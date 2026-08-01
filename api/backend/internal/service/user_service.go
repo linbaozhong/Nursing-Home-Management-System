@@ -1,0 +1,60 @@
+package service
+
+import (
+	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tbluser"
+	"api/internal/model/do"
+	"api/internal/model/dto"
+	"context"
+	"fmt"
+	"errors"
+	"github.com/linbaozhong/gentity/pkg/ace"
+	"github.com/linbaozhong/gentity/pkg/types"
+)
+
+type user struct{}
+
+var User = &user{}
+
+func (u *user)Register(ctx context.Context, in *dto.UserRegisterReq, out *dto.UserRegisterResp) error {
+	// todo: 在这里做用户注册，返回用户信息
+	fmt.Println("UserRegister:",in)
+
+	out.UserID=12345678
+	out.UserName="哈利蔺特"
+
+	return nil
+}
+
+func (u *user)Get(ctx context.Context, in *dto.GetUserReq, out *dto.GetUserResp) error {
+	user := do.NewUser()
+	// 第一种方法
+	e := db.Table(do.UserTableName).
+		Where(tbluser.Id.Eq(in.UserID)).Select().Get(ctx, user)
+
+	// 第二种方法
+	e = ace.Table(do.UserTableName).
+		Where(tbluser.Id.Eq(in.UserID)).Select().Get(ctx, user)
+
+	// 第三种方法
+	user, has, e := dao.User(db).GetByID(ctx, types.BigInt(*in.UserID))
+
+	// 第四种方法
+	user, has, e = dao.User(db).Get(ctx, ace.Where(tbluser.Id.Eq(in.UserID)))
+
+	if e != nil {
+		return e
+	}
+	if !has {
+		return errors.New("user not found")
+	}
+
+	// 上面四种方法都可以，根据个人喜好选择一种
+
+	// 这里是将do.User转换为dto.GetUserResp
+	out.UserID = user.Id.Uint64()
+	out.Email = user.Email.String()
+	out.UserName = user.Name.String()
+
+	return nil
+}

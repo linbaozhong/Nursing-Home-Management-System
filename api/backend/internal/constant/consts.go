@@ -1,0 +1,11 @@
+package constant
+
+import "github.com/linbaozhong/gentity/pkg/types"
+
+const (
+	Authorization = "Authorization"
+)
+
+var (
+	ErrAuthorizationNotFound = types.NewError(400, "访问令牌缺失")
+)
