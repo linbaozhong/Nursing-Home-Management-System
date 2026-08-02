@@ -19,6 +19,14 @@ func (c *contract) RegisterRoute(group ack.Party) {
 	_g.Get("/contractExpireJob", c.contractExpireJob)
 }
 
+// ExpireJob
+// @Summary ExpireJob
+// @Tags 合同
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.EmptyReq true "EmptyReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /contract/contractExpireJob [get]
 func (c *contract) contractExpireJob(ctx ack.Context) {
 	ack.Get(ctx, service.Contract.ContractExpireJob)
 }

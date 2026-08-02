@@ -1,6 +1,10 @@
 package service
 
 import (
+	"api/internal/model/define/table/tblaccident"
+	"api/internal/model/define/table/tblelder"
+	"api/internal/model/define/table/tblstaff"
+	"api/internal/model/do"
 	"context"
 
 	"api/internal/model/define/dao"
@@ -22,10 +26,19 @@ var Accident = &accident{}
 //
 // todo: 1) in.Key 非空 -> (tbl<accident>.Id.Eq(in.Key) OR tbl<elder>.ElderName.Like(in.Key))
 //
-//	2) DB 分页: Count + List(联表 LeftJoin)
-//	3) 组装含老人姓名的 VO 并赋值 out
-func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
+//  2. DB 分页: Count + List(联表 LeftJoin)
+//  3. 组装含老人姓名的 VO 并赋值 out
+func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentByKeyQuery, out *dto.PageAccidentByKeyVO) error {
+	// todo: 实现联表分页查询
+	db.Table(do.AccidentTableName).
+		LeftJoin(tblaccident.ElderId, tblelder.Id).
+		LeftJoin(tblaccident.StaffId, tblstaff.Id).
+		Cols(
+			tblaccident.Id,
+			tblelder.Name.AsName("elder_name"),
+			tblstaff.Name.AsName("staff_name"),
+			tblaccident.OccurDate,
+		).Select().Slices(ctx)
 	return nil
 }
 
@@ -33,7 +46,7 @@ func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentBy
 // 对应 Java: AccidentServiceImpl.getAccidentById -> accidentMapper.selectByPrimaryKey
 // todo: 标准 CRUD - dao.Accident(db).GetByID(ctx, types.BigInt(in.ID))
 func (a *accident) GetAccidentById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.Accident(db).GetByID(ctx, types.BigInt(in.ID))
+	obj, has, e := dao.Accident(db).GetByID(ctx, types.BigInt(*in.ID))
 	if e != nil {
 		return e
 	}

@@ -24,26 +24,74 @@ func (h *home) RegisterRoute(group ack.Party) {
 	_g.Get("/businessTrend", h.businessTrend)
 }
 
+// Overview
+// @Summary Overview
+// @Tags 首页
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.EmptyReq true "EmptyReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /home/todayOverview [get]
 func (h *home) todayOverview(ctx ack.Context) {
 	ack.Get(ctx, service.Home.TodayOverview)
 }
 
+// 床位
+// @Summary 床位
+// @Tags 首页
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.EmptyReq true "EmptyReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /home/availableBed [get]
 func (h *home) availableBed(ctx ack.Context) {
 	ack.Get(ctx, service.Home.AvailableBed)
 }
 
+// SaleFollow
+// @Summary SaleFollow
+// @Tags 首页
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.EmptyReq true "EmptyReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /home/todaySaleFollow [get]
 func (h *home) todaySaleFollow(ctx ack.Context) {
 	ack.Get(ctx, service.Home.TodaySaleFollow)
 }
 
+// PerformanceRank
+// @Summary PerformanceRank
+// @Tags 首页
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.EmptyReq true "EmptyReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /home/monthPerformanceRank [get]
 func (h *home) monthPerformanceRank(ctx ack.Context) {
 	ack.Get(ctx, service.Home.MonthPerformanceRank)
 }
 
+// 来源
+// @Summary 来源
+// @Tags 首页
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.EmptyReq true "EmptyReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /home/clientSource [get]
 func (h *home) clientSource(ctx ack.Context) {
 	ack.Get(ctx, service.Home.ClientSource)
 }
 
+// Trend
+// @Summary Trend
+// @Tags 首页
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.EmptyReq true "EmptyReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /home/businessTrend [get]
 func (h *home) businessTrend(ctx ack.Context) {
 	ack.Get(ctx, service.Home.BusinessTrend)
 }

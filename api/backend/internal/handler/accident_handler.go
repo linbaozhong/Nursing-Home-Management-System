@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"github.com/linbaozhong/gentity/pkg/ack/iris"
 	"api/internal/lib"
 	"api/internal/service"
+	"github.com/linbaozhong/gentity/pkg/ack/iris"
 )
 
 type accident struct{}
@@ -19,26 +19,66 @@ func (a *accident) RegisterRoute(group ack.Party) {
 	_g.Get("/pageAccidentByKey", a.pageAccidentByKey)
 	_g.Get("/getAccidentById", a.getAccidentById)
 	_g.Post("/addAccident", a.addAccident)
-	_g.Put("/editAccident", a.editAccident)
-	_g.Delete("/deleteAccident", a.deleteAccident)
+	_g.Post("/editAccident", a.editAccident)
+	_g.Post("/deleteAccident", a.deleteAccident)
 }
 
+// 分页查询事故
+// @Summary 分页查询事故
+// @Tags 事故记录
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.PageAccidentByKeyQuery true "PageAccidentByKeyQuery"
+// @Success 200 {object} dto.EmptyResp
+// @Router /accident/pageAccidentByKey [get]
 func (a *accident) pageAccidentByKey(ctx ack.Context) {
 	ack.Get(ctx, service.Accident.PageAccidentByKey)
 }
 
+// 获取事故
+// @Summary 获取事故
+// @Tags 事故记录
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.IDReq true "IDReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /accident/getAccidentById [get]
 func (a *accident) getAccidentById(ctx ack.Context) {
 	ack.Get(ctx, service.Accident.GetAccidentById)
 }
 
+// 新增事故
+// @Summary 新增事故
+// @Tags 事故记录
+// @Accept application/json
+// @Produce application/json
+// @Param data body dto.AddAccidentQuery true "AddAccidentQuery"
+// @Success 200 {object} dto.EmptyResp
+// @Router /accident/addAccident [post]
 func (a *accident) addAccident(ctx ack.Context) {
 	ack.Post(ctx, service.Accident.AddAccident)
 }
 
+// 编辑事故
+// @Summary 编辑事故
+// @Tags 事故记录
+// @Accept application/json
+// @Produce application/json
+// @Param data body dto.EditAccidentQuery true "EditAccidentQuery"
+// @Success 200 {object} dto.EmptyResp
+// @Router /accident/editAccident [post]
 func (a *accident) editAccident(ctx ack.Context) {
-	ack.Put(ctx, service.Accident.EditAccident)
+	ack.Post(ctx, service.Accident.EditAccident)
 }
 
+// 删除事故
+// @Summary 删除事故
+// @Tags 事故记录
+// @Accept application/json
+// @Produce application/json
+// @Param data body dto.IDReq true "IDReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /accident/deleteAccident [post]
 func (a *accident) deleteAccident(ctx ack.Context) {
-	ack.Delete(ctx, service.Accident.DeleteAccident)
+	ack.Post(ctx, service.Accident.DeleteAccident)
 }

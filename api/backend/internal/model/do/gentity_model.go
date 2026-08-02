@@ -62,22 +62,23 @@ type RoleAuth struct {
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
 }
 
-// User
-// @tablename user
-type User struct {
-	pool.Model
-	Id       types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`     // 编号
-	Name     types.String `json:"name,omitempty" db:"'name' size:40"`         // 姓名
-	Email    types.String `json:"email,omitempty" db:"'email' size:40"`       // 邮箱
-	Mobile   types.String `json:"mobile,omitempty" db:"'mobile' size:20"`     // 手机号
-	Gender   types.String `json:"gender,omitempty" db:"'gender' size:5"`      // 性别
-	Birthday types.String `json:"birthday,omitempty" db:"'birthday' size:20"` // 生日
-	Creator  types.BigInt `json:"creator,omitempty" db:"'creator' size:20"`   // 创建人
-	Status   types.Int8   `json:"status,omitempty" db:"'status' size:4"`      // 状态
-	State    types.Int8   `json:"state,omitempty" db:"'state' size:4"`        // 启用状态
-	Ctime    types.Time   `json:"ctime,omitempty" db:"'ctime'"`               // 创建时间
-	Utime    types.Time   `json:"utime,omitempty" db:"'utime'"`               // 修改时间
-}
+//
+//// User
+//// @tablename user
+//type User struct {
+//	pool.Model
+//	Id       types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`     // 编号
+//	Name     types.String `json:"name,omitempty" db:"'name' size:40"`         // 姓名
+//	Email    types.String `json:"email,omitempty" db:"'email' size:40"`       // 邮箱
+//	Mobile   types.String `json:"mobile,omitempty" db:"'mobile' size:20"`     // 手机号
+//	Gender   types.String `json:"gender,omitempty" db:"'gender' size:5"`      // 性别
+//	Birthday types.String `json:"birthday,omitempty" db:"'birthday' size:20"` // 生日
+//	Creator  types.BigInt `json:"creator,omitempty" db:"'creator' size:20"`   // 创建人
+//	Status   types.Int8   `json:"status,omitempty" db:"'status' size:4"`      // 状态
+//	State    types.Int8   `json:"state,omitempty" db:"'state' size:4"`        // 启用状态
+//	Ctime    types.Time   `json:"ctime,omitempty" db:"'ctime'"`               // 创建时间
+//	Utime    types.Time   `json:"utime,omitempty" db:"'utime'"`               // 修改时间
+//}
 
 // SetDishes
 // @tablename set_dishes

@@ -19,6 +19,14 @@ func (b *bedpanorama) RegisterRoute(group ack.Party) {
 	_g.Get("/getBedPanorama", b.getBedPanorama)
 }
 
+// 获取床位全景
+// @Summary 获取床位全景
+// @Tags 床位全景
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.EmptyReq true "EmptyReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /bedPanorama/getBedPanorama [get]
 func (b *bedpanorama) getBedPanorama(ctx ack.Context) {
 	ack.Get(ctx, service.BedPanorama.GetBedPanorama)
 }

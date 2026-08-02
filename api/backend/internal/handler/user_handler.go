@@ -28,6 +28,14 @@ func (u *user) RegisterRoute(group ack.Party) {
 	_g.Get("/get", u.get)
 }
 
+// Register
+// @Summary Register
+// @Tags 用户
+// @Accept application/json
+// @Produce application/json
+// @Param data body dto.EmptyReq true "EmptyReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /user/user_register [post]
 func (u *user) userRegister(ctx ack.Context) {
 	// 如果不需要保持接口的幂等性，则使用下面的 Post 方法
 	ack.Post(ctx, service.User.Register)
@@ -35,6 +43,14 @@ func (u *user) userRegister(ctx ack.Context) {
 	ack.PostIdempotent(ctx, idempotencyConfig, service.User.Register)
 }
 
+// 用户
+// @Summary 用户
+// @Tags 用户
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.EmptyReq true "EmptyReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /user/get [get]
 func (u *user) get(ctx ack.Context) {
 	ack.Get(ctx, service.User.Get)
 }

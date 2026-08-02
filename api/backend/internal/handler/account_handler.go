@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"github.com/linbaozhong/gentity/pkg/ack/iris"
 	"api/internal/lib"
 	"api/internal/service"
+	"github.com/linbaozhong/gentity/pkg/ack/iris"
 )
 
 type account struct{}
@@ -27,31 +27,66 @@ func (a *account) RegisterRoute(group ack.Party) {
 
 	// 需要登录
 	_g.Use(lib.AuthMiddleware())
-	_g.Put("/edit", a.edit)
+	_g.Post("/edit", a.edit)
 	_g.Get("/logout", a.logout)
 }
 
-// login 登录
+// 账户
+// @Summary 账户
+// @Tags 账户
+// @Accept application/json
+// @Produce application/json
+// @Param data body dto.LoginQuery true "LoginQuery"
+// @Success 200 {object} dto.LoginUserVO
+// @Router /account/login [post]
 func (a *account) login(ctx ack.Context) {
 	ack.Post(ctx, service.Account.Login)
 }
 
-// sendCode 发送验证码
+// 发送验证码
+// @Summary 发送验证码
+// @Tags 账户
+// @Accept application/json
+// @Produce application/json
+// @Param data body dto.SendCodeQuery true "SendCodeQuery"
+// @Success 200 {object} dto.EmptyResp
+// @Router /account/sendCode [post]
 func (a *account) sendCode(ctx ack.Context) {
 	ack.Post(ctx, service.Account.SendCode)
 }
 
-// forget 忘记密码
+// 账户
+// @Summary 账户
+// @Tags 账户
+// @Accept application/json
+// @Produce application/json
+// @Param data body dto.ForgetQuery true "ForgetQuery"
+// @Success 200 {object} dto.LoginUserVO
+// @Router /account/forget [post]
 func (a *account) forget(ctx ack.Context) {
 	ack.Post(ctx, service.Account.Forget)
 }
 
-// edit 修改账户
+// 账户
+// @Summary 账户
+// @Tags 账户
+// @Accept application/json
+// @Produce application/json
+// @Param data body dto.EditQuery true "EditQuery"
+// @Success 200 {object} dto.EmptyResp
+// @Router /account/edit [post]
 func (a *account) edit(ctx ack.Context) {
-	ack.Put(ctx, service.Account.Edit)
+	ack.Post(ctx, service.Account.Edit)
 }
 
-// logout 退出登录
+// 账户
+// @Summary 账户
+// @Tags 账户
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.EmptyReq true "EmptyReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /account/logout [get]
 func (a *account) logout(ctx ack.Context) {
 	ack.Get(ctx, service.Account.Logout)
 }
