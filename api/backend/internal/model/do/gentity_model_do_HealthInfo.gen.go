@@ -162,22 +162,22 @@ func (p *HealthInfo) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var healthinfoFieldToPtrFunc = map[dialect.Field]func(*HealthInfo) any{
-	tblhealthinfo.SelfCare:       func(p *HealthInfo) any { return &p.SelfCare },
-	tblhealthinfo.Vision:         func(p *HealthInfo) any { return &p.Vision },
-	tblhealthinfo.Hearing:        func(p *HealthInfo) any { return &p.Hearing },
-	tblhealthinfo.Hospital:       func(p *HealthInfo) any { return &p.Hospital },
-	tblhealthinfo.Doctor:         func(p *HealthInfo) any { return &p.Doctor },
-	tblhealthinfo.Phone:          func(p *HealthInfo) any { return &p.Phone },
-	tblhealthinfo.AllergyDrug:    func(p *HealthInfo) any { return &p.AllergyDrug },
-	tblhealthinfo.MedicalHistory: func(p *HealthInfo) any { return &p.MedicalHistory },
-	tblhealthinfo.MajorDisease:   func(p *HealthInfo) any { return &p.MajorDisease },
-	tblhealthinfo.Id:             func(p *HealthInfo) any { return &p.Id },
-	tblhealthinfo.ElderId:        func(p *HealthInfo) any { return &p.ElderId },
-	tblhealthinfo.CreateId:       func(p *HealthInfo) any { return &p.CreateId },
-	tblhealthinfo.CreateTime:     func(p *HealthInfo) any { return &p.CreateTime },
-	tblhealthinfo.UpdateId:       func(p *HealthInfo) any { return &p.UpdateId },
-	tblhealthinfo.UpdateTime:     func(p *HealthInfo) any { return &p.UpdateTime },
+var healthinfoFieldToPtrFunc = map[string]func(*HealthInfo) any{
+	tblhealthinfo.SelfCare.Name:       func(p *HealthInfo) any { return &p.SelfCare },
+	tblhealthinfo.Vision.Name:         func(p *HealthInfo) any { return &p.Vision },
+	tblhealthinfo.Hearing.Name:        func(p *HealthInfo) any { return &p.Hearing },
+	tblhealthinfo.Hospital.Name:       func(p *HealthInfo) any { return &p.Hospital },
+	tblhealthinfo.Doctor.Name:         func(p *HealthInfo) any { return &p.Doctor },
+	tblhealthinfo.Phone.Name:          func(p *HealthInfo) any { return &p.Phone },
+	tblhealthinfo.AllergyDrug.Name:    func(p *HealthInfo) any { return &p.AllergyDrug },
+	tblhealthinfo.MedicalHistory.Name: func(p *HealthInfo) any { return &p.MedicalHistory },
+	tblhealthinfo.MajorDisease.Name:   func(p *HealthInfo) any { return &p.MajorDisease },
+	tblhealthinfo.Id.Name:             func(p *HealthInfo) any { return &p.Id },
+	tblhealthinfo.ElderId.Name:        func(p *HealthInfo) any { return &p.ElderId },
+	tblhealthinfo.CreateId.Name:       func(p *HealthInfo) any { return &p.CreateId },
+	tblhealthinfo.CreateTime.Name:     func(p *HealthInfo) any { return &p.CreateTime },
+	tblhealthinfo.UpdateId.Name:       func(p *HealthInfo) any { return &p.UpdateId },
+	tblhealthinfo.UpdateTime.Name:     func(p *HealthInfo) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -191,11 +191,28 @@ func (p *HealthInfo) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := healthinfoFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := healthinfoFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *HealthInfo) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := healthinfoFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -310,12 +327,10 @@ func (p *HealthInfo) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]s
 	return cols, vals
 }
 
-//
 func (p *HealthInfo) AssignKeys() (dialect.Field, any) {
 	return tblhealthinfo.PrimaryKey, p.Id
 }
 
-//
 func (p *HealthInfo) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

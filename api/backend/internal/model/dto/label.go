@@ -5,16 +5,16 @@ package dto
 // @request
 // OperateLabelQuery 操作客户标签请求
 type OperateLabelQuery struct {
-	ID     *int64  `json:"id"` // id
-	TypeID *int64  `json:"typeId"` // typeId
-	Name   *string `json:"name" valid:"required"` // 名称
+	ID     *int64  `json:"id"`                     // id
+	TypeID *int64  `json:"type_id"`                // typeId
+	Name   *string `json:"name" valid:"required"`  // 名称
 	Color  *string `json:"color" valid:"required"` // 颜色
 }
 
 // @request
 // OperateLabelTypeQuery 操作客户标签分类请求
 type OperateLabelTypeQuery struct {
-	ID   *int64  `json:"id"` // id
+	ID   *int64  `json:"id"`                    // id
 	Name *string `json:"name" valid:"required"` // 名称
 }
 
@@ -35,40 +35,40 @@ type OperateLabelTypeVO struct {
 // @request
 // AddLabelQuery 新增客户标签请求
 type AddLabelQuery struct {
-	ID     *int64  `json:"id"` // id
-	TypeID *int64  `json:"typeId"` // typeId
-	Name   *string `json:"name" valid:"required"` // 名称
+	ID     *int64  `json:"id"`                     // id
+	TypeID *int64  `json:"type_id"`                // typeId
+	Name   *string `json:"name" valid:"required"`  // 名称
 	Color  *string `json:"color" valid:"required"` // 颜色
 }
 
 // @request
 // EditLabelQuery 编辑客户标签请求
 type EditLabelQuery struct {
-	ID     *int64  `json:"id"` // id
-	TypeID *int64  `json:"typeId"` // typeId
-	Name   *string `json:"name" valid:"required"` // 名称
+	ID     *int64  `json:"id"`                     // id
+	TypeID *int64  `json:"type_id"`                // typeId
+	Name   *string `json:"name" valid:"required"`  // 名称
 	Color  *string `json:"color" valid:"required"` // 颜色
 }
 
 // @request
 // PageLabelTypeByKeyQuery 分页查询客户标签分类请求
 type PageLabelTypeByKeyQuery struct {
-	PageNum  *int    `json:"pageNum" valid:"required"` // 页码
-	PageSize *int    `json:"pageSize" valid:"required"` // 条数
-	Name     *string `json:"name"` // 分类名称
+	PageNum  *int    `json:"page_num" valid:"required"`  // 页码
+	PageSize *int    `json:"page_size" valid:"required"` // 条数
+	Name     *string `json:"name"`                       // 分类名称
 }
 
 // @request
 // AddLabelTypeQuery 新增客户标签分类请求
 type AddLabelTypeQuery struct {
-	ID   *int64  `json:"id"` // id
+	ID   *int64  `json:"id"`                    // id
 	Name *string `json:"name" valid:"required"` // 名称
 }
 
 // @request
 // EditLabelTypeQuery 编辑客户标签分类请求
 type EditLabelTypeQuery struct {
-	ID   *int64  `json:"id"` // id
+	ID   *int64  `json:"id"`                    // id
 	Name *string `json:"name" valid:"required"` // 名称
 }
 

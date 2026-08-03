@@ -114,14 +114,14 @@ func (p *ElderLabel) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var elderlabelFieldToPtrFunc = map[dialect.Field]func(*ElderLabel) any{
-	tblelderlabel.Id:         func(p *ElderLabel) any { return &p.Id },
-	tblelderlabel.ElderId:    func(p *ElderLabel) any { return &p.ElderId },
-	tblelderlabel.LabelId:    func(p *ElderLabel) any { return &p.LabelId },
-	tblelderlabel.CreateId:   func(p *ElderLabel) any { return &p.CreateId },
-	tblelderlabel.CreateTime: func(p *ElderLabel) any { return &p.CreateTime },
-	tblelderlabel.UpdateId:   func(p *ElderLabel) any { return &p.UpdateId },
-	tblelderlabel.UpdateTime: func(p *ElderLabel) any { return &p.UpdateTime },
+var elderlabelFieldToPtrFunc = map[string]func(*ElderLabel) any{
+	tblelderlabel.Id.Name:         func(p *ElderLabel) any { return &p.Id },
+	tblelderlabel.ElderId.Name:    func(p *ElderLabel) any { return &p.ElderId },
+	tblelderlabel.LabelId.Name:    func(p *ElderLabel) any { return &p.LabelId },
+	tblelderlabel.CreateId.Name:   func(p *ElderLabel) any { return &p.CreateId },
+	tblelderlabel.CreateTime.Name: func(p *ElderLabel) any { return &p.CreateTime },
+	tblelderlabel.UpdateId.Name:   func(p *ElderLabel) any { return &p.UpdateId },
+	tblelderlabel.UpdateTime.Name: func(p *ElderLabel) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -135,11 +135,28 @@ func (p *ElderLabel) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := elderlabelFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := elderlabelFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *ElderLabel) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := elderlabelFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -230,12 +247,10 @@ func (p *ElderLabel) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]s
 	return cols, vals
 }
 
-//
 func (p *ElderLabel) AssignKeys() (dialect.Field, any) {
 	return tblelderlabel.PrimaryKey, p.Id
 }
 
-//
 func (p *ElderLabel) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

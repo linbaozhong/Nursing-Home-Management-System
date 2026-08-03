@@ -126,16 +126,16 @@ func (p *Dishes) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var dishesFieldToPtrFunc = map[dialect.Field]func(*Dishes) any{
-	tbldishes.Name:       func(p *Dishes) any { return &p.Name },
-	tbldishes.DelFlag:    func(p *Dishes) any { return &p.DelFlag },
-	tbldishes.Id:         func(p *Dishes) any { return &p.Id },
-	tbldishes.TypeId:     func(p *Dishes) any { return &p.TypeId },
-	tbldishes.Price:      func(p *Dishes) any { return &p.Price },
-	tbldishes.CreateId:   func(p *Dishes) any { return &p.CreateId },
-	tbldishes.CreateTime: func(p *Dishes) any { return &p.CreateTime },
-	tbldishes.UpdateId:   func(p *Dishes) any { return &p.UpdateId },
-	tbldishes.UpdateTime: func(p *Dishes) any { return &p.UpdateTime },
+var dishesFieldToPtrFunc = map[string]func(*Dishes) any{
+	tbldishes.Name.Name:       func(p *Dishes) any { return &p.Name },
+	tbldishes.DelFlag.Name:    func(p *Dishes) any { return &p.DelFlag },
+	tbldishes.Id.Name:         func(p *Dishes) any { return &p.Id },
+	tbldishes.TypeId.Name:     func(p *Dishes) any { return &p.TypeId },
+	tbldishes.Price.Name:      func(p *Dishes) any { return &p.Price },
+	tbldishes.CreateId.Name:   func(p *Dishes) any { return &p.CreateId },
+	tbldishes.CreateTime.Name: func(p *Dishes) any { return &p.CreateTime },
+	tbldishes.UpdateId.Name:   func(p *Dishes) any { return &p.UpdateId },
+	tbldishes.UpdateTime.Name: func(p *Dishes) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -149,11 +149,28 @@ func (p *Dishes) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := dishesFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := dishesFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Dishes) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := dishesFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -250,12 +267,10 @@ func (p *Dishes) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]strin
 	return cols, vals
 }
 
-//
 func (p *Dishes) AssignKeys() (dialect.Field, any) {
 	return tbldishes.PrimaryKey, p.Id
 }
 
-//
 func (p *Dishes) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

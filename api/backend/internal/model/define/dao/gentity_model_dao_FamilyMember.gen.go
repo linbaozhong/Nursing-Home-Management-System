@@ -226,11 +226,14 @@ func (p *familymember) DeleteByIds(ctx context.Context, ids []any) (int64, error
 }
 
 // Get 查询第一个符合条件的记录
-//  s: 选择器，用于构建sql语句
+//
+//	s: 选择器，用于构建sql语句
+//
 // 返回值:
 //  1. *do.FamilyMember: 第一个符合条件的记录
 //  2. bool: 是否存在记录
 //  3. error: 错误信息
+//
 // 注意:
 //  1. 如果没有指定表名，则默认使用do.FamilyMemberTableName
 //  2. 如果没有指定查询列，则默认使用tblfamilymember.ReadableFields
@@ -289,11 +292,14 @@ func (p *familymember) GetByIds(ctx context.Context, ids []any, cols ...dialect.
 }
 
 // Cell 查询第一个符合条件的记录的第一个列
-//  s: 选择器，用于构建sql语句
+//
+//	s: 选择器，用于构建sql语句
+//
 // 返回值:
 //  1. any: 第一个符合条件的记录的第一个列
 //  2. bool: 是否存在记录
 //  3. error: 错误信息
+//
 // 注意:
 //  1. 如果没有指定表名，则默认使用do.FamilyMemberTableName
 //  2. 如果没有指定查询列，则默认使用tblfamilymember.PrimaryKey

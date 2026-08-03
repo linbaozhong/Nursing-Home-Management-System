@@ -126,16 +126,16 @@ func (p *Bed) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var bedFieldToPtrFunc = map[dialect.Field]func(*Bed) any{
-	tblbed.Name:       func(p *Bed) any { return &p.Name },
-	tblbed.BedFlag:    func(p *Bed) any { return &p.BedFlag },
-	tblbed.DelFlag:    func(p *Bed) any { return &p.DelFlag },
-	tblbed.Id:         func(p *Bed) any { return &p.Id },
-	tblbed.RoomId:     func(p *Bed) any { return &p.RoomId },
-	tblbed.CreateId:   func(p *Bed) any { return &p.CreateId },
-	tblbed.CreateTime: func(p *Bed) any { return &p.CreateTime },
-	tblbed.UpdateId:   func(p *Bed) any { return &p.UpdateId },
-	tblbed.UpdateTime: func(p *Bed) any { return &p.UpdateTime },
+var bedFieldToPtrFunc = map[string]func(*Bed) any{
+	tblbed.Name.Name:       func(p *Bed) any { return &p.Name },
+	tblbed.BedFlag.Name:    func(p *Bed) any { return &p.BedFlag },
+	tblbed.DelFlag.Name:    func(p *Bed) any { return &p.DelFlag },
+	tblbed.Id.Name:         func(p *Bed) any { return &p.Id },
+	tblbed.RoomId.Name:     func(p *Bed) any { return &p.RoomId },
+	tblbed.CreateId.Name:   func(p *Bed) any { return &p.CreateId },
+	tblbed.CreateTime.Name: func(p *Bed) any { return &p.CreateTime },
+	tblbed.UpdateId.Name:   func(p *Bed) any { return &p.UpdateId },
+	tblbed.UpdateTime.Name: func(p *Bed) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -149,11 +149,28 @@ func (p *Bed) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := bedFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := bedFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Bed) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := bedFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -250,12 +267,10 @@ func (p *Bed) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]string, 
 	return cols, vals
 }
 
-//
 func (p *Bed) AssignKeys() (dialect.Field, any) {
 	return tblbed.PrimaryKey, p.Id
 }
 
-//
 func (p *Bed) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

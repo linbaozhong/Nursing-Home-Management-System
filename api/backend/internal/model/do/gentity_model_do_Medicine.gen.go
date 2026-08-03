@@ -138,18 +138,18 @@ func (p *Medicine) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var medicineFieldToPtrFunc = map[dialect.Field]func(*Medicine) any{
-	tblmedicine.Name:          func(p *Medicine) any { return &p.Name },
-	tblmedicine.Type:          func(p *Medicine) any { return &p.Type },
-	tblmedicine.Specification: func(p *Medicine) any { return &p.Specification },
-	tblmedicine.DosageForm:    func(p *Medicine) any { return &p.DosageForm },
-	tblmedicine.Manufacturer:  func(p *Medicine) any { return &p.Manufacturer },
-	tblmedicine.DelFlag:       func(p *Medicine) any { return &p.DelFlag },
-	tblmedicine.Id:            func(p *Medicine) any { return &p.Id },
-	tblmedicine.CreateId:      func(p *Medicine) any { return &p.CreateId },
-	tblmedicine.CreateTime:    func(p *Medicine) any { return &p.CreateTime },
-	tblmedicine.UpdateId:      func(p *Medicine) any { return &p.UpdateId },
-	tblmedicine.UpdateTime:    func(p *Medicine) any { return &p.UpdateTime },
+var medicineFieldToPtrFunc = map[string]func(*Medicine) any{
+	tblmedicine.Name.Name:          func(p *Medicine) any { return &p.Name },
+	tblmedicine.Type.Name:          func(p *Medicine) any { return &p.Type },
+	tblmedicine.Specification.Name: func(p *Medicine) any { return &p.Specification },
+	tblmedicine.DosageForm.Name:    func(p *Medicine) any { return &p.DosageForm },
+	tblmedicine.Manufacturer.Name:  func(p *Medicine) any { return &p.Manufacturer },
+	tblmedicine.DelFlag.Name:       func(p *Medicine) any { return &p.DelFlag },
+	tblmedicine.Id.Name:            func(p *Medicine) any { return &p.Id },
+	tblmedicine.CreateId.Name:      func(p *Medicine) any { return &p.CreateId },
+	tblmedicine.CreateTime.Name:    func(p *Medicine) any { return &p.CreateTime },
+	tblmedicine.UpdateId.Name:      func(p *Medicine) any { return &p.UpdateId },
+	tblmedicine.UpdateTime.Name:    func(p *Medicine) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -163,11 +163,28 @@ func (p *Medicine) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := medicineFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := medicineFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Medicine) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := medicineFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -270,12 +287,10 @@ func (p *Medicine) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 	return cols, vals
 }
 
-//
 func (p *Medicine) AssignKeys() (dialect.Field, any) {
 	return tblmedicine.PrimaryKey, p.Id
 }
 
-//
 func (p *Medicine) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

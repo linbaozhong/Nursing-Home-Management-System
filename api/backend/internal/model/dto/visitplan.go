@@ -3,26 +3,26 @@ package dto
 // @request
 // PageVisitPlanQuery 分页查询回访计划（Java: PageVisitPlanQuery）
 type PageVisitPlanQuery struct {
-	PageNum      *int    `json:"pageNum"`      // 页码
-	PageSize     *int    `json:"pageSize"`     // 每页数量
-	ElderID      *int64  `json:"elderId"`      // 老人编号
-	CompleteFlag *bool  `json:"completeFlag"` // 是否已完成(null=全部 true=已完成 false=待执行)
+	PageNum      *int   `json:"page_num"`      // 页码
+	PageSize     *int   `json:"page_size"`     // 每页数量
+	ElderID      *int64 `json:"elder_id"`      // 老人编号
+	CompleteFlag *bool  `json:"complete_flag"` // 是否已完成(null=全部 true=已完成 false=待执行)
 }
 
 // @request
 // AddVisitPlanQuery 新增回访计划（Java: AddVisitPlanQuery）
 type AddVisitPlanQuery struct {
-	ElderID *int64  `json:"elderId"` // 老人编号
-	Title   *string `json:"title"`   // 回访计划标题
-	PlanDate *string `json:"planDate"` // 计划回访时间 yyyy-MM-dd HH:mm:ss
+	ElderID  *int64  `json:"elder_id"`  // 老人编号
+	Title    *string `json:"title"`     // 回访计划标题
+	PlanDate *string `json:"plan_date"` // 计划回访时间 yyyy-MM-dd HH:mm:ss
 }
 
 // @request
 // CompleteVisitPlanQuery 执行回访计划（Java: CompleteVisitPlanQuery）
 type CompleteVisitPlanQuery struct {
-	ID           *int64  `json:"id"`           // 回访计划编号
-	Content      *string `json:"content"`      // 回访内容
-	CompleteDate *string `json:"completeDate"` // 完成时间 yyyy-MM-dd HH:mm:ss
+	ID           *int64  `json:"id"`            // 回访计划编号
+	Content      *string `json:"content"`       // 回访内容
+	CompleteDate *string `json:"complete_date"` // 完成时间 yyyy-MM-dd HH:mm:ss
 }
 
 // @request
@@ -38,13 +38,13 @@ type ListLabelQuery struct{}
 // @request
 // GetElderLabelByIdQuery 按老人编号查询其标签（Java: getElderLabelById）
 type GetElderLabelByIdQuery struct {
-	ElderID *int64 `json:"elderId"` // 老人编号
+	ElderID *int64 `json:"elder_id"` // 老人编号
 }
 
 // @request
 // GetEditElderLabelByIdQuery 编辑时按老人编号查询标签（按分类分组）
 type GetEditElderLabelByIdQuery struct {
-	ElderID *int64 `json:"elderId"` // 老人编号
+	ElderID *int64 `json:"elder_id"` // 老人编号
 }
 
 // PageCommunicationRecordQuery / AddCommunicationRecordQuery / EditCommunicationRecordQuery

@@ -156,21 +156,21 @@ func (p *Visit) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var visitFieldToPtrFunc = map[dialect.Field]func(*Visit) any{
-	tblvisit.Name:       func(p *Visit) any { return &p.Name },
-	tblvisit.Phone:      func(p *Visit) any { return &p.Phone },
-	tblvisit.Relation:   func(p *Visit) any { return &p.Relation },
-	tblvisit.VisitFlag:  func(p *Visit) any { return &p.VisitFlag },
-	tblvisit.DelFlag:    func(p *Visit) any { return &p.DelFlag },
-	tblvisit.Id:         func(p *Visit) any { return &p.Id },
-	tblvisit.ElderId:    func(p *Visit) any { return &p.ElderId },
-	tblvisit.VisitDate:  func(p *Visit) any { return &p.VisitDate },
-	tblvisit.LeaveDate:  func(p *Visit) any { return &p.LeaveDate },
-	tblvisit.CreateId:   func(p *Visit) any { return &p.CreateId },
-	tblvisit.CreateTime: func(p *Visit) any { return &p.CreateTime },
-	tblvisit.UpdateId:   func(p *Visit) any { return &p.UpdateId },
-	tblvisit.UpdateTime: func(p *Visit) any { return &p.UpdateTime },
-	tblvisit.VisitNum:   func(p *Visit) any { return &p.VisitNum },
+var visitFieldToPtrFunc = map[string]func(*Visit) any{
+	tblvisit.Name.Name:       func(p *Visit) any { return &p.Name },
+	tblvisit.Phone.Name:      func(p *Visit) any { return &p.Phone },
+	tblvisit.Relation.Name:   func(p *Visit) any { return &p.Relation },
+	tblvisit.VisitFlag.Name:  func(p *Visit) any { return &p.VisitFlag },
+	tblvisit.DelFlag.Name:    func(p *Visit) any { return &p.DelFlag },
+	tblvisit.Id.Name:         func(p *Visit) any { return &p.Id },
+	tblvisit.ElderId.Name:    func(p *Visit) any { return &p.ElderId },
+	tblvisit.VisitDate.Name:  func(p *Visit) any { return &p.VisitDate },
+	tblvisit.LeaveDate.Name:  func(p *Visit) any { return &p.LeaveDate },
+	tblvisit.CreateId.Name:   func(p *Visit) any { return &p.CreateId },
+	tblvisit.CreateTime.Name: func(p *Visit) any { return &p.CreateTime },
+	tblvisit.UpdateId.Name:   func(p *Visit) any { return &p.UpdateId },
+	tblvisit.UpdateTime.Name: func(p *Visit) any { return &p.UpdateTime },
+	tblvisit.VisitNum.Name:   func(p *Visit) any { return &p.VisitNum },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -184,11 +184,28 @@ func (p *Visit) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := visitFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := visitFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Visit) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := visitFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -300,12 +317,10 @@ func (p *Visit) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]string
 	return cols, vals
 }
 
-//
 func (p *Visit) AssignKeys() (dialect.Field, any) {
 	return tblvisit.PrimaryKey, p.Id
 }
 
-//
 func (p *Visit) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

@@ -5,34 +5,34 @@ package dto
 // @request
 // PageOrderByKeyQuery 分页查询点餐请求
 type PageOrderByKeyQuery struct {
-	PageNum    *int    `json:"pageNum" valid:"required"` // 页码
-	PageSize   *int    `json:"pageSize" valid:"required"` // 条数
-	ElderName  *string `json:"elderName"` // 老人姓名
-	ElderPhone *string `json:"elderPhone"` // 老人电话
+	PageNum    *int    `json:"page_num" valid:"required"`  // 页码
+	PageSize   *int    `json:"page_size" valid:"required"` // 条数
+	ElderName  *string `json:"elder_name"`                 // 老人姓名
+	ElderPhone *string `json:"elder_phone"`                // 老人电话
 }
 
 // @request
 // AddOrderQuery 新增点餐请求
 type AddOrderQuery struct {
-	ElderID         *int64                  `json:"elderId" valid:"required"` // 老人编号
-	DineDate        *string                 `json:"dineDate" valid:"required"` // 就餐时间
-	DineType        *string                 `json:"dineType" valid:"required"` // 就餐方式
-	OrderDishesList []AddOrderDishesQuery  `json:"orderDishesList" valid:"required"` // 菜品列表
+	ElderID         *int64                `json:"elder_id" valid:"required"`          // 老人编号
+	DineDate        *string               `json:"dine_date" valid:"required"`         // 就餐时间
+	DineType        *string               `json:"dine_type" valid:"required"`         // 就餐方式
+	OrderDishesList []AddOrderDishesQuery `json:"order_dishes_list" valid:"required"` // 菜品列表
 }
 
 // @request
 // AddOrderDishesQuery 新增点餐食物请求（嵌套）
 type AddOrderDishesQuery struct {
-	DishesID *int64 `json:"dishesId" valid:"required"` // 菜品编号
-	OrderNum *int   `json:"orderNum" valid:"required"` // 菜品份数
+	DishesID *int64 `json:"dishes_id" valid:"required"` // 菜品编号
+	OrderNum *int   `json:"order_num" valid:"required"` // 菜品份数
 }
 
 // @request
 // SendOrderQuery 送餐请求
 type SendOrderQuery struct {
-	ID               *int64  `json:"id" valid:"required"` // id
-	StaffID          *int64  `json:"staffId" valid:"required"` // 送餐人员编号
-	DeliverDishesDate *string `json:"deliverDishesDate" valid:"required"` // 送餐时间
+	ID                *int64  `json:"id" valid:"required"`                  // id
+	StaffID           *int64  `json:"staff_id" valid:"required"`            // 送餐人员编号
+	DeliverDishesDate *string `json:"deliver_dishes_date" valid:"required"` // 送餐时间
 }
 
 // ============ OrderController 响应 ============
@@ -41,37 +41,37 @@ type SendOrderQuery struct {
 // PageOrderByKeyVO 分页查询点餐响应
 type PageOrderByKeyVO struct {
 	Rank
-	ID               int64   `json:"id"` // id
-	ElderName        string  `json:"elderName"` // 老人姓名
-	ElderPhone       string  `json:"elderPhone"` // 老人电话
-	DineDate         string  `json:"dineDate"` // 就餐时间
-	DineType         string  `json:"dineType"` // 就餐方式
-	StaffName        string  `json:"staffName"` // 送餐人员姓名
-	DeliverDishesDate string `json:"deliverDishesDate"` // 送餐时间
-	PayAmount        float64 `json:"payAmount"` // 支付总额
-	OrderFlag        string  `json:"orderFlag"` // 订单状态
+	ID                int64   `json:"id"`                  // id
+	ElderName         string  `json:"elder_name"`          // 老人姓名
+	ElderPhone        string  `json:"elder_phone"`         // 老人电话
+	DineDate          string  `json:"dine_date"`           // 就餐时间
+	DineType          string  `json:"dine_type"`           // 就餐方式
+	StaffName         string  `json:"staff_name"`          // 送餐人员姓名
+	DeliverDishesDate string  `json:"deliver_dishes_date"` // 送餐时间
+	PayAmount         float64 `json:"pay_amount"`          // 支付总额
+	OrderFlag         string  `json:"order_flag"`          // 订单状态
 }
 
 // @response
 // GetOrderByIDVO 根据编号查询点餐响应
 type GetOrderByIDVO struct {
-	ElderName         string          `json:"elderName"` // 老人姓名
-	ElderPhone        string          `json:"elderPhone"` // 老人电话
-	DineDate          string          `json:"dineDate"` // 就餐时间
-	DineType          string          `json:"dineType"` // 就餐方式
-	StaffName         string          `json:"staffName"` // 送餐人员姓名
-	DeliverDishesDate string          `json:"deliverDishesDate"` // 送餐时间
-	OrderDishesVOList []OrderDishesVO `json:"orderDishesVoList"` // 订单菜品列表
+	ElderName         string          `json:"elder_name"`           // 老人姓名
+	ElderPhone        string          `json:"elder_phone"`          // 老人电话
+	DineDate          string          `json:"dine_date"`            // 就餐时间
+	DineType          string          `json:"dine_type"`            // 就餐方式
+	StaffName         string          `json:"staff_name"`           // 送餐人员姓名
+	DeliverDishesDate string          `json:"deliver_dishes_date"`  // 送餐时间
+	OrderDishesVOList []OrderDishesVO `json:"order_dishes_vo_list"` // 订单菜品列表
 }
 
 // @response
 // OrderDishesVO 菜单菜品响应（嵌套，继承 Rank）
 type OrderDishesVO struct {
 	Rank
-	DishesName  string  `json:"dishesName"` // 菜品名称
-	DishesPrice float64 `json:"dishesPrice"` // 菜品价格
-	OrderNum    int     `json:"orderNum"` // 菜品份数
-	SetFlag     string  `json:"setFlag"` // 套餐标记
-	TotalAmount float64 `json:"totalAmount"` // 菜品总额
-	ReallyAmount float64 `json:"reallyAmount"` // 实际总额
+	DishesName   string  `json:"dishes_name"`   // 菜品名称
+	DishesPrice  float64 `json:"dishes_price"`  // 菜品价格
+	OrderNum     int     `json:"order_num"`     // 菜品份数
+	SetFlag      string  `json:"set_flag"`      // 套餐标记
+	TotalAmount  float64 `json:"total_amount"`  // 菜品总额
+	ReallyAmount float64 `json:"really_amount"` // 实际总额
 }

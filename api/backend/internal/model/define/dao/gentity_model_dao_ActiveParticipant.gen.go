@@ -226,11 +226,14 @@ func (p *activeparticipant) DeleteByIds(ctx context.Context, ids []any) (int64, 
 }
 
 // Get 查询第一个符合条件的记录
-//  s: 选择器，用于构建sql语句
+//
+//	s: 选择器，用于构建sql语句
+//
 // 返回值:
 //  1. *do.ActiveParticipant: 第一个符合条件的记录
 //  2. bool: 是否存在记录
 //  3. error: 错误信息
+//
 // 注意:
 //  1. 如果没有指定表名，则默认使用do.ActiveParticipantTableName
 //  2. 如果没有指定查询列，则默认使用tblactiveparticipant.ReadableFields
@@ -289,11 +292,14 @@ func (p *activeparticipant) GetByIds(ctx context.Context, ids []any, cols ...dia
 }
 
 // Cell 查询第一个符合条件的记录的第一个列
-//  s: 选择器，用于构建sql语句
+//
+//	s: 选择器，用于构建sql语句
+//
 // 返回值:
 //  1. any: 第一个符合条件的记录的第一个列
 //  2. bool: 是否存在记录
 //  3. error: 错误信息
+//
 // 注意:
 //  1. 如果没有指定表名，则默认使用do.ActiveParticipantTableName
 //  2. 如果没有指定查询列，则默认使用tblactiveparticipant.PrimaryKey

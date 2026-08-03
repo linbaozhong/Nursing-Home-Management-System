@@ -150,20 +150,20 @@ func (p *Nurse) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var nurseFieldToPtrFunc = map[dialect.Field]func(*Nurse) any{
-	tblnurse.CompleteFlag: func(p *Nurse) any { return &p.CompleteFlag },
-	tblnurse.DineFlag:     func(p *Nurse) any { return &p.DineFlag },
-	tblnurse.Rest:         func(p *Nurse) any { return &p.Rest },
-	tblnurse.TakeMedicine: func(p *Nurse) any { return &p.TakeMedicine },
-	tblnurse.Active:       func(p *Nurse) any { return &p.Active },
-	tblnurse.Id:           func(p *Nurse) any { return &p.Id },
-	tblnurse.ElderId:      func(p *Nurse) any { return &p.ElderId },
-	tblnurse.StaffId:      func(p *Nurse) any { return &p.StaffId },
-	tblnurse.NurseDate:    func(p *Nurse) any { return &p.NurseDate },
-	tblnurse.CreateId:     func(p *Nurse) any { return &p.CreateId },
-	tblnurse.CreateTime:   func(p *Nurse) any { return &p.CreateTime },
-	tblnurse.UpdateId:     func(p *Nurse) any { return &p.UpdateId },
-	tblnurse.UpdateTime:   func(p *Nurse) any { return &p.UpdateTime },
+var nurseFieldToPtrFunc = map[string]func(*Nurse) any{
+	tblnurse.CompleteFlag.Name: func(p *Nurse) any { return &p.CompleteFlag },
+	tblnurse.DineFlag.Name:     func(p *Nurse) any { return &p.DineFlag },
+	tblnurse.Rest.Name:         func(p *Nurse) any { return &p.Rest },
+	tblnurse.TakeMedicine.Name: func(p *Nurse) any { return &p.TakeMedicine },
+	tblnurse.Active.Name:       func(p *Nurse) any { return &p.Active },
+	tblnurse.Id.Name:           func(p *Nurse) any { return &p.Id },
+	tblnurse.ElderId.Name:      func(p *Nurse) any { return &p.ElderId },
+	tblnurse.StaffId.Name:      func(p *Nurse) any { return &p.StaffId },
+	tblnurse.NurseDate.Name:    func(p *Nurse) any { return &p.NurseDate },
+	tblnurse.CreateId.Name:     func(p *Nurse) any { return &p.CreateId },
+	tblnurse.CreateTime.Name:   func(p *Nurse) any { return &p.CreateTime },
+	tblnurse.UpdateId.Name:     func(p *Nurse) any { return &p.UpdateId },
+	tblnurse.UpdateTime.Name:   func(p *Nurse) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -177,11 +177,28 @@ func (p *Nurse) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := nurseFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := nurseFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Nurse) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := nurseFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -290,12 +307,10 @@ func (p *Nurse) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]string
 	return cols, vals
 }
 
-//
 func (p *Nurse) AssignKeys() (dialect.Field, any) {
 	return tblnurse.PrimaryKey, p.Id
 }
 
-//
 func (p *Nurse) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

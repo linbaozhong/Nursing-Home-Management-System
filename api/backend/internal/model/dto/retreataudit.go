@@ -5,19 +5,19 @@ package dto
 // @request
 // PageRetreatAuditByKeyQuery 分页查询退住审核请求
 type PageRetreatAuditByKeyQuery struct {
-	PageNum   *int    `json:"pageNum" valid:"required"` // 页码
-	PageSize  *int    `json:"pageSize" valid:"required"` // 条数
-	ElderName *string `json:"elderName"` // 老人姓名
-	ElderSex  *string `json:"elderSex"` // 老人性别
-	IDNum     *string `json:"idNum"` // 老人身份证号
+	PageNum   *int    `json:"page_num" valid:"required"`  // 页码
+	PageSize  *int    `json:"page_size" valid:"required"` // 条数
+	ElderName *string `json:"elder_name"`                 // 老人姓名
+	ElderSex  *string `json:"elder_sex"`                  // 老人性别
+	IDNum     *string `json:"id_num"`                     // 老人身份证号
 }
 
 // @request
 // AuditRetreatQuery 审核退住请求
 type AuditRetreatQuery struct {
-	ID         *int64  `json:"id" valid:"required"` // 退住申请编号
-	AuditResult *string `json:"auditResult" valid:"required"` // 审核结果
-	AuditRemark *string `json:"auditRemark"` // 审核备注
+	ID          *int64  `json:"id" valid:"required"`           // 退住申请编号
+	AuditResult *string `json:"audit_result" valid:"required"` // 审核结果
+	AuditRemark *string `json:"audit_remark"`                  // 审核备注
 }
 
 // PageRetreatAuditQuery 分页查询退住审核请求（定义见 retreatapply.go）

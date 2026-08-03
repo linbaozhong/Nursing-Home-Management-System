@@ -114,14 +114,14 @@ func (p *MaterialType) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var materialtypeFieldToPtrFunc = map[dialect.Field]func(*MaterialType) any{
-	tblmaterialtype.Name:       func(p *MaterialType) any { return &p.Name },
-	tblmaterialtype.DelFlag:    func(p *MaterialType) any { return &p.DelFlag },
-	tblmaterialtype.Id:         func(p *MaterialType) any { return &p.Id },
-	tblmaterialtype.CreateId:   func(p *MaterialType) any { return &p.CreateId },
-	tblmaterialtype.CreateTime: func(p *MaterialType) any { return &p.CreateTime },
-	tblmaterialtype.UpdateId:   func(p *MaterialType) any { return &p.UpdateId },
-	tblmaterialtype.UpdateTime: func(p *MaterialType) any { return &p.UpdateTime },
+var materialtypeFieldToPtrFunc = map[string]func(*MaterialType) any{
+	tblmaterialtype.Name.Name:       func(p *MaterialType) any { return &p.Name },
+	tblmaterialtype.DelFlag.Name:    func(p *MaterialType) any { return &p.DelFlag },
+	tblmaterialtype.Id.Name:         func(p *MaterialType) any { return &p.Id },
+	tblmaterialtype.CreateId.Name:   func(p *MaterialType) any { return &p.CreateId },
+	tblmaterialtype.CreateTime.Name: func(p *MaterialType) any { return &p.CreateTime },
+	tblmaterialtype.UpdateId.Name:   func(p *MaterialType) any { return &p.UpdateId },
+	tblmaterialtype.UpdateTime.Name: func(p *MaterialType) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -135,11 +135,28 @@ func (p *MaterialType) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := materialtypeFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := materialtypeFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *MaterialType) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := materialtypeFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -230,12 +247,10 @@ func (p *MaterialType) AssignValues(d dialect.Dialect, args ...dialect.Field) ([
 	return cols, vals
 }
 
-//
 func (p *MaterialType) AssignKeys() (dialect.Field, any) {
 	return tblmaterialtype.PrimaryKey, p.Id
 }
 
-//
 func (p *MaterialType) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

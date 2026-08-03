@@ -138,18 +138,18 @@ func (p *VisitPlan) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var visitplanFieldToPtrFunc = map[dialect.Field]func(*VisitPlan) any{
-	tblvisitplan.Title:        func(p *VisitPlan) any { return &p.Title },
-	tblvisitplan.Content:      func(p *VisitPlan) any { return &p.Content },
-	tblvisitplan.DelFlag:      func(p *VisitPlan) any { return &p.DelFlag },
-	tblvisitplan.Id:           func(p *VisitPlan) any { return &p.Id },
-	tblvisitplan.ElderId:      func(p *VisitPlan) any { return &p.ElderId },
-	tblvisitplan.PlanDate:     func(p *VisitPlan) any { return &p.PlanDate },
-	tblvisitplan.CompleteDate: func(p *VisitPlan) any { return &p.CompleteDate },
-	tblvisitplan.CreateId:     func(p *VisitPlan) any { return &p.CreateId },
-	tblvisitplan.CreateTime:   func(p *VisitPlan) any { return &p.CreateTime },
-	tblvisitplan.UpdateId:     func(p *VisitPlan) any { return &p.UpdateId },
-	tblvisitplan.UpdateTime:   func(p *VisitPlan) any { return &p.UpdateTime },
+var visitplanFieldToPtrFunc = map[string]func(*VisitPlan) any{
+	tblvisitplan.Title.Name:        func(p *VisitPlan) any { return &p.Title },
+	tblvisitplan.Content.Name:      func(p *VisitPlan) any { return &p.Content },
+	tblvisitplan.DelFlag.Name:      func(p *VisitPlan) any { return &p.DelFlag },
+	tblvisitplan.Id.Name:           func(p *VisitPlan) any { return &p.Id },
+	tblvisitplan.ElderId.Name:      func(p *VisitPlan) any { return &p.ElderId },
+	tblvisitplan.PlanDate.Name:     func(p *VisitPlan) any { return &p.PlanDate },
+	tblvisitplan.CompleteDate.Name: func(p *VisitPlan) any { return &p.CompleteDate },
+	tblvisitplan.CreateId.Name:     func(p *VisitPlan) any { return &p.CreateId },
+	tblvisitplan.CreateTime.Name:   func(p *VisitPlan) any { return &p.CreateTime },
+	tblvisitplan.UpdateId.Name:     func(p *VisitPlan) any { return &p.UpdateId },
+	tblvisitplan.UpdateTime.Name:   func(p *VisitPlan) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -163,11 +163,28 @@ func (p *VisitPlan) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := visitplanFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := visitplanFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *VisitPlan) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := visitplanFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -270,12 +287,10 @@ func (p *VisitPlan) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]st
 	return cols, vals
 }
 
-//
 func (p *VisitPlan) AssignKeys() (dialect.Field, any) {
 	return tblvisitplan.PrimaryKey, p.Id
 }
 
-//
 func (p *VisitPlan) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

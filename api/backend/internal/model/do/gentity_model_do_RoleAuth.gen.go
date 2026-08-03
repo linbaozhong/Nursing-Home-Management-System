@@ -114,14 +114,14 @@ func (p *RoleAuth) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var roleauthFieldToPtrFunc = map[dialect.Field]func(*RoleAuth) any{
-	tblroleauth.Id:         func(p *RoleAuth) any { return &p.Id },
-	tblroleauth.RoleId:     func(p *RoleAuth) any { return &p.RoleId },
-	tblroleauth.AuthId:     func(p *RoleAuth) any { return &p.AuthId },
-	tblroleauth.CreateId:   func(p *RoleAuth) any { return &p.CreateId },
-	tblroleauth.CreateTime: func(p *RoleAuth) any { return &p.CreateTime },
-	tblroleauth.UpdateId:   func(p *RoleAuth) any { return &p.UpdateId },
-	tblroleauth.UpdateTime: func(p *RoleAuth) any { return &p.UpdateTime },
+var roleauthFieldToPtrFunc = map[string]func(*RoleAuth) any{
+	tblroleauth.Id.Name:         func(p *RoleAuth) any { return &p.Id },
+	tblroleauth.RoleId.Name:     func(p *RoleAuth) any { return &p.RoleId },
+	tblroleauth.AuthId.Name:     func(p *RoleAuth) any { return &p.AuthId },
+	tblroleauth.CreateId.Name:   func(p *RoleAuth) any { return &p.CreateId },
+	tblroleauth.CreateTime.Name: func(p *RoleAuth) any { return &p.CreateTime },
+	tblroleauth.UpdateId.Name:   func(p *RoleAuth) any { return &p.UpdateId },
+	tblroleauth.UpdateTime.Name: func(p *RoleAuth) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -135,11 +135,28 @@ func (p *RoleAuth) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := roleauthFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := roleauthFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *RoleAuth) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := roleauthFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -230,12 +247,10 @@ func (p *RoleAuth) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 	return cols, vals
 }
 
-//
 func (p *RoleAuth) AssignKeys() (dialect.Field, any) {
 	return tblroleauth.PrimaryKey, p.Id
 }
 
-//
 func (p *RoleAuth) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

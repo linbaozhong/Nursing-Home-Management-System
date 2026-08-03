@@ -144,19 +144,19 @@ func (p *OrderDishes) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var orderdishesFieldToPtrFunc = map[dialect.Field]func(*OrderDishes) any{
-	tblorderdishes.DishesName:   func(p *OrderDishes) any { return &p.DishesName },
-	tblorderdishes.SetFlag:      func(p *OrderDishes) any { return &p.SetFlag },
-	tblorderdishes.Id:           func(p *OrderDishes) any { return &p.Id },
-	tblorderdishes.OrderId:      func(p *OrderDishes) any { return &p.OrderId },
-	tblorderdishes.DishesPrice:  func(p *OrderDishes) any { return &p.DishesPrice },
-	tblorderdishes.TotalAmount:  func(p *OrderDishes) any { return &p.TotalAmount },
-	tblorderdishes.ReallyAmount: func(p *OrderDishes) any { return &p.ReallyAmount },
-	tblorderdishes.CreateId:     func(p *OrderDishes) any { return &p.CreateId },
-	tblorderdishes.CreateTime:   func(p *OrderDishes) any { return &p.CreateTime },
-	tblorderdishes.UpdateId:     func(p *OrderDishes) any { return &p.UpdateId },
-	tblorderdishes.UpdateTime:   func(p *OrderDishes) any { return &p.UpdateTime },
-	tblorderdishes.OrderNum:     func(p *OrderDishes) any { return &p.OrderNum },
+var orderdishesFieldToPtrFunc = map[string]func(*OrderDishes) any{
+	tblorderdishes.DishesName.Name:   func(p *OrderDishes) any { return &p.DishesName },
+	tblorderdishes.SetFlag.Name:      func(p *OrderDishes) any { return &p.SetFlag },
+	tblorderdishes.Id.Name:           func(p *OrderDishes) any { return &p.Id },
+	tblorderdishes.OrderId.Name:      func(p *OrderDishes) any { return &p.OrderId },
+	tblorderdishes.DishesPrice.Name:  func(p *OrderDishes) any { return &p.DishesPrice },
+	tblorderdishes.TotalAmount.Name:  func(p *OrderDishes) any { return &p.TotalAmount },
+	tblorderdishes.ReallyAmount.Name: func(p *OrderDishes) any { return &p.ReallyAmount },
+	tblorderdishes.CreateId.Name:     func(p *OrderDishes) any { return &p.CreateId },
+	tblorderdishes.CreateTime.Name:   func(p *OrderDishes) any { return &p.CreateTime },
+	tblorderdishes.UpdateId.Name:     func(p *OrderDishes) any { return &p.UpdateId },
+	tblorderdishes.UpdateTime.Name:   func(p *OrderDishes) any { return &p.UpdateTime },
+	tblorderdishes.OrderNum.Name:     func(p *OrderDishes) any { return &p.OrderNum },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -170,11 +170,28 @@ func (p *OrderDishes) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := orderdishesFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := orderdishesFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *OrderDishes) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := orderdishesFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -280,12 +297,10 @@ func (p *OrderDishes) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]
 	return cols, vals
 }
 
-//
 func (p *OrderDishes) AssignKeys() (dialect.Field, any) {
 	return tblorderdishes.PrimaryKey, p.Id
 }
 
-//
 func (p *OrderDishes) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

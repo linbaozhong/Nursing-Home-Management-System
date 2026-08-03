@@ -144,19 +144,19 @@ func (p *BaseAttachment) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var baseattachmentFieldToPtrFunc = map[dialect.Field]func(*BaseAttachment) any{
-	tblbaseattachment.Name:       func(p *BaseAttachment) any { return &p.Name },
-	tblbaseattachment.RealName:   func(p *BaseAttachment) any { return &p.RealName },
-	tblbaseattachment.Path:       func(p *BaseAttachment) any { return &p.Path },
-	tblbaseattachment.Url:        func(p *BaseAttachment) any { return &p.Url },
-	tblbaseattachment.Suff:       func(p *BaseAttachment) any { return &p.Suff },
-	tblbaseattachment.DelFlag:    func(p *BaseAttachment) any { return &p.DelFlag },
-	tblbaseattachment.Id:         func(p *BaseAttachment) any { return &p.Id },
-	tblbaseattachment.Size:       func(p *BaseAttachment) any { return &p.Size },
-	tblbaseattachment.CreateId:   func(p *BaseAttachment) any { return &p.CreateId },
-	tblbaseattachment.CreateTime: func(p *BaseAttachment) any { return &p.CreateTime },
-	tblbaseattachment.UpdateId:   func(p *BaseAttachment) any { return &p.UpdateId },
-	tblbaseattachment.UpdateTime: func(p *BaseAttachment) any { return &p.UpdateTime },
+var baseattachmentFieldToPtrFunc = map[string]func(*BaseAttachment) any{
+	tblbaseattachment.Name.Name:       func(p *BaseAttachment) any { return &p.Name },
+	tblbaseattachment.RealName.Name:   func(p *BaseAttachment) any { return &p.RealName },
+	tblbaseattachment.Path.Name:       func(p *BaseAttachment) any { return &p.Path },
+	tblbaseattachment.Url.Name:        func(p *BaseAttachment) any { return &p.Url },
+	tblbaseattachment.Suff.Name:       func(p *BaseAttachment) any { return &p.Suff },
+	tblbaseattachment.DelFlag.Name:    func(p *BaseAttachment) any { return &p.DelFlag },
+	tblbaseattachment.Id.Name:         func(p *BaseAttachment) any { return &p.Id },
+	tblbaseattachment.Size.Name:       func(p *BaseAttachment) any { return &p.Size },
+	tblbaseattachment.CreateId.Name:   func(p *BaseAttachment) any { return &p.CreateId },
+	tblbaseattachment.CreateTime.Name: func(p *BaseAttachment) any { return &p.CreateTime },
+	tblbaseattachment.UpdateId.Name:   func(p *BaseAttachment) any { return &p.UpdateId },
+	tblbaseattachment.UpdateTime.Name: func(p *BaseAttachment) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -170,11 +170,28 @@ func (p *BaseAttachment) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := baseattachmentFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := baseattachmentFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *BaseAttachment) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := baseattachmentFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -280,12 +297,10 @@ func (p *BaseAttachment) AssignValues(d dialect.Dialect, args ...dialect.Field) 
 	return cols, vals
 }
 
-//
 func (p *BaseAttachment) AssignKeys() (dialect.Field, any) {
 	return tblbaseattachment.PrimaryKey, p.Id
 }
 
-//
 func (p *BaseAttachment) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

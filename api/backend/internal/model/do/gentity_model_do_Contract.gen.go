@@ -132,17 +132,17 @@ func (p *Contract) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var contractFieldToPtrFunc = map[dialect.Field]func(*Contract) any{
-	tblcontract.Id:         func(p *Contract) any { return &p.Id },
-	tblcontract.ElderId:    func(p *Contract) any { return &p.ElderId },
-	tblcontract.StaffId:    func(p *Contract) any { return &p.StaffId },
-	tblcontract.SignDate:   func(p *Contract) any { return &p.SignDate },
-	tblcontract.StartDate:  func(p *Contract) any { return &p.StartDate },
-	tblcontract.EndDate:    func(p *Contract) any { return &p.EndDate },
-	tblcontract.CreateId:   func(p *Contract) any { return &p.CreateId },
-	tblcontract.CreateTime: func(p *Contract) any { return &p.CreateTime },
-	tblcontract.UpdateId:   func(p *Contract) any { return &p.UpdateId },
-	tblcontract.UpdateTime: func(p *Contract) any { return &p.UpdateTime },
+var contractFieldToPtrFunc = map[string]func(*Contract) any{
+	tblcontract.Id.Name:         func(p *Contract) any { return &p.Id },
+	tblcontract.ElderId.Name:    func(p *Contract) any { return &p.ElderId },
+	tblcontract.StaffId.Name:    func(p *Contract) any { return &p.StaffId },
+	tblcontract.SignDate.Name:   func(p *Contract) any { return &p.SignDate },
+	tblcontract.StartDate.Name:  func(p *Contract) any { return &p.StartDate },
+	tblcontract.EndDate.Name:    func(p *Contract) any { return &p.EndDate },
+	tblcontract.CreateId.Name:   func(p *Contract) any { return &p.CreateId },
+	tblcontract.CreateTime.Name: func(p *Contract) any { return &p.CreateTime },
+	tblcontract.UpdateId.Name:   func(p *Contract) any { return &p.UpdateId },
+	tblcontract.UpdateTime.Name: func(p *Contract) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -156,11 +156,28 @@ func (p *Contract) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := contractFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := contractFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Contract) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := contractFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -260,12 +277,10 @@ func (p *Contract) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 	return cols, vals
 }
 
-//
 func (p *Contract) AssignKeys() (dialect.Field, any) {
 	return tblcontract.PrimaryKey, p.Id
 }
 
-//
 func (p *Contract) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

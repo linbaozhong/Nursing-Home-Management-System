@@ -5,17 +5,17 @@ package dto
 // @request
 // PageWarehouseByKeyQuery 分页查询仓库请求
 type PageWarehouseByKeyQuery struct {
-	PageNum      *int    `json:"pageNum" valid:"required"` // 页码
-	PageSize     *int    `json:"pageSize" valid:"required"` // 条数
-	WarehouseName *string `json:"warehouseName"` // 仓库名称
+	PageNum       *int    `json:"page_num" valid:"required"`  // 页码
+	PageSize      *int    `json:"page_size" valid:"required"` // 条数
+	WarehouseName *string `json:"warehouse_name"`             // 仓库名称
 }
 
 // @request
 // OperateWarehouseQuery 操作仓库请求
 type OperateWarehouseQuery struct {
-	ID      *int64  `json:"id"` // id
-	StaffID *int64  `json:"staffId" valid:"required"` // 仓库管理员编号
-	Name    *string `json:"name" valid:"required"` // 仓库名称
+	ID      *int64  `json:"id"`                        // id
+	StaffID *int64  `json:"staff_id" valid:"required"` // 仓库管理员编号
+	Name    *string `json:"name" valid:"required"`     // 仓库名称
 }
 
 // ============ WarehouseController 响应 ============
@@ -24,9 +24,9 @@ type OperateWarehouseQuery struct {
 // PageWarehouseByKeyVO 分页查询仓库响应
 type PageWarehouseByKeyVO struct {
 	Rank
-	ID        int64  `json:"id"` // id
-	Name      string `json:"name"` // 仓库名称
-	StaffName string `json:"staffName"` // 仓库管理员
+	ID        int64  `json:"id"`         // id
+	Name      string `json:"name"`       // 仓库名称
+	StaffName string `json:"staff_name"` // 仓库管理员
 }
 
 // @response

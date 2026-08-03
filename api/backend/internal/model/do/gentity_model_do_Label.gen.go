@@ -126,16 +126,16 @@ func (p *Label) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var labelFieldToPtrFunc = map[dialect.Field]func(*Label) any{
-	tbllabel.Name:       func(p *Label) any { return &p.Name },
-	tbllabel.Color:      func(p *Label) any { return &p.Color },
-	tbllabel.DelFlag:    func(p *Label) any { return &p.DelFlag },
-	tbllabel.Id:         func(p *Label) any { return &p.Id },
-	tbllabel.TypeId:     func(p *Label) any { return &p.TypeId },
-	tbllabel.CreateId:   func(p *Label) any { return &p.CreateId },
-	tbllabel.CreateTime: func(p *Label) any { return &p.CreateTime },
-	tbllabel.UpdateId:   func(p *Label) any { return &p.UpdateId },
-	tbllabel.UpdateTime: func(p *Label) any { return &p.UpdateTime },
+var labelFieldToPtrFunc = map[string]func(*Label) any{
+	tbllabel.Name.Name:       func(p *Label) any { return &p.Name },
+	tbllabel.Color.Name:      func(p *Label) any { return &p.Color },
+	tbllabel.DelFlag.Name:    func(p *Label) any { return &p.DelFlag },
+	tbllabel.Id.Name:         func(p *Label) any { return &p.Id },
+	tbllabel.TypeId.Name:     func(p *Label) any { return &p.TypeId },
+	tbllabel.CreateId.Name:   func(p *Label) any { return &p.CreateId },
+	tbllabel.CreateTime.Name: func(p *Label) any { return &p.CreateTime },
+	tbllabel.UpdateId.Name:   func(p *Label) any { return &p.UpdateId },
+	tbllabel.UpdateTime.Name: func(p *Label) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -149,11 +149,28 @@ func (p *Label) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := labelFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := labelFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Label) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := labelFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -250,12 +267,10 @@ func (p *Label) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]string
 	return cols, vals
 }
 
-//
 func (p *Label) AssignKeys() (dialect.Field, any) {
 	return tbllabel.PrimaryKey, p.Id
 }
 
-//
 func (p *Label) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

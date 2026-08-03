@@ -156,21 +156,21 @@ func (p *FamilyMember) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var familymemberFieldToPtrFunc = map[dialect.Field]func(*FamilyMember) any{
-	tblfamilymember.Name:        func(p *FamilyMember) any { return &p.Name },
-	tblfamilymember.IdNum:       func(p *FamilyMember) any { return &p.IdNum },
-	tblfamilymember.Phone:       func(p *FamilyMember) any { return &p.Phone },
-	tblfamilymember.Email:       func(p *FamilyMember) any { return &p.Email },
-	tblfamilymember.Address:     func(p *FamilyMember) any { return &p.Address },
-	tblfamilymember.Relation:    func(p *FamilyMember) any { return &p.Relation },
-	tblfamilymember.ReceiveFlag: func(p *FamilyMember) any { return &p.ReceiveFlag },
-	tblfamilymember.DelFlag:     func(p *FamilyMember) any { return &p.DelFlag },
-	tblfamilymember.Id:          func(p *FamilyMember) any { return &p.Id },
-	tblfamilymember.ElderId:     func(p *FamilyMember) any { return &p.ElderId },
-	tblfamilymember.CreateId:    func(p *FamilyMember) any { return &p.CreateId },
-	tblfamilymember.CreateTime:  func(p *FamilyMember) any { return &p.CreateTime },
-	tblfamilymember.UpdateId:    func(p *FamilyMember) any { return &p.UpdateId },
-	tblfamilymember.UpdateTime:  func(p *FamilyMember) any { return &p.UpdateTime },
+var familymemberFieldToPtrFunc = map[string]func(*FamilyMember) any{
+	tblfamilymember.Name.Name:        func(p *FamilyMember) any { return &p.Name },
+	tblfamilymember.IdNum.Name:       func(p *FamilyMember) any { return &p.IdNum },
+	tblfamilymember.Phone.Name:       func(p *FamilyMember) any { return &p.Phone },
+	tblfamilymember.Email.Name:       func(p *FamilyMember) any { return &p.Email },
+	tblfamilymember.Address.Name:     func(p *FamilyMember) any { return &p.Address },
+	tblfamilymember.Relation.Name:    func(p *FamilyMember) any { return &p.Relation },
+	tblfamilymember.ReceiveFlag.Name: func(p *FamilyMember) any { return &p.ReceiveFlag },
+	tblfamilymember.DelFlag.Name:     func(p *FamilyMember) any { return &p.DelFlag },
+	tblfamilymember.Id.Name:          func(p *FamilyMember) any { return &p.Id },
+	tblfamilymember.ElderId.Name:     func(p *FamilyMember) any { return &p.ElderId },
+	tblfamilymember.CreateId.Name:    func(p *FamilyMember) any { return &p.CreateId },
+	tblfamilymember.CreateTime.Name:  func(p *FamilyMember) any { return &p.CreateTime },
+	tblfamilymember.UpdateId.Name:    func(p *FamilyMember) any { return &p.UpdateId },
+	tblfamilymember.UpdateTime.Name:  func(p *FamilyMember) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -184,11 +184,28 @@ func (p *FamilyMember) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := familymemberFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := familymemberFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *FamilyMember) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := familymemberFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -300,12 +317,10 @@ func (p *FamilyMember) AssignValues(d dialect.Dialect, args ...dialect.Field) ([
 	return cols, vals
 }
 
-//
 func (p *FamilyMember) AssignKeys() (dialect.Field, any) {
 	return tblfamilymember.PrimaryKey, p.Id
 }
 
-//
 func (p *FamilyMember) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

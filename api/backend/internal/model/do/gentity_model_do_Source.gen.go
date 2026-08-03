@@ -114,14 +114,14 @@ func (p *Source) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var sourceFieldToPtrFunc = map[dialect.Field]func(*Source) any{
-	tblsource.Name:       func(p *Source) any { return &p.Name },
-	tblsource.DelFlag:    func(p *Source) any { return &p.DelFlag },
-	tblsource.Id:         func(p *Source) any { return &p.Id },
-	tblsource.CreateId:   func(p *Source) any { return &p.CreateId },
-	tblsource.CreateTime: func(p *Source) any { return &p.CreateTime },
-	tblsource.UpdateId:   func(p *Source) any { return &p.UpdateId },
-	tblsource.UpdateTime: func(p *Source) any { return &p.UpdateTime },
+var sourceFieldToPtrFunc = map[string]func(*Source) any{
+	tblsource.Name.Name:       func(p *Source) any { return &p.Name },
+	tblsource.DelFlag.Name:    func(p *Source) any { return &p.DelFlag },
+	tblsource.Id.Name:         func(p *Source) any { return &p.Id },
+	tblsource.CreateId.Name:   func(p *Source) any { return &p.CreateId },
+	tblsource.CreateTime.Name: func(p *Source) any { return &p.CreateTime },
+	tblsource.UpdateId.Name:   func(p *Source) any { return &p.UpdateId },
+	tblsource.UpdateTime.Name: func(p *Source) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -135,11 +135,28 @@ func (p *Source) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := sourceFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := sourceFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Source) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := sourceFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -230,12 +247,10 @@ func (p *Source) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]strin
 	return cols, vals
 }
 
-//
 func (p *Source) AssignKeys() (dialect.Field, any) {
 	return tblsource.PrimaryKey, p.Id
 }
 
-//
 func (p *Source) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }
