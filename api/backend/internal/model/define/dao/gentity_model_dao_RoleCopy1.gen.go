@@ -119,7 +119,7 @@ func (p *rolecopy1) InsertBatch(ctx context.Context, beans []*do.RoleCopy1, cols
 func (p *rolecopy1) Update(ctx context.Context, sets []dialect.Setter, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
 	if len(sets) == 0 {
-		return false, dialect.ErrSetterEmpty
+		return true, nil
 	}
 	_result, e := p.x.Table(do.RoleCopy1TableName).
 		Where(cond...).

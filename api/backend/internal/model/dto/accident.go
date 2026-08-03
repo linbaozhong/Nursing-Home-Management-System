@@ -16,7 +16,7 @@ type PageAccidentByKeyQuery struct {
 // @request
 // EditAccidentQuery 编辑事故登记请求
 type EditAccidentQuery struct {
-	ID *int64 `json:"id"` // id
+	ID *int64 `json:"id" valid:"required"` // id
 	AccidentQuery
 }
 

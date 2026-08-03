@@ -175,6 +175,9 @@ func (p *EditAccidentQuery) Init() error {
 
 // Check
 func (p *EditAccidentQuery) Check() error {
+	if p.ID == nil {
+		return types.NewError(http.StatusBadRequest, "id is required")
+	}
 	return nil
 }
 
@@ -6131,6 +6134,9 @@ func (p *IDReq) Init() error {
 
 // Check
 func (p *IDReq) Check() error {
+	if p.ID == nil {
+		return types.NewError(http.StatusBadRequest, "id is required")
+	}
 	return nil
 }
 
@@ -22594,6 +22600,9 @@ func (p *OperateSourceQuery) Init() error {
 
 // Check
 func (p *OperateSourceQuery) Check() error {
+	if p.ID == nil {
+		return types.NewError(http.StatusBadRequest, "id is required")
+	}
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -22694,6 +22703,15 @@ func (p *PageSourceByKeyVO) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(2 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
+	return write.Bytes(), nil
+}
+
+/*
+	--- OperateSourceVo ---
+*/
+// MarshalJSON
+func (p *OperateSourceVo) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 

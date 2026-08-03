@@ -223,9 +223,9 @@ type EmptyReq struct{}
 type EmptyResp struct{}
 
 // @request
-// IDReq 单编号请求（对应 Java @RequestParam Long xxxId）
+// IDReq 单编号请求
 type IDReq struct {
-	ID *int64 `json:"id"` // 编号
+	ID *int64 `json:"id" valid:"required"` // 编号
 }
 
 // @request

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"api/internal/constant"
 	"api/internal/model/define/table/tblaccident"
 	"api/internal/model/define/table/tblelder"
 	"api/internal/model/define/table/tblstaff"
@@ -26,7 +27,7 @@ func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentBy
 		LeftJoin(tblaccident.ElderId, tblelder.Id).
 		LeftJoin(tblaccident.StaffId, tblstaff.Id).
 		Where(
-			tblaccident.DelFlag.Eq("N"),
+			tblaccident.DelFlag.Eq(constant.YesNoNo),
 		).
 		Cols(
 			tblaccident.Id,
@@ -53,14 +54,20 @@ func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentBy
 }
 
 // GetAccidentById 根据编号获取事故
-func (a *accident) GetAccidentById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.Accident(db).GetByID(ctx, types.BigInt(*in.ID))
-	if e != nil {
-		return e
-	}
-	_ = has
-	_ = obj
-	return nil
+func (a *accident) GetAccidentById(ctx context.Context, in *dto.IDReq, out *dto.GetAccidentByIDVO) error {
+	return db.Table(do.AccidentTableName).
+		LeftJoin(tblaccident.ElderId, tblelder.Id).
+		Where(tblaccident.Id.Eq(*in.ID)).
+		Cols(
+			tblaccident.Id,
+			tblelder.Name.AsName("elder_name"),
+			tblaccident.StaffId,
+			tblaccident.OccurDate,
+			tblaccident.Description,
+			tblaccident.Picture,
+		).
+		Select().
+		Get(ctx, out)
 }
 
 // AddAccident 新增事故
@@ -90,7 +97,7 @@ func (a *accident) AddAccident(ctx context.Context, in *dto.AddAccidentQuery, ou
 
 // EditAccident 编辑事故
 func (a *accident) EditAccident(ctx context.Context, in *dto.EditAccidentQuery, out *dto.EmptyResp) error {
-	acci, has, e := dao.Accident(db).GetByID(ctx, types.BigInt(*in.ID),
+	obj, has, e := dao.Accident(db).GetByID(ctx, types.BigInt(*in.ID),
 		tblaccident.StaffId,
 		tblaccident.OccurDate,
 		tblaccident.Description,
@@ -104,17 +111,17 @@ func (a *accident) EditAccident(ctx context.Context, in *dto.EditAccidentQuery, 
 	}
 	//
 	var sets = make([]dialect.Setter, 0, 4)
-	if in.StaffID != nil && acci.StaffId.Int64() != *in.StaffID {
-		sets = append(sets, tblaccident.StaffId.Set(types.BigInt(*in.StaffID)))
+	if in.StaffID != nil && obj.StaffId.Int64() != *in.StaffID {
+		sets = append(sets, tblaccident.StaffId.Set(*in.StaffID))
 	}
-	if in.OccurDate != nil && acci.OccurDate.Time != conv.String2Time(*in.OccurDate) {
-		sets = append(sets, tblaccident.OccurDate.Set(types.Time{conv.String2Time(*in.OccurDate)}))
+	if in.OccurDate != nil && !obj.OccurDate.Time.Equal(conv.String2Time(*in.OccurDate)) {
+		sets = append(sets, tblaccident.OccurDate.Set(conv.String2Time(*in.OccurDate)))
 	}
-	if in.Description != nil && acci.Description.String() != *in.Description {
-		sets = append(sets, tblaccident.Description.Set(types.String(*in.Description)))
+	if in.Description != nil && obj.Description.String() != *in.Description {
+		sets = append(sets, tblaccident.Description.Set(*in.Description))
 	}
-	if in.Picture != nil && acci.Picture.String() != *in.Picture {
-		sets = append(sets, tblaccident.Picture.Set(types.String(*in.Picture)))
+	if in.Picture != nil && obj.Picture.String() != *in.Picture {
+		sets = append(sets, tblaccident.Picture.Set(*in.Picture))
 	}
 	_, e = dao.Accident(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
 	return e
@@ -122,15 +129,8 @@ func (a *accident) EditAccident(ctx context.Context, in *dto.EditAccidentQuery, 
 
 // DeleteAccident 删除事故
 func (a *accident) DeleteAccident(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	has, e := dao.Accident(db).Exists(ctx, tblaccident.Id.Eq(types.BigInt(*in.ID)))
-	if e != nil {
-		return e
-	}
-	if !has {
-		return errors.New("事故不存在")
-	}
-	_, e = dao.Accident(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tblaccident.DelFlag.Set(types.String("Y")),
+	_, e := dao.Accident(db).UpdateById(ctx, types.BigInt(*in.ID),
+		tblaccident.DelFlag.Set(constant.YesNoYes),
 	)
 	return e
 }

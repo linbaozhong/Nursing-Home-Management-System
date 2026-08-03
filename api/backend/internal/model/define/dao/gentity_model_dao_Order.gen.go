@@ -119,7 +119,7 @@ func (p *order) InsertBatch(ctx context.Context, beans []*do.Order, cols ...dial
 func (p *order) Update(ctx context.Context, sets []dialect.Setter, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
 	if len(sets) == 0 {
-		return false, dialect.ErrSetterEmpty
+		return true, nil
 	}
 	_result, e := p.x.Table(do.OrderTableName).
 		Where(cond...).

@@ -119,7 +119,7 @@ func (p *serviceitem) InsertBatch(ctx context.Context, beans []*do.ServiceItem, 
 func (p *serviceitem) Update(ctx context.Context, sets []dialect.Setter, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
 	if len(sets) == 0 {
-		return false, dialect.ErrSetterEmpty
+		return true, nil
 	}
 	_result, e := p.x.Table(do.ServiceItemTableName).
 		Where(cond...).

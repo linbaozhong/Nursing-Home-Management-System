@@ -119,7 +119,7 @@ func (p *nursegrade) InsertBatch(ctx context.Context, beans []*do.NurseGrade, co
 func (p *nursegrade) Update(ctx context.Context, sets []dialect.Setter, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
 	if len(sets) == 0 {
-		return false, dialect.ErrSetterEmpty
+		return true, nil
 	}
 	_result, e := p.x.Table(do.NurseGradeTableName).
 		Where(cond...).

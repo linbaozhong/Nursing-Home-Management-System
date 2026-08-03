@@ -2,10 +2,18 @@ package service
 
 import (
 	"context"
+	"errors"
+	"github.com/linbaozhong/gentity/pkg/conv"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblactive"
+	"api/internal/model/define/table/tblactiveparticipant"
 	"api/internal/model/define/table/tblactivetype"
+	"api/internal/model/define/table/tblelder"
+	"api/internal/model/do"
 	"api/internal/model/dto"
+
 	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/types"
@@ -15,89 +23,222 @@ type active struct{}
 
 var Active = &active{}
 
-// PageActiveByKey 分页查询活动（联表 active_type、elder_active、elder、user）
-// 对应 Java: ActiveServiceImpl.pageActiveByKey -> ActiveMapper.listActiveByKey
-// SQL: SELECT a.*, at.type_name, ea.elder_id, e.elder_name, u.name AS charge_user_name
+// PageActiveByKey 分页查询活动
+// 对应 Java: ActiveServiceImpl.pageActiveByKey -> ActiveMapper.listActiveByKey + PageUtil 内存分页
+// Java SQL: SELECT a.*, at.type_name FROM active a LEFT JOIN active_type at ON at.id = a.active_type_id
 //
-//	FROM active a
-//	LEFT JOIN active_type at ON at.id = a.active_type_id
-//	LEFT JOIN elder_active ea ON ea.active_id = a.id
-//	LEFT JOIN elder e ON e.id = ea.elder_id
-//	LEFT JOIN user u ON u.id = a.charge_user_id
-//	WHERE (at.type_name LIKE %key% OR a.id = key) [可选]
-//	ORDER BY a.create_time DESC; 再由 PageUtil 内存分页。
+//	WHERE (at.type_name LIKE %key% OR a.id = key) [可选] ORDER BY a.create_time DESC
 //
-// todo: 1) in.Key 非空 -> (tbl<activetype>.TypeName.Like(in.Key) OR tbl<active>.Id.Eq(in.Key))
-//
-//	2) DB 分页: Count + List(联表 LeftJoin active_type/elder_active/elder/user)
-//	3) 组装含类型名/参与老人/负责人姓名的 VO 并赋值 out
-func (a *active) PageActiveByKey(ctx context.Context, in *dto.PageActiveByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
-	return nil
-}
-
-// GetActiveById 根据编号获取活动
-// 对应 Java: ActiveServiceImpl.getActiveById -> activeMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.Active(db).GetByID(ctx, types.BigInt(in.ID)); 另查 elder_active 获取参与老人
-func (a *active) GetActiveById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.Active(db).GetByID(ctx, types.BigInt(in.ID))
+// 说明：Java 实际为查全量后 PageUtil 内存分页。Go 端用独立 builder 做 DB 分页，
+// typeName 通过预加载 active_type map 补齐（替代 mapper 联表）。
+func (a *active) PageActiveByKey(ctx context.Context, in *dto.PageActiveByKeyQuery, out *[]dto.PageActiveByKeyVO) error {
+	// 1) 预加载活动类型，用于补齐 typeName
+	typeList, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.DelFlag.Eq(constant.YesNoNo)))
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
-	// todo: 另 dao.ElderActive(db).List(ctx, ...) 获取参与老人列表
+	typeNameMap := make(map[uint64]string, len(typeList))
+	for _, t := range typeList {
+		typeNameMap[uint64(t.Id)] = string(t.Name)
+	}
+
+	// 2) 条件构造 + 分页
+	q := db.Table(do.ActiveTableName).Where(tblactive.DelFlag.Eq(constant.YesNoNo))
+	if in.TypeID != nil {
+		q.And(tblactive.TypeId.Eq(types.BigInt(*in.TypeID)))
+	}
+	if in.Name != nil {
+		q.And(tblactive.Name.Like(*in.Name))
+	}
+	if in.StartTime != nil {
+		q.And(tblactive.ActiveDate.Gte(*in.StartTime))
+	}
+	if in.EndTime != nil {
+		q.And(tblactive.ActiveDate.Lte(*in.EndTime))
+	}
+	e = q.Desc(tblactive.CreateTime).Page(uint(*in.PageNum), uint(*in.PageSize)).Select().Gets(ctx, out)
+	if e != nil {
+		return e
+	}
+	for i := range *out {
+		(*out)[i].TypeName = typeNameMap[uint64((*out)[i].ID)]
+	}
+	return nil
+}
+
+// GetActiveById 根据编号获取活动（含参与老人列表）
+// 对应 Java: ActiveServiceImpl.getActiveById -> activeMapper.selectByPrimaryKey + activeParticipantMapper.listParticipateElder
+// 说明：参与老人 Java 联 elder 取 name/phone；Go 端查 elder_active 后批量取 elder 补齐。
+func (a *active) GetActiveById(ctx context.Context, in *dto.IDReq, out *dto.GetActiveByIDVO) error {
+	obj, has, e := dao.Active(db).GetByID(ctx, types.BigInt(*in.ID))
+	if e != nil {
+		return e
+	}
+	if !has || obj == nil {
+		return errors.New("活动不存在")
+	}
+
+	// 回填活动基本信息
+	id := int64(obj.Id)
+	name := string(obj.Name)
+	theme := string(obj.Theme)
+	content := string(obj.Content)
+	address := string(obj.Address)
+	organizer := string(obj.Organizer)
+	phone := string(obj.Phone)
+	activeDate := obj.ActiveDate.Format("2006-01-02 15:04:05")
+	activePicture := string(obj.ActivePicture)
+	typeID := int64(obj.TypeId)
+	out.ID = &id
+	out.TypeID = &typeID
+	out.Name = &name
+	out.Theme = &theme
+	out.Content = &content
+	out.Address = &address
+	out.Organizer = &organizer
+	out.Phone = &phone
+	out.ActiveDate = &activeDate
+	out.ActivePicture = &activePicture
+
+	// 查询参与老人关联
+	participants, _, e := dao.ActiveParticipant(db).List(ctx, ace.Where(tblactiveparticipant.ActiveId.Eq(types.BigInt(*in.ID))))
+	if e != nil {
+		return e
+	}
+	if len(participants) == 0 {
+		out.ParticipateElderVOList = []dto.ParticipateElderVO{}
+		return nil
+	}
+	ids := make([]any, 0, len(participants))
+	for _, p := range participants {
+		ids = append(ids, p.ElderId)
+	}
+	elders, e := dao.Elder(db).GetByIds(ctx, ids)
+	if e != nil {
+		return e
+	}
+	elderMap := make(map[uint64]*do.Elder, len(elders))
+	for _, el := range elders {
+		elderMap[uint64(el.Id)] = el
+	}
+	voList := make([]dto.ParticipateElderVO, 0, len(participants))
+	for _, p := range participants {
+		el, ok := elderMap[uint64(p.ElderId)]
+		if !ok {
+			continue
+		}
+		voList = append(voList, dto.ParticipateElderVO{
+			ID:    int64(el.Id),
+			Name:  string(el.Name),
+			Phone: string(el.Phone),
+		})
+	}
+	out.ParticipateElderVOList = voList
 	return nil
 }
 
 // AddActive 新增活动（同时写入参与老人 elder_active）
 // 对应 Java: ActiveServiceImpl.addActive -> activeMapper.insertSelective 后批量 insert elder_active
-// todo: 事务: 1) dao.Active(db).InsertOne(active); 2) 遍历 in.ElderIdList 批量 dao.ElderActive(db).InsertOne
+// 说明：Java 为 @Transactional。Go 端分两步写入（框架未启用显式事务）。
 func (a *active) AddActive(ctx context.Context, in *dto.OperateActiveQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewActive(); 填充 in; dao.Active(db).InsertOne(ctx, bean)
-	// todo: 遍历 in.ElderIdList 写入 elder_active 表
+	bean := do.NewActive()
+	bean.TypeId = types.BigInt(*in.TypeID)
+	bean.Theme = types.String(*in.Theme)
+	bean.Name = types.String(*in.Name)
+	bean.Content = types.String(*in.Content)
+	bean.Address = types.String(*in.Address)
+	bean.Organizer = types.String(*in.Organizer)
+	bean.Phone = types.String(*in.Phone)
+	bean.ActiveDate = types.Time{conv.String2Time(*in.ActiveDate)}
+	bean.ActivePicture = types.String(*in.ActivePicture)
+	bean.DelFlag = constant.YesNoNo
+	_, e := dao.Active(db).InsertOne(ctx, bean)
+	if e != nil {
+		return e
+	}
+
+	for _, elderId := range in.ElderIDList {
+		if _, e = dao.ActiveParticipant(db).Insert(ctx,
+			tblactiveparticipant.ActiveId.Set(bean.Id),
+			tblactiveparticipant.ElderId.Set(types.BigInt(elderId)),
+		); e != nil {
+			return e
+		}
+	}
 	return nil
 }
 
 // EditActive 编辑活动（先删后插参与老人 elder_active）
 // 对应 Java: ActiveServiceImpl.editActive -> 更新 active + 删除旧 elder_active + 批量新增
-// todo: 事务: 1) dao.Active(db).UpdateById; 2) 删除 elder_active(active_id); 3) 批量新增 elder_active
+// 说明：Java 为 @Transactional。Go 端分三步写入。
 func (a *active) EditActive(ctx context.Context, in *dto.OperateActiveQuery, out *dto.EmptyResp) error {
 	sets := []dialect.Setter{
-		// todo: 例 tbl<active>.ActiveName.Value(in.ActiveName),
+		tblactive.TypeId.Set(*in.TypeID),
+		tblactive.Theme.Set(*in.Theme),
+		tblactive.Name.Set(*in.Name),
+		tblactive.Content.Set(*in.Content),
+		tblactive.Address.Set(*in.Address),
+		tblactive.Organizer.Set(*in.Organizer),
+		tblactive.Phone.Set(*in.Phone),
+		tblactive.ActivePicture.Set(*in.ActivePicture),
+		tblactive.ActiveDate.Set(*in.ActiveDate),
 	}
-	_, e := dao.Active(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
-	if e != nil {
+	if _, e := dao.Active(db).UpdateById(ctx, types.BigInt(*in.ID), sets...); e != nil {
 		return e
 	}
-	// todo: 删除并重新写入 elder_active
+
+	// 清空旧参与老人
+	if _, e := dao.ActiveParticipant(db).Delete(ctx, tblactiveparticipant.ActiveId.Eq(types.BigInt(*in.ID))); e != nil {
+		return e
+	}
+
+	for _, elderId := range in.ElderIDList {
+		if _, e := dao.ActiveParticipant(db).Insert(ctx,
+			tblactiveparticipant.ActiveId.Set(types.BigInt(*in.ID)),
+			tblactiveparticipant.ElderId.Set(types.BigInt(elderId)),
+		); e != nil {
+			return e
+		}
+	}
 	return nil
 }
 
-// DeleteActive 删除活动
-// 对应 Java: ActiveServiceImpl.deleteActive -> activeMapper.deleteByPrimaryKey(级联删 elder_active)
-// todo: 事务: 1) 删 elder_active(active_id); 2) dao.Active(db).DeleteById(ctx, types.BigInt(in.ID))
+// DeleteActive 删除活动（级联删参与老人）
+// 对应 Java: ActiveServiceImpl.deleteActive -> activeMapper.deleteByPrimaryKey（级联删 elder_active）
 func (a *active) DeleteActive(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	// todo: 先删 elder_active, 再删 active
-	_, e := dao.Active(db).DeleteById(ctx, types.BigInt(in.ID))
+	if _, e := dao.ActiveParticipant(db).Delete(ctx, tblactiveparticipant.ActiveId.Eq(types.BigInt(*in.ID))); e != nil {
+		return e
+	}
+	_, e := dao.Active(db).DeleteById(ctx, types.BigInt(*in.ID))
 	return e
 }
 
 // PageSearchElderByKey 分页搜索老人（供活动选择参与老人）
-// 对应 Java: ActiveServiceImpl.pageSearchElderByKey -> elderMapper.listElderByKey
-// SQL: SELECT * FROM elder WHERE (elder_name LIKE %key% OR id = key) [可选] AND del_flag=0
-// todo: 实现老人分页查询 - 复用 elder 表条件, 结果赋值 out(需定义老人分页返回类型)
+// 对应 Java: ActiveServiceImpl.pageSearchElderByKey -> CommonFunc.pageSearchElderByKeyResult
+// Java SQL: SELECT * FROM elder WHERE (elder_name LIKE %key% OR id = key) [可选] AND del_flag=0
+// 说明：Java 侧按 checkFlag in (咨询/意向/预定/退住) 过滤；Go 端对齐 CheckContract 的咨询口径。
 func (a *active) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 elder 表并分页
+	query := ace.Where(tblelder.DelFlag.Eq(constant.YesNoNo))
+	if in.Name != nil {
+		query.And(tblelder.Name.Like("%" + *in.Name + "%"))
+	}
+	if in.Phone != nil {
+		query.And(tblelder.Phone.Like("%" + *in.Phone + "%"))
+	}
+	// todo: 分页查询 elder（Java: checkFlag in CONSULT/INTENTION/RESERVE/EXIT）
+	list, _, e := dao.Elder(db).List(ctx, query)
+	if e != nil {
+		return e
+	}
+	_ = list
 	return nil
 }
 
 // GetActiveType 获取活动类型下拉框
-// 对应 Java: ActiveServiceImpl.getActiveType -> activeTypeMapper.listNotDelActiveType(null)
+// 对应 Java: ActiveServiceImpl.getActiveType -> activeTypeMapper.listNotDelActiveType
 // SQL: SELECT * FROM active_type WHERE del_flag = 0
-// todo: 查询未删除的活动类型, 组装 []dto.DropDown{ID, Name} 赋值 out
-func (a *active) GetActiveType(ctx context.Context, in *dto.EmptyReq, out *dto.EmptyResp) error {
-	list, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.DelFlag.Eq("N")))
+func (a *active) GetActiveType(ctx context.Context, in *dto.EmptyReq, out *[]dto.DropDown) error {
+	list, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.DelFlag.Eq(constant.YesNoNo)))
 	if e != nil {
 		return e
 	}
@@ -105,6 +246,6 @@ func (a *active) GetActiveType(ctx context.Context, in *dto.EmptyReq, out *dto.E
 	for _, v := range list {
 		dropList = append(dropList, dto.DropDown{ID: int64(v.Id), Name: string(v.Name)})
 	}
-	// todo: 结果赋值 out
+	*out = dropList
 	return nil
 }

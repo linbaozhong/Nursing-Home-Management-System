@@ -119,7 +119,7 @@ func (p *room) InsertBatch(ctx context.Context, beans []*do.Room, cols ...dialec
 func (p *room) Update(ctx context.Context, sets []dialect.Setter, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
 	if len(sets) == 0 {
-		return false, dialect.ErrSetterEmpty
+		return true, nil
 	}
 	_result, e := p.x.Table(do.RoomTableName).
 		Where(cond...).

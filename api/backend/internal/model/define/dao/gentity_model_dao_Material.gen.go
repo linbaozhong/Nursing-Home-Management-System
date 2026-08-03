@@ -119,7 +119,7 @@ func (p *material) InsertBatch(ctx context.Context, beans []*do.Material, cols .
 func (p *material) Update(ctx context.Context, sets []dialect.Setter, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
 	if len(sets) == 0 {
-		return false, dialect.ErrSetterEmpty
+		return true, nil
 	}
 	_result, e := p.x.Table(do.MaterialTableName).
 		Where(cond...).
