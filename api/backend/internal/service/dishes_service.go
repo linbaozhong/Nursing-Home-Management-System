@@ -2,12 +2,15 @@ package service
 
 import (
 	"context"
+	"errors"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tbldishes"
 	"api/internal/model/define/table/tbldishestype"
+	"api/internal/model/do"
 	"api/internal/model/dto"
-	"github.com/linbaozhong/gentity/pkg/ace"
+
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
@@ -16,108 +19,192 @@ type dishes struct{}
 
 var Dishes = &dishes{}
 
-// PageDishesByKey 分页查询菜品（联表 dishes_type 获取类型名）
-// 对应 Java: DishesServiceImpl.pageDishesByKey -> DishesMapper.listDishesByKey
-// SQL: SELECT d.*, dt.type_name FROM dishes d
-//
-//	LEFT JOIN dishes_type dt ON dt.id = d.dishes_type_id
-//	WHERE (dt.type_name LIKE %key% OR d.dishes_name LIKE %key%) [可选]
-//	ORDER BY d.create_time DESC; 再由 PageUtil 内存分页。
-//
-// todo: 1) in.Key 非空 -> (tbl<dishestype>.TypeName.Like(in.Key) OR tbl<dishes>.DishesName.Like(in.Key))
-//
-//	2) DB 分页: Count + List(联表 LeftJoin)
-//	3) 组装含类型名的 VO 并赋值 out
-func (d *dishes) PageDishesByKey(ctx context.Context, in *dto.PageDishesByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
-	return nil
+// PageDishesByKey 分页查询菜品（联表菜品类别）
+// 对应 Java: DishesServiceImpl.pageDishesByKey -> DishesFunc.listDishes
+func (d *dishes) PageDishesByKey(ctx context.Context, in *dto.PageDishesByKeyQuery, out *[]dto.PageDishesByKeyVO) error {
+	q := db.Table(do.DishesTableName).
+		LeftJoin(tbldishes.TypeId, tbldishestype.Id).
+		Where(tbldishes.DelFlag.Eq(constant.YesNoNo))
+	if in.TypeID != nil {
+		q.And(tbldishes.TypeId.Eq(types.BigInt(*in.TypeID)))
+	}
+	if in.DishesName != nil && *in.DishesName != "" {
+		q.And(tbldishes.Name.Like(*in.DishesName))
+	}
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(
+			tbldishes.Id.AsName("id"),
+			tbldishestype.Name.AsName("type_name"),
+			tbldishes.Name.AsName("dishes_name"),
+			tbldishes.Price.AsName("price"),
+		).
+		Desc(tbldishes.CreateTime).
+		Select().
+		Gets(ctx, out)
 }
 
 // GetDishesById 根据编号获取菜品
-// 对应 Java: DishesServiceImpl.getDishesById -> dishesMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.Dishes(db).GetByID(ctx, types.BigInt(in.ID))
-func (d *dishes) GetDishesById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.Dishes(db).GetByID(ctx, types.BigInt(in.ID))
+func (d *dishes) GetDishesById(ctx context.Context, in *dto.IDReq, out *dto.OperateDishesVO) error {
+	obj, has, e := dao.Dishes(db).GetByID(ctx, types.BigInt(*in.ID),
+		tbldishes.Id,
+		tbldishes.TypeId,
+		tbldishes.Name,
+		tbldishes.Price,
+	)
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
-	return nil
-}
-
-// AddDishes 新增菜品
-// 对应 Java: DishesServiceImpl.addDishes -> dishesMapper.insertSelective
-// todo: 标准 CRUD - dao.Dishes(db).InsertOne 写入 dishes 表(含 dishesName/dishesTypeId/price 等)
-func (d *dishes) AddDishes(ctx context.Context, in *dto.AddDishesQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewDishes(); 填充 in; dao.Dishes(db).InsertOne(ctx, bean)
-	return nil
-}
-
-// EditDishes 编辑菜品
-// 对应 Java: DishesServiceImpl.editDishes -> dishesMapper.updateByPrimaryKeySelective
-// todo: 标准 CRUD - 按主键更新 dishes 表(tbl<dishes>.X.Value(in.X))
-func (d *dishes) EditDishes(ctx context.Context, in *dto.EditDishesQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<dishes>.DishesName.Value(in.DishesName),
+	if !has {
+		return errors.New("菜品不存在")
 	}
-	_, e := dao.Dishes(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
+	out.ID = int64(obj.Id)
+	out.TypeID = int64(obj.TypeId)
+	out.Name = obj.Name.String()
+	out.Price = obj.Price.Float64()
+	return nil
+}
+
+// AddDishes 新增菜品（校验名称+类别唯一）
+func (d *dishes) AddDishes(ctx context.Context, in *dto.OperateDishesQuery, out *dto.EmptyResp) error {
+	repeat, e := dao.Dishes(db).Exists(ctx,
+		tbldishes.Name.Eq(*in.Name),
+		tbldishes.TypeId.Eq(types.BigInt(*in.TypeID)),
+		tbldishes.DelFlag.Eq(constant.YesNoNo),
+	)
+	if e != nil {
+		return e
+	}
+	if repeat {
+		return errors.New("菜品已存在")
+	}
+	bean := do.NewDishes()
+	bean.TypeId = types.BigInt(*in.TypeID)
+	bean.Name = types.String(*in.Name)
+	bean.Price = types.Float64(*in.Price)
+	_, e = dao.Dishes(db).InsertOne(ctx, bean)
 	return e
 }
 
-// DeleteDishes 删除菜品
-// 对应 Java: DishesServiceImpl.deleteDishes -> dishesMapper.deleteByPrimaryKey
-// todo: 标准 CRUD - dao.Dishes(db).DeleteById(ctx, types.BigInt(in.ID))
+// EditDishes 编辑菜品（校验同名不同编号）
+func (d *dishes) EditDishes(ctx context.Context, in *dto.OperateDishesQuery, out *dto.EmptyResp) error {
+	repeat, e := dao.Dishes(db).Exists(ctx,
+		tbldishes.Name.Eq(*in.Name),
+		tbldishes.TypeId.Eq(types.BigInt(*in.TypeID)),
+		tbldishes.DelFlag.Eq(constant.YesNoNo),
+		tbldishes.Id.Neq(types.BigInt(*in.ID)),
+	)
+	if e != nil {
+		return e
+	}
+	if repeat {
+		return errors.New("菜品已存在")
+	}
+	var sets = make([]dialect.Setter, 0, 3)
+	sets = append(sets, tbldishes.TypeId.Set(*in.TypeID))
+	sets = append(sets, tbldishes.Name.Set(*in.Name))
+	sets = append(sets, tbldishes.Price.Set(*in.Price))
+	_, e = dao.Dishes(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
+	return e
+}
+
+// DeleteDishes 删除菜品（逻辑删除）
 func (d *dishes) DeleteDishes(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.Dishes(db).DeleteById(ctx, types.BigInt(in.ID))
+	_, e := dao.Dishes(db).UpdateById(ctx, types.BigInt(*in.ID),
+		tbldishes.DelFlag.Set(constant.YesNoYes),
+	)
 	return e
 }
 
-// PageDishesTypeByKey 分页查询菜品类型
-// 对应 Java: DishesServiceImpl.pageDishesTypeByKey -> DishesTypeMapper.listDishesTypeByKey
-// SQL: SELECT * FROM dishes_type WHERE (type_name LIKE %key%) [可选] ORDER BY create_time DESC
-// todo: 类型分页查询 - dao.DishesType(db) 条件 + 分页, 结果赋值 out
-func (d *dishes) PageDishesTypeByKey(ctx context.Context, in *dto.PageDishesTypeByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 dishes_type 表并分页
-	return nil
+// PageDishesTypeByKey 分页查询菜品类别
+// 对应 Java: DishesServiceImpl.pageDishesTypeByKey -> DishesTypeFunc.listDishesType
+func (d *dishes) PageDishesTypeByKey(ctx context.Context, in *dto.PageDishesTypeByKeyQuery, out *[]dto.DropDown) error {
+	q := db.Table(do.DishesTypeTableName).
+		Where(tbldishestype.DelFlag.Eq(constant.YesNoNo))
+	if in.Name != nil && *in.Name != "" {
+		q.And(tbldishestype.Name.Like(*in.Name))
+	}
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(tbldishestype.Id, tbldishestype.Name).
+		Desc(tbldishestype.CreateTime).
+		Select().
+		Gets(ctx, out)
 }
 
-// GetDishesTypeById 根据编号获取菜品类型
-// 对应 Java: DishesServiceImpl.getDishesTypeById
-// todo: 标准 CRUD - dao.DishesType(db).GetByID(ctx, types.BigInt(in.ID))
-func (d *dishes) GetDishesTypeById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.DishesType(db).GetByID(ctx, types.BigInt(in.ID))
+// GetDishesTypeById 根据编号获取菜品类别
+func (d *dishes) GetDishesTypeById(ctx context.Context, in *dto.IDReq, out *dto.DropDown) error {
+	obj, has, e := dao.DishesType(db).GetByID(ctx, types.BigInt(*in.ID),
+		tbldishestype.Id,
+		tbldishestype.Name,
+	)
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
-	return nil
-}
-
-// AddDishesType 新增菜品类型
-// 对应 Java: DishesServiceImpl.addDishesType
-// todo: 标准 CRUD - dao.DishesType(db).InsertOne 写入 dishes_type 表
-func (d *dishes) AddDishesType(ctx context.Context, in *dto.AddDishesTypeQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewDishesType(); 填充 in; dao.DishesType(db).InsertOne(ctx, bean)
-	return nil
-}
-
-// EditDishesType 编辑菜品类型
-// 对应 Java: DishesServiceImpl.editDishesType
-// todo: 标准 CRUD - 按主键更新 dishes_type 表
-func (d *dishes) EditDishesType(ctx context.Context, in *dto.EditDishesTypeQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<dishestype>.TypeName.Value(in.TypeName),
+	if !has {
+		return errors.New("菜品类别不存在")
 	}
-	_, e := dao.DishesType(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
+	out.ID = int64(obj.Id)
+	out.Name = obj.Name.String()
+	return nil
+}
+
+// AddDishesType 新增菜品类别（校验名称唯一 + 类别总数上限）
+func (d *dishes) AddDishesType(ctx context.Context, in *dto.OperateDishesTypeQuery, out *dto.EmptyResp) error {
+	total, e := dao.DishesType(db).Count(ctx, tbldishestype.DelFlag.Eq(constant.YesNoNo))
+	if e != nil {
+		return e
+	}
+	if total >= 10 {
+		return errors.New("菜品类别已经达到上限")
+	}
+	repeat, e := dao.DishesType(db).Exists(ctx,
+		tbldishestype.Name.Eq(*in.Name),
+		tbldishestype.DelFlag.Eq(constant.YesNoNo),
+	)
+	if e != nil {
+		return e
+	}
+	if repeat {
+		return errors.New("菜品类别已存在")
+	}
+	bean := do.NewDishesType()
+	bean.Name = types.String(*in.Name)
+	_, e = dao.DishesType(db).InsertOne(ctx, bean)
 	return e
 }
 
-// DeleteDishesType 删除菜品类型
-// 对应 Java: DishesServiceImpl.deleteDishesType
-// todo: 标准 CRUD - dao.DishesType(db).DeleteById(ctx, types.BigInt(in.ID))
+// EditDishesType 编辑菜品类别（校验同名不同编号）
+func (d *dishes) EditDishesType(ctx context.Context, in *dto.OperateDishesTypeQuery, out *dto.EmptyResp) error {
+	repeat, e := dao.DishesType(db).Exists(ctx,
+		tbldishestype.Name.Eq(*in.Name),
+		tbldishestype.DelFlag.Eq(constant.YesNoNo),
+		tbldishestype.Id.Neq(types.BigInt(*in.ID)),
+	)
+	if e != nil {
+		return e
+	}
+	if repeat {
+		return errors.New("菜品类别已存在")
+	}
+	_, e = dao.DishesType(db).UpdateById(ctx, types.BigInt(*in.ID),
+		tbldishestype.Name.Set(*in.Name),
+	)
+	return e
+}
+
+// DeleteDishesType 删除菜品类别（逻辑删除，需无子菜品）
 func (d *dishes) DeleteDishesType(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.DishesType(db).DeleteById(ctx, types.BigInt(in.ID))
+	hasChild, e := dao.Dishes(db).Exists(ctx,
+		tbldishes.TypeId.Eq(types.BigInt(*in.ID)),
+		tbldishes.DelFlag.Eq(constant.YesNoNo),
+	)
+	if e != nil {
+		return e
+	}
+	if hasChild {
+		return errors.New("该类别存在菜品，无法删除")
+	}
+	_, e = dao.DishesType(db).UpdateById(ctx, types.BigInt(*in.ID),
+		tbldishestype.DelFlag.Set(constant.YesNoYes),
+	)
 	return e
 }

@@ -28,11 +28,11 @@ type DropDown struct {
 	Name string `json:"name"` // 名称
 }
 
-// @response
-// Rank 序号基类（对应 Java Rank）
-type Rank struct {
-	Rank int64 `json:"rank"` // 序号
-}
+// // @response
+// // Rank 序号基类（对应 Java Rank）
+// type Rank struct {
+// 	Rank int64 `json:"rank"` // 序号
+// }
 
 // @response
 // BuildingVO 楼栋-楼层-房间-床位树响应（对应 Java base.BuildingVo）
@@ -105,13 +105,13 @@ type OperateServiceQuery struct {
 	NeedDate     *int     `json:"need_date" valid:"required"`     // 所需时间
 }
 
-// @response
-// SetDishesVO 套餐/菜品嵌套响应（被 CateringSet、ElderRecord 引用）
-type SetDishesVO struct {
-	ID    int64   `json:"id"`    // id
-	Name  string  `json:"name"`  // 菜品名称
-	Price float64 `json:"price"` // 菜品价格
-}
+// // @response
+// // SetDishesVO 套餐/菜品嵌套响应（被 CateringSet、ElderRecord 引用）
+// type SetDishesVO struct {
+// 	ID    int64   `json:"id"`    // id
+// 	Name  string  `json:"name"`  // 菜品名称
+// 	Price float64 `json:"price"` // 菜品价格
+// }
 
 // ============ 跨 Controller 共享响应对象 ============
 
@@ -128,14 +128,14 @@ type NurseGradeServiceVO struct {
 	OperateServiceQuery
 }
 
-// @response
-// GetCateringSetByIDVO 餐饮套餐详情响应（被 ElderRecord 引用）
-type GetCateringSetByIDVO struct {
-	ID              int64         `json:"id"`                 // id
-	Name            string        `json:"name"`               // 套餐名称
-	MonthPrice      float64       `json:"month_price"`        // 月套餐费用
-	SetDishesVOList []SetDishesVO `json:"set_dishes_vo_list"` // 护理等级服务列表
-}
+// // @response
+// // GetCateringSetByIDVO 餐饮套餐详情响应（被 ElderRecord 引用）
+// type GetCateringSetByIDVO struct {
+// 	ID              int64         `json:"id"`                 // id
+// 	Name            string        `json:"name"`               // 套餐名称
+// 	MonthPrice      float64       `json:"month_price"`        // 月套餐费用
+// 	SetDishesVOList []SetDishesVO `json:"set_dishes_vo_list"` // 护理等级服务列表
+// }
 
 // @response
 // GetBedByIDVO 床位详情响应（被 ElderRecord 引用）

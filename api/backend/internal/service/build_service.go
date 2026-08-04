@@ -20,8 +20,7 @@ import (
 )
 
 const (
-	bedFlagIdle  = "0" // 对应 Java BedEnum.IDLE
-	delFlagYes   = "Y" // 对应 Java YesNoEnum.YES
+	// delFlagYes   = "Y" // 对应 Java YesNoEnum.YES
 	markBuilding = "building"
 	markFloor    = "floor"
 	markRoom     = "room"
@@ -116,7 +115,7 @@ func (b *build) hasOccupiedBed(ctx context.Context, scope string, id int64) (boo
 		return false, e
 	}
 	for _, bed := range beds {
-		if bed.BedFlag != bedFlagIdle {
+		if bed.BedFlag != types.Int8(constant.BedIdle) {
 			return true, nil
 		}
 	}
@@ -164,7 +163,7 @@ func (b *build) buildTree(buildings []*do.Building, floors []*do.Floor, rooms []
 					ri.BedList = append(ri.BedList, dto.RoomItemVO{
 						ID:      int64(bd2.Id),
 						Name:    string(bd2.Name),
-						BedFlag: string(bd2.BedFlag),
+						BedFlag: constant.YesNo(bd2.BedFlag).String(),
 					})
 				}
 				fi.RoomList = append(fi.RoomList, ri)
@@ -269,7 +268,7 @@ func (b *build) DeleteBuilding(ctx context.Context, in *dto.IDReq, out *dto.Empt
 	} else if occupied {
 		return errors.New("该楼栋下存在占用床位，无法删除")
 	}
-	_, e := dao.Building(db).UpdateById(ctx, types.BigInt(*in.ID), tblbuilding.DelFlag.Set(delFlagYes))
+	_, e := dao.Building(db).UpdateById(ctx, types.BigInt(*in.ID), tblbuilding.DelFlag.Set(constant.YesNoYes))
 	return e
 }
 
@@ -390,7 +389,7 @@ func (b *build) DeleteFloor(ctx context.Context, in *dto.IDReq, out *dto.EmptyRe
 	} else if occupied {
 		return errors.New("该楼层下存在占用床位，无法删除")
 	}
-	_, e := dao.Floor(db).UpdateById(ctx, types.BigInt(*in.ID), tblfloor.DelFlag.Set(delFlagYes))
+	_, e := dao.Floor(db).UpdateById(ctx, types.BigInt(*in.ID), tblfloor.DelFlag.Set(constant.YesNoYes))
 	return e
 }
 
@@ -535,7 +534,7 @@ func (b *build) DeleteRoom(ctx context.Context, in *dto.IDReq, out *dto.EmptyRes
 	if occupied {
 		return errors.New("该房间下存在占用床位，无法删除")
 	}
-	_, e = dao.Room(db).UpdateById(ctx, types.BigInt(*in.ID), tblroom.DelFlag.Set(delFlagYes))
+	_, e = dao.Room(db).UpdateById(ctx, types.BigInt(*in.ID), tblroom.DelFlag.Set(constant.YesNoYes))
 	return e
 }
 
@@ -627,7 +626,7 @@ func (b *build) AddBed(ctx context.Context, in *dto.OperateBedQuery, out *dto.Em
 	if in.Name != nil {
 		bean.Name = types.String(*in.Name)
 	}
-	bean.BedFlag = bedFlagIdle
+	bean.BedFlag = types.Int8(constant.BedIdle)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	_, e := dao.Bed(db).InsertOne(ctx, bean)
 	return e
@@ -679,10 +678,10 @@ func (b *build) DeleteBed(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp
 	if !has {
 		return errors.New("床位不存在")
 	}
-	if bed.BedFlag != bedFlagIdle {
+	if bed.BedFlag != types.Int8(constant.BedIdle) {
 		return errors.New("该床位被占用，删除失败")
 	}
-	_, e = dao.Bed(db).UpdateById(ctx, types.BigInt(*in.ID), tblbed.DelFlag.Set(delFlagYes))
+	_, e = dao.Bed(db).UpdateById(ctx, types.BigInt(*in.ID), tblbed.DelFlag.Set(constant.YesNoYes))
 	return e
 }
 

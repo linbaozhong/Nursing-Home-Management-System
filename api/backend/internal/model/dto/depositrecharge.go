@@ -44,7 +44,6 @@ type EditDepositRechargeQuery struct {
 // @response
 // PageDepositRechargeByKeyVO 分页查询预存充值响应
 type PageDepositRechargeByKeyVO struct {
-	Rank
 	ElderID    string  `json:"elder_id"`    // 老人编号
 	ElderName  string  `json:"elder_name"`  // 老人姓名
 	ElderPhone string  `json:"elder_phone"` // 老人电话

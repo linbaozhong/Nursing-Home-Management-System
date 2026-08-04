@@ -29,7 +29,6 @@ type OperateIntentionQuery struct {
 // @response
 // PageIntentionByKeyVO 分页查询意向客户响应
 type PageIntentionByKeyVO struct {
-	Rank
 	ID          int64              `json:"id"`            // 老人编号
 	Name        string             `json:"name"`          // 老人姓名
 	Phone       string             `json:"phone"`         // 老人电话

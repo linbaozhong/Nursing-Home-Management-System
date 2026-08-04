@@ -1803,127 +1803,6 @@ func (p *ListFloorByBuildingIdQuery) UnmarshalValues(m map[string][]string) erro
 }
 
 /*
-	--- ListRoomByKeyQuery ---
-*/
-// Init
-func (p *ListRoomByKeyQuery) Init() error {
-	p.BuildingID = nil
-	p.FloorID = nil
-	p.ElderName = nil
-
-	return nil
-}
-
-// Check
-func (p *ListRoomByKeyQuery) Check() error {
-	return nil
-}
-
-// UnmarshalJSON
-func (p *ListRoomByKeyQuery) UnmarshalJSON(data []byte) error {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Error(r)
-			return
-		}
-	}()
-
-	ok := gjson.ValidBytes(data)
-	if !ok {
-		return errors.New("invalid json")
-	}
-	_result := gjson.ParseBytes(data)
-	var e error
-	_result.ForEach(func(key, value gjson.Result) bool {
-		switch key.Str {
-		case "building_id":
-			e = types.Unmarshal(value, &p.BuildingID, func(value gjson.Result) *int64 {
-				var obj *int64
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		case "floor_id":
-			e = types.Unmarshal(value, &p.FloorID, func(value gjson.Result) *int64 {
-				var obj *int64
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		case "elder_name":
-			e = types.Unmarshal(value, &p.ElderName, func(value gjson.Result) *string {
-				var obj *string
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		}
-		if e != nil {
-			log.Error(e)
-			return false
-		}
-		return true
-	})
-	return nil
-}
-
-// UnmarshalValues
-func (p *ListRoomByKeyQuery) UnmarshalValues(m map[string][]string) error {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Error(r)
-			return
-		}
-	}()
-
-	var e error
-	for k, v := range m {
-		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
-		switch k {
-		case "building_id":
-			e = types.Unmarshal(value, &p.BuildingID, func(value gjson.Result) *int64 {
-				var obj *int64
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		case "floor_id":
-			e = types.Unmarshal(value, &p.FloorID, func(value gjson.Result) *int64 {
-				var obj *int64
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		case "elder_name":
-			e = types.Unmarshal(value, &p.ElderName, func(value gjson.Result) *string {
-				var obj *string
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		}
-		if e != nil {
-			log.Error(e)
-			return e
-		}
-	}
-
-	return nil
-}
-
-/*
 	--- PageBedByKeyQuery ---
 */
 // Init
@@ -5552,6 +5431,152 @@ func (p *OperateCheckContractQuery) UnmarshalValues(m map[string][]string) error
 }
 
 /*
+	--- PageSearchElderByKeyQuery ---
+*/
+// Init
+func (p *PageSearchElderByKeyQuery) Init() error {
+	p.PageNum = nil
+	p.PageSize = nil
+	p.Name = nil
+	p.Phone = nil
+
+	return nil
+}
+
+// Check
+func (p *PageSearchElderByKeyQuery) Check() error {
+	if p.PageNum == nil {
+		return types.NewError(http.StatusBadRequest, "page_num is required")
+	}
+	if p.PageSize == nil {
+		return types.NewError(http.StatusBadRequest, "page_size is required")
+	}
+	return nil
+}
+
+// UnmarshalJSON
+func (p *PageSearchElderByKeyQuery) UnmarshalJSON(data []byte) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	ok := gjson.ValidBytes(data)
+	if !ok {
+		return errors.New("invalid json")
+	}
+	_result := gjson.ParseBytes(data)
+	var e error
+	_result.ForEach(func(key, value gjson.Result) bool {
+		switch key.Str {
+		case "page_num":
+			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "page_size":
+			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "name":
+			e = types.Unmarshal(value, &p.Name, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "phone":
+			e = types.Unmarshal(value, &p.Phone, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return false
+		}
+		return true
+	})
+	return nil
+}
+
+// UnmarshalValues
+func (p *PageSearchElderByKeyQuery) UnmarshalValues(m map[string][]string) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	var e error
+	for k, v := range m {
+		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
+		switch k {
+		case "page_num":
+			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "page_size":
+			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "name":
+			e = types.Unmarshal(value, &p.Name, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "phone":
+			e = types.Unmarshal(value, &p.Phone, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return e
+		}
+	}
+
+	return nil
+}
+
+/*
 	--- PageCheckContractByKeyVO ---
 */
 // MarshalJSON
@@ -5569,11 +5594,32 @@ func (p *PageCheckContractByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
+	--- PageSearchElderByKeyVO ---
+*/
+// MarshalJSON
+func (p *PageSearchElderByKeyVO) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(7 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("id_num", types.Marshal(p.IDNum))
+	write.WriteRaw("sex", types.Marshal(p.Sex))
+	write.WriteRaw("phone", types.Marshal(p.Phone))
+	write.WriteRaw("address", types.Marshal(p.Address))
+	write.WriteRaw("check_flag", types.Marshal(p.CheckFlag))
+	return write.Bytes(), nil
+}
+
+/*
 	--- GetCheckContractByIDVO ---
 */
 // MarshalJSON
 func (p *GetCheckContractByIDVO) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(0 * 50)
+	write := types.NewJsonWriter(5 * 50)
+	write.WriteRaw("staff_id", types.Marshal(p.StaffID))
+	write.WriteRaw("sign_date", types.Marshal(p.SignDate))
+	write.WriteRaw("start_date", types.Marshal(p.StartDate))
+	write.WriteRaw("end_date", types.Marshal(p.EndDate))
+	write.WriteRaw("operate_emergency_contact_query_list", types.Marshal(p.OperateEmergencyContactQueryList))
 	return write.Bytes(), nil
 }
 
@@ -6218,18 +6264,6 @@ func (p *OperateServiceQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- SetDishesVO ---
-*/
-// MarshalJSON
-func (p *SetDishesVO) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(3 * 50)
-	write.WriteRaw("id", types.Marshal(p.ID))
-	write.WriteRaw("name", types.Marshal(p.Name))
-	write.WriteRaw("price", types.Marshal(p.Price))
-	return write.Bytes(), nil
-}
-
-/*
 	--- GetNurseGradeByIDVO ---
 */
 // MarshalJSON
@@ -6245,19 +6279,6 @@ func (p *GetNurseGradeByIDVO) MarshalJSON() ([]byte, error) {
 // MarshalJSON
 func (p *NurseGradeServiceVO) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
-	return write.Bytes(), nil
-}
-
-/*
-	--- GetCateringSetByIDVO ---
-*/
-// MarshalJSON
-func (p *GetCateringSetByIDVO) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(4 * 50)
-	write.WriteRaw("id", types.Marshal(p.ID))
-	write.WriteRaw("name", types.Marshal(p.Name))
-	write.WriteRaw("month_price", types.Marshal(p.MonthPrice))
-	write.WriteRaw("set_dishes_vo_list", types.Marshal(p.SetDishesVOList))
 	return write.Bytes(), nil
 }
 
@@ -8886,12 +8907,29 @@ func (p *EditConsumeQuery) UnmarshalValues(m map[string][]string) error {
 */
 // MarshalJSON
 func (p *PageConsumeByKeyVO) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(5 * 50)
+	write := types.NewJsonWriter(6 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
 	write.WriteRaw("id_num", types.Marshal(p.IDNum))
 	write.WriteRaw("consume_type", types.Marshal(p.ConsumeType))
 	write.WriteRaw("consume_amount", types.Marshal(p.ConsumeAmount))
 	write.WriteRaw("consume_date", types.Marshal(p.ConsumeDate))
+	return write.Bytes(), nil
+}
+
+/*
+	--- GetConsumeByIdVO ---
+*/
+// MarshalJSON
+func (p *GetConsumeByIdVO) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(7 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
+	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
+	write.WriteRaw("consume_type", types.Marshal(p.ConsumeType))
+	write.WriteRaw("consume_amount", types.Marshal(p.ConsumeAmount))
+	write.WriteRaw("consume_date", types.Marshal(p.ConsumeDate))
+	write.WriteRaw("remark", types.Marshal(p.Remark))
 	return write.Bytes(), nil
 }
 
@@ -10724,152 +10762,6 @@ func (p *PageElderByKeyQuery) UnmarshalValues(m map[string][]string) error {
 			}(value))
 		case "elder_sex":
 			e = types.Unmarshal(value, &p.ElderSex, func(value gjson.Result) *string {
-				var obj *string
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		}
-		if e != nil {
-			log.Error(e)
-			return e
-		}
-	}
-
-	return nil
-}
-
-/*
-	--- PageSearchElderByKeyQuery ---
-*/
-// Init
-func (p *PageSearchElderByKeyQuery) Init() error {
-	p.PageNum = nil
-	p.PageSize = nil
-	p.Name = nil
-	p.Phone = nil
-
-	return nil
-}
-
-// Check
-func (p *PageSearchElderByKeyQuery) Check() error {
-	if p.PageNum == nil {
-		return types.NewError(http.StatusBadRequest, "page_num is required")
-	}
-	if p.PageSize == nil {
-		return types.NewError(http.StatusBadRequest, "page_size is required")
-	}
-	return nil
-}
-
-// UnmarshalJSON
-func (p *PageSearchElderByKeyQuery) UnmarshalJSON(data []byte) error {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Error(r)
-			return
-		}
-	}()
-
-	ok := gjson.ValidBytes(data)
-	if !ok {
-		return errors.New("invalid json")
-	}
-	_result := gjson.ParseBytes(data)
-	var e error
-	_result.ForEach(func(key, value gjson.Result) bool {
-		switch key.Str {
-		case "page_num":
-			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *int {
-				var obj *int
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		case "page_size":
-			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *int {
-				var obj *int
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		case "name":
-			e = types.Unmarshal(value, &p.Name, func(value gjson.Result) *string {
-				var obj *string
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		case "phone":
-			e = types.Unmarshal(value, &p.Phone, func(value gjson.Result) *string {
-				var obj *string
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		}
-		if e != nil {
-			log.Error(e)
-			return false
-		}
-		return true
-	})
-	return nil
-}
-
-// UnmarshalValues
-func (p *PageSearchElderByKeyQuery) UnmarshalValues(m map[string][]string) error {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Error(r)
-			return
-		}
-	}()
-
-	var e error
-	for k, v := range m {
-		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
-		switch k {
-		case "page_num":
-			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *int {
-				var obj *int
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		case "page_size":
-			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *int {
-				var obj *int
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		case "name":
-			e = types.Unmarshal(value, &p.Name, func(value gjson.Result) *string {
-				var obj *string
-				e := types.Unmarshal(value, &obj)
-				if e != nil {
-					panic(e)
-				}
-				return obj
-			}(value))
-		case "phone":
-			e = types.Unmarshal(value, &p.Phone, func(value gjson.Result) *string {
 				var obj *string
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
@@ -24891,6 +24783,21 @@ func (p *DeleteCommunicationRecordQuery) UnmarshalValues(m map[string][]string) 
 	}
 
 	return nil
+}
+
+/*
+	--- PageVisitPlanVO ---
+*/
+// MarshalJSON
+func (p *PageVisitPlanVO) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(6 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
+	write.WriteRaw("title", types.Marshal(p.Title))
+	write.WriteRaw("plan_date", types.Marshal(p.PlanDate))
+	write.WriteRaw("complete_date", types.Marshal(p.CompleteDate))
+	write.WriteRaw("content", types.Marshal(p.Content))
+	return write.Bytes(), nil
 }
 
 /*

@@ -12,14 +12,14 @@ type PageElderByKeyQuery struct {
 	ElderSex  *string `json:"elder_sex"`                  // 老人性别
 }
 
-// @request
-// PageSearchElderByKeyQuery 分页搜索老人请求
-type PageSearchElderByKeyQuery struct {
-	PageNum  *int    `json:"page_num" valid:"required"`  // 页码
-	PageSize *int    `json:"page_size" valid:"required"` // 条数
-	Name     *string `json:"name"`                       // 老人姓名
-	Phone    *string `json:"phone"`                      // 老人电话
-}
+// // @request
+// // PageSearchElderByKeyQuery 分页搜索老人请求
+// type PageSearchElderByKeyQuery struct {
+// 	PageNum  *int    `json:"page_num" valid:"required"`  // 页码
+// 	PageSize *int    `json:"page_size" valid:"required"` // 条数
+// 	Name     *string `json:"name"`                       // 老人姓名
+// 	Phone    *string `json:"phone"`                      // 老人电话
+// }
 
 // @request
 // EditElderLabelQuery 编辑老人标签请求
@@ -41,7 +41,6 @@ type AuditElderFeeQuery struct {
 // @response
 // PageElderByKeyVO 分页查询长者响应
 type PageElderByKeyVO struct {
-	Rank
 	ID        int64  `json:"id"`         // id
 	BedName   string `json:"bed_name"`   // 床位名称
 	Name      string `json:"name"`       // 姓名

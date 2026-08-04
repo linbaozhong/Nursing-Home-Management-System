@@ -32,7 +32,6 @@ type OperateDishesTypeQuery struct {
 // @response
 // PageDishesByKeyVO 分页查询菜品响应
 type PageDishesByKeyVO struct {
-	Rank
 	ID         int64   `json:"id"`          // id
 	TypeName   string  `json:"type_name"`   // 类别名称
 	DishesName string  `json:"dishes_name"` // 菜品名称

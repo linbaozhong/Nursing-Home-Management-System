@@ -41,10 +41,22 @@ type EditConsumeQuery struct {
 // @response
 // PageConsumeByKeyVO 分页查询消费记录响应
 type PageConsumeByKeyVO struct {
-	Rank
+	ID            int64     `json:"id"`             // 消费记录编号
 	ElderName     string    `json:"elder_name"`     // 老人姓名
 	IDNum         string    `json:"id_num"`         // 身份证号
 	ConsumeType   string    `json:"consume_type"`   // 消费类别
 	ConsumeAmount float64   `json:"consume_amount"` // 消费金额
 	ConsumeDate   time.Time `json:"consume_date"`   // 消费日期
+}
+
+// @response
+// GetConsumeByIdVO 根据编号获取消费记录响应
+type GetConsumeByIdVO struct {
+	ID            int64     `json:"id"`             // 消费记录编号
+	ElderID       int64     `json:"elder_id"`       // 老人编号
+	ElderName     string    `json:"elder_name"`     // 老人姓名
+	ConsumeType   string    `json:"consume_type"`   // 消费类别
+	ConsumeAmount float64   `json:"consume_amount"` // 消费金额
+	ConsumeDate   time.Time `json:"consume_date"`   // 消费日期
+	Remark        string    `json:"remark"`         // 备注
 }

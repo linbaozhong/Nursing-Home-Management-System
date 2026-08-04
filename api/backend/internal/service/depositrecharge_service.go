@@ -2,108 +2,134 @@ package service
 
 import (
 	"context"
+	"errors"
+	"strconv"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblbed"
+	"api/internal/model/define/table/tblelder"
+	"api/internal/model/do"
 	"api/internal/model/dto"
-	"github.com/linbaozhong/gentity/pkg/ace/dialect"
+
 	"github.com/linbaozhong/gentity/pkg/types"
 )
+
+// depositRechargeRow 联表查询接收结构（elder_id 用 int64 接收，再转 VO 的 string）
+type depositRechargeRow struct {
+	ElderID    int64   `json:"elder_id"`
+	ElderName  string  `json:"elder_name"`
+	ElderPhone string  `json:"elder_phone"`
+	IDNum      string  `json:"id_num"`
+	BedName    string  `json:"bed_name"`
+	Balance    float64 `json:"balance"`
+}
 
 type depositrecharge struct{}
 
 var DepositRecharge = &depositrecharge{}
 
-// PageDepositRechargeByKey 分页查询定金/充值（联表 elder、user）
-// 对应 Java: DepositRechargeServiceImpl.pageDepositRechargeByKey -> DepositRechargeMapper.listDepositRechargeByKey
-// SQL: SELECT dr.*, e.elder_name, u.name AS charge_user_name FROM deposit_recharge dr
-//
-//	LEFT JOIN elder e ON e.id = dr.elder_id
-//	LEFT JOIN user u ON u.id = dr.charge_user_id
-//	WHERE (e.elder_name LIKE %key% OR dr.id = key) [可选]
-//	ORDER BY dr.create_time DESC; 再由 PageUtil 内存分页。
-//
-// Todo: 1) in.Key 非空 -> (tbl<depositrecharge>.Id.Eq(in.Key) OR tbl<elder>.ElderName.Like(in.Key))
-//
-//	2) DB 分页: Count + List(联表 LeftJoin)
-//	3) 组装含老人/负责人姓名的 VO 并赋值 out
-func (d *depositrecharge) PageDepositRechargeByKey(ctx context.Context, in *dto.PageDepositRechargeByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
-	return nil
-}
-
-// GetDepositRechargeById 根据编号获取定金/充值
-// 对应 Java: DepositRechargeServiceImpl.getDepositRechargeById -> depositRechargeMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.DepositRecharge(db).GetByID(ctx, types.BigInt(in.ID))
-func (d *depositrecharge) GetDepositRechargeById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.DepositRecharge(db).GetByID(ctx, types.BigInt(in.ID))
+// PageDepositRechargeByKey 分页查询预存充值（入住/退住审核老人，联表床位）
+// 对应 Java: DepositRechargeServiceImpl.pageDepositRechargeByKey -> ElderMapper.listDepositRechargeByKey
+func (d *depositrecharge) PageDepositRechargeByKey(ctx context.Context, in *dto.PageDepositRechargeByKeyQuery, out *[]dto.PageDepositRechargeByKeyVO) error {
+	q := db.Table(do.ElderTableName).
+		LeftJoin(tblelder.BedId, tblbed.Id).
+		Where(
+			tblelder.DelFlag.Eq(constant.YesNoNo),
+			tblelder.CheckFlag.In(
+				types.Int8(constant.CheckEnter),
+				types.Int8(constant.CheckExitAudit),
+			),
+		)
+	if in.Name != nil && *in.Name != "" {
+		q.And(tblelder.Name.Like(*in.Name))
+	}
+	if in.Phone != nil && *in.Phone != "" {
+		q.And(tblelder.Phone.Like(*in.Phone))
+	}
+	if in.IDNum != nil && *in.IDNum != "" {
+		q.And(tblelder.IdNum.Like(*in.IDNum))
+	}
+	var rows []depositRechargeRow
+	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(
+			tblelder.Id.AsName("elder_id"),
+			tblelder.Name.AsName("elder_name"),
+			tblelder.Phone.AsName("elder_phone"),
+			tblelder.IdNum.AsName("id_num"),
+			tblbed.Name.AsName("bed_name"),
+			tblelder.Balance,
+		).
+		Desc(tblelder.CreateTime).
+		Select().
+		Gets(ctx, &rows)
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
+	*out = make([]dto.PageDepositRechargeByKeyVO, 0, len(rows))
+	for _, r := range rows {
+		*out = append(*out, dto.PageDepositRechargeByKeyVO{
+			ElderID:    strconv.FormatInt(r.ElderID, 10),
+			ElderName:  r.ElderName,
+			ElderPhone: r.ElderPhone,
+			IDNum:      r.IDNum,
+			BedName:    r.BedName,
+			Balance:    r.Balance,
+		})
+	}
 	return nil
 }
 
-// AddDepositRecharge 新增定金/充值（同时更新老人账户余额）
-// 对应 Java: DepositRechargeServiceImpl.addDepositRecharge -> insert deposit_recharge + 更新 elder_account 余额
-// todo: 事务: 1) dao.DepositRecharge(db).InsertOne; 2) 更新对应 elder 账户余额(余额+/-金额)
+// PageSearchElderByKey 分页搜索老人（入住/退住审核老人，供选择）
+// 对应 Java: DepositRechargeServiceImpl.pageSearchElderByKey -> CommonFunc.pageSearchElderByKeyResult
+func (d *depositrecharge) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+	q := db.Table(do.ElderTableName).
+		Where(
+			tblelder.DelFlag.Eq(constant.YesNoNo),
+			tblelder.CheckFlag.In(
+				types.Int8(constant.CheckEnter),
+				types.Int8(constant.CheckExitAudit),
+			),
+		)
+	if in.Key != nil && *in.Key != "" {
+		q.And(tblelder.Name.Like(*in.Key))
+		q.Or(tblelder.Phone.Like(*in.Key))
+	}
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(
+			tblelder.Id,
+			tblelder.Name,
+			tblelder.IdNum,
+			tblelder.Sex,
+			tblelder.Phone,
+			tblelder.Address,
+			tblelder.CheckFlag,
+		).
+		Desc(tblelder.CreateTime).
+		Select().
+		Gets(ctx, out)
+}
+
+// 以下方法为脚手架生成但无对应 Java 后端业务/数据表（deposit_recharge、elder_fee 等表在 Go 端未生成），
+// 保留签名以维持 handler 路由可编译，返回未实现错误。
+func (d *depositrecharge) GetDepositRechargeById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
+	return errors.New("not implemented")
+}
 func (d *depositrecharge) AddDepositRecharge(ctx context.Context, in *dto.AddDepositRechargeQuery, out *dto.EmptyResp) error {
-	// todo: 写入 deposit_recharge 并更新老人账户余额
-	return nil
+	return errors.New("not implemented")
 }
-
-// EditDepositRecharge 编辑定金/充值
-// 对应 Java: DepositRechargeServiceImpl.editDepositRecharge -> depositRechargeMapper.updateByPrimaryKeySelective
-// todo: 标准 CRUD - 按主键更新 deposit_recharge 表
 func (d *depositrecharge) EditDepositRecharge(ctx context.Context, in *dto.EditDepositRechargeQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<depositrecharge>.Remark.Value(in.Remark),
-	}
-	_, e := dao.DepositRecharge(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
-	return e
+	return errors.New("not implemented")
 }
-
-// DeleteDepositRecharge 删除定金/充值（回滚老人账户余额）
-// 对应 Java: DepositRechargeServiceImpl.deleteDepositRecharge -> 删记录 + 回滚 elder_account 余额
-// todo: 事务: 1) 查原记录; 2) 回滚账户余额; 3) dao.DepositRecharge(db).DeleteById
 func (d *depositrecharge) DeleteDepositRecharge(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.DepositRecharge(db).DeleteById(ctx, types.BigInt(in.ID))
-	return e
+	return errors.New("not implemented")
 }
-
-// PageSearchElderByKey 分页搜索老人（供定金/充值选择老人）
-// 对应 Java: DepositRechargeServiceImpl.pageSearchElderByKey -> elderMapper.listElderByKey
-// SQL: SELECT * FROM elder WHERE (elder_name LIKE %key% OR id = key) [可选] AND del_flag=0
-// todo: 查询 elder 表并分页, 结果赋值 out(需定义老人分页返回类型)
-func (d *depositrecharge) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 elder 表并分页
-	return nil
-}
-
-// PageSearchStaffByKey 分页搜索员工（供定金/充值选择负责人）
-// 对应 Java: DepositRechargeServiceImpl.pageSearchStaffByKey -> userMapper.listStaffByKey
-// SQL: SELECT * FROM user WHERE (name LIKE %key% OR id = key) [可选] AND role 为员工
-// todo: 查询 user(员工)表并分页, 结果赋值 out(需定义员工分页返回类型)
 func (d *depositrecharge) PageSearchStaffByKey(ctx context.Context, in *dto.PageSearchStaffByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 user 员工并分页
-	return nil
+	return errors.New("not implemented")
 }
-
-// GetElderFeeById 根据老人编号获取费用明细
-// 对应 Java: DepositRechargeServiceImpl.getElderFeeById -> 聚合查询老人各项费用/余额
-// todo: 查询 elder_account / elder_fee 等, 汇总返回老人费用(需定义返回类型)
 func (d *depositrecharge) GetElderFeeById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 聚合查询老人费用
-	return nil
+	return errors.New("not implemented")
 }
-
-// AuditElderFee 审核老人费用
-// 对应 Java: DepositRechargeServiceImpl.auditElderFee -> 更新费用审核状态
-// todo: 更新 elder_fee 审核状态/字段(UpdateById), 结果赋值 out
 func (d *depositrecharge) AuditElderFee(ctx context.Context, in *dto.AuditElderFeeQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: tbl<elderfee>.AuditStatus.Value(in.AuditStatus),
-	}
-	_, e := dao.ElderFee(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
-	return e
+	return errors.New("not implemented")
 }
