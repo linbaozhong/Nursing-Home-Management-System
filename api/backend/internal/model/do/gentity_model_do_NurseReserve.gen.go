@@ -36,9 +36,6 @@ func (p *NurseReserve) MarshalJSON() ([]byte, error) {
 	if p.ChargeMethod != "" {
 		write.WriteRaw("charge_method", types.Marshal(p.ChargeMethod))
 	}
-	if p.OrderFlag != "" {
-		write.WriteRaw("order_flag", types.Marshal(p.OrderFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -75,6 +72,9 @@ func (p *NurseReserve) MarshalJSON() ([]byte, error) {
 	if p.Frequency != 0 {
 		write.WriteRaw("frequency", types.Marshal(p.Frequency))
 	}
+	if p.OrderFlag != 0 {
+		write.WriteRaw("order_flag", types.Marshal(p.OrderFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -92,8 +92,6 @@ func (p *NurseReserve) UnmarshalJSON(data []byte) error {
 			p.ServiceName = types.String(value.Str)
 		case "charge_method":
 			p.ChargeMethod = types.String(value.Str)
-		case "order_flag":
-			p.OrderFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -118,6 +116,8 @@ func (p *NurseReserve) UnmarshalJSON(data []byte) error {
 			p.NeedDate = types.Int32(value.Int())
 		case "frequency":
 			p.Frequency = types.Int32(value.Int())
+		case "order_flag":
+			p.OrderFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -141,7 +141,6 @@ func (p *NurseReserve) Free() {
 func (p *NurseReserve) Reset() {
 	p.ServiceName = ""
 	p.ChargeMethod = ""
-	p.OrderFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.StaffId = 0
@@ -154,6 +153,7 @@ func (p *NurseReserve) Reset() {
 	p.UpdateTime = types.Time{}
 	p.NeedDate = 0
 	p.Frequency = 0
+	p.OrderFlag = 0
 
 }
 
@@ -165,7 +165,6 @@ func (p *NurseReserve) TableName() string {
 var nursereserveFieldToPtrFunc = map[string]func(*NurseReserve) any{
 	tblnursereserve.ServiceName.Name:  func(p *NurseReserve) any { return &p.ServiceName },
 	tblnursereserve.ChargeMethod.Name: func(p *NurseReserve) any { return &p.ChargeMethod },
-	tblnursereserve.OrderFlag.Name:    func(p *NurseReserve) any { return &p.OrderFlag },
 	tblnursereserve.Id.Name:           func(p *NurseReserve) any { return &p.Id },
 	tblnursereserve.ElderId.Name:      func(p *NurseReserve) any { return &p.ElderId },
 	tblnursereserve.StaffId.Name:      func(p *NurseReserve) any { return &p.StaffId },
@@ -178,6 +177,7 @@ var nursereserveFieldToPtrFunc = map[string]func(*NurseReserve) any{
 	tblnursereserve.UpdateTime.Name:   func(p *NurseReserve) any { return &p.UpdateTime },
 	tblnursereserve.NeedDate.Name:     func(p *NurseReserve) any { return &p.NeedDate },
 	tblnursereserve.Frequency.Name:    func(p *NurseReserve) any { return &p.Frequency },
+	tblnursereserve.OrderFlag.Name:    func(p *NurseReserve) any { return &p.OrderFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -259,9 +259,6 @@ var nursereserveFieldToValueFunc = map[dialect.Field]func(*NurseReserve) (any, b
 	tblnursereserve.ChargeMethod: func(p *NurseReserve) (any, bool) {
 		return p.ChargeMethod, p.ChargeMethod == ""
 	},
-	tblnursereserve.OrderFlag: func(p *NurseReserve) (any, bool) {
-		return p.OrderFlag, p.OrderFlag == ""
-	},
 	tblnursereserve.Id: func(p *NurseReserve) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -297,6 +294,9 @@ var nursereserveFieldToValueFunc = map[dialect.Field]func(*NurseReserve) (any, b
 	},
 	tblnursereserve.Frequency: func(p *NurseReserve) (any, bool) {
 		return p.Frequency, p.Frequency == 0
+	},
+	tblnursereserve.OrderFlag: func(p *NurseReserve) (any, bool) {
+		return p.OrderFlag, p.OrderFlag == 0
 	},
 }
 

@@ -9,7 +9,6 @@ import (
 var (
 	ServiceName  = dialect.Field{Name: "service_name", Json: "service_name", Table: "nurse_reserve", Type: "types.String", IsRelation: false}
 	ChargeMethod = dialect.Field{Name: "charge_method", Json: "charge_method", Table: "nurse_reserve", Type: "types.String", IsRelation: false}
-	OrderFlag    = dialect.Field{Name: "order_flag", Json: "order_flag", Table: "nurse_reserve", Type: "types.String", IsRelation: false}
 	Id           = dialect.Field{Name: "id", Json: "id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
 	ElderId      = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
 	StaffId      = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
@@ -22,6 +21,7 @@ var (
 	UpdateTime   = dialect.Field{Name: "update_time", Json: "update_time", Table: "nurse_reserve", Type: "types.Time", IsRelation: false}
 	NeedDate     = dialect.Field{Name: "need_date", Json: "need_date", Table: "nurse_reserve", Type: "types.Int32", IsRelation: false}
 	Frequency    = dialect.Field{Name: "frequency", Json: "frequency", Table: "nurse_reserve", Type: "types.Int32", IsRelation: false}
+	OrderFlag    = dialect.Field{Name: "order_flag", Json: "order_flag", Table: "nurse_reserve", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -29,7 +29,6 @@ var (
 	WritableFields = []dialect.Field{
 		ServiceName,
 		ChargeMethod,
-		OrderFlag,
 		Id,
 		ElderId,
 		StaffId,
@@ -42,12 +41,12 @@ var (
 		UpdateTime,
 		NeedDate,
 		Frequency,
+		OrderFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		ServiceName,
 		ChargeMethod,
-		OrderFlag,
 		Id,
 		ElderId,
 		StaffId,
@@ -60,5 +59,6 @@ var (
 		UpdateTime,
 		NeedDate,
 		Frequency,
+		OrderFlag,
 	}
 )

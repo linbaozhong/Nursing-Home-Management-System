@@ -33,12 +33,6 @@ func (p *Bed) MarshalJSON() ([]byte, error) {
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.BedFlag != "" {
-		write.WriteRaw("bed_flag", types.Marshal(p.BedFlag))
-	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -57,6 +51,12 @@ func (p *Bed) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
+	if p.BedFlag != 0 {
+		write.WriteRaw("bed_flag", types.Marshal(p.BedFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -72,10 +72,6 @@ func (p *Bed) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "bed_flag":
-			p.BedFlag = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "room_id":
@@ -88,6 +84,10 @@ func (p *Bed) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
+		case "bed_flag":
+			p.BedFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -110,14 +110,14 @@ func (p *Bed) Free() {
 // Reset
 func (p *Bed) Reset() {
 	p.Name = ""
-	p.BedFlag = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.RoomId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
+	p.BedFlag = 0
 
 }
 
@@ -128,14 +128,14 @@ func (p *Bed) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var bedFieldToPtrFunc = map[string]func(*Bed) any{
 	tblbed.Name.Name:       func(p *Bed) any { return &p.Name },
-	tblbed.BedFlag.Name:    func(p *Bed) any { return &p.BedFlag },
-	tblbed.DelFlag.Name:    func(p *Bed) any { return &p.DelFlag },
 	tblbed.Id.Name:         func(p *Bed) any { return &p.Id },
 	tblbed.RoomId.Name:     func(p *Bed) any { return &p.RoomId },
 	tblbed.CreateId.Name:   func(p *Bed) any { return &p.CreateId },
 	tblbed.CreateTime.Name: func(p *Bed) any { return &p.CreateTime },
 	tblbed.UpdateId.Name:   func(p *Bed) any { return &p.UpdateId },
 	tblbed.UpdateTime.Name: func(p *Bed) any { return &p.UpdateTime },
+	tblbed.DelFlag.Name:    func(p *Bed) any { return &p.DelFlag },
+	tblbed.BedFlag.Name:    func(p *Bed) any { return &p.BedFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -214,12 +214,6 @@ var bedFieldToValueFunc = map[dialect.Field]func(*Bed) (any, bool){
 	tblbed.Name: func(p *Bed) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tblbed.BedFlag: func(p *Bed) (any, bool) {
-		return p.BedFlag, p.BedFlag == ""
-	},
-	tblbed.DelFlag: func(p *Bed) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblbed.Id: func(p *Bed) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -237,6 +231,12 @@ var bedFieldToValueFunc = map[dialect.Field]func(*Bed) (any, bool){
 	},
 	tblbed.UpdateTime: func(p *Bed) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblbed.DelFlag: func(p *Bed) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
+	},
+	tblbed.BedFlag: func(p *Bed) (any, bool) {
+		return p.BedFlag, p.BedFlag == 0
 	},
 }
 

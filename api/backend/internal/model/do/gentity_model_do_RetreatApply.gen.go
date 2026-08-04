@@ -30,9 +30,6 @@ func NewRetreatApply() *RetreatApply {
 // MarshalJSON
 func (p *RetreatApply) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
-	if p.ApplyFlag != "" {
-		write.WriteRaw("apply_flag", types.Marshal(p.ApplyFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -51,6 +48,9 @@ func (p *RetreatApply) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.ApplyFlag != 0 {
+		write.WriteRaw("apply_flag", types.Marshal(p.ApplyFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -64,8 +64,6 @@ func (p *RetreatApply) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "apply_flag":
-			p.ApplyFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -78,6 +76,8 @@ func (p *RetreatApply) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "apply_flag":
+			p.ApplyFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -99,13 +99,13 @@ func (p *RetreatApply) Free() {
 
 // Reset
 func (p *RetreatApply) Reset() {
-	p.ApplyFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.ApplyFlag = 0
 
 }
 
@@ -115,13 +115,13 @@ func (p *RetreatApply) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var retreatapplyFieldToPtrFunc = map[string]func(*RetreatApply) any{
-	tblretreatapply.ApplyFlag.Name:  func(p *RetreatApply) any { return &p.ApplyFlag },
 	tblretreatapply.Id.Name:         func(p *RetreatApply) any { return &p.Id },
 	tblretreatapply.ElderId.Name:    func(p *RetreatApply) any { return &p.ElderId },
 	tblretreatapply.CreateId.Name:   func(p *RetreatApply) any { return &p.CreateId },
 	tblretreatapply.CreateTime.Name: func(p *RetreatApply) any { return &p.CreateTime },
 	tblretreatapply.UpdateId.Name:   func(p *RetreatApply) any { return &p.UpdateId },
 	tblretreatapply.UpdateTime.Name: func(p *RetreatApply) any { return &p.UpdateTime },
+	tblretreatapply.ApplyFlag.Name:  func(p *RetreatApply) any { return &p.ApplyFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -197,9 +197,6 @@ func (p *RetreatApply) RawAssignValues(d dialect.Dialect, args ...dialect.Field)
 
 // 定义字段到值检查和获取函数的映射
 var retreatapplyFieldToValueFunc = map[dialect.Field]func(*RetreatApply) (any, bool){
-	tblretreatapply.ApplyFlag: func(p *RetreatApply) (any, bool) {
-		return p.ApplyFlag, p.ApplyFlag == ""
-	},
 	tblretreatapply.Id: func(p *RetreatApply) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -217,6 +214,9 @@ var retreatapplyFieldToValueFunc = map[dialect.Field]func(*RetreatApply) (any, b
 	},
 	tblretreatapply.UpdateTime: func(p *RetreatApply) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblretreatapply.ApplyFlag: func(p *RetreatApply) (any, bool) {
+		return p.ApplyFlag, p.ApplyFlag == 0
 	},
 }
 

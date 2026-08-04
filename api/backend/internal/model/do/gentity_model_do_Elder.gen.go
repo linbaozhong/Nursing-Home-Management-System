@@ -45,9 +45,6 @@ func (p *Elder) MarshalJSON() ([]byte, error) {
 	if p.Address != "" {
 		write.WriteRaw("address", types.Marshal(p.Address))
 	}
-	if p.CheckFlag != "" {
-		write.WriteRaw("check_flag", types.Marshal(p.CheckFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -78,6 +75,9 @@ func (p *Elder) MarshalJSON() ([]byte, error) {
 	if p.Age != 0 {
 		write.WriteRaw("age", types.Marshal(p.Age))
 	}
+	if p.CheckFlag != 0 {
+		write.WriteRaw("check_flag", types.Marshal(p.CheckFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -101,8 +101,6 @@ func (p *Elder) UnmarshalJSON(data []byte) error {
 			p.Phone = types.String(value.Str)
 		case "address":
 			p.Address = types.String(value.Str)
-		case "check_flag":
-			p.CheckFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "nursing_grade_id":
@@ -123,6 +121,8 @@ func (p *Elder) UnmarshalJSON(data []byte) error {
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "age":
 			p.Age = types.Int32(value.Int())
+		case "check_flag":
+			p.CheckFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -149,7 +149,6 @@ func (p *Elder) Reset() {
 	p.Sex = ""
 	p.Phone = ""
 	p.Address = ""
-	p.CheckFlag = ""
 	p.Id = 0
 	p.NursingGradeId = 0
 	p.CateringSetId = 0
@@ -160,6 +159,7 @@ func (p *Elder) Reset() {
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.Age = 0
+	p.CheckFlag = 0
 
 }
 
@@ -174,7 +174,6 @@ var elderFieldToPtrFunc = map[string]func(*Elder) any{
 	tblelder.Sex.Name:            func(p *Elder) any { return &p.Sex },
 	tblelder.Phone.Name:          func(p *Elder) any { return &p.Phone },
 	tblelder.Address.Name:        func(p *Elder) any { return &p.Address },
-	tblelder.CheckFlag.Name:      func(p *Elder) any { return &p.CheckFlag },
 	tblelder.Id.Name:             func(p *Elder) any { return &p.Id },
 	tblelder.NursingGradeId.Name: func(p *Elder) any { return &p.NursingGradeId },
 	tblelder.CateringSetId.Name:  func(p *Elder) any { return &p.CateringSetId },
@@ -185,6 +184,7 @@ var elderFieldToPtrFunc = map[string]func(*Elder) any{
 	tblelder.UpdateId.Name:       func(p *Elder) any { return &p.UpdateId },
 	tblelder.UpdateTime.Name:     func(p *Elder) any { return &p.UpdateTime },
 	tblelder.Age.Name:            func(p *Elder) any { return &p.Age },
+	tblelder.CheckFlag.Name:      func(p *Elder) any { return &p.CheckFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -275,9 +275,6 @@ var elderFieldToValueFunc = map[dialect.Field]func(*Elder) (any, bool){
 	tblelder.Address: func(p *Elder) (any, bool) {
 		return p.Address, p.Address == ""
 	},
-	tblelder.CheckFlag: func(p *Elder) (any, bool) {
-		return p.CheckFlag, p.CheckFlag == ""
-	},
 	tblelder.Id: func(p *Elder) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -307,6 +304,9 @@ var elderFieldToValueFunc = map[dialect.Field]func(*Elder) (any, bool){
 	},
 	tblelder.Age: func(p *Elder) (any, bool) {
 		return p.Age, p.Age == 0
+	},
+	tblelder.CheckFlag: func(p *Elder) (any, bool) {
+		return p.CheckFlag, p.CheckFlag == 0
 	},
 }
 

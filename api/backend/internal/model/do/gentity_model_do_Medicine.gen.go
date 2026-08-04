@@ -45,9 +45,6 @@ func (p *Medicine) MarshalJSON() ([]byte, error) {
 	if p.Manufacturer != "" {
 		write.WriteRaw("manufacturer", types.Marshal(p.Manufacturer))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -62,6 +59,9 @@ func (p *Medicine) MarshalJSON() ([]byte, error) {
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
 	}
 	return write.Bytes(), nil
 }
@@ -86,8 +86,6 @@ func (p *Medicine) UnmarshalJSON(data []byte) error {
 			p.DosageForm = types.String(value.Str)
 		case "manufacturer":
 			p.Manufacturer = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "create_id":
@@ -98,6 +96,8 @@ func (p *Medicine) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -124,12 +124,12 @@ func (p *Medicine) Reset() {
 	p.Specification = ""
 	p.DosageForm = ""
 	p.Manufacturer = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
 
 }
 
@@ -144,12 +144,12 @@ var medicineFieldToPtrFunc = map[string]func(*Medicine) any{
 	tblmedicine.Specification.Name: func(p *Medicine) any { return &p.Specification },
 	tblmedicine.DosageForm.Name:    func(p *Medicine) any { return &p.DosageForm },
 	tblmedicine.Manufacturer.Name:  func(p *Medicine) any { return &p.Manufacturer },
-	tblmedicine.DelFlag.Name:       func(p *Medicine) any { return &p.DelFlag },
 	tblmedicine.Id.Name:            func(p *Medicine) any { return &p.Id },
 	tblmedicine.CreateId.Name:      func(p *Medicine) any { return &p.CreateId },
 	tblmedicine.CreateTime.Name:    func(p *Medicine) any { return &p.CreateTime },
 	tblmedicine.UpdateId.Name:      func(p *Medicine) any { return &p.UpdateId },
 	tblmedicine.UpdateTime.Name:    func(p *Medicine) any { return &p.UpdateTime },
+	tblmedicine.DelFlag.Name:       func(p *Medicine) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -240,9 +240,6 @@ var medicineFieldToValueFunc = map[dialect.Field]func(*Medicine) (any, bool){
 	tblmedicine.Manufacturer: func(p *Medicine) (any, bool) {
 		return p.Manufacturer, p.Manufacturer == ""
 	},
-	tblmedicine.DelFlag: func(p *Medicine) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblmedicine.Id: func(p *Medicine) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -257,6 +254,9 @@ var medicineFieldToValueFunc = map[dialect.Field]func(*Medicine) (any, bool){
 	},
 	tblmedicine.UpdateTime: func(p *Medicine) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblmedicine.DelFlag: func(p *Medicine) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

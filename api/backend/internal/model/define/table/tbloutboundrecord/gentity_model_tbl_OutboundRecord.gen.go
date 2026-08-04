@@ -9,8 +9,6 @@ import (
 var (
 	RecipientType = dialect.Field{Name: "recipient_type", Json: "recipient_type", Table: "outbound_record", Type: "types.String", IsRelation: false}
 	MaterialUse   = dialect.Field{Name: "material_use", Json: "material_use", Table: "outbound_record", Type: "types.String", IsRelation: false}
-	OutboundFlag  = dialect.Field{Name: "outbound_flag", Json: "outbound_flag", Table: "outbound_record", Type: "types.String", IsRelation: false}
-	DelFlag       = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "outbound_record", Type: "types.String", IsRelation: false}
 	Id            = dialect.Field{Name: "id", Json: "id", Table: "outbound_record", Type: "types.BigInt", IsRelation: false}
 	WarehouseId   = dialect.Field{Name: "warehouse_id", Json: "warehouse_id", Table: "outbound_record", Type: "types.BigInt", IsRelation: false}
 	StaffId       = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "outbound_record", Type: "types.BigInt", IsRelation: false}
@@ -20,6 +18,8 @@ var (
 	CreateTime    = dialect.Field{Name: "create_time", Json: "create_time", Table: "outbound_record", Type: "types.Time", IsRelation: false}
 	UpdateId      = dialect.Field{Name: "update_id", Json: "update_id", Table: "outbound_record", Type: "types.BigInt", IsRelation: false}
 	UpdateTime    = dialect.Field{Name: "update_time", Json: "update_time", Table: "outbound_record", Type: "types.Time", IsRelation: false}
+	OutboundFlag  = dialect.Field{Name: "outbound_flag", Json: "outbound_flag", Table: "outbound_record", Type: "types.Int8", IsRelation: false}
+	DelFlag       = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "outbound_record", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -27,8 +27,6 @@ var (
 	WritableFields = []dialect.Field{
 		RecipientType,
 		MaterialUse,
-		OutboundFlag,
-		DelFlag,
 		Id,
 		WarehouseId,
 		StaffId,
@@ -38,13 +36,13 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		OutboundFlag,
+		DelFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		RecipientType,
 		MaterialUse,
-		OutboundFlag,
-		DelFlag,
 		Id,
 		WarehouseId,
 		StaffId,
@@ -54,5 +52,7 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		OutboundFlag,
+		DelFlag,
 	}
 )

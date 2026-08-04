@@ -8,7 +8,6 @@ import (
 
 var (
 	DineType          = dialect.Field{Name: "dine_type", Json: "dine_type", Table: "order", Type: "types.String", IsRelation: false}
-	OrderFlag         = dialect.Field{Name: "order_flag", Json: "order_flag", Table: "order", Type: "types.String", IsRelation: false}
 	Id                = dialect.Field{Name: "id", Json: "id", Table: "order", Type: "types.BigInt", IsRelation: false}
 	ElderId           = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "order", Type: "types.BigInt", IsRelation: false}
 	StaffId           = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "order", Type: "types.BigInt", IsRelation: false}
@@ -19,13 +18,13 @@ var (
 	CreateTime        = dialect.Field{Name: "create_time", Json: "create_time", Table: "order", Type: "types.Time", IsRelation: false}
 	UpdateId          = dialect.Field{Name: "update_id", Json: "update_id", Table: "order", Type: "types.BigInt", IsRelation: false}
 	UpdateTime        = dialect.Field{Name: "update_time", Json: "update_time", Table: "order", Type: "types.Time", IsRelation: false}
+	OrderFlag         = dialect.Field{Name: "order_flag", Json: "order_flag", Table: "order", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
 		DineType,
-		OrderFlag,
 		Id,
 		ElderId,
 		StaffId,
@@ -36,11 +35,11 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		OrderFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		DineType,
-		OrderFlag,
 		Id,
 		ElderId,
 		StaffId,
@@ -51,5 +50,6 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		OrderFlag,
 	}
 )

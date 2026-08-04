@@ -9,7 +9,6 @@ import (
 var (
 	Title        = dialect.Field{Name: "title", Json: "title", Table: "visit_plan", Type: "types.String", IsRelation: false}
 	Content      = dialect.Field{Name: "content", Json: "content", Table: "visit_plan", Type: "types.String", IsRelation: false}
-	DelFlag      = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "visit_plan", Type: "types.String", IsRelation: false}
 	Id           = dialect.Field{Name: "id", Json: "id", Table: "visit_plan", Type: "types.BigInt", IsRelation: false}
 	ElderId      = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "visit_plan", Type: "types.BigInt", IsRelation: false}
 	PlanDate     = dialect.Field{Name: "plan_date", Json: "plan_date", Table: "visit_plan", Type: "types.Time", IsRelation: false}
@@ -18,6 +17,7 @@ var (
 	CreateTime   = dialect.Field{Name: "create_time", Json: "create_time", Table: "visit_plan", Type: "types.Time", IsRelation: false}
 	UpdateId     = dialect.Field{Name: "update_id", Json: "update_id", Table: "visit_plan", Type: "types.BigInt", IsRelation: false}
 	UpdateTime   = dialect.Field{Name: "update_time", Json: "update_time", Table: "visit_plan", Type: "types.Time", IsRelation: false}
+	DelFlag      = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "visit_plan", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -25,7 +25,6 @@ var (
 	WritableFields = []dialect.Field{
 		Title,
 		Content,
-		DelFlag,
 		Id,
 		ElderId,
 		PlanDate,
@@ -34,12 +33,12 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Title,
 		Content,
-		DelFlag,
 		Id,
 		ElderId,
 		PlanDate,
@@ -48,5 +47,6 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 )

@@ -34,10 +34,18 @@ type OperateCheckContractQuery struct {
 
 // ============ CheckContractController 响应 ============
 
+// @request
+// PageSearchElderByKeyQuery 分页搜索老人请求
+type PageSearchElderByKeyQuery struct {
+	PageNum  *int    `json:"page_num" valid:"required"`  // 页码
+	PageSize *int    `json:"page_size" valid:"required"` // 条数
+	Name     *string `json:"name"`                       // 姓名
+	Phone    *string `json:"phone"`                      // 联系电话
+}
+
 // @response
 // PageCheckContractByKeyVO 分页查询入住签约响应
 type PageCheckContractByKeyVO struct {
-	Rank
 	ID        int64  `json:"id"`         // id
 	Name      string `json:"name"`       // 姓名
 	IDNum     string `json:"id_num"`     // 身份证号
@@ -49,7 +57,24 @@ type PageCheckContractByKeyVO struct {
 }
 
 // @response
+// PageSearchElderByKeyVO 分页搜索老人响应
+type PageSearchElderByKeyVO struct {
+	ID        int64  `json:"id"`         // id
+	Name      string `json:"name"`       // 姓名
+	IDNum     string `json:"id_num"`     // 身份证号
+	Sex       string `json:"sex"`        // 性别
+	Phone     string `json:"phone"`      // 电话
+	Address   string `json:"address"`    // 地址
+	CheckFlag string `json:"check_flag"` // 入住状态
+}
+
+// @response
 // GetCheckContractByIDVO 根据编号获取入住签约响应（继承 OperateCheckContractQuery）
 type GetCheckContractByIDVO struct {
 	OperateCheckContractQuery
+	StaffID                          *int64                         `json:"staff_id"`                             // 营销人员编号
+	SignDate                         *string                        `json:"sign_date"`                            // 合同签订日期
+	StartDate                        *string                        `json:"start_date"`                           // 合同开始日期
+	EndDate                          *string                        `json:"end_date"`                             // 合同结束日期
+	OperateEmergencyContactQueryList []OperateEmergencyContactQuery `json:"operate_emergency_contact_query_list"` // 紧急联系人
 }

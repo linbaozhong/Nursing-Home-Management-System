@@ -30,12 +30,6 @@ func NewNurse() *Nurse {
 // MarshalJSON
 func (p *Nurse) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(13 * 50)
-	if p.CompleteFlag != "" {
-		write.WriteRaw("complete_flag", types.Marshal(p.CompleteFlag))
-	}
-	if p.DineFlag != "" {
-		write.WriteRaw("dine_flag", types.Marshal(p.DineFlag))
-	}
 	if p.Rest != "" {
 		write.WriteRaw("rest", types.Marshal(p.Rest))
 	}
@@ -69,6 +63,12 @@ func (p *Nurse) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.CompleteFlag != 0 {
+		write.WriteRaw("complete_flag", types.Marshal(p.CompleteFlag))
+	}
+	if p.DineFlag != 0 {
+		write.WriteRaw("dine_flag", types.Marshal(p.DineFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -82,10 +82,6 @@ func (p *Nurse) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "complete_flag":
-			p.CompleteFlag = types.String(value.Str)
-		case "dine_flag":
-			p.DineFlag = types.String(value.Str)
 		case "rest":
 			p.Rest = types.String(value.Str)
 		case "take_medicine":
@@ -108,6 +104,10 @@ func (p *Nurse) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "complete_flag":
+			p.CompleteFlag = types.Int8(value.Int())
+		case "dine_flag":
+			p.DineFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -129,8 +129,6 @@ func (p *Nurse) Free() {
 
 // Reset
 func (p *Nurse) Reset() {
-	p.CompleteFlag = ""
-	p.DineFlag = ""
 	p.Rest = ""
 	p.TakeMedicine = ""
 	p.Active = ""
@@ -142,6 +140,8 @@ func (p *Nurse) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.CompleteFlag = 0
+	p.DineFlag = 0
 
 }
 
@@ -151,8 +151,6 @@ func (p *Nurse) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var nurseFieldToPtrFunc = map[string]func(*Nurse) any{
-	tblnurse.CompleteFlag.Name: func(p *Nurse) any { return &p.CompleteFlag },
-	tblnurse.DineFlag.Name:     func(p *Nurse) any { return &p.DineFlag },
 	tblnurse.Rest.Name:         func(p *Nurse) any { return &p.Rest },
 	tblnurse.TakeMedicine.Name: func(p *Nurse) any { return &p.TakeMedicine },
 	tblnurse.Active.Name:       func(p *Nurse) any { return &p.Active },
@@ -164,6 +162,8 @@ var nurseFieldToPtrFunc = map[string]func(*Nurse) any{
 	tblnurse.CreateTime.Name:   func(p *Nurse) any { return &p.CreateTime },
 	tblnurse.UpdateId.Name:     func(p *Nurse) any { return &p.UpdateId },
 	tblnurse.UpdateTime.Name:   func(p *Nurse) any { return &p.UpdateTime },
+	tblnurse.CompleteFlag.Name: func(p *Nurse) any { return &p.CompleteFlag },
+	tblnurse.DineFlag.Name:     func(p *Nurse) any { return &p.DineFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -239,12 +239,6 @@ func (p *Nurse) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 
 // 定义字段到值检查和获取函数的映射
 var nurseFieldToValueFunc = map[dialect.Field]func(*Nurse) (any, bool){
-	tblnurse.CompleteFlag: func(p *Nurse) (any, bool) {
-		return p.CompleteFlag, p.CompleteFlag == ""
-	},
-	tblnurse.DineFlag: func(p *Nurse) (any, bool) {
-		return p.DineFlag, p.DineFlag == ""
-	},
 	tblnurse.Rest: func(p *Nurse) (any, bool) {
 		return p.Rest, p.Rest == ""
 	},
@@ -277,6 +271,12 @@ var nurseFieldToValueFunc = map[dialect.Field]func(*Nurse) (any, bool){
 	},
 	tblnurse.UpdateTime: func(p *Nurse) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblnurse.CompleteFlag: func(p *Nurse) (any, bool) {
+		return p.CompleteFlag, p.CompleteFlag == 0
+	},
+	tblnurse.DineFlag: func(p *Nurse) (any, bool) {
+		return p.DineFlag, p.DineFlag == 0
 	},
 }
 

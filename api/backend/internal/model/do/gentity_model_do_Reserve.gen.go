@@ -36,9 +36,6 @@ func (p *Reserve) MarshalJSON() ([]byte, error) {
 	if p.Phone != "" {
 		write.WriteRaw("phone", types.Marshal(p.Phone))
 	}
-	if p.ReserveFlag != "" {
-		write.WriteRaw("reserve_flag", types.Marshal(p.ReserveFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -66,6 +63,9 @@ func (p *Reserve) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.ReserveFlag != 0 {
+		write.WriteRaw("reserve_flag", types.Marshal(p.ReserveFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -83,8 +83,6 @@ func (p *Reserve) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "phone":
 			p.Phone = types.String(value.Str)
-		case "reserve_flag":
-			p.ReserveFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -103,6 +101,8 @@ func (p *Reserve) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "reserve_flag":
+			p.ReserveFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -126,7 +126,6 @@ func (p *Reserve) Free() {
 func (p *Reserve) Reset() {
 	p.Name = ""
 	p.Phone = ""
-	p.ReserveFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.StaffId = 0
@@ -136,6 +135,7 @@ func (p *Reserve) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.ReserveFlag = 0
 
 }
 
@@ -147,7 +147,6 @@ func (p *Reserve) TableName() string {
 var reserveFieldToPtrFunc = map[string]func(*Reserve) any{
 	tblreserve.Name.Name:        func(p *Reserve) any { return &p.Name },
 	tblreserve.Phone.Name:       func(p *Reserve) any { return &p.Phone },
-	tblreserve.ReserveFlag.Name: func(p *Reserve) any { return &p.ReserveFlag },
 	tblreserve.Id.Name:          func(p *Reserve) any { return &p.Id },
 	tblreserve.ElderId.Name:     func(p *Reserve) any { return &p.ElderId },
 	tblreserve.StaffId.Name:     func(p *Reserve) any { return &p.StaffId },
@@ -157,6 +156,7 @@ var reserveFieldToPtrFunc = map[string]func(*Reserve) any{
 	tblreserve.CreateTime.Name:  func(p *Reserve) any { return &p.CreateTime },
 	tblreserve.UpdateId.Name:    func(p *Reserve) any { return &p.UpdateId },
 	tblreserve.UpdateTime.Name:  func(p *Reserve) any { return &p.UpdateTime },
+	tblreserve.ReserveFlag.Name: func(p *Reserve) any { return &p.ReserveFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -238,9 +238,6 @@ var reserveFieldToValueFunc = map[dialect.Field]func(*Reserve) (any, bool){
 	tblreserve.Phone: func(p *Reserve) (any, bool) {
 		return p.Phone, p.Phone == ""
 	},
-	tblreserve.ReserveFlag: func(p *Reserve) (any, bool) {
-		return p.ReserveFlag, p.ReserveFlag == ""
-	},
 	tblreserve.Id: func(p *Reserve) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -267,6 +264,9 @@ var reserveFieldToValueFunc = map[dialect.Field]func(*Reserve) (any, bool){
 	},
 	tblreserve.UpdateTime: func(p *Reserve) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblreserve.ReserveFlag: func(p *Reserve) (any, bool) {
+		return p.ReserveFlag, p.ReserveFlag == 0
 	},
 }
 

@@ -33,12 +33,6 @@ func (p *DrugDeposit) MarshalJSON() ([]byte, error) {
 	if p.Mode != "" {
 		write.WriteRaw("mode", types.Marshal(p.Mode))
 	}
-	if p.DepositFlag != "" {
-		write.WriteRaw("deposit_flag", types.Marshal(p.DepositFlag))
-	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -57,6 +51,12 @@ func (p *DrugDeposit) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.DepositFlag != 0 {
+		write.WriteRaw("deposit_flag", types.Marshal(p.DepositFlag))
+	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -72,10 +72,6 @@ func (p *DrugDeposit) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "mode":
 			p.Mode = types.String(value.Str)
-		case "deposit_flag":
-			p.DepositFlag = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -88,6 +84,10 @@ func (p *DrugDeposit) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "deposit_flag":
+			p.DepositFlag = types.Int8(value.Int())
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -110,14 +110,14 @@ func (p *DrugDeposit) Free() {
 // Reset
 func (p *DrugDeposit) Reset() {
 	p.Mode = ""
-	p.DepositFlag = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DepositFlag = 0
+	p.DelFlag = 0
 
 }
 
@@ -128,14 +128,14 @@ func (p *DrugDeposit) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var drugdepositFieldToPtrFunc = map[string]func(*DrugDeposit) any{
 	tbldrugdeposit.Mode.Name:        func(p *DrugDeposit) any { return &p.Mode },
-	tbldrugdeposit.DepositFlag.Name: func(p *DrugDeposit) any { return &p.DepositFlag },
-	tbldrugdeposit.DelFlag.Name:     func(p *DrugDeposit) any { return &p.DelFlag },
 	tbldrugdeposit.Id.Name:          func(p *DrugDeposit) any { return &p.Id },
 	tbldrugdeposit.ElderId.Name:     func(p *DrugDeposit) any { return &p.ElderId },
 	tbldrugdeposit.CreateId.Name:    func(p *DrugDeposit) any { return &p.CreateId },
 	tbldrugdeposit.CreateTime.Name:  func(p *DrugDeposit) any { return &p.CreateTime },
 	tbldrugdeposit.UpdateId.Name:    func(p *DrugDeposit) any { return &p.UpdateId },
 	tbldrugdeposit.UpdateTime.Name:  func(p *DrugDeposit) any { return &p.UpdateTime },
+	tbldrugdeposit.DepositFlag.Name: func(p *DrugDeposit) any { return &p.DepositFlag },
+	tbldrugdeposit.DelFlag.Name:     func(p *DrugDeposit) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -214,12 +214,6 @@ var drugdepositFieldToValueFunc = map[dialect.Field]func(*DrugDeposit) (any, boo
 	tbldrugdeposit.Mode: func(p *DrugDeposit) (any, bool) {
 		return p.Mode, p.Mode == ""
 	},
-	tbldrugdeposit.DepositFlag: func(p *DrugDeposit) (any, bool) {
-		return p.DepositFlag, p.DepositFlag == ""
-	},
-	tbldrugdeposit.DelFlag: func(p *DrugDeposit) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tbldrugdeposit.Id: func(p *DrugDeposit) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -237,6 +231,12 @@ var drugdepositFieldToValueFunc = map[dialect.Field]func(*DrugDeposit) (any, boo
 	},
 	tbldrugdeposit.UpdateTime: func(p *DrugDeposit) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tbldrugdeposit.DepositFlag: func(p *DrugDeposit) (any, bool) {
+		return p.DepositFlag, p.DepositFlag == 0
+	},
+	tbldrugdeposit.DelFlag: func(p *DrugDeposit) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

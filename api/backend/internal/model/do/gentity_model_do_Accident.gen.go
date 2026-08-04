@@ -36,9 +36,6 @@ func (p *Accident) MarshalJSON() ([]byte, error) {
 	if p.Picture != "" {
 		write.WriteRaw("picture", types.Marshal(p.Picture))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -63,6 +60,9 @@ func (p *Accident) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -80,8 +80,6 @@ func (p *Accident) UnmarshalJSON(data []byte) error {
 			p.Description = types.String(value.Str)
 		case "picture":
 			p.Picture = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -98,6 +96,8 @@ func (p *Accident) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -121,7 +121,6 @@ func (p *Accident) Free() {
 func (p *Accident) Reset() {
 	p.Description = ""
 	p.Picture = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.StaffId = 0
@@ -130,6 +129,7 @@ func (p *Accident) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
 
 }
 
@@ -141,7 +141,6 @@ func (p *Accident) TableName() string {
 var accidentFieldToPtrFunc = map[string]func(*Accident) any{
 	tblaccident.Description.Name: func(p *Accident) any { return &p.Description },
 	tblaccident.Picture.Name:     func(p *Accident) any { return &p.Picture },
-	tblaccident.DelFlag.Name:     func(p *Accident) any { return &p.DelFlag },
 	tblaccident.Id.Name:          func(p *Accident) any { return &p.Id },
 	tblaccident.ElderId.Name:     func(p *Accident) any { return &p.ElderId },
 	tblaccident.StaffId.Name:     func(p *Accident) any { return &p.StaffId },
@@ -150,6 +149,7 @@ var accidentFieldToPtrFunc = map[string]func(*Accident) any{
 	tblaccident.CreateTime.Name:  func(p *Accident) any { return &p.CreateTime },
 	tblaccident.UpdateId.Name:    func(p *Accident) any { return &p.UpdateId },
 	tblaccident.UpdateTime.Name:  func(p *Accident) any { return &p.UpdateTime },
+	tblaccident.DelFlag.Name:     func(p *Accident) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -231,9 +231,6 @@ var accidentFieldToValueFunc = map[dialect.Field]func(*Accident) (any, bool){
 	tblaccident.Picture: func(p *Accident) (any, bool) {
 		return p.Picture, p.Picture == ""
 	},
-	tblaccident.DelFlag: func(p *Accident) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblaccident.Id: func(p *Accident) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -257,6 +254,9 @@ var accidentFieldToValueFunc = map[dialect.Field]func(*Accident) (any, bool){
 	},
 	tblaccident.UpdateTime: func(p *Accident) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblaccident.DelFlag: func(p *Accident) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

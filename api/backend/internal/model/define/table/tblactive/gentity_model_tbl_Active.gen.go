@@ -14,7 +14,6 @@ var (
 	Organizer     = dialect.Field{Name: "organizer", Json: "organizer", Table: "active", Type: "types.String", IsRelation: false}
 	Phone         = dialect.Field{Name: "phone", Json: "phone", Table: "active", Type: "types.String", IsRelation: false}
 	ActivePicture = dialect.Field{Name: "active_picture", Json: "active_picture", Table: "active", Type: "types.String", IsRelation: false}
-	DelFlag       = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "active", Type: "types.String", IsRelation: false}
 	Id            = dialect.Field{Name: "id", Json: "id", Table: "active", Type: "types.BigInt", IsRelation: false}
 	TypeId        = dialect.Field{Name: "type_id", Json: "type_id", Table: "active", Type: "types.BigInt", IsRelation: false}
 	ActiveDate    = dialect.Field{Name: "active_date", Json: "active_date", Table: "active", Type: "types.Time", IsRelation: false}
@@ -22,6 +21,7 @@ var (
 	CreateTime    = dialect.Field{Name: "create_time", Json: "create_time", Table: "active", Type: "types.Time", IsRelation: false}
 	UpdateId      = dialect.Field{Name: "update_id", Json: "update_id", Table: "active", Type: "types.BigInt", IsRelation: false}
 	UpdateTime    = dialect.Field{Name: "update_time", Json: "update_time", Table: "active", Type: "types.Time", IsRelation: false}
+	DelFlag       = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "active", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -34,7 +34,6 @@ var (
 		Organizer,
 		Phone,
 		ActivePicture,
-		DelFlag,
 		Id,
 		TypeId,
 		ActiveDate,
@@ -42,6 +41,7 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
@@ -52,7 +52,6 @@ var (
 		Organizer,
 		Phone,
 		ActivePicture,
-		DelFlag,
 		Id,
 		TypeId,
 		ActiveDate,
@@ -60,5 +59,6 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 )

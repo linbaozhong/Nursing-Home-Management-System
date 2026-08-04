@@ -33,9 +33,6 @@ func (p *OrderDishes) MarshalJSON() ([]byte, error) {
 	if p.DishesName != "" {
 		write.WriteRaw("dishes_name", types.Marshal(p.DishesName))
 	}
-	if p.SetFlag != "" {
-		write.WriteRaw("set_flag", types.Marshal(p.SetFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -66,6 +63,9 @@ func (p *OrderDishes) MarshalJSON() ([]byte, error) {
 	if p.OrderNum != 0 {
 		write.WriteRaw("order_num", types.Marshal(p.OrderNum))
 	}
+	if p.SetFlag != 0 {
+		write.WriteRaw("set_flag", types.Marshal(p.SetFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -81,8 +81,6 @@ func (p *OrderDishes) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "dishes_name":
 			p.DishesName = types.String(value.Str)
-		case "set_flag":
-			p.SetFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "order_id":
@@ -103,6 +101,8 @@ func (p *OrderDishes) UnmarshalJSON(data []byte) error {
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "order_num":
 			p.OrderNum = types.Int32(value.Int())
+		case "set_flag":
+			p.SetFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -125,7 +125,6 @@ func (p *OrderDishes) Free() {
 // Reset
 func (p *OrderDishes) Reset() {
 	p.DishesName = ""
-	p.SetFlag = ""
 	p.Id = 0
 	p.OrderId = 0
 	p.DishesPrice = 0
@@ -136,6 +135,7 @@ func (p *OrderDishes) Reset() {
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.OrderNum = 0
+	p.SetFlag = 0
 
 }
 
@@ -146,7 +146,6 @@ func (p *OrderDishes) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var orderdishesFieldToPtrFunc = map[string]func(*OrderDishes) any{
 	tblorderdishes.DishesName.Name:   func(p *OrderDishes) any { return &p.DishesName },
-	tblorderdishes.SetFlag.Name:      func(p *OrderDishes) any { return &p.SetFlag },
 	tblorderdishes.Id.Name:           func(p *OrderDishes) any { return &p.Id },
 	tblorderdishes.OrderId.Name:      func(p *OrderDishes) any { return &p.OrderId },
 	tblorderdishes.DishesPrice.Name:  func(p *OrderDishes) any { return &p.DishesPrice },
@@ -157,6 +156,7 @@ var orderdishesFieldToPtrFunc = map[string]func(*OrderDishes) any{
 	tblorderdishes.UpdateId.Name:     func(p *OrderDishes) any { return &p.UpdateId },
 	tblorderdishes.UpdateTime.Name:   func(p *OrderDishes) any { return &p.UpdateTime },
 	tblorderdishes.OrderNum.Name:     func(p *OrderDishes) any { return &p.OrderNum },
+	tblorderdishes.SetFlag.Name:      func(p *OrderDishes) any { return &p.SetFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -235,9 +235,6 @@ var orderdishesFieldToValueFunc = map[dialect.Field]func(*OrderDishes) (any, boo
 	tblorderdishes.DishesName: func(p *OrderDishes) (any, bool) {
 		return p.DishesName, p.DishesName == ""
 	},
-	tblorderdishes.SetFlag: func(p *OrderDishes) (any, bool) {
-		return p.SetFlag, p.SetFlag == ""
-	},
 	tblorderdishes.Id: func(p *OrderDishes) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -267,6 +264,9 @@ var orderdishesFieldToValueFunc = map[dialect.Field]func(*OrderDishes) (any, boo
 	},
 	tblorderdishes.OrderNum: func(p *OrderDishes) (any, bool) {
 		return p.OrderNum, p.OrderNum == 0
+	},
+	tblorderdishes.SetFlag: func(p *OrderDishes) (any, bool) {
+		return p.SetFlag, p.SetFlag == 0
 	},
 }
 

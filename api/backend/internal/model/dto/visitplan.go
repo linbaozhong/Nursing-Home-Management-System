@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 // @request
 // PageVisitPlanQuery 分页查询回访计划（Java: PageVisitPlanQuery）
 type PageVisitPlanQuery struct {
@@ -54,4 +56,15 @@ type GetEditElderLabelByIdQuery struct {
 // DeleteCommunicationRecordQuery 删除沟通记录
 type DeleteCommunicationRecordQuery struct {
 	ID *int64 `json:"id"` // 编号
+}
+
+// @response
+// PageVisitPlanVO 分页查询回访计划响应
+type PageVisitPlanVO struct {
+	ID           int64     `json:"id"`            // 回访计划编号
+	ElderID      int64     `json:"elder_id"`      // 老人编号
+	Title        string    `json:"title"`         // 回访计划标题
+	PlanDate     time.Time `json:"plan_date"`     // 计划回访时间
+	CompleteDate time.Time `json:"complete_date"` // 完成时间
+	Content      string    `json:"content"`       // 回访内容
 }

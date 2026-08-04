@@ -89,7 +89,7 @@ func (a *accident) AddAccident(ctx context.Context, in *dto.AddAccidentQuery, ou
 	if in.Picture != nil {
 		bean.Picture = types.String(*in.Picture)
 	}
-	bean.DelFlag = "N"
+	bean.DelFlag = types.Int8(constant.YesNoNo)
 	// 新增
 	_, e := dao.Accident(db).InsertOne(ctx, bean)
 	return e

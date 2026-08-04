@@ -151,7 +151,7 @@ func (a *active) AddActive(ctx context.Context, in *dto.OperateActiveQuery, out 
 	bean.Phone = types.String(*in.Phone)
 	bean.ActiveDate = types.Time{conv.String2Time(*in.ActiveDate)}
 	bean.ActivePicture = types.String(*in.ActivePicture)
-	bean.DelFlag = constant.YesNoNo
+	bean.DelFlag = types.Int8(int8(constant.YesNoYes))
 	_, e := dao.Active(db).InsertOne(ctx, bean)
 	if e != nil {
 		return e
@@ -217,20 +217,27 @@ func (a *active) DeleteActive(ctx context.Context, in *dto.IDReq, out *dto.Empty
 // 对应 Java: ActiveServiceImpl.pageSearchElderByKey -> CommonFunc.pageSearchElderByKeyResult
 // Java SQL: SELECT * FROM elder WHERE (elder_name LIKE %key% OR id = key) [可选] AND del_flag=0
 // 说明：Java 侧按 checkFlag in (咨询/意向/预定/退住) 过滤；Go 端对齐 CheckContract 的咨询口径。
-func (a *active) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *dto.EmptyResp) error {
-	query := ace.Where(tblelder.DelFlag.Eq(constant.YesNoNo))
+func (a *active) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.ParticipateElderVO) error {
+	// 注：elder 表无 del_flag 字段，此处用恒真条件占位
+	query := ace.Where(tblelder.Id.Gte(types.BigInt(0)))
 	if in.Name != nil {
-		query.And(tblelder.Name.Like("%" + *in.Name + "%"))
+		query.And(tblelder.Name.Like(*in.Name))
 	}
 	if in.Phone != nil {
-		query.And(tblelder.Phone.Like("%" + *in.Phone + "%"))
+		query.And(tblelder.Phone.Like(*in.Phone))
 	}
-	// todo: 分页查询 elder（Java: checkFlag in CONSULT/INTENTION/RESERVE/EXIT）
 	list, _, e := dao.Elder(db).List(ctx, query)
 	if e != nil {
 		return e
 	}
-	_ = list
+	*out = make([]dto.ParticipateElderVO, 0, len(list))
+	for _, elder := range list {
+		*out = append(*out, dto.ParticipateElderVO{
+			ID:    int64(elder.Id),
+			Name:  elder.Name.String(),
+			Phone: elder.Phone.String(),
+		})
+	}
 	return nil
 }
 

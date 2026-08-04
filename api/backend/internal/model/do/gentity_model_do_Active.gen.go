@@ -51,9 +51,6 @@ func (p *Active) MarshalJSON() ([]byte, error) {
 	if p.ActivePicture != "" {
 		write.WriteRaw("active_picture", types.Marshal(p.ActivePicture))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -74,6 +71,9 @@ func (p *Active) MarshalJSON() ([]byte, error) {
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
 	}
 	return write.Bytes(), nil
 }
@@ -102,8 +102,6 @@ func (p *Active) UnmarshalJSON(data []byte) error {
 			p.Phone = types.String(value.Str)
 		case "active_picture":
 			p.ActivePicture = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "type_id":
@@ -118,6 +116,8 @@ func (p *Active) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -146,7 +146,6 @@ func (p *Active) Reset() {
 	p.Organizer = ""
 	p.Phone = ""
 	p.ActivePicture = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.TypeId = 0
 	p.ActiveDate = types.Time{}
@@ -154,6 +153,7 @@ func (p *Active) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
 
 }
 
@@ -170,7 +170,6 @@ var activeFieldToPtrFunc = map[string]func(*Active) any{
 	tblactive.Organizer.Name:     func(p *Active) any { return &p.Organizer },
 	tblactive.Phone.Name:         func(p *Active) any { return &p.Phone },
 	tblactive.ActivePicture.Name: func(p *Active) any { return &p.ActivePicture },
-	tblactive.DelFlag.Name:       func(p *Active) any { return &p.DelFlag },
 	tblactive.Id.Name:            func(p *Active) any { return &p.Id },
 	tblactive.TypeId.Name:        func(p *Active) any { return &p.TypeId },
 	tblactive.ActiveDate.Name:    func(p *Active) any { return &p.ActiveDate },
@@ -178,6 +177,7 @@ var activeFieldToPtrFunc = map[string]func(*Active) any{
 	tblactive.CreateTime.Name:    func(p *Active) any { return &p.CreateTime },
 	tblactive.UpdateId.Name:      func(p *Active) any { return &p.UpdateId },
 	tblactive.UpdateTime.Name:    func(p *Active) any { return &p.UpdateTime },
+	tblactive.DelFlag.Name:       func(p *Active) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -274,9 +274,6 @@ var activeFieldToValueFunc = map[dialect.Field]func(*Active) (any, bool){
 	tblactive.ActivePicture: func(p *Active) (any, bool) {
 		return p.ActivePicture, p.ActivePicture == ""
 	},
-	tblactive.DelFlag: func(p *Active) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblactive.Id: func(p *Active) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -297,6 +294,9 @@ var activeFieldToValueFunc = map[dialect.Field]func(*Active) (any, bool){
 	},
 	tblactive.UpdateTime: func(p *Active) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblactive.DelFlag: func(p *Active) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

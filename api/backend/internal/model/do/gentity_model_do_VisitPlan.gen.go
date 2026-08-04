@@ -36,9 +36,6 @@ func (p *VisitPlan) MarshalJSON() ([]byte, error) {
 	if p.Content != "" {
 		write.WriteRaw("content", types.Marshal(p.Content))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -63,6 +60,9 @@ func (p *VisitPlan) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -80,8 +80,6 @@ func (p *VisitPlan) UnmarshalJSON(data []byte) error {
 			p.Title = types.String(value.Str)
 		case "content":
 			p.Content = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -98,6 +96,8 @@ func (p *VisitPlan) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -121,7 +121,6 @@ func (p *VisitPlan) Free() {
 func (p *VisitPlan) Reset() {
 	p.Title = ""
 	p.Content = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.PlanDate = types.Time{}
@@ -130,6 +129,7 @@ func (p *VisitPlan) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
 
 }
 
@@ -141,7 +141,6 @@ func (p *VisitPlan) TableName() string {
 var visitplanFieldToPtrFunc = map[string]func(*VisitPlan) any{
 	tblvisitplan.Title.Name:        func(p *VisitPlan) any { return &p.Title },
 	tblvisitplan.Content.Name:      func(p *VisitPlan) any { return &p.Content },
-	tblvisitplan.DelFlag.Name:      func(p *VisitPlan) any { return &p.DelFlag },
 	tblvisitplan.Id.Name:           func(p *VisitPlan) any { return &p.Id },
 	tblvisitplan.ElderId.Name:      func(p *VisitPlan) any { return &p.ElderId },
 	tblvisitplan.PlanDate.Name:     func(p *VisitPlan) any { return &p.PlanDate },
@@ -150,6 +149,7 @@ var visitplanFieldToPtrFunc = map[string]func(*VisitPlan) any{
 	tblvisitplan.CreateTime.Name:   func(p *VisitPlan) any { return &p.CreateTime },
 	tblvisitplan.UpdateId.Name:     func(p *VisitPlan) any { return &p.UpdateId },
 	tblvisitplan.UpdateTime.Name:   func(p *VisitPlan) any { return &p.UpdateTime },
+	tblvisitplan.DelFlag.Name:      func(p *VisitPlan) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -231,9 +231,6 @@ var visitplanFieldToValueFunc = map[dialect.Field]func(*VisitPlan) (any, bool){
 	tblvisitplan.Content: func(p *VisitPlan) (any, bool) {
 		return p.Content, p.Content == ""
 	},
-	tblvisitplan.DelFlag: func(p *VisitPlan) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblvisitplan.Id: func(p *VisitPlan) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -257,6 +254,9 @@ var visitplanFieldToValueFunc = map[dialect.Field]func(*VisitPlan) (any, bool){
 	},
 	tblvisitplan.UpdateTime: func(p *VisitPlan) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblvisitplan.DelFlag: func(p *VisitPlan) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

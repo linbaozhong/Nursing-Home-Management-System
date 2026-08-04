@@ -33,12 +33,6 @@ func (p *WarehouseRecord) MarshalJSON() ([]byte, error) {
 	if p.Source != "" {
 		write.WriteRaw("source", types.Marshal(p.Source))
 	}
-	if p.WarehouseFlag != "" {
-		write.WriteRaw("warehouse_flag", types.Marshal(p.WarehouseFlag))
-	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -63,6 +57,12 @@ func (p *WarehouseRecord) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.WarehouseFlag != 0 {
+		write.WriteRaw("warehouse_flag", types.Marshal(p.WarehouseFlag))
+	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -78,10 +78,6 @@ func (p *WarehouseRecord) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "source":
 			p.Source = types.String(value.Str)
-		case "warehouse_flag":
-			p.WarehouseFlag = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "warehouse_id":
@@ -98,6 +94,10 @@ func (p *WarehouseRecord) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "warehouse_flag":
+			p.WarehouseFlag = types.Int8(value.Int())
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -120,8 +120,6 @@ func (p *WarehouseRecord) Free() {
 // Reset
 func (p *WarehouseRecord) Reset() {
 	p.Source = ""
-	p.WarehouseFlag = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.WarehouseId = 0
 	p.StaffId = 0
@@ -130,6 +128,8 @@ func (p *WarehouseRecord) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.WarehouseFlag = 0
+	p.DelFlag = 0
 
 }
 
@@ -140,8 +140,6 @@ func (p *WarehouseRecord) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var warehouserecordFieldToPtrFunc = map[string]func(*WarehouseRecord) any{
 	tblwarehouserecord.Source.Name:        func(p *WarehouseRecord) any { return &p.Source },
-	tblwarehouserecord.WarehouseFlag.Name: func(p *WarehouseRecord) any { return &p.WarehouseFlag },
-	tblwarehouserecord.DelFlag.Name:       func(p *WarehouseRecord) any { return &p.DelFlag },
 	tblwarehouserecord.Id.Name:            func(p *WarehouseRecord) any { return &p.Id },
 	tblwarehouserecord.WarehouseId.Name:   func(p *WarehouseRecord) any { return &p.WarehouseId },
 	tblwarehouserecord.StaffId.Name:       func(p *WarehouseRecord) any { return &p.StaffId },
@@ -150,6 +148,8 @@ var warehouserecordFieldToPtrFunc = map[string]func(*WarehouseRecord) any{
 	tblwarehouserecord.CreateTime.Name:    func(p *WarehouseRecord) any { return &p.CreateTime },
 	tblwarehouserecord.UpdateId.Name:      func(p *WarehouseRecord) any { return &p.UpdateId },
 	tblwarehouserecord.UpdateTime.Name:    func(p *WarehouseRecord) any { return &p.UpdateTime },
+	tblwarehouserecord.WarehouseFlag.Name: func(p *WarehouseRecord) any { return &p.WarehouseFlag },
+	tblwarehouserecord.DelFlag.Name:       func(p *WarehouseRecord) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -228,12 +228,6 @@ var warehouserecordFieldToValueFunc = map[dialect.Field]func(*WarehouseRecord) (
 	tblwarehouserecord.Source: func(p *WarehouseRecord) (any, bool) {
 		return p.Source, p.Source == ""
 	},
-	tblwarehouserecord.WarehouseFlag: func(p *WarehouseRecord) (any, bool) {
-		return p.WarehouseFlag, p.WarehouseFlag == ""
-	},
-	tblwarehouserecord.DelFlag: func(p *WarehouseRecord) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblwarehouserecord.Id: func(p *WarehouseRecord) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -257,6 +251,12 @@ var warehouserecordFieldToValueFunc = map[dialect.Field]func(*WarehouseRecord) (
 	},
 	tblwarehouserecord.UpdateTime: func(p *WarehouseRecord) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblwarehouserecord.WarehouseFlag: func(p *WarehouseRecord) (any, bool) {
+		return p.WarehouseFlag, p.WarehouseFlag == 0
+	},
+	tblwarehouserecord.DelFlag: func(p *WarehouseRecord) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

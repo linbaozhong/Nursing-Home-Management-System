@@ -36,9 +36,6 @@ func (p *ServiceItem) MarshalJSON() ([]byte, error) {
 	if p.ChargeMethod != "" {
 		write.WriteRaw("charge_method", types.Marshal(p.ChargeMethod))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -63,6 +60,9 @@ func (p *ServiceItem) MarshalJSON() ([]byte, error) {
 	if p.NeedDate != 0 {
 		write.WriteRaw("need_date", types.Marshal(p.NeedDate))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -80,8 +80,6 @@ func (p *ServiceItem) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "charge_method":
 			p.ChargeMethod = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "type_id":
@@ -98,6 +96,8 @@ func (p *ServiceItem) UnmarshalJSON(data []byte) error {
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "need_date":
 			p.NeedDate = types.Int32(value.Int())
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -121,7 +121,6 @@ func (p *ServiceItem) Free() {
 func (p *ServiceItem) Reset() {
 	p.Name = ""
 	p.ChargeMethod = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.TypeId = 0
 	p.Price = 0
@@ -130,6 +129,7 @@ func (p *ServiceItem) Reset() {
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.NeedDate = 0
+	p.DelFlag = 0
 
 }
 
@@ -141,7 +141,6 @@ func (p *ServiceItem) TableName() string {
 var serviceitemFieldToPtrFunc = map[string]func(*ServiceItem) any{
 	tblserviceitem.Name.Name:         func(p *ServiceItem) any { return &p.Name },
 	tblserviceitem.ChargeMethod.Name: func(p *ServiceItem) any { return &p.ChargeMethod },
-	tblserviceitem.DelFlag.Name:      func(p *ServiceItem) any { return &p.DelFlag },
 	tblserviceitem.Id.Name:           func(p *ServiceItem) any { return &p.Id },
 	tblserviceitem.TypeId.Name:       func(p *ServiceItem) any { return &p.TypeId },
 	tblserviceitem.Price.Name:        func(p *ServiceItem) any { return &p.Price },
@@ -150,6 +149,7 @@ var serviceitemFieldToPtrFunc = map[string]func(*ServiceItem) any{
 	tblserviceitem.UpdateId.Name:     func(p *ServiceItem) any { return &p.UpdateId },
 	tblserviceitem.UpdateTime.Name:   func(p *ServiceItem) any { return &p.UpdateTime },
 	tblserviceitem.NeedDate.Name:     func(p *ServiceItem) any { return &p.NeedDate },
+	tblserviceitem.DelFlag.Name:      func(p *ServiceItem) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -231,9 +231,6 @@ var serviceitemFieldToValueFunc = map[dialect.Field]func(*ServiceItem) (any, boo
 	tblserviceitem.ChargeMethod: func(p *ServiceItem) (any, bool) {
 		return p.ChargeMethod, p.ChargeMethod == ""
 	},
-	tblserviceitem.DelFlag: func(p *ServiceItem) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblserviceitem.Id: func(p *ServiceItem) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -257,6 +254,9 @@ var serviceitemFieldToValueFunc = map[dialect.Field]func(*ServiceItem) (any, boo
 	},
 	tblserviceitem.NeedDate: func(p *ServiceItem) (any, bool) {
 		return p.NeedDate, p.NeedDate == 0
+	},
+	tblserviceitem.DelFlag: func(p *ServiceItem) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

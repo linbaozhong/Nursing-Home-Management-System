@@ -33,9 +33,6 @@ func (p *Dishes) MarshalJSON() ([]byte, error) {
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -57,6 +54,9 @@ func (p *Dishes) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -72,8 +72,6 @@ func (p *Dishes) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "type_id":
@@ -88,6 +86,8 @@ func (p *Dishes) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -110,7 +110,6 @@ func (p *Dishes) Free() {
 // Reset
 func (p *Dishes) Reset() {
 	p.Name = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.TypeId = 0
 	p.Price = 0
@@ -118,6 +117,7 @@ func (p *Dishes) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
 
 }
 
@@ -128,7 +128,6 @@ func (p *Dishes) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var dishesFieldToPtrFunc = map[string]func(*Dishes) any{
 	tbldishes.Name.Name:       func(p *Dishes) any { return &p.Name },
-	tbldishes.DelFlag.Name:    func(p *Dishes) any { return &p.DelFlag },
 	tbldishes.Id.Name:         func(p *Dishes) any { return &p.Id },
 	tbldishes.TypeId.Name:     func(p *Dishes) any { return &p.TypeId },
 	tbldishes.Price.Name:      func(p *Dishes) any { return &p.Price },
@@ -136,6 +135,7 @@ var dishesFieldToPtrFunc = map[string]func(*Dishes) any{
 	tbldishes.CreateTime.Name: func(p *Dishes) any { return &p.CreateTime },
 	tbldishes.UpdateId.Name:   func(p *Dishes) any { return &p.UpdateId },
 	tbldishes.UpdateTime.Name: func(p *Dishes) any { return &p.UpdateTime },
+	tbldishes.DelFlag.Name:    func(p *Dishes) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -214,9 +214,6 @@ var dishesFieldToValueFunc = map[dialect.Field]func(*Dishes) (any, bool){
 	tbldishes.Name: func(p *Dishes) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tbldishes.DelFlag: func(p *Dishes) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tbldishes.Id: func(p *Dishes) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -237,6 +234,9 @@ var dishesFieldToValueFunc = map[dialect.Field]func(*Dishes) (any, bool){
 	},
 	tbldishes.UpdateTime: func(p *Dishes) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tbldishes.DelFlag: func(p *Dishes) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

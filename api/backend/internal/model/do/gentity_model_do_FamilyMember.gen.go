@@ -48,12 +48,6 @@ func (p *FamilyMember) MarshalJSON() ([]byte, error) {
 	if p.Relation != "" {
 		write.WriteRaw("relation", types.Marshal(p.Relation))
 	}
-	if p.ReceiveFlag != "" {
-		write.WriteRaw("receive_flag", types.Marshal(p.ReceiveFlag))
-	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -71,6 +65,12 @@ func (p *FamilyMember) MarshalJSON() ([]byte, error) {
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
+	if p.ReceiveFlag != 0 {
+		write.WriteRaw("receive_flag", types.Marshal(p.ReceiveFlag))
 	}
 	return write.Bytes(), nil
 }
@@ -97,10 +97,6 @@ func (p *FamilyMember) UnmarshalJSON(data []byte) error {
 			p.Address = types.String(value.Str)
 		case "relation":
 			p.Relation = types.String(value.Str)
-		case "receive_flag":
-			p.ReceiveFlag = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -113,6 +109,10 @@ func (p *FamilyMember) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
+		case "receive_flag":
+			p.ReceiveFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -140,14 +140,14 @@ func (p *FamilyMember) Reset() {
 	p.Email = ""
 	p.Address = ""
 	p.Relation = ""
-	p.ReceiveFlag = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
+	p.ReceiveFlag = 0
 
 }
 
@@ -163,14 +163,14 @@ var familymemberFieldToPtrFunc = map[string]func(*FamilyMember) any{
 	tblfamilymember.Email.Name:       func(p *FamilyMember) any { return &p.Email },
 	tblfamilymember.Address.Name:     func(p *FamilyMember) any { return &p.Address },
 	tblfamilymember.Relation.Name:    func(p *FamilyMember) any { return &p.Relation },
-	tblfamilymember.ReceiveFlag.Name: func(p *FamilyMember) any { return &p.ReceiveFlag },
-	tblfamilymember.DelFlag.Name:     func(p *FamilyMember) any { return &p.DelFlag },
 	tblfamilymember.Id.Name:          func(p *FamilyMember) any { return &p.Id },
 	tblfamilymember.ElderId.Name:     func(p *FamilyMember) any { return &p.ElderId },
 	tblfamilymember.CreateId.Name:    func(p *FamilyMember) any { return &p.CreateId },
 	tblfamilymember.CreateTime.Name:  func(p *FamilyMember) any { return &p.CreateTime },
 	tblfamilymember.UpdateId.Name:    func(p *FamilyMember) any { return &p.UpdateId },
 	tblfamilymember.UpdateTime.Name:  func(p *FamilyMember) any { return &p.UpdateTime },
+	tblfamilymember.DelFlag.Name:     func(p *FamilyMember) any { return &p.DelFlag },
+	tblfamilymember.ReceiveFlag.Name: func(p *FamilyMember) any { return &p.ReceiveFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -264,12 +264,6 @@ var familymemberFieldToValueFunc = map[dialect.Field]func(*FamilyMember) (any, b
 	tblfamilymember.Relation: func(p *FamilyMember) (any, bool) {
 		return p.Relation, p.Relation == ""
 	},
-	tblfamilymember.ReceiveFlag: func(p *FamilyMember) (any, bool) {
-		return p.ReceiveFlag, p.ReceiveFlag == ""
-	},
-	tblfamilymember.DelFlag: func(p *FamilyMember) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblfamilymember.Id: func(p *FamilyMember) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -287,6 +281,12 @@ var familymemberFieldToValueFunc = map[dialect.Field]func(*FamilyMember) (any, b
 	},
 	tblfamilymember.UpdateTime: func(p *FamilyMember) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblfamilymember.DelFlag: func(p *FamilyMember) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
+	},
+	tblfamilymember.ReceiveFlag: func(p *FamilyMember) (any, bool) {
+		return p.ReceiveFlag, p.ReceiveFlag == 0
 	},
 }
 

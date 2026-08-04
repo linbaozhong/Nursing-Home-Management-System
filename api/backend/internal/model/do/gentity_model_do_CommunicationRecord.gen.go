@@ -33,9 +33,6 @@ func (p *CommunicationRecord) MarshalJSON() ([]byte, error) {
 	if p.CommunicationRecord != "" {
 		write.WriteRaw("communication_record", types.Marshal(p.CommunicationRecord))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -57,6 +54,9 @@ func (p *CommunicationRecord) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -72,8 +72,6 @@ func (p *CommunicationRecord) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "communication_record":
 			p.CommunicationRecord = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -88,6 +86,8 @@ func (p *CommunicationRecord) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -110,7 +110,6 @@ func (p *CommunicationRecord) Free() {
 // Reset
 func (p *CommunicationRecord) Reset() {
 	p.CommunicationRecord = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.RecordDate = types.Time{}
@@ -118,6 +117,7 @@ func (p *CommunicationRecord) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
 
 }
 
@@ -128,7 +128,6 @@ func (p *CommunicationRecord) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var communicationrecordFieldToPtrFunc = map[string]func(*CommunicationRecord) any{
 	tblcommunicationrecord.CommunicationRecord.Name: func(p *CommunicationRecord) any { return &p.CommunicationRecord },
-	tblcommunicationrecord.DelFlag.Name:             func(p *CommunicationRecord) any { return &p.DelFlag },
 	tblcommunicationrecord.Id.Name:                  func(p *CommunicationRecord) any { return &p.Id },
 	tblcommunicationrecord.ElderId.Name:             func(p *CommunicationRecord) any { return &p.ElderId },
 	tblcommunicationrecord.RecordDate.Name:          func(p *CommunicationRecord) any { return &p.RecordDate },
@@ -136,6 +135,7 @@ var communicationrecordFieldToPtrFunc = map[string]func(*CommunicationRecord) an
 	tblcommunicationrecord.CreateTime.Name:          func(p *CommunicationRecord) any { return &p.CreateTime },
 	tblcommunicationrecord.UpdateId.Name:            func(p *CommunicationRecord) any { return &p.UpdateId },
 	tblcommunicationrecord.UpdateTime.Name:          func(p *CommunicationRecord) any { return &p.UpdateTime },
+	tblcommunicationrecord.DelFlag.Name:             func(p *CommunicationRecord) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -214,9 +214,6 @@ var communicationrecordFieldToValueFunc = map[dialect.Field]func(*CommunicationR
 	tblcommunicationrecord.CommunicationRecord: func(p *CommunicationRecord) (any, bool) {
 		return p.CommunicationRecord, p.CommunicationRecord == ""
 	},
-	tblcommunicationrecord.DelFlag: func(p *CommunicationRecord) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblcommunicationrecord.Id: func(p *CommunicationRecord) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -237,6 +234,9 @@ var communicationrecordFieldToValueFunc = map[dialect.Field]func(*CommunicationR
 	},
 	tblcommunicationrecord.UpdateTime: func(p *CommunicationRecord) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblcommunicationrecord.DelFlag: func(p *CommunicationRecord) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

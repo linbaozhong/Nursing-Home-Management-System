@@ -9,13 +9,13 @@ import (
 var (
 	Name       = dialect.Field{Name: "name", Json: "name", Table: "label", Type: "types.String", IsRelation: false}
 	Color      = dialect.Field{Name: "color", Json: "color", Table: "label", Type: "types.String", IsRelation: false}
-	DelFlag    = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "label", Type: "types.String", IsRelation: false}
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "label", Type: "types.BigInt", IsRelation: false}
 	TypeId     = dialect.Field{Name: "type_id", Json: "type_id", Table: "label", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "label", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "label", Type: "types.Time", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "label", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "label", Type: "types.Time", IsRelation: false}
+	DelFlag    = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "label", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -23,24 +23,24 @@ var (
 	WritableFields = []dialect.Field{
 		Name,
 		Color,
-		DelFlag,
 		Id,
 		TypeId,
 		CreateId,
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Name,
 		Color,
-		DelFlag,
 		Id,
 		TypeId,
 		CreateId,
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 )

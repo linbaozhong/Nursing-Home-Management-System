@@ -29,7 +29,6 @@ type AddActiveTypeQuery struct {
 // @response
 // PageActiveTypeByKeyVO 分页查询活动分类响应
 type PageActiveTypeByKeyVO struct {
-	Rank
 	ID   int64  `json:"id"`   // id
 	Name string `json:"name"` // 活动分类名称
 }

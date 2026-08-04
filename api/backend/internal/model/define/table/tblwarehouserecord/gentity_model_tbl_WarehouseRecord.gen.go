@@ -8,8 +8,6 @@ import (
 
 var (
 	Source        = dialect.Field{Name: "source", Json: "source", Table: "warehouse_record", Type: "types.String", IsRelation: false}
-	WarehouseFlag = dialect.Field{Name: "warehouse_flag", Json: "warehouse_flag", Table: "warehouse_record", Type: "types.String", IsRelation: false}
-	DelFlag       = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "warehouse_record", Type: "types.String", IsRelation: false}
 	Id            = dialect.Field{Name: "id", Json: "id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
 	WarehouseId   = dialect.Field{Name: "warehouse_id", Json: "warehouse_id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
 	StaffId       = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
@@ -18,14 +16,14 @@ var (
 	CreateTime    = dialect.Field{Name: "create_time", Json: "create_time", Table: "warehouse_record", Type: "types.Time", IsRelation: false}
 	UpdateId      = dialect.Field{Name: "update_id", Json: "update_id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
 	UpdateTime    = dialect.Field{Name: "update_time", Json: "update_time", Table: "warehouse_record", Type: "types.Time", IsRelation: false}
+	WarehouseFlag = dialect.Field{Name: "warehouse_flag", Json: "warehouse_flag", Table: "warehouse_record", Type: "types.Int8", IsRelation: false}
+	DelFlag       = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "warehouse_record", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
 		Source,
-		WarehouseFlag,
-		DelFlag,
 		Id,
 		WarehouseId,
 		StaffId,
@@ -34,12 +32,12 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		WarehouseFlag,
+		DelFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Source,
-		WarehouseFlag,
-		DelFlag,
 		Id,
 		WarehouseId,
 		StaffId,
@@ -48,5 +46,7 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		WarehouseFlag,
+		DelFlag,
 	}
 )

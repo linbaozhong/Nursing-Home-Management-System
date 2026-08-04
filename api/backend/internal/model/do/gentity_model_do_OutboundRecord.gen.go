@@ -36,12 +36,6 @@ func (p *OutboundRecord) MarshalJSON() ([]byte, error) {
 	if p.MaterialUse != "" {
 		write.WriteRaw("material_use", types.Marshal(p.MaterialUse))
 	}
-	if p.OutboundFlag != "" {
-		write.WriteRaw("outbound_flag", types.Marshal(p.OutboundFlag))
-	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -69,6 +63,12 @@ func (p *OutboundRecord) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.OutboundFlag != 0 {
+		write.WriteRaw("outbound_flag", types.Marshal(p.OutboundFlag))
+	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -86,10 +86,6 @@ func (p *OutboundRecord) UnmarshalJSON(data []byte) error {
 			p.RecipientType = types.String(value.Str)
 		case "material_use":
 			p.MaterialUse = types.String(value.Str)
-		case "outbound_flag":
-			p.OutboundFlag = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "warehouse_id":
@@ -108,6 +104,10 @@ func (p *OutboundRecord) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "outbound_flag":
+			p.OutboundFlag = types.Int8(value.Int())
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -131,8 +131,6 @@ func (p *OutboundRecord) Free() {
 func (p *OutboundRecord) Reset() {
 	p.RecipientType = ""
 	p.MaterialUse = ""
-	p.OutboundFlag = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.WarehouseId = 0
 	p.StaffId = 0
@@ -142,6 +140,8 @@ func (p *OutboundRecord) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.OutboundFlag = 0
+	p.DelFlag = 0
 
 }
 
@@ -153,8 +153,6 @@ func (p *OutboundRecord) TableName() string {
 var outboundrecordFieldToPtrFunc = map[string]func(*OutboundRecord) any{
 	tbloutboundrecord.RecipientType.Name: func(p *OutboundRecord) any { return &p.RecipientType },
 	tbloutboundrecord.MaterialUse.Name:   func(p *OutboundRecord) any { return &p.MaterialUse },
-	tbloutboundrecord.OutboundFlag.Name:  func(p *OutboundRecord) any { return &p.OutboundFlag },
-	tbloutboundrecord.DelFlag.Name:       func(p *OutboundRecord) any { return &p.DelFlag },
 	tbloutboundrecord.Id.Name:            func(p *OutboundRecord) any { return &p.Id },
 	tbloutboundrecord.WarehouseId.Name:   func(p *OutboundRecord) any { return &p.WarehouseId },
 	tbloutboundrecord.StaffId.Name:       func(p *OutboundRecord) any { return &p.StaffId },
@@ -164,6 +162,8 @@ var outboundrecordFieldToPtrFunc = map[string]func(*OutboundRecord) any{
 	tbloutboundrecord.CreateTime.Name:    func(p *OutboundRecord) any { return &p.CreateTime },
 	tbloutboundrecord.UpdateId.Name:      func(p *OutboundRecord) any { return &p.UpdateId },
 	tbloutboundrecord.UpdateTime.Name:    func(p *OutboundRecord) any { return &p.UpdateTime },
+	tbloutboundrecord.OutboundFlag.Name:  func(p *OutboundRecord) any { return &p.OutboundFlag },
+	tbloutboundrecord.DelFlag.Name:       func(p *OutboundRecord) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -245,12 +245,6 @@ var outboundrecordFieldToValueFunc = map[dialect.Field]func(*OutboundRecord) (an
 	tbloutboundrecord.MaterialUse: func(p *OutboundRecord) (any, bool) {
 		return p.MaterialUse, p.MaterialUse == ""
 	},
-	tbloutboundrecord.OutboundFlag: func(p *OutboundRecord) (any, bool) {
-		return p.OutboundFlag, p.OutboundFlag == ""
-	},
-	tbloutboundrecord.DelFlag: func(p *OutboundRecord) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tbloutboundrecord.Id: func(p *OutboundRecord) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -277,6 +271,12 @@ var outboundrecordFieldToValueFunc = map[dialect.Field]func(*OutboundRecord) (an
 	},
 	tbloutboundrecord.UpdateTime: func(p *OutboundRecord) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tbloutboundrecord.OutboundFlag: func(p *OutboundRecord) (any, bool) {
+		return p.OutboundFlag, p.OutboundFlag == 0
+	},
+	tbloutboundrecord.DelFlag: func(p *OutboundRecord) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

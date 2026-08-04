@@ -33,9 +33,6 @@ func (p *Floor) MarshalJSON() ([]byte, error) {
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -57,6 +54,9 @@ func (p *Floor) MarshalJSON() ([]byte, error) {
 	if p.RoomNum != 0 {
 		write.WriteRaw("room_num", types.Marshal(p.RoomNum))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -72,8 +72,6 @@ func (p *Floor) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "building_id":
@@ -88,6 +86,8 @@ func (p *Floor) UnmarshalJSON(data []byte) error {
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "room_num":
 			p.RoomNum = types.Int32(value.Int())
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -110,7 +110,6 @@ func (p *Floor) Free() {
 // Reset
 func (p *Floor) Reset() {
 	p.Name = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.BuildingId = 0
 	p.CreateId = 0
@@ -118,6 +117,7 @@ func (p *Floor) Reset() {
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.RoomNum = 0
+	p.DelFlag = 0
 
 }
 
@@ -128,7 +128,6 @@ func (p *Floor) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var floorFieldToPtrFunc = map[string]func(*Floor) any{
 	tblfloor.Name.Name:       func(p *Floor) any { return &p.Name },
-	tblfloor.DelFlag.Name:    func(p *Floor) any { return &p.DelFlag },
 	tblfloor.Id.Name:         func(p *Floor) any { return &p.Id },
 	tblfloor.BuildingId.Name: func(p *Floor) any { return &p.BuildingId },
 	tblfloor.CreateId.Name:   func(p *Floor) any { return &p.CreateId },
@@ -136,6 +135,7 @@ var floorFieldToPtrFunc = map[string]func(*Floor) any{
 	tblfloor.UpdateId.Name:   func(p *Floor) any { return &p.UpdateId },
 	tblfloor.UpdateTime.Name: func(p *Floor) any { return &p.UpdateTime },
 	tblfloor.RoomNum.Name:    func(p *Floor) any { return &p.RoomNum },
+	tblfloor.DelFlag.Name:    func(p *Floor) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -214,9 +214,6 @@ var floorFieldToValueFunc = map[dialect.Field]func(*Floor) (any, bool){
 	tblfloor.Name: func(p *Floor) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tblfloor.DelFlag: func(p *Floor) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblfloor.Id: func(p *Floor) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -237,6 +234,9 @@ var floorFieldToValueFunc = map[dialect.Field]func(*Floor) (any, bool){
 	},
 	tblfloor.RoomNum: func(p *Floor) (any, bool) {
 		return p.RoomNum, p.RoomNum == 0
+	},
+	tblfloor.DelFlag: func(p *Floor) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

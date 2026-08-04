@@ -1720,6 +1720,210 @@ func (p *OperateActiveTypeVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
+	--- ListFloorByBuildingIdQuery ---
+*/
+// Init
+func (p *ListFloorByBuildingIdQuery) Init() error {
+	p.BuildingID = nil
+
+	return nil
+}
+
+// Check
+func (p *ListFloorByBuildingIdQuery) Check() error {
+	return nil
+}
+
+// UnmarshalJSON
+func (p *ListFloorByBuildingIdQuery) UnmarshalJSON(data []byte) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	ok := gjson.ValidBytes(data)
+	if !ok {
+		return errors.New("invalid json")
+	}
+	_result := gjson.ParseBytes(data)
+	var e error
+	_result.ForEach(func(key, value gjson.Result) bool {
+		switch key.Str {
+		case "building_id":
+			e = types.Unmarshal(value, &p.BuildingID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return false
+		}
+		return true
+	})
+	return nil
+}
+
+// UnmarshalValues
+func (p *ListFloorByBuildingIdQuery) UnmarshalValues(m map[string][]string) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	var e error
+	for k, v := range m {
+		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
+		switch k {
+		case "building_id":
+			e = types.Unmarshal(value, &p.BuildingID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return e
+		}
+	}
+
+	return nil
+}
+
+/*
+	--- ListRoomByKeyQuery ---
+*/
+// Init
+func (p *ListRoomByKeyQuery) Init() error {
+	p.BuildingID = nil
+	p.FloorID = nil
+	p.ElderName = nil
+
+	return nil
+}
+
+// Check
+func (p *ListRoomByKeyQuery) Check() error {
+	return nil
+}
+
+// UnmarshalJSON
+func (p *ListRoomByKeyQuery) UnmarshalJSON(data []byte) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	ok := gjson.ValidBytes(data)
+	if !ok {
+		return errors.New("invalid json")
+	}
+	_result := gjson.ParseBytes(data)
+	var e error
+	_result.ForEach(func(key, value gjson.Result) bool {
+		switch key.Str {
+		case "building_id":
+			e = types.Unmarshal(value, &p.BuildingID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "floor_id":
+			e = types.Unmarshal(value, &p.FloorID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "elder_name":
+			e = types.Unmarshal(value, &p.ElderName, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return false
+		}
+		return true
+	})
+	return nil
+}
+
+// UnmarshalValues
+func (p *ListRoomByKeyQuery) UnmarshalValues(m map[string][]string) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	var e error
+	for k, v := range m {
+		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
+		switch k {
+		case "building_id":
+			e = types.Unmarshal(value, &p.BuildingID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "floor_id":
+			e = types.Unmarshal(value, &p.FloorID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "elder_name":
+			e = types.Unmarshal(value, &p.ElderName, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return e
+		}
+	}
+
+	return nil
+}
+
+/*
 	--- PageBedByKeyQuery ---
 */
 // Init
@@ -2643,6 +2847,18 @@ func (p *ListRoomByKeyQuery) UnmarshalValues(m map[string][]string) error {
 	}
 
 	return nil
+}
+
+/*
+	--- PageBuildingByKeyVO ---
+*/
+// MarshalJSON
+func (p *PageBuildingByKeyVO) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(3 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("floor_num", types.Marshal(p.FloorNum))
+	return write.Bytes(), nil
 }
 
 /*
@@ -4751,6 +4967,31 @@ func (p *PageCateringSetByKeyVO) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
 	write.WriteRaw("month_price", types.Marshal(p.MonthPrice))
+	return write.Bytes(), nil
+}
+
+/*
+	--- SetDishesVO ---
+*/
+// MarshalJSON
+func (p *SetDishesVO) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(3 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("price", types.Marshal(p.Price))
+	return write.Bytes(), nil
+}
+
+/*
+	--- GetCateringSetByIDVO ---
+*/
+// MarshalJSON
+func (p *GetCateringSetByIDVO) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(4 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("month_price", types.Marshal(p.MonthPrice))
+	write.WriteRaw("set_dishes", types.Marshal(p.SetDishes))
 	return write.Bytes(), nil
 }
 

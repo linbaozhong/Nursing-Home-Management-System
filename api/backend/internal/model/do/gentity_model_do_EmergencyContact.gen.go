@@ -42,9 +42,6 @@ func (p *EmergencyContact) MarshalJSON() ([]byte, error) {
 	if p.Relation != "" {
 		write.WriteRaw("relation", types.Marshal(p.Relation))
 	}
-	if p.ReceiveFlag != "" {
-		write.WriteRaw("receive_flag", types.Marshal(p.ReceiveFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -62,6 +59,9 @@ func (p *EmergencyContact) MarshalJSON() ([]byte, error) {
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.ReceiveFlag != 0 {
+		write.WriteRaw("receive_flag", types.Marshal(p.ReceiveFlag))
 	}
 	return write.Bytes(), nil
 }
@@ -84,8 +84,6 @@ func (p *EmergencyContact) UnmarshalJSON(data []byte) error {
 			p.Email = types.String(value.Str)
 		case "relation":
 			p.Relation = types.String(value.Str)
-		case "receive_flag":
-			p.ReceiveFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -98,6 +96,8 @@ func (p *EmergencyContact) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "receive_flag":
+			p.ReceiveFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -123,13 +123,13 @@ func (p *EmergencyContact) Reset() {
 	p.Phone = ""
 	p.Email = ""
 	p.Relation = ""
-	p.ReceiveFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.ReceiveFlag = 0
 
 }
 
@@ -143,13 +143,13 @@ var emergencycontactFieldToPtrFunc = map[string]func(*EmergencyContact) any{
 	tblemergencycontact.Phone.Name:       func(p *EmergencyContact) any { return &p.Phone },
 	tblemergencycontact.Email.Name:       func(p *EmergencyContact) any { return &p.Email },
 	tblemergencycontact.Relation.Name:    func(p *EmergencyContact) any { return &p.Relation },
-	tblemergencycontact.ReceiveFlag.Name: func(p *EmergencyContact) any { return &p.ReceiveFlag },
 	tblemergencycontact.Id.Name:          func(p *EmergencyContact) any { return &p.Id },
 	tblemergencycontact.ElderId.Name:     func(p *EmergencyContact) any { return &p.ElderId },
 	tblemergencycontact.CreateId.Name:    func(p *EmergencyContact) any { return &p.CreateId },
 	tblemergencycontact.CreateTime.Name:  func(p *EmergencyContact) any { return &p.CreateTime },
 	tblemergencycontact.UpdateId.Name:    func(p *EmergencyContact) any { return &p.UpdateId },
 	tblemergencycontact.UpdateTime.Name:  func(p *EmergencyContact) any { return &p.UpdateTime },
+	tblemergencycontact.ReceiveFlag.Name: func(p *EmergencyContact) any { return &p.ReceiveFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -237,9 +237,6 @@ var emergencycontactFieldToValueFunc = map[dialect.Field]func(*EmergencyContact)
 	tblemergencycontact.Relation: func(p *EmergencyContact) (any, bool) {
 		return p.Relation, p.Relation == ""
 	},
-	tblemergencycontact.ReceiveFlag: func(p *EmergencyContact) (any, bool) {
-		return p.ReceiveFlag, p.ReceiveFlag == ""
-	},
 	tblemergencycontact.Id: func(p *EmergencyContact) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -257,6 +254,9 @@ var emergencycontactFieldToValueFunc = map[dialect.Field]func(*EmergencyContact)
 	},
 	tblemergencycontact.UpdateTime: func(p *EmergencyContact) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblemergencycontact.ReceiveFlag: func(p *EmergencyContact) (any, bool) {
+		return p.ReceiveFlag, p.ReceiveFlag == 0
 	},
 }
 

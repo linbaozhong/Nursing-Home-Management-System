@@ -62,24 +62,6 @@ type RoleAuth struct {
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
 }
 
-//
-//// User
-//// @tablename user
-//type User struct {
-//	pool.Model
-//	Id       types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`     // 编号
-//	Name     types.String `json:"name,omitempty" db:"'name' size:40"`         // 姓名
-//	Email    types.String `json:"email,omitempty" db:"'email' size:40"`       // 邮箱
-//	Mobile   types.String `json:"mobile,omitempty" db:"'mobile' size:20"`     // 手机号
-//	Gender   types.String `json:"gender,omitempty" db:"'gender' size:5"`      // 性别
-//	Birthday types.String `json:"birthday,omitempty" db:"'birthday' size:20"` // 生日
-//	Creator  types.BigInt `json:"creator,omitempty" db:"'creator' size:20"`   // 创建人
-//	Status   types.Int8   `json:"status,omitempty" db:"'status' size:4"`      // 状态
-//	State    types.Int8   `json:"state,omitempty" db:"'state' size:4"`        // 启用状态
-//	Ctime    types.Time   `json:"ctime,omitempty" db:"'ctime'"`               // 创建时间
-//	Utime    types.Time   `json:"utime,omitempty" db:"'utime'"`               // 修改时间
-//}
-
 // SetDishes
 // @tablename set_dishes
 type SetDishes struct {
@@ -98,14 +80,14 @@ type SetDishes struct {
 type Bed struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:40"`           // 床位名称
-	BedFlag    types.String `json:"bed_flag,omitempty" db:"'bed_flag' size:5"`    // 床位状态(空闲/预定/入住/退住审核)
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	RoomId     types.BigInt `json:"room_id,omitempty" db:"'room_id' size:20"`     // 房间编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
+	BedFlag    types.Int8   `json:"bed_flag,omitempty" db:"'bed_flag' size:5"`    // 床位状态(空闲/预定/入住/退住审核)
 }
 
 // Consult
@@ -153,25 +135,25 @@ type HealthInfo struct {
 type MaterialType struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 物资类别名称
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // RetreatApply
 // @tablename retreat_apply
 type RetreatApply struct {
 	pool.Model
-	ApplyFlag  types.String `json:"apply_flag,omitempty" db:"'apply_flag' size:5"` // 申请状态
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`        // 编号
 	ElderId    types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`    // 老人编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`  // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`      // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`  // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`      // 修改时间
+	ApplyFlag  types.Int8   `json:"apply_flag,omitempty" db:"'apply_flag' size:5"` // 申请状态
 }
 
 // DepositInfo
@@ -212,8 +194,6 @@ type Visit struct {
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`            // 来访者姓名
 	Phone      types.String `json:"phone,omitempty" db:"'phone' size:11"`          // 来访者电话
 	Relation   types.String `json:"relation,omitempty" db:"'relation' size:5"`     // 与老人关系
-	VisitFlag  types.String `json:"visit_flag,omitempty" db:"'visit_flag' size:5"` // 来访状态
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`     // 删除状态
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`        // 编号
 	ElderId    types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`    // 老人编号
 	VisitDate  types.Time   `json:"visit_date,omitempty" db:"'visit_date'"`        // 来访时间
@@ -223,6 +203,8 @@ type Visit struct {
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`  // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`      // 修改时间
 	VisitNum   types.Int32  `json:"visit_num,omitempty" db:"'visit_num' size:11"`  // 来访者人数
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`     // 删除状态
+	VisitFlag  types.Int8   `json:"visit_flag,omitempty" db:"'visit_flag' size:5"` // 来访状态
 }
 
 // WarehouseMaterial
@@ -247,12 +229,12 @@ type WarehouseMaterial struct {
 type LabelType struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 分类名称
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // NurseGrade
@@ -261,13 +243,13 @@ type NurseGrade struct {
 	pool.Model
 	Name       types.String  `json:"name,omitempty" db:"'name' size:10"`                 // 级别名称
 	Type       types.String  `json:"type,omitempty" db:"'type' size:5"`                  // 护理类型
-	DelFlag    types.String  `json:"del_flag,omitempty" db:"'del_flag' size:2"`          // 删除状态（Y/N）
 	Id         types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`             // 编号
 	MonthPrice types.Float64 `json:"month_price,omitempty" db:"'month_price' size:10|2"` // 月护理费用
 	CreateId   types.BigInt  `json:"create_id,omitempty" db:"'create_id' size:20"`       // 创建人编号
 	CreateTime types.Time    `json:"create_time,omitempty" db:"'create_time'"`           // 创建时间
 	UpdateId   types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"`       // 修改人编号
 	UpdateTime types.Time    `json:"update_time,omitempty" db:"'update_time'"`           // 修改时间
+	DelFlag    types.Int8    `json:"del_flag,omitempty" db:"'del_flag' size:1"`          // 删除状态（Y/N）
 }
 
 // ActiveType
@@ -275,12 +257,12 @@ type NurseGrade struct {
 type ActiveType struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 活动类型名称
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // CommunicationRecord
@@ -288,7 +270,6 @@ type ActiveType struct {
 type CommunicationRecord struct {
 	pool.Model
 	CommunicationRecord types.String `json:"communication_record,omitempty" db:"'communication_record' size:255"` // 沟通记录
-	DelFlag             types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`                           // 删除状态（Y/N）
 	Id                  types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                              // 编号
 	ElderId             types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`                          // 老人编号
 	RecordDate          types.Time   `json:"record_date,omitempty" db:"'record_date'"`                            // 记录时间
@@ -296,6 +277,7 @@ type CommunicationRecord struct {
 	CreateTime          types.Time   `json:"create_time,omitempty" db:"'create_time'"`                            // 创建时间
 	UpdateId            types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`                        // 修改人编号
 	UpdateTime          types.Time   `json:"update_time,omitempty" db:"'update_time'"`                            // 修改时间
+	DelFlag             types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`                           // 删除状态（Y/N）
 }
 
 // DishesType
@@ -303,12 +285,12 @@ type CommunicationRecord struct {
 type DishesType struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 菜品类别名称
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // HealthData
@@ -350,7 +332,6 @@ type Outward struct {
 	ChaperoneName  types.String `json:"chaperone_name,omitempty" db:"'chaperone_name' size:10"`   // 陪同人姓名
 	ChaperonePhone types.String `json:"chaperone_phone,omitempty" db:"'chaperone_phone' size:11"` // 陪同人电话
 	ChaperoneType  types.String `json:"chaperone_type,omitempty" db:"'chaperone_type' size:5"`    // 陪同人类型（家属/护工）
-	DelFlag        types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`                // 删除状态（Y/N）
 	Id             types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                   // 编号
 	ElderId        types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`               // 老人编号
 	OutwardDate    types.Time   `json:"outward_date,omitempty" db:"'outward_date'"`               // 外出时间
@@ -360,6 +341,7 @@ type Outward struct {
 	CreateTime     types.Time   `json:"create_time,omitempty" db:"'create_time'"`                 // 创建时间
 	UpdateId       types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`             // 修改人编号
 	UpdateTime     types.Time   `json:"update_time,omitempty" db:"'update_time'"`                 // 修改时间
+	DelFlag        types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`                // 删除状态（Y/N）
 }
 
 // Reserve
@@ -368,7 +350,6 @@ type Reserve struct {
 	pool.Model
 	Name        types.String  `json:"name,omitempty" db:"'name' size:10"`                // 交款人姓名
 	Phone       types.String  `json:"phone,omitempty" db:"'phone' size:11"`              // 交款人电话
-	ReserveFlag types.String  `json:"reserve_flag,omitempty" db:"'reserve_flag' size:2"` // 退款状态（N/Y）
 	Id          types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`            // 编号
 	ElderId     types.BigInt  `json:"elder_id,omitempty" db:"'elder_id' size:20"`        // 老人编号
 	StaffId     types.BigInt  `json:"staff_id,omitempty" db:"'staff_id' size:20"`        // 销售人员编号
@@ -378,6 +359,7 @@ type Reserve struct {
 	CreateTime  types.Time    `json:"create_time,omitempty" db:"'create_time'"`          // 创建时间
 	UpdateId    types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"`      // 修改人编号
 	UpdateTime  types.Time    `json:"update_time,omitempty" db:"'update_time'"`          // 修改时间
+	ReserveFlag types.Int8    `json:"reserve_flag,omitempty" db:"'reserve_flag' size:1"` // 退款状态（N/Y）
 }
 
 // VisitPlan
@@ -386,7 +368,6 @@ type VisitPlan struct {
 	pool.Model
 	Title        types.String `json:"title,omitempty" db:"'title' size:25"`         // 回访计划标题
 	Content      types.String `json:"content,omitempty" db:"'content' size:255"`    // 回访计划内容
-	DelFlag      types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id           types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	ElderId      types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`   // 老人编号
 	PlanDate     types.Time   `json:"plan_date,omitempty" db:"'plan_date'"`         // 计划回访时间
@@ -395,6 +376,7 @@ type VisitPlan struct {
 	CreateTime   types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId     types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime   types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag      types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // ElderLabel
@@ -416,13 +398,13 @@ type Label struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 标签名称
 	Color      types.String `json:"color,omitempty" db:"'color' size:15"`         // 标签颜色
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	TypeId     types.BigInt `json:"type_id,omitempty" db:"'type_id' size:20"`     // 类别编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // Dishes
@@ -430,7 +412,6 @@ type Label struct {
 type Dishes struct {
 	pool.Model
 	Name       types.String  `json:"name,omitempty" db:"'name' size:15"`           // 菜品名称
-	DelFlag    types.String  `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	TypeId     types.BigInt  `json:"type_id,omitempty" db:"'type_id' size:20"`     // 菜品类别编号
 	Price      types.Float64 `json:"price,omitempty" db:"'price' size:10|2"`       // 菜品价格
@@ -438,6 +419,7 @@ type Dishes struct {
 	CreateTime types.Time    `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time    `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8    `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // Material
@@ -445,7 +427,6 @@ type Dishes struct {
 type Material struct {
 	pool.Model
 	Name       types.String  `json:"name,omitempty" db:"'name' size:15"`           // 物资名称
-	DelFlag    types.String  `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	TypeId     types.BigInt  `json:"type_id,omitempty" db:"'type_id' size:20"`     // 物资类别编号
 	Price      types.Float64 `json:"price,omitempty" db:"'price' size:10|2"`       // 物资单价
@@ -453,6 +434,7 @@ type Material struct {
 	CreateTime types.Time    `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time    `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8    `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // RoomType
@@ -460,13 +442,13 @@ type Material struct {
 type RoomType struct {
 	pool.Model
 	Name       types.String  `json:"name,omitempty" db:"'name' size:10"`                 // 房间类型名称
-	DelFlag    types.String  `json:"del_flag,omitempty" db:"'del_flag' size:2"`          // 删除状态（Y/N）
 	Id         types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`             // 编号
 	MonthPrice types.Float64 `json:"month_price,omitempty" db:"'month_price' size:10|2"` // 月房间费用
 	CreateId   types.BigInt  `json:"create_id,omitempty" db:"'create_id' size:20"`       // 创建人编号
 	CreateTime types.Time    `json:"create_time,omitempty" db:"'create_time'"`           // 创建时间
 	UpdateId   types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"`       // 修改人编号
 	UpdateTime types.Time    `json:"update_time,omitempty" db:"'update_time'"`           // 修改时间
+	DelFlag    types.Int8    `json:"del_flag,omitempty" db:"'del_flag' size:1"`          // 删除状态（Y/N）
 }
 
 // Auth
@@ -493,12 +475,12 @@ type Auth struct {
 type ServiceType struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 服务项目名称
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // NurseGroup
@@ -506,13 +488,13 @@ type ServiceType struct {
 type NurseGroup struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 护工小组名称
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	StaffId    types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`   // 护工小组组长编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // Retreat
@@ -576,7 +558,6 @@ type NurseReserve struct {
 	pool.Model
 	ServiceName  types.String  `json:"service_name,omitempty" db:"'service_name' size:10"`     // 服务项目名称
 	ChargeMethod types.String  `json:"charge_method,omitempty" db:"'charge_method' size:3"`    // 收费方式
-	OrderFlag    types.String  `json:"order_flag,omitempty" db:"'order_flag' size:2"`          // 订单状态
 	Id           types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`                 // 编号
 	ElderId      types.BigInt  `json:"elder_id,omitempty" db:"'elder_id' size:20"`             // 老人编号
 	StaffId      types.BigInt  `json:"staff_id,omitempty" db:"'staff_id' size:20"`             // 服务人编号
@@ -589,6 +570,7 @@ type NurseReserve struct {
 	UpdateTime   types.Time    `json:"update_time,omitempty" db:"'update_time'"`               // 修改时间
 	NeedDate     types.Int32   `json:"need_date,omitempty" db:"'need_date' size:11"`           // 所需时间
 	Frequency    types.Int32   `json:"frequency,omitempty" db:"'frequency' size:11"`           // 服务次数
+	OrderFlag    types.Int8    `json:"order_flag,omitempty" db:"'order_flag' size:1"`          // 订单状态
 }
 
 // WarehouseRecord
@@ -596,8 +578,6 @@ type NurseReserve struct {
 type WarehouseRecord struct {
 	pool.Model
 	Source        types.String `json:"source,omitempty" db:"'source' size:5"`                 // 物资来源
-	WarehouseFlag types.String `json:"warehouse_flag,omitempty" db:"'warehouse_flag' size:5"` // 入库状态
-	DelFlag       types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`             // 删除状态（Y/N）
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                // 编号
 	WarehouseId   types.BigInt `json:"warehouse_id,omitempty" db:"'warehouse_id' size:20"`    // 仓库编号
 	StaffId       types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`            // 经办人编号
@@ -606,6 +586,8 @@ type WarehouseRecord struct {
 	CreateTime    types.Time   `json:"create_time,omitempty" db:"'create_time'"`              // 创建时间
 	UpdateId      types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`          // 修改人编号
 	UpdateTime    types.Time   `json:"update_time,omitempty" db:"'update_time'"`              // 修改时间
+	WarehouseFlag types.Int8   `json:"warehouse_flag,omitempty" db:"'warehouse_flag' size:5"` // 入库状态
+	DelFlag       types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`             // 删除状态（Y/N）
 }
 
 // Building
@@ -613,13 +595,13 @@ type WarehouseRecord struct {
 type Building struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 楼栋名称
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
 	FloorNum   types.Int32  `json:"floor_num,omitempty" db:"'floor_num' size:11"` // 楼层数量
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // OrderDishes
@@ -627,7 +609,6 @@ type Building struct {
 type OrderDishes struct {
 	pool.Model
 	DishesName   types.String  `json:"dishes_name,omitempty" db:"'dishes_name' size:15"`       // 菜品名称
-	SetFlag      types.String  `json:"set_flag,omitempty" db:"'set_flag' size:2"`              // 套餐标记
 	Id           types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`                 // 编号
 	OrderId      types.BigInt  `json:"order_id,omitempty" db:"'order_id' size:20"`             // 订餐编号
 	DishesPrice  types.Float64 `json:"dishes_price,omitempty" db:"'dishes_price' size:10|2"`   // 菜品价格
@@ -638,6 +619,7 @@ type OrderDishes struct {
 	UpdateId     types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"`           // 修改人编号
 	UpdateTime   types.Time    `json:"update_time,omitempty" db:"'update_time'"`               // 修改时间
 	OrderNum     types.Int32   `json:"order_num,omitempty" db:"'order_num' size:11"`           // 菜品份数
+	SetFlag      types.Int8    `json:"set_flag,omitempty" db:"'set_flag' size:1"`              // 套餐标记
 }
 
 // Active
@@ -651,7 +633,6 @@ type Active struct {
 	Organizer     types.String `json:"organizer,omitempty" db:"'organizer' size:10"`            // 组织者姓名
 	Phone         types.String `json:"phone,omitempty" db:"'phone' size:11"`                    // 组织者电话
 	ActivePicture types.String `json:"active_picture,omitempty" db:"'active_picture' size:255"` // 活动图片
-	DelFlag       types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`               // 删除状态（Y/N）
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                  // 编号
 	TypeId        types.BigInt `json:"type_id,omitempty" db:"'type_id' size:20"`                // 活动类别编号
 	ActiveDate    types.Time   `json:"active_date,omitempty" db:"'active_date'"`                // 活动日期
@@ -659,6 +640,7 @@ type Active struct {
 	CreateTime    types.Time   `json:"create_time,omitempty" db:"'create_time'"`                // 创建时间
 	UpdateId      types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`            // 修改人编号
 	UpdateTime    types.Time   `json:"update_time,omitempty" db:"'update_time'"`                // 修改时间
+	DelFlag       types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`               // 删除状态（Y/N）
 }
 
 // CateringSet
@@ -666,13 +648,13 @@ type Active struct {
 type CateringSet struct {
 	pool.Model
 	Name       types.String  `json:"name,omitempty" db:"'name' size:10"`                 // 餐饮套餐名称
-	DelFlag    types.String  `json:"del_flag,omitempty" db:"'del_flag' size:2"`          // 删除状态（Y/N）
 	Id         types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`             // 编号
 	MonthPrice types.Float64 `json:"month_price,omitempty" db:"'month_price' size:10|2"` // 月套餐费用
 	CreateId   types.BigInt  `json:"create_id,omitempty" db:"'create_id' size:20"`       // 创建人编号
 	CreateTime types.Time    `json:"create_time,omitempty" db:"'create_time'"`           // 创建时间
 	UpdateId   types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"`       // 修改人编号
 	UpdateTime types.Time    `json:"update_time,omitempty" db:"'update_time'"`           // 修改时间
+	DelFlag    types.Int8    `json:"del_flag,omitempty" db:"'del_flag' size:1"`          // 删除状态（Y/N）
 }
 
 // DrugDeposit
@@ -680,14 +662,14 @@ type CateringSet struct {
 type DrugDeposit struct {
 	pool.Model
 	Mode        types.String `json:"mode,omitempty" db:"'mode' size:5"`                 // 缴存药品方式
-	DepositFlag types.String `json:"deposit_flag,omitempty" db:"'deposit_flag' size:5"` // 缴存状态
-	DelFlag     types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`         // 删除状态（Y/N）
 	Id          types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`            // 编号
 	ElderId     types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`        // 老人编号
 	CreateId    types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`      // 创建人编号
 	CreateTime  types.Time   `json:"create_time,omitempty" db:"'create_time'"`          // 创建时间
 	UpdateId    types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`      // 修改人编号
 	UpdateTime  types.Time   `json:"update_time,omitempty" db:"'update_time'"`          // 修改时间
+	DepositFlag types.Int8   `json:"deposit_flag,omitempty" db:"'deposit_flag' size:5"` // 缴存状态
+	DelFlag     types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`         // 删除状态（Y/N）
 }
 
 // FamilyMember
@@ -700,14 +682,14 @@ type FamilyMember struct {
 	Email       types.String `json:"email,omitempty" db:"'email' size:30"`              // 家属邮箱
 	Address     types.String `json:"address,omitempty" db:"'address' size:50"`          // 地址
 	Relation    types.String `json:"relation,omitempty" db:"'relation' size:5"`         // 与老人关系
-	ReceiveFlag types.String `json:"receive_flag,omitempty" db:"'receive_flag' size:2"` // 是否接收消息（Y/N）
-	DelFlag     types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`         // 删除状态（Y/N）
 	Id          types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`            // 编号
 	ElderId     types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`        // 老人编号
 	CreateId    types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`      // 创建人编号
 	CreateTime  types.Time   `json:"create_time,omitempty" db:"'create_time'"`          // 创建时间
 	UpdateId    types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`      // 修改人编号
 	UpdateTime  types.Time   `json:"update_time,omitempty" db:"'update_time'"`          // 修改时间
+	DelFlag     types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`         // 删除状态（Y/N）
+	ReceiveFlag types.Int8   `json:"receive_flag,omitempty" db:"'receive_flag' size:1"` // 是否接收消息（Y/N）
 }
 
 // Medicine
@@ -719,12 +701,12 @@ type Medicine struct {
 	Specification types.String `json:"specification,omitempty" db:"'specification' size:10"` // 药品规格
 	DosageForm    types.String `json:"dosage_form,omitempty" db:"'dosage_form' size:5"`      // 药品剂型
 	Manufacturer  types.String `json:"manufacturer,omitempty" db:"'manufacturer' size:25"`   // 生产厂家
-	DelFlag       types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`            // 删除状态（Y/N）
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`               // 编号
 	CreateId      types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`         // 创建人编号
 	CreateTime    types.Time   `json:"create_time,omitempty" db:"'create_time'"`             // 创建时间
 	UpdateId      types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`         // 修改人编号
 	UpdateTime    types.Time   `json:"update_time,omitempty" db:"'update_time'"`             // 修改时间
+	DelFlag       types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`            // 删除状态（Y/N）
 }
 
 // NurseGroupMember
@@ -745,12 +727,12 @@ type NurseGroupMember struct {
 type Source struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 来源渠道名称
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // Warehouse
@@ -758,13 +740,13 @@ type Source struct {
 type Warehouse struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 仓库名称
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	StaffId    types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`   // 仓库管理员编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // MedicineSet
@@ -787,7 +769,6 @@ type Accident struct {
 	pool.Model
 	Description types.String `json:"description,omitempty" db:"'description' size:255"` // 事故描述
 	Picture     types.String `json:"picture,omitempty" db:"'picture' size:255"`         // 事故图片
-	DelFlag     types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`         // 删除状态（Y/N）
 	Id          types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`            // 编号
 	ElderId     types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`        // 老人编号
 	StaffId     types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`        // 值班护工编号
@@ -796,6 +777,7 @@ type Accident struct {
 	CreateTime  types.Time   `json:"create_time,omitempty" db:"'create_time'"`          // 创建时间
 	UpdateId    types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`      // 修改人编号
 	UpdateTime  types.Time   `json:"update_time,omitempty" db:"'update_time'"`          // 修改时间
+	DelFlag     types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`         // 删除状态（Y/N）
 }
 
 // EmergencyContact
@@ -806,21 +788,19 @@ type EmergencyContact struct {
 	Phone       types.String `json:"phone,omitempty" db:"'phone' size:11"`              // 紧急联系人电话
 	Email       types.String `json:"email,omitempty" db:"'email' size:30"`              // 紧急联系人邮箱
 	Relation    types.String `json:"relation,omitempty" db:"'relation' size:5"`         // 与老人关系
-	ReceiveFlag types.String `json:"receive_flag,omitempty" db:"'receive_flag' size:2"` // 是否接收消息（Y/N）
 	Id          types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`            // 编号
 	ElderId     types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`        // 老人编号
 	CreateId    types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`      // 创建人编号
 	CreateTime  types.Time   `json:"create_time,omitempty" db:"'create_time'"`          // 创建时间
 	UpdateId    types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`      // 修改人编号
 	UpdateTime  types.Time   `json:"update_time,omitempty" db:"'update_time'"`          // 修改时间
+	ReceiveFlag types.Int8   `json:"receive_flag,omitempty" db:"'receive_flag' size:1"` // 是否接收消息（Y/N）
 }
 
 // Nurse
 // @tablename nurse
 type Nurse struct {
 	pool.Model
-	CompleteFlag types.String `json:"complete_flag,omitempty" db:"'complete_flag' size:5"` // 护理完成情况
-	DineFlag     types.String `json:"dine_flag,omitempty" db:"'dine_flag' size:5"`         // 进餐情况
 	Rest         types.String `json:"rest,omitempty" db:"'rest' size:5"`                   // 休息
 	TakeMedicine types.String `json:"take_medicine,omitempty" db:"'take_medicine' size:5"` // 服药
 	Active       types.String `json:"active,omitempty" db:"'active' size:5"`               // 活动
@@ -832,6 +812,8 @@ type Nurse struct {
 	CreateTime   types.Time   `json:"create_time,omitempty" db:"'create_time'"`            // 创建时间
 	UpdateId     types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`        // 修改人编号
 	UpdateTime   types.Time   `json:"update_time,omitempty" db:"'update_time'"`            // 修改时间
+	CompleteFlag types.Int8   `json:"complete_flag,omitempty" db:"'complete_flag' size:5"` // 护理完成情况
+	DineFlag     types.Int8   `json:"dine_flag,omitempty" db:"'dine_flag' size:5"`         // 进餐情况
 }
 
 // RoleCopy1
@@ -855,13 +837,13 @@ type BaseAttachment struct {
 	Path       types.String `json:"path,omitempty" db:"'path' size:225"`           // 文件绝对路径
 	Url        types.String `json:"url,omitempty" db:"'url' size:225"`             // url相对路径
 	Suff       types.String `json:"suff,omitempty" db:"'suff' size:225"`           // 文件后缀
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`     // 删除状态(Y/N)
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`        // 编号
 	Size       types.BigInt `json:"size,omitempty" db:"'size' size:20"`            // 文件大小 B
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`  // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`      // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`  // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`      // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`     // 删除状态(Y/N)
 }
 
 // Order
@@ -869,7 +851,6 @@ type BaseAttachment struct {
 type Order struct {
 	pool.Model
 	DineType          types.String  `json:"dine_type,omitempty" db:"'dine_type' size:5"`              // 就餐方式
-	OrderFlag         types.String  `json:"order_flag,omitempty" db:"'order_flag' size:2"`            // 订单状态
 	Id                types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`                   // 编号
 	ElderId           types.BigInt  `json:"elder_id,omitempty" db:"'elder_id' size:20"`               // 老人编号
 	StaffId           types.BigInt  `json:"staff_id,omitempty" db:"'staff_id' size:20"`               // 送餐人编号
@@ -880,6 +861,7 @@ type Order struct {
 	CreateTime        types.Time    `json:"create_time,omitempty" db:"'create_time'"`                 // 创建时间
 	UpdateId          types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"`             // 修改人编号
 	UpdateTime        types.Time    `json:"update_time,omitempty" db:"'update_time'"`                 // 修改时间
+	OrderFlag         types.Int8    `json:"order_flag,omitempty" db:"'order_flag' size:1"`            // 订单状态
 }
 
 // Room
@@ -887,7 +869,6 @@ type Order struct {
 type Room struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:30"`           // 房间名称
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`    // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
 	TypeId     types.BigInt `json:"type_id,omitempty" db:"'type_id' size:20"`     // 房间类型编号
 	FloorId    types.BigInt `json:"floor_id,omitempty" db:"'floor_id' size:20"`   // 楼层编号
@@ -896,6 +877,7 @@ type Room struct {
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
 	BedNum     types.Int32  `json:"bed_num,omitempty" db:"'bed_num' size:11"`     // 床位数量
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
 }
 
 // Staff
@@ -910,7 +892,6 @@ type Staff struct {
 	Pass       types.String `json:"pass,omitempty" db:"'pass' size:255"`           // 密码
 	Avator     types.String `json:"avator,omitempty" db:"'avator' size:255"`       // 头像
 	Address    types.String `json:"address,omitempty" db:"'address' size:50"`      // 地址
-	LeaveFlag  types.String `json:"leave_flag,omitempty" db:"'leave_flag' size:2"` // 离职状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`        // 编号
 	RoleId     types.BigInt `json:"role_id,omitempty" db:"'role_id' size:20"`      // 角色编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`  // 创建人编号
@@ -918,6 +899,7 @@ type Staff struct {
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`  // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`      // 修改时间
 	Age        types.Int32  `json:"age,omitempty" db:"'age' size:11"`              // 年龄
+	LeaveFlag  types.Int8   `json:"leave_flag,omitempty" db:"'leave_flag' size:1"` // 离职状态（Y/N）
 }
 
 // Elder
@@ -929,7 +911,6 @@ type Elder struct {
 	Sex            types.String  `json:"sex,omitempty" db:"'sex' size:2"`                            // 性别(男/女)
 	Phone          types.String  `json:"phone,omitempty" db:"'phone' size:11"`                       // 老人电话
 	Address        types.String  `json:"address,omitempty" db:"'address' size:50"`                   // 地址
-	CheckFlag      types.String  `json:"check_flag,omitempty" db:"'check_flag' size:11"`             // 入住状态
 	Id             types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`                     // 编号
 	NursingGradeId types.BigInt  `json:"nursing_grade_id,omitempty" db:"'nursing_grade_id' size:20"` // 护理等级编号
 	CateringSetId  types.BigInt  `json:"catering_set_id,omitempty" db:"'catering_set_id' size:20"`   // 餐饮套餐编号
@@ -940,6 +921,7 @@ type Elder struct {
 	UpdateId       types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"`               // 修改人编号
 	UpdateTime     types.Time    `json:"update_time,omitempty" db:"'update_time'"`                   // 修改时间
 	Age            types.Int32   `json:"age,omitempty" db:"'age' size:11"`                           // 年龄
+	CheckFlag      types.Int8    `json:"check_flag,omitempty" db:"'check_flag' size:11"`             // 入住状态
 }
 
 // Floor
@@ -947,7 +929,6 @@ type Elder struct {
 type Floor struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:20"`               // 楼层名称
-	DelFlag    types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`        // 删除状态（Y/N）
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`           // 编号
 	BuildingId types.BigInt `json:"building_id,omitempty" db:"'building_id' size:20"` // 楼栋编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`     // 创建人编号
@@ -955,6 +936,7 @@ type Floor struct {
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`     // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`         // 修改时间
 	RoomNum    types.Int32  `json:"room_num,omitempty" db:"'room_num' size:11"`       // 房间数量
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`        // 删除状态（Y/N）
 }
 
 // OutboundRecord
@@ -963,8 +945,6 @@ type OutboundRecord struct {
 	pool.Model
 	RecipientType types.String `json:"recipient_type,omitempty" db:"'recipient_type' size:5"` // 领用人类型
 	MaterialUse   types.String `json:"material_use,omitempty" db:"'material_use' size:5"`     // 物资去向
-	OutboundFlag  types.String `json:"outbound_flag,omitempty" db:"'outbound_flag' size:5"`   // 出库状态
-	DelFlag       types.String `json:"del_flag,omitempty" db:"'del_flag' size:2"`             // 删除状态（Y/N）
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                // 编号
 	WarehouseId   types.BigInt `json:"warehouse_id,omitempty" db:"'warehouse_id' size:20"`    // 仓库编号
 	StaffId       types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`            // 经办人编号
@@ -974,6 +954,8 @@ type OutboundRecord struct {
 	CreateTime    types.Time   `json:"create_time,omitempty" db:"'create_time'"`              // 创建时间
 	UpdateId      types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`          // 修改人编号
 	UpdateTime    types.Time   `json:"update_time,omitempty" db:"'update_time'"`              // 修改时间
+	OutboundFlag  types.Int8   `json:"outbound_flag,omitempty" db:"'outbound_flag' size:5"`   // 出库状态
+	DelFlag       types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`             // 删除状态（Y/N）
 }
 
 // ServiceItem
@@ -982,7 +964,6 @@ type ServiceItem struct {
 	pool.Model
 	Name         types.String  `json:"name,omitempty" db:"'name' size:10"`                  // 服务名称
 	ChargeMethod types.String  `json:"charge_method,omitempty" db:"'charge_method' size:3"` // 收费方式
-	DelFlag      types.String  `json:"del_flag,omitempty" db:"'del_flag' size:2"`           // 删除状态（Y/N）
 	Id           types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`              // 编号
 	TypeId       types.BigInt  `json:"type_id,omitempty" db:"'type_id' size:20"`            // 服务项目类别编号
 	Price        types.Float64 `json:"price,omitempty" db:"'price' size:10|2"`              // 服务费用
@@ -991,4 +972,5 @@ type ServiceItem struct {
 	UpdateId     types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"`        // 修改人编号
 	UpdateTime   types.Time    `json:"update_time,omitempty" db:"'update_time'"`            // 修改时间
 	NeedDate     types.Int32   `json:"need_date,omitempty" db:"'need_date' size:11"`        // 所需时间(分)
+	DelFlag      types.Int8    `json:"del_flag,omitempty" db:"'del_flag' size:1"`           // 删除状态（Y/N）
 }

@@ -33,9 +33,6 @@ func (p *Source) MarshalJSON() ([]byte, error) {
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -50,6 +47,9 @@ func (p *Source) MarshalJSON() ([]byte, error) {
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
 	}
 	return write.Bytes(), nil
 }
@@ -66,8 +66,6 @@ func (p *Source) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "create_id":
@@ -78,6 +76,8 @@ func (p *Source) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -100,12 +100,12 @@ func (p *Source) Free() {
 // Reset
 func (p *Source) Reset() {
 	p.Name = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
 
 }
 
@@ -116,12 +116,12 @@ func (p *Source) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var sourceFieldToPtrFunc = map[string]func(*Source) any{
 	tblsource.Name.Name:       func(p *Source) any { return &p.Name },
-	tblsource.DelFlag.Name:    func(p *Source) any { return &p.DelFlag },
 	tblsource.Id.Name:         func(p *Source) any { return &p.Id },
 	tblsource.CreateId.Name:   func(p *Source) any { return &p.CreateId },
 	tblsource.CreateTime.Name: func(p *Source) any { return &p.CreateTime },
 	tblsource.UpdateId.Name:   func(p *Source) any { return &p.UpdateId },
 	tblsource.UpdateTime.Name: func(p *Source) any { return &p.UpdateTime },
+	tblsource.DelFlag.Name:    func(p *Source) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -200,9 +200,6 @@ var sourceFieldToValueFunc = map[dialect.Field]func(*Source) (any, bool){
 	tblsource.Name: func(p *Source) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tblsource.DelFlag: func(p *Source) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblsource.Id: func(p *Source) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -217,6 +214,9 @@ var sourceFieldToValueFunc = map[dialect.Field]func(*Source) (any, bool){
 	},
 	tblsource.UpdateTime: func(p *Source) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblsource.DelFlag: func(p *Source) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 

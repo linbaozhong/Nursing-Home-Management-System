@@ -63,6 +63,14 @@ type ListRoomByKeyQuery struct {
 // GetBuildingTreeVO 楼栋树响应（对应 BuildingVO）
 type GetBuildingTreeVO = BuildingVO
 
+// @response
+// PageBuildingByKeyVO 分页查询楼栋响应
+type PageBuildingByKeyVO struct {
+	ID       int64  `json:"id"`        // 楼栋编号
+	Name     string `json:"name"`      // 楼栋名称
+	FloorNum int    `json:"floor_num"` // 楼层数量
+}
+
 // @request
 // PageBuildingByKeyQuery 分页查询楼宇请求
 type PageBuildingByKeyQuery struct {
@@ -172,4 +180,68 @@ type GetFloorByBuildingIdQuery struct {
 type GetRoomByFloorIdQuery struct {
 	FloorID *int64  `json:"floor_id" valid:"required"` // 楼层编号
 	Name    *string `json:"name"`                      // 房间名称
+}
+
+// ============ BuildController 响应 VO ============
+
+// OperateBuildingVO 楼栋详情响应（对应 OperateBuildingVo）
+type OperateBuildingVO struct {
+	ID       int64  `json:"id"`        // 楼栋编号
+	Name     string `json:"name"`      // 楼栋名称
+	FloorNum int    `json:"floor_num"` // 楼层数量
+}
+
+// PageFloorByKeyVO 分页查询楼层响应（对应 PageFloorByKeyVo）
+type PageFloorByKeyVO struct {
+	ID         int64  `json:"id"`          // 楼层编号
+	BuildingID int64  `json:"building_id"` // 楼栋编号
+	Name       string `json:"name"`        // 楼层名称
+	RoomNum    int    `json:"room_num"`    // 房间数量
+}
+
+// OperateFloorVO 楼层详情响应（对应 OperateFloorVo）
+type OperateFloorVO struct {
+	ID         int64  `json:"id"`          // 楼层编号
+	BuildingID int64  `json:"building_id"` // 楼栋编号
+	Name       string `json:"name"`        // 楼层名称
+	RoomNum    int    `json:"room_num"`    // 房间数量
+}
+
+// PageRoomByKeyVO 分页查询房间响应（对应 PageRoomByKeyVo）
+type PageRoomByKeyVO struct {
+	ID      int64  `json:"id"`       // 房间编号
+	TypeId  int64  `json:"type_id"`  // 房间类型
+	FloorId int64  `json:"floor_id"` // 楼层编号
+	Name    string `json:"name"`     // 房间名称
+	BedNum  int    `json:"bed_num"`  // 床位数量
+}
+
+// OperateRoomVO 房间详情响应（对应 OperateRoomVo）
+type OperateRoomVO struct {
+	ID      int64  `json:"id"`       // 房间编号
+	TypeId  int64  `json:"type_id"`  // 房间类型
+	FloorId int64  `json:"floor_id"` // 楼层编号
+	Name    string `json:"name"`     // 房间名称
+	BedNum  int    `json:"bed_num"`  // 床位数量
+}
+
+// RoomByFloorIdVO 根据楼层获取房间列表响应（对应 FloorItem）
+type RoomByFloorIdVO struct {
+	ID     int64  `json:"id"`      // 房间编号
+	Name   string `json:"name"`    // 房间名称
+	BedNum int    `json:"bed_num"` // 床位数量
+}
+
+// PageBedByKeyVO 分页查询床位响应（对应 PageBedByKeyVo）
+type PageBedByKeyVO struct {
+	ID      int64  `json:"id"`       // 床位编号
+	Name    string `json:"name"`     // 床位名称
+	BedFlag string `json:"bed_flag"` // 床位状态
+}
+
+// OperateBedVO 床位详情响应（对应 OperateBedVo）
+type OperateBedVO struct {
+	ID     int64  `json:"id"`      // 床位编号
+	RoomId int64  `json:"room_id"` // 房间编号
+	Name   string `json:"name"`    // 床位名称
 }

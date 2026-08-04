@@ -7,34 +7,34 @@ import (
 )
 
 var (
-	ApplyFlag  = dialect.Field{Name: "apply_flag", Json: "apply_flag", Table: "retreat_apply", Type: "types.String", IsRelation: false}
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "retreat_apply", Type: "types.BigInt", IsRelation: false}
 	ElderId    = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "retreat_apply", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "retreat_apply", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "retreat_apply", Type: "types.Time", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "retreat_apply", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "retreat_apply", Type: "types.Time", IsRelation: false}
+	ApplyFlag  = dialect.Field{Name: "apply_flag", Json: "apply_flag", Table: "retreat_apply", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		ApplyFlag,
 		Id,
 		ElderId,
 		CreateId,
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		ApplyFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		ApplyFlag,
 		Id,
 		ElderId,
 		CreateId,
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		ApplyFlag,
 	}
 )

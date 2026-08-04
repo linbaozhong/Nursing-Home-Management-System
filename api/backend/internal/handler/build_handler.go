@@ -52,7 +52,7 @@ func (b *build) listRoomType(ctx ack.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param data query dto.PageBuildingByKeyQuery true "PageBuildingByKeyQuery"
-// @Success 200 {object} dto.EmptyResp
+// @Success 200 {object} []dto.PageBuildingByKeyVO
 // @Router /build/pageBuildingByKey [get]
 func (b *build) pageBuildingByKey(ctx ack.Context) {
 	ack.Get(ctx, service.Build.PageBuildingByKey)

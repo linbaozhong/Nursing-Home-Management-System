@@ -124,7 +124,6 @@ type PageConsultByKeyVO struct {
 // @response
 // PageCommunicationRecordVO 分页查询沟通记录响应
 type PageCommunicationRecordVO struct {
-	Rank
 	ID                  int64     `json:"id"`                   // id
 	RecordDate          time.Time `json:"record_date"`          // 记录时间
 	CommunicationRecord string    `json:"communication_record"` // 沟通记录
