@@ -1,28 +1,15 @@
 package service
 
 import (
-	"context"
-	"errors"
-	"time"
-
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblorder"
-	"api/internal/model/define/table/tblorderdishes"
 	"api/internal/model/do"
 	"api/internal/model/dto"
+	"context"
+	"errors"
 	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
-
-// parseTime 将 "yyyy-MM-dd HH:mm:ss" 或 "yyyy-MM-dd" 字符串解析为 types.Time
-func parseTime(s string) types.Time {
-	for _, layout := range []string{"2006-01-02 15:04:05", "2006-01-02"} {
-		if t, e := time.Parse(layout, s); e == nil {
-			return types.Time(t)
-		}
-	}
-	return types.Time(time.Time{})
-}
 
 type order struct{}
 
@@ -96,9 +83,9 @@ func (o *order) AddOrder(ctx context.Context, in *dto.AddOrderQuery, out *dto.Em
 	}
 	// 5) 插入订单
 	bean := &do.Order{
-		ElderId:  types.BigInt(in.ElderID),
-		DineDate: parseTime(in.DineDate),
-		DineType: in.DineType,
+		ElderId:   types.BigInt(in.ElderID),
+		DineDate:  parseTime(in.DineDate),
+		DineType:  in.DineType,
 		PayAmount: payAmount,
 		OrderFlag: "N",
 	}
@@ -165,10 +152,10 @@ func (o *order) SendOrder(ctx context.Context, in *dto.SendOrderQuery, out *dto.
 	// todo: elderFunc.deductionFee(getOrder.ElderId, getOrder.PayAmount) 调用 Elder 账户扣费逻辑(查 elder 表减余额)
 	// 5) 新增消费记录（DISHES 类型，对应 dineDate）
 	_, e = dao.Consume(db).InsertOne(ctx, &do.Consume{
-		ElderId:      getOrder.ElderId,
-		ConsumeType:  "DISHES",
+		ElderId:       getOrder.ElderId,
+		ConsumeType:   "DISHES",
 		ConsumeAmount: getOrder.PayAmount,
-		ConsumeDate:  getOrder.DineDate,
+		ConsumeDate:   getOrder.DineDate,
 	})
 	if e != nil {
 		return e

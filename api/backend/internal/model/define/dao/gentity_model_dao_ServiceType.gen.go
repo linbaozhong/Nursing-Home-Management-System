@@ -119,7 +119,7 @@ func (p *servicetype) InsertBatch(ctx context.Context, beans []*do.ServiceType, 
 func (p *servicetype) Update(ctx context.Context, sets []dialect.Setter, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
 	if len(sets) == 0 {
-		return false, dialect.ErrSetterEmpty
+		return true, nil
 	}
 	_result, e := p.x.Table(do.ServiceTypeTableName).
 		Where(cond...).
@@ -226,11 +226,14 @@ func (p *servicetype) DeleteByIds(ctx context.Context, ids []any) (int64, error)
 }
 
 // Get 查询第一个符合条件的记录
-//  s: 选择器，用于构建sql语句
+//
+//	s: 选择器，用于构建sql语句
+//
 // 返回值:
 //  1. *do.ServiceType: 第一个符合条件的记录
 //  2. bool: 是否存在记录
 //  3. error: 错误信息
+//
 // 注意:
 //  1. 如果没有指定表名，则默认使用do.ServiceTypeTableName
 //  2. 如果没有指定查询列，则默认使用tblservicetype.ReadableFields
@@ -289,11 +292,14 @@ func (p *servicetype) GetByIds(ctx context.Context, ids []any, cols ...dialect.F
 }
 
 // Cell 查询第一个符合条件的记录的第一个列
-//  s: 选择器，用于构建sql语句
+//
+//	s: 选择器，用于构建sql语句
+//
 // 返回值:
 //  1. any: 第一个符合条件的记录的第一个列
 //  2. bool: 是否存在记录
 //  3. error: 错误信息
+//
 // 注意:
 //  1. 如果没有指定表名，则默认使用do.ServiceTypeTableName
 //  2. 如果没有指定查询列，则默认使用tblservicetype.PrimaryKey

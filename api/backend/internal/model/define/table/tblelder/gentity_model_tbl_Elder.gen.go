@@ -12,7 +12,6 @@ var (
 	Sex            = dialect.Field{Name: "sex", Json: "sex", Table: "elder", Type: "types.String", IsRelation: false}
 	Phone          = dialect.Field{Name: "phone", Json: "phone", Table: "elder", Type: "types.String", IsRelation: false}
 	Address        = dialect.Field{Name: "address", Json: "address", Table: "elder", Type: "types.String", IsRelation: false}
-	CheckFlag      = dialect.Field{Name: "check_flag", Json: "check_flag", Table: "elder", Type: "types.String", IsRelation: false}
 	Id             = dialect.Field{Name: "id", Json: "id", Table: "elder", Type: "types.BigInt", IsRelation: false}
 	NursingGradeId = dialect.Field{Name: "nursing_grade_id", Json: "nursing_grade_id", Table: "elder", Type: "types.BigInt", IsRelation: false}
 	CateringSetId  = dialect.Field{Name: "catering_set_id", Json: "catering_set_id", Table: "elder", Type: "types.BigInt", IsRelation: false}
@@ -23,6 +22,7 @@ var (
 	UpdateId       = dialect.Field{Name: "update_id", Json: "update_id", Table: "elder", Type: "types.BigInt", IsRelation: false}
 	UpdateTime     = dialect.Field{Name: "update_time", Json: "update_time", Table: "elder", Type: "types.Time", IsRelation: false}
 	Age            = dialect.Field{Name: "age", Json: "age", Table: "elder", Type: "types.Int32", IsRelation: false}
+	CheckFlag      = dialect.Field{Name: "check_flag", Json: "check_flag", Table: "elder", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -33,7 +33,6 @@ var (
 		Sex,
 		Phone,
 		Address,
-		CheckFlag,
 		Id,
 		NursingGradeId,
 		CateringSetId,
@@ -44,6 +43,7 @@ var (
 		UpdateId,
 		UpdateTime,
 		Age,
+		CheckFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
@@ -52,7 +52,6 @@ var (
 		Sex,
 		Phone,
 		Address,
-		CheckFlag,
 		Id,
 		NursingGradeId,
 		CateringSetId,
@@ -63,5 +62,6 @@ var (
 		UpdateId,
 		UpdateTime,
 		Age,
+		CheckFlag,
 	}
 )

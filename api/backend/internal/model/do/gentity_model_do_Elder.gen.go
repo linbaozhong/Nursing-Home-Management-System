@@ -45,9 +45,6 @@ func (p *Elder) MarshalJSON() ([]byte, error) {
 	if p.Address != "" {
 		write.WriteRaw("address", types.Marshal(p.Address))
 	}
-	if p.CheckFlag != "" {
-		write.WriteRaw("check_flag", types.Marshal(p.CheckFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -78,6 +75,9 @@ func (p *Elder) MarshalJSON() ([]byte, error) {
 	if p.Age != 0 {
 		write.WriteRaw("age", types.Marshal(p.Age))
 	}
+	if p.CheckFlag != 0 {
+		write.WriteRaw("check_flag", types.Marshal(p.CheckFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -101,8 +101,6 @@ func (p *Elder) UnmarshalJSON(data []byte) error {
 			p.Phone = types.String(value.Str)
 		case "address":
 			p.Address = types.String(value.Str)
-		case "check_flag":
-			p.CheckFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "nursing_grade_id":
@@ -123,6 +121,8 @@ func (p *Elder) UnmarshalJSON(data []byte) error {
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "age":
 			p.Age = types.Int32(value.Int())
+		case "check_flag":
+			p.CheckFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -149,7 +149,6 @@ func (p *Elder) Reset() {
 	p.Sex = ""
 	p.Phone = ""
 	p.Address = ""
-	p.CheckFlag = ""
 	p.Id = 0
 	p.NursingGradeId = 0
 	p.CateringSetId = 0
@@ -160,6 +159,7 @@ func (p *Elder) Reset() {
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.Age = 0
+	p.CheckFlag = 0
 
 }
 
@@ -168,23 +168,23 @@ func (p *Elder) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var elderFieldToPtrFunc = map[dialect.Field]func(*Elder) any{
-	tblelder.Name:           func(p *Elder) any { return &p.Name },
-	tblelder.IdNum:          func(p *Elder) any { return &p.IdNum },
-	tblelder.Sex:            func(p *Elder) any { return &p.Sex },
-	tblelder.Phone:          func(p *Elder) any { return &p.Phone },
-	tblelder.Address:        func(p *Elder) any { return &p.Address },
-	tblelder.CheckFlag:      func(p *Elder) any { return &p.CheckFlag },
-	tblelder.Id:             func(p *Elder) any { return &p.Id },
-	tblelder.NursingGradeId: func(p *Elder) any { return &p.NursingGradeId },
-	tblelder.CateringSetId:  func(p *Elder) any { return &p.CateringSetId },
-	tblelder.BedId:          func(p *Elder) any { return &p.BedId },
-	tblelder.Balance:        func(p *Elder) any { return &p.Balance },
-	tblelder.CreateId:       func(p *Elder) any { return &p.CreateId },
-	tblelder.CreateTime:     func(p *Elder) any { return &p.CreateTime },
-	tblelder.UpdateId:       func(p *Elder) any { return &p.UpdateId },
-	tblelder.UpdateTime:     func(p *Elder) any { return &p.UpdateTime },
-	tblelder.Age:            func(p *Elder) any { return &p.Age },
+var elderFieldToPtrFunc = map[string]func(*Elder) any{
+	tblelder.Name.Name:           func(p *Elder) any { return &p.Name },
+	tblelder.IdNum.Name:          func(p *Elder) any { return &p.IdNum },
+	tblelder.Sex.Name:            func(p *Elder) any { return &p.Sex },
+	tblelder.Phone.Name:          func(p *Elder) any { return &p.Phone },
+	tblelder.Address.Name:        func(p *Elder) any { return &p.Address },
+	tblelder.Id.Name:             func(p *Elder) any { return &p.Id },
+	tblelder.NursingGradeId.Name: func(p *Elder) any { return &p.NursingGradeId },
+	tblelder.CateringSetId.Name:  func(p *Elder) any { return &p.CateringSetId },
+	tblelder.BedId.Name:          func(p *Elder) any { return &p.BedId },
+	tblelder.Balance.Name:        func(p *Elder) any { return &p.Balance },
+	tblelder.CreateId.Name:       func(p *Elder) any { return &p.CreateId },
+	tblelder.CreateTime.Name:     func(p *Elder) any { return &p.CreateTime },
+	tblelder.UpdateId.Name:       func(p *Elder) any { return &p.UpdateId },
+	tblelder.UpdateTime.Name:     func(p *Elder) any { return &p.UpdateTime },
+	tblelder.Age.Name:            func(p *Elder) any { return &p.Age },
+	tblelder.CheckFlag.Name:      func(p *Elder) any { return &p.CheckFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -198,11 +198,28 @@ func (p *Elder) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := elderFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := elderFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Elder) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := elderFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -258,9 +275,6 @@ var elderFieldToValueFunc = map[dialect.Field]func(*Elder) (any, bool){
 	tblelder.Address: func(p *Elder) (any, bool) {
 		return p.Address, p.Address == ""
 	},
-	tblelder.CheckFlag: func(p *Elder) (any, bool) {
-		return p.CheckFlag, p.CheckFlag == ""
-	},
 	tblelder.Id: func(p *Elder) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -291,6 +305,9 @@ var elderFieldToValueFunc = map[dialect.Field]func(*Elder) (any, bool){
 	tblelder.Age: func(p *Elder) (any, bool) {
 		return p.Age, p.Age == 0
 	},
+	tblelder.CheckFlag: func(p *Elder) (any, bool) {
+		return p.CheckFlag, p.CheckFlag == 0
+	},
 }
 
 // AssignValues 向数据库写入数据前，为表列赋值。
@@ -320,12 +337,10 @@ func (p *Elder) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]string
 	return cols, vals
 }
 
-//
 func (p *Elder) AssignKeys() (dialect.Field, any) {
 	return tblelder.PrimaryKey, p.Id
 }
 
-//
 func (p *Elder) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

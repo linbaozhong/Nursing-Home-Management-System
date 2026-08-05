@@ -42,9 +42,6 @@ func (p *EmergencyContact) MarshalJSON() ([]byte, error) {
 	if p.Relation != "" {
 		write.WriteRaw("relation", types.Marshal(p.Relation))
 	}
-	if p.ReceiveFlag != "" {
-		write.WriteRaw("receive_flag", types.Marshal(p.ReceiveFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -62,6 +59,9 @@ func (p *EmergencyContact) MarshalJSON() ([]byte, error) {
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.ReceiveFlag != 0 {
+		write.WriteRaw("receive_flag", types.Marshal(p.ReceiveFlag))
 	}
 	return write.Bytes(), nil
 }
@@ -84,8 +84,6 @@ func (p *EmergencyContact) UnmarshalJSON(data []byte) error {
 			p.Email = types.String(value.Str)
 		case "relation":
 			p.Relation = types.String(value.Str)
-		case "receive_flag":
-			p.ReceiveFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -98,6 +96,8 @@ func (p *EmergencyContact) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "receive_flag":
+			p.ReceiveFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -123,13 +123,13 @@ func (p *EmergencyContact) Reset() {
 	p.Phone = ""
 	p.Email = ""
 	p.Relation = ""
-	p.ReceiveFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.ReceiveFlag = 0
 
 }
 
@@ -138,18 +138,18 @@ func (p *EmergencyContact) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var emergencycontactFieldToPtrFunc = map[dialect.Field]func(*EmergencyContact) any{
-	tblemergencycontact.Name:        func(p *EmergencyContact) any { return &p.Name },
-	tblemergencycontact.Phone:       func(p *EmergencyContact) any { return &p.Phone },
-	tblemergencycontact.Email:       func(p *EmergencyContact) any { return &p.Email },
-	tblemergencycontact.Relation:    func(p *EmergencyContact) any { return &p.Relation },
-	tblemergencycontact.ReceiveFlag: func(p *EmergencyContact) any { return &p.ReceiveFlag },
-	tblemergencycontact.Id:          func(p *EmergencyContact) any { return &p.Id },
-	tblemergencycontact.ElderId:     func(p *EmergencyContact) any { return &p.ElderId },
-	tblemergencycontact.CreateId:    func(p *EmergencyContact) any { return &p.CreateId },
-	tblemergencycontact.CreateTime:  func(p *EmergencyContact) any { return &p.CreateTime },
-	tblemergencycontact.UpdateId:    func(p *EmergencyContact) any { return &p.UpdateId },
-	tblemergencycontact.UpdateTime:  func(p *EmergencyContact) any { return &p.UpdateTime },
+var emergencycontactFieldToPtrFunc = map[string]func(*EmergencyContact) any{
+	tblemergencycontact.Name.Name:        func(p *EmergencyContact) any { return &p.Name },
+	tblemergencycontact.Phone.Name:       func(p *EmergencyContact) any { return &p.Phone },
+	tblemergencycontact.Email.Name:       func(p *EmergencyContact) any { return &p.Email },
+	tblemergencycontact.Relation.Name:    func(p *EmergencyContact) any { return &p.Relation },
+	tblemergencycontact.Id.Name:          func(p *EmergencyContact) any { return &p.Id },
+	tblemergencycontact.ElderId.Name:     func(p *EmergencyContact) any { return &p.ElderId },
+	tblemergencycontact.CreateId.Name:    func(p *EmergencyContact) any { return &p.CreateId },
+	tblemergencycontact.CreateTime.Name:  func(p *EmergencyContact) any { return &p.CreateTime },
+	tblemergencycontact.UpdateId.Name:    func(p *EmergencyContact) any { return &p.UpdateId },
+	tblemergencycontact.UpdateTime.Name:  func(p *EmergencyContact) any { return &p.UpdateTime },
+	tblemergencycontact.ReceiveFlag.Name: func(p *EmergencyContact) any { return &p.ReceiveFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -163,11 +163,28 @@ func (p *EmergencyContact) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := emergencycontactFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := emergencycontactFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *EmergencyContact) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := emergencycontactFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -220,9 +237,6 @@ var emergencycontactFieldToValueFunc = map[dialect.Field]func(*EmergencyContact)
 	tblemergencycontact.Relation: func(p *EmergencyContact) (any, bool) {
 		return p.Relation, p.Relation == ""
 	},
-	tblemergencycontact.ReceiveFlag: func(p *EmergencyContact) (any, bool) {
-		return p.ReceiveFlag, p.ReceiveFlag == ""
-	},
 	tblemergencycontact.Id: func(p *EmergencyContact) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -240,6 +254,9 @@ var emergencycontactFieldToValueFunc = map[dialect.Field]func(*EmergencyContact)
 	},
 	tblemergencycontact.UpdateTime: func(p *EmergencyContact) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblemergencycontact.ReceiveFlag: func(p *EmergencyContact) (any, bool) {
+		return p.ReceiveFlag, p.ReceiveFlag == 0
 	},
 }
 
@@ -270,12 +287,10 @@ func (p *EmergencyContact) AssignValues(d dialect.Dialect, args ...dialect.Field
 	return cols, vals
 }
 
-//
 func (p *EmergencyContact) AssignKeys() (dialect.Field, any) {
 	return tblemergencycontact.PrimaryKey, p.Id
 }
 
-//
 func (p *EmergencyContact) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

@@ -228,33 +228,33 @@ func (p *HealthData) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var healthdataFieldToPtrFunc = map[dialect.Field]func(*HealthData) any{
-	tblhealthdata.LeftEar:                  func(p *HealthData) any { return &p.LeftEar },
-	tblhealthdata.RightEar:                 func(p *HealthData) any { return &p.RightEar },
-	tblhealthdata.Id:                       func(p *HealthData) any { return &p.Id },
-	tblhealthdata.ElderId:                  func(p *HealthData) any { return &p.ElderId },
-	tblhealthdata.Weight:                   func(p *HealthData) any { return &p.Weight },
-	tblhealthdata.Temperature:              func(p *HealthData) any { return &p.Temperature },
-	tblhealthdata.LeftEye:                  func(p *HealthData) any { return &p.LeftEye },
-	tblhealthdata.RightEye:                 func(p *HealthData) any { return &p.RightEye },
-	tblhealthdata.CreateId:                 func(p *HealthData) any { return &p.CreateId },
-	tblhealthdata.CreateTime:               func(p *HealthData) any { return &p.CreateTime },
-	tblhealthdata.UpdateId:                 func(p *HealthData) any { return &p.UpdateId },
-	tblhealthdata.UpdateTime:               func(p *HealthData) any { return &p.UpdateTime },
-	tblhealthdata.Height:                   func(p *HealthData) any { return &p.Height },
-	tblhealthdata.HeartRate:                func(p *HealthData) any { return &p.HeartRate },
-	tblhealthdata.SystolicBloodPressure:    func(p *HealthData) any { return &p.SystolicBloodPressure },
-	tblhealthdata.DiastolicBloodPressure:   func(p *HealthData) any { return &p.DiastolicBloodPressure },
-	tblhealthdata.FastingBloodGlucose:      func(p *HealthData) any { return &p.FastingBloodGlucose },
-	tblhealthdata.PostprandialBloodGlucose: func(p *HealthData) any { return &p.PostprandialBloodGlucose },
-	tblhealthdata.BloodOxygenSaturation:    func(p *HealthData) any { return &p.BloodOxygenSaturation },
-	tblhealthdata.Cholesterol:              func(p *HealthData) any { return &p.Cholesterol },
-	tblhealthdata.UricAcid:                 func(p *HealthData) any { return &p.UricAcid },
-	tblhealthdata.MusclePercentage:         func(p *HealthData) any { return &p.MusclePercentage },
-	tblhealthdata.BodyFatPercentage:        func(p *HealthData) any { return &p.BodyFatPercentage },
-	tblhealthdata.WaistCircumference:       func(p *HealthData) any { return &p.WaistCircumference },
-	tblhealthdata.HipCircumference:         func(p *HealthData) any { return &p.HipCircumference },
-	tblhealthdata.MoistureContent:          func(p *HealthData) any { return &p.MoistureContent },
+var healthdataFieldToPtrFunc = map[string]func(*HealthData) any{
+	tblhealthdata.LeftEar.Name:                  func(p *HealthData) any { return &p.LeftEar },
+	tblhealthdata.RightEar.Name:                 func(p *HealthData) any { return &p.RightEar },
+	tblhealthdata.Id.Name:                       func(p *HealthData) any { return &p.Id },
+	tblhealthdata.ElderId.Name:                  func(p *HealthData) any { return &p.ElderId },
+	tblhealthdata.Weight.Name:                   func(p *HealthData) any { return &p.Weight },
+	tblhealthdata.Temperature.Name:              func(p *HealthData) any { return &p.Temperature },
+	tblhealthdata.LeftEye.Name:                  func(p *HealthData) any { return &p.LeftEye },
+	tblhealthdata.RightEye.Name:                 func(p *HealthData) any { return &p.RightEye },
+	tblhealthdata.CreateId.Name:                 func(p *HealthData) any { return &p.CreateId },
+	tblhealthdata.CreateTime.Name:               func(p *HealthData) any { return &p.CreateTime },
+	tblhealthdata.UpdateId.Name:                 func(p *HealthData) any { return &p.UpdateId },
+	tblhealthdata.UpdateTime.Name:               func(p *HealthData) any { return &p.UpdateTime },
+	tblhealthdata.Height.Name:                   func(p *HealthData) any { return &p.Height },
+	tblhealthdata.HeartRate.Name:                func(p *HealthData) any { return &p.HeartRate },
+	tblhealthdata.SystolicBloodPressure.Name:    func(p *HealthData) any { return &p.SystolicBloodPressure },
+	tblhealthdata.DiastolicBloodPressure.Name:   func(p *HealthData) any { return &p.DiastolicBloodPressure },
+	tblhealthdata.FastingBloodGlucose.Name:      func(p *HealthData) any { return &p.FastingBloodGlucose },
+	tblhealthdata.PostprandialBloodGlucose.Name: func(p *HealthData) any { return &p.PostprandialBloodGlucose },
+	tblhealthdata.BloodOxygenSaturation.Name:    func(p *HealthData) any { return &p.BloodOxygenSaturation },
+	tblhealthdata.Cholesterol.Name:              func(p *HealthData) any { return &p.Cholesterol },
+	tblhealthdata.UricAcid.Name:                 func(p *HealthData) any { return &p.UricAcid },
+	tblhealthdata.MusclePercentage.Name:         func(p *HealthData) any { return &p.MusclePercentage },
+	tblhealthdata.BodyFatPercentage.Name:        func(p *HealthData) any { return &p.BodyFatPercentage },
+	tblhealthdata.WaistCircumference.Name:       func(p *HealthData) any { return &p.WaistCircumference },
+	tblhealthdata.HipCircumference.Name:         func(p *HealthData) any { return &p.HipCircumference },
+	tblhealthdata.MoistureContent.Name:          func(p *HealthData) any { return &p.MoistureContent },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -268,11 +268,28 @@ func (p *HealthData) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := healthdataFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := healthdataFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *HealthData) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := healthdataFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -420,12 +437,10 @@ func (p *HealthData) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]s
 	return cols, vals
 }
 
-//
 func (p *HealthData) AssignKeys() (dialect.Field, any) {
 	return tblhealthdata.PrimaryKey, p.Id
 }
 
-//
 func (p *HealthData) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

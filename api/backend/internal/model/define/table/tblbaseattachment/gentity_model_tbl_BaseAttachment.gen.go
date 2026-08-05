@@ -12,13 +12,13 @@ var (
 	Path       = dialect.Field{Name: "path", Json: "path", Table: "base_attachment", Type: "types.String", IsRelation: false}
 	Url        = dialect.Field{Name: "url", Json: "url", Table: "base_attachment", Type: "types.String", IsRelation: false}
 	Suff       = dialect.Field{Name: "suff", Json: "suff", Table: "base_attachment", Type: "types.String", IsRelation: false}
-	DelFlag    = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "base_attachment", Type: "types.String", IsRelation: false}
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
 	Size       = dialect.Field{Name: "size", Json: "size", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "base_attachment", Type: "types.Time", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "base_attachment", Type: "types.Time", IsRelation: false}
+	DelFlag    = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "base_attachment", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -29,13 +29,13 @@ var (
 		Path,
 		Url,
 		Suff,
-		DelFlag,
 		Id,
 		Size,
 		CreateId,
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
@@ -44,12 +44,12 @@ var (
 		Path,
 		Url,
 		Suff,
-		DelFlag,
 		Id,
 		Size,
 		CreateId,
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 )

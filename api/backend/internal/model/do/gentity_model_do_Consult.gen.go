@@ -150,20 +150,20 @@ func (p *Consult) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var consultFieldToPtrFunc = map[dialect.Field]func(*Consult) any{
-	tblconsult.Name:           func(p *Consult) any { return &p.Name },
-	tblconsult.Phone:          func(p *Consult) any { return &p.Phone },
-	tblconsult.Relation:       func(p *Consult) any { return &p.Relation },
-	tblconsult.ConsultContent: func(p *Consult) any { return &p.ConsultContent },
-	tblconsult.Id:             func(p *Consult) any { return &p.Id },
-	tblconsult.ElderId:        func(p *Consult) any { return &p.ElderId },
-	tblconsult.SourceId:       func(p *Consult) any { return &p.SourceId },
-	tblconsult.StaffId:        func(p *Consult) any { return &p.StaffId },
-	tblconsult.ConsultDate:    func(p *Consult) any { return &p.ConsultDate },
-	tblconsult.CreateId:       func(p *Consult) any { return &p.CreateId },
-	tblconsult.CreateTime:     func(p *Consult) any { return &p.CreateTime },
-	tblconsult.UpdateId:       func(p *Consult) any { return &p.UpdateId },
-	tblconsult.UpdateTime:     func(p *Consult) any { return &p.UpdateTime },
+var consultFieldToPtrFunc = map[string]func(*Consult) any{
+	tblconsult.Name.Name:           func(p *Consult) any { return &p.Name },
+	tblconsult.Phone.Name:          func(p *Consult) any { return &p.Phone },
+	tblconsult.Relation.Name:       func(p *Consult) any { return &p.Relation },
+	tblconsult.ConsultContent.Name: func(p *Consult) any { return &p.ConsultContent },
+	tblconsult.Id.Name:             func(p *Consult) any { return &p.Id },
+	tblconsult.ElderId.Name:        func(p *Consult) any { return &p.ElderId },
+	tblconsult.SourceId.Name:       func(p *Consult) any { return &p.SourceId },
+	tblconsult.StaffId.Name:        func(p *Consult) any { return &p.StaffId },
+	tblconsult.ConsultDate.Name:    func(p *Consult) any { return &p.ConsultDate },
+	tblconsult.CreateId.Name:       func(p *Consult) any { return &p.CreateId },
+	tblconsult.CreateTime.Name:     func(p *Consult) any { return &p.CreateTime },
+	tblconsult.UpdateId.Name:       func(p *Consult) any { return &p.UpdateId },
+	tblconsult.UpdateTime.Name:     func(p *Consult) any { return &p.UpdateTime },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -177,11 +177,28 @@ func (p *Consult) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := consultFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := consultFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Consult) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := consultFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -290,12 +307,10 @@ func (p *Consult) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]stri
 	return cols, vals
 }
 
-//
 func (p *Consult) AssignKeys() (dialect.Field, any) {
 	return tblconsult.PrimaryKey, p.Id
 }
 
-//
 func (p *Consult) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

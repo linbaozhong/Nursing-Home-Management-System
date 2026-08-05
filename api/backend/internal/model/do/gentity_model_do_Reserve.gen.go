@@ -36,9 +36,6 @@ func (p *Reserve) MarshalJSON() ([]byte, error) {
 	if p.Phone != "" {
 		write.WriteRaw("phone", types.Marshal(p.Phone))
 	}
-	if p.ReserveFlag != "" {
-		write.WriteRaw("reserve_flag", types.Marshal(p.ReserveFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -66,6 +63,9 @@ func (p *Reserve) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.ReserveFlag != 0 {
+		write.WriteRaw("reserve_flag", types.Marshal(p.ReserveFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -83,8 +83,6 @@ func (p *Reserve) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "phone":
 			p.Phone = types.String(value.Str)
-		case "reserve_flag":
-			p.ReserveFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -103,6 +101,8 @@ func (p *Reserve) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "reserve_flag":
+			p.ReserveFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -126,7 +126,6 @@ func (p *Reserve) Free() {
 func (p *Reserve) Reset() {
 	p.Name = ""
 	p.Phone = ""
-	p.ReserveFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.StaffId = 0
@@ -136,6 +135,7 @@ func (p *Reserve) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.ReserveFlag = 0
 
 }
 
@@ -144,19 +144,19 @@ func (p *Reserve) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var reserveFieldToPtrFunc = map[dialect.Field]func(*Reserve) any{
-	tblreserve.Name:        func(p *Reserve) any { return &p.Name },
-	tblreserve.Phone:       func(p *Reserve) any { return &p.Phone },
-	tblreserve.ReserveFlag: func(p *Reserve) any { return &p.ReserveFlag },
-	tblreserve.Id:          func(p *Reserve) any { return &p.Id },
-	tblreserve.ElderId:     func(p *Reserve) any { return &p.ElderId },
-	tblreserve.StaffId:     func(p *Reserve) any { return &p.StaffId },
-	tblreserve.DueDate:     func(p *Reserve) any { return &p.DueDate },
-	tblreserve.Deposit:     func(p *Reserve) any { return &p.Deposit },
-	tblreserve.CreateId:    func(p *Reserve) any { return &p.CreateId },
-	tblreserve.CreateTime:  func(p *Reserve) any { return &p.CreateTime },
-	tblreserve.UpdateId:    func(p *Reserve) any { return &p.UpdateId },
-	tblreserve.UpdateTime:  func(p *Reserve) any { return &p.UpdateTime },
+var reserveFieldToPtrFunc = map[string]func(*Reserve) any{
+	tblreserve.Name.Name:        func(p *Reserve) any { return &p.Name },
+	tblreserve.Phone.Name:       func(p *Reserve) any { return &p.Phone },
+	tblreserve.Id.Name:          func(p *Reserve) any { return &p.Id },
+	tblreserve.ElderId.Name:     func(p *Reserve) any { return &p.ElderId },
+	tblreserve.StaffId.Name:     func(p *Reserve) any { return &p.StaffId },
+	tblreserve.DueDate.Name:     func(p *Reserve) any { return &p.DueDate },
+	tblreserve.Deposit.Name:     func(p *Reserve) any { return &p.Deposit },
+	tblreserve.CreateId.Name:    func(p *Reserve) any { return &p.CreateId },
+	tblreserve.CreateTime.Name:  func(p *Reserve) any { return &p.CreateTime },
+	tblreserve.UpdateId.Name:    func(p *Reserve) any { return &p.UpdateId },
+	tblreserve.UpdateTime.Name:  func(p *Reserve) any { return &p.UpdateTime },
+	tblreserve.ReserveFlag.Name: func(p *Reserve) any { return &p.ReserveFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -170,11 +170,28 @@ func (p *Reserve) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := reserveFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := reserveFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Reserve) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := reserveFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -221,9 +238,6 @@ var reserveFieldToValueFunc = map[dialect.Field]func(*Reserve) (any, bool){
 	tblreserve.Phone: func(p *Reserve) (any, bool) {
 		return p.Phone, p.Phone == ""
 	},
-	tblreserve.ReserveFlag: func(p *Reserve) (any, bool) {
-		return p.ReserveFlag, p.ReserveFlag == ""
-	},
 	tblreserve.Id: func(p *Reserve) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -250,6 +264,9 @@ var reserveFieldToValueFunc = map[dialect.Field]func(*Reserve) (any, bool){
 	},
 	tblreserve.UpdateTime: func(p *Reserve) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblreserve.ReserveFlag: func(p *Reserve) (any, bool) {
+		return p.ReserveFlag, p.ReserveFlag == 0
 	},
 }
 
@@ -280,12 +297,10 @@ func (p *Reserve) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]stri
 	return cols, vals
 }
 
-//
 func (p *Reserve) AssignKeys() (dialect.Field, any) {
 	return tblreserve.PrimaryKey, p.Id
 }
 
-//
 func (p *Reserve) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

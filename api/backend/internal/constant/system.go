@@ -1,0 +1,59 @@
+package constant
+
+// 系统通用常量
+const (
+	Subject       = "敬老院管理系统"
+	Developer     = "@developer "
+	EmperorWen    = "Xxx"
+	AnonymousUser = "anonymousUser"
+
+	// 正则
+	PhoneRegular = "^1[35789]\\d{9}$"
+
+	// REDIS
+	LoginRedis = "login:"
+
+	// OTHER
+	TotalLimit = int64(10)
+	Comma      = ","
+)
+
+// RecipientType 接收方类型
+type RecipientType int8
+
+// 接收方类型
+const (
+	RecipientElder RecipientType = 1 // 老人
+	RecipientStaff RecipientType = 2 // 员工
+)
+
+func (r RecipientType) String() string {
+	switch r {
+	case RecipientElder:
+		return "老人"
+	case RecipientStaff:
+		return "员工"
+	default:
+		return "未知"
+	}
+}
+
+// VisitStatus 来访状态
+type VisitStatus int8
+
+// 来访状态
+const (
+	VisitStayLeave    VisitStatus = 0 // 待离开
+	VisitAlreadyLeave VisitStatus = 1 // 已离开
+)
+
+func (v VisitStatus) String() string {
+	switch v {
+	case VisitStayLeave:
+		return "待离开"
+	case VisitAlreadyLeave:
+		return "已离开"
+	default:
+		return "未知"
+	}
+}

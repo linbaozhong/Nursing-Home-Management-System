@@ -2,9 +2,15 @@ package service
 
 import (
 	"context"
+	"errors"
+	"time"
 
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblconsume"
+	"api/internal/model/define/table/tblelder"
+	"api/internal/model/do"
 	"api/internal/model/dto"
+
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
@@ -13,65 +19,104 @@ type consume struct{}
 
 var Consume = &consume{}
 
-// PageConsumeByKey 分页查询消费记录（联表 elder 获取老人姓名等）
-// 对应 Java: ConsumeServiceImpl.pageConsumeByKey -> ConsumeMapper.listConsumeByKey
-// SQL: SELECT c.*, e.elder_name FROM consume c
-//
-//	LEFT JOIN elder e ON e.id = c.elder_id
-//	WHERE (c.consume_type = #{consumeType}) [可选]
-//	  AND (e.elder_name LIKE %key% OR c.id = key) [可选]
-//	ORDER BY c.create_time DESC; 再由 PageUtil 内存分页。
-//
-// todo: 1) in.ConsumeType 非空 -> tblconsume.ConsumeType.Eq(in.ConsumeType)
-//
-//	2) in.Key 非空 -> (tblconsume.Id.Eq(in.Key) OR tbl<elder>.ElderName.Like(in.Key))
-//	3) DB 分页: 先 dao.Consume(db).Count(cond...) 再 List(Limit/Offset)
-//	4) 组装含老人姓名的 VO 并赋值 out(需定义分页返回类型, 当前为 EmptyResp)
-func (c *consume) PageConsumeByKey(ctx context.Context, in *dto.PageConsumeByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
-	return nil
+// PageConsumeByKey 分页查询消费记录（联表 elder 获取老人姓名/身份证）
+// 对应 Java: ConsumeServiceImpl.pageConsumeByKey
+func (c *consume) PageConsumeByKey(ctx context.Context, in *dto.PageConsumeByKeyQuery, out *[]dto.PageConsumeByKeyVO) error {
+	q := db.Table(do.ConsumeTableName).
+		LeftJoin(tblconsume.ElderId, tblelder.Id).
+		Where(tblconsume.DelFlag.Eq(0))
+	if in.ElderName != nil && *in.ElderName != "" {
+		q.And(tblelder.Name.Like(*in.ElderName))
+	}
+	if in.StartTime != nil && *in.StartTime != "" {
+		if t, err := time.ParseInLocation("2006-01-02", *in.StartTime, time.Local); err == nil {
+			q.And(tblconsume.ConsumeDate.Gte(types.Time(t)))
+		}
+	}
+	if in.EndTime != nil && *in.EndTime != "" {
+		if t, err := time.ParseInLocation("2006-01-02", *in.EndTime, time.Local); err == nil {
+			q.And(tblconsume.ConsumeDate.Lte(types.Time(t.Add(24*time.Hour - time.Second))))
+		}
+	}
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(
+			tblconsume.Id,
+			tblelder.Name.AsName("elder_name"),
+			tblelder.IdNum.AsName("id_num"),
+			tblconsume.ConsumeType,
+			tblconsume.ConsumeAmount,
+			tblconsume.ConsumeDate,
+		).
+		Desc(tblconsume.ConsumeDate).
+		Select().
+		Gets(ctx, out)
 }
 
 // GetConsumeById 根据编号获取消费记录
-// 对应 Java: 无单独接口(page 结果已携带), 此处为前端补充的详情接口。
-// todo: 实现标准 CRUD - 按主键查询 consume 表
-func (c *consume) GetConsumeById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.Consume(db).GetByID(ctx, types.BigInt(in.ID))
+func (c *consume) GetConsumeById(ctx context.Context, in *dto.IDReq, out *dto.GetConsumeByIdVO) error {
+	obj, has, e := dao.Consume(db).GetByID(ctx, types.BigInt(*in.ID),
+		tblconsume.Id,
+		tblconsume.ElderId,
+		tblconsume.ConsumeType,
+		tblconsume.ConsumeAmount,
+		tblconsume.ConsumeDate,
+		tblconsume.Remark,
+	)
 	if e != nil {
 		return e
 	}
 	if !has {
-		// todo: 记录不存在, 视业务返回错误或空
-		return nil
+		return errors.New("消费记录不存在")
 	}
-	_ = obj
+	out.ID = int64(obj.Id)
+	out.ElderID = int64(obj.ElderId)
+	out.ConsumeType = obj.ConsumeType.String()
+	out.ConsumeAmount = obj.ConsumeAmount.Float64()
+	out.ConsumeDate = time.Time(obj.ConsumeDate)
+	out.Remark = obj.Remark.String()
 	return nil
 }
 
 // AddConsume 新增消费
-// 对应 Java: 无(前端补充的 CRUD)。入参 AddConsumeQuery 含 elderId/consumeType/consumeAmount/consumeDate。
-// todo: 实现标准 CRUD - 将 in 字段写入 consume 表(用 dao.Consume(db).InsertOne)
 func (c *consume) AddConsume(ctx context.Context, in *dto.AddConsumeQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewConsume(); 填充 in 字段; dao.Consume(db).InsertOne(ctx, bean)
-	return nil
+	bean := do.NewConsume()
+	bean.ElderId = types.BigInt(*in.ElderID)
+	bean.ConsumeType = types.String(*in.ConsumeType)
+	bean.ConsumeAmount = types.Float64(*in.ConsumeAmount)
+	bean.ConsumeDate = types.Time(parseTimeStr(*in.ConsumeDate))
+	_, e := dao.Consume(db).InsertOne(ctx, bean)
+	return e
 }
 
 // EditConsume 编辑消费
-// 对应 Java: 无(前端补充的 CRUD)。
-// todo: 实现标准 CRUD - 按主键更新 consume 表字段(tblconsume.X.Value(in.X))
 func (c *consume) EditConsume(ctx context.Context, in *dto.EditConsumeQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tblconsume.ConsumeAmount.Value(in.ConsumeAmount),
-		//       tblconsume.ConsumeDate.Value(in.ConsumeDate),
+	var sets = make([]dialect.Setter, 0, 4)
+	sets = append(sets, tblconsume.ElderId.Set(*in.ElderID))
+	sets = append(sets, tblconsume.ConsumeType.Set(*in.ConsumeType))
+	sets = append(sets, tblconsume.ConsumeAmount.Set(*in.ConsumeAmount))
+	sets = append(sets, tblconsume.ConsumeDate.Set(parseTimeStr(*in.ConsumeDate)))
+	if in.Remark != nil {
+		sets = append(sets, tblconsume.Remark.Set(*in.Remark))
 	}
-	_, e := dao.Consume(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
+	_, e := dao.Consume(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
 	return e
 }
 
 // DeleteConsume 删除消费
-// 对应 Java: 无(前端补充的 CRUD)。
-// todo: 实现标准 CRUD - 按主键删除 consume 记录
 func (c *consume) DeleteConsume(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.Consume(db).DeleteById(ctx, types.BigInt(in.ID))
+	_, e := dao.Consume(db).DeleteById(ctx, types.BigInt(*in.ID))
 	return e
+}
+
+// parseTimeStr 解析消费日期字符串（支持两种格式）
+func parseTimeStr(s *string) types.Time {
+	if s == nil || *s == "" {
+		return types.Time{}
+	}
+	for _, layout := range []string{"2006-01-02 15:04:05", "2006-01-02"} {
+		if t, err := time.ParseInLocation(layout, *s, time.Local); err == nil {
+			return types.Time(t)
+		}
+	}
+	return types.Time{}
 }

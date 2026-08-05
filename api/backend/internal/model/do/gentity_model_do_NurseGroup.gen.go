@@ -33,9 +33,6 @@ func (p *NurseGroup) MarshalJSON() ([]byte, error) {
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -54,6 +51,9 @@ func (p *NurseGroup) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -69,8 +69,6 @@ func (p *NurseGroup) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "staff_id":
@@ -83,6 +81,8 @@ func (p *NurseGroup) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -105,13 +105,13 @@ func (p *NurseGroup) Free() {
 // Reset
 func (p *NurseGroup) Reset() {
 	p.Name = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.StaffId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
 
 }
 
@@ -120,15 +120,15 @@ func (p *NurseGroup) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var nursegroupFieldToPtrFunc = map[dialect.Field]func(*NurseGroup) any{
-	tblnursegroup.Name:       func(p *NurseGroup) any { return &p.Name },
-	tblnursegroup.DelFlag:    func(p *NurseGroup) any { return &p.DelFlag },
-	tblnursegroup.Id:         func(p *NurseGroup) any { return &p.Id },
-	tblnursegroup.StaffId:    func(p *NurseGroup) any { return &p.StaffId },
-	tblnursegroup.CreateId:   func(p *NurseGroup) any { return &p.CreateId },
-	tblnursegroup.CreateTime: func(p *NurseGroup) any { return &p.CreateTime },
-	tblnursegroup.UpdateId:   func(p *NurseGroup) any { return &p.UpdateId },
-	tblnursegroup.UpdateTime: func(p *NurseGroup) any { return &p.UpdateTime },
+var nursegroupFieldToPtrFunc = map[string]func(*NurseGroup) any{
+	tblnursegroup.Name.Name:       func(p *NurseGroup) any { return &p.Name },
+	tblnursegroup.Id.Name:         func(p *NurseGroup) any { return &p.Id },
+	tblnursegroup.StaffId.Name:    func(p *NurseGroup) any { return &p.StaffId },
+	tblnursegroup.CreateId.Name:   func(p *NurseGroup) any { return &p.CreateId },
+	tblnursegroup.CreateTime.Name: func(p *NurseGroup) any { return &p.CreateTime },
+	tblnursegroup.UpdateId.Name:   func(p *NurseGroup) any { return &p.UpdateId },
+	tblnursegroup.UpdateTime.Name: func(p *NurseGroup) any { return &p.UpdateTime },
+	tblnursegroup.DelFlag.Name:    func(p *NurseGroup) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -142,11 +142,28 @@ func (p *NurseGroup) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := nursegroupFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := nursegroupFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *NurseGroup) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := nursegroupFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -190,9 +207,6 @@ var nursegroupFieldToValueFunc = map[dialect.Field]func(*NurseGroup) (any, bool)
 	tblnursegroup.Name: func(p *NurseGroup) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tblnursegroup.DelFlag: func(p *NurseGroup) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblnursegroup.Id: func(p *NurseGroup) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -210,6 +224,9 @@ var nursegroupFieldToValueFunc = map[dialect.Field]func(*NurseGroup) (any, bool)
 	},
 	tblnursegroup.UpdateTime: func(p *NurseGroup) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblnursegroup.DelFlag: func(p *NurseGroup) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 
@@ -240,12 +257,10 @@ func (p *NurseGroup) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]s
 	return cols, vals
 }
 
-//
 func (p *NurseGroup) AssignKeys() (dialect.Field, any) {
 	return tblnursegroup.PrimaryKey, p.Id
 }
 
-//
 func (p *NurseGroup) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

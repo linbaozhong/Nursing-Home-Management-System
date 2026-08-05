@@ -10,7 +10,6 @@ var (
 	ChaperoneName  = dialect.Field{Name: "chaperone_name", Json: "chaperone_name", Table: "outward", Type: "types.String", IsRelation: false}
 	ChaperonePhone = dialect.Field{Name: "chaperone_phone", Json: "chaperone_phone", Table: "outward", Type: "types.String", IsRelation: false}
 	ChaperoneType  = dialect.Field{Name: "chaperone_type", Json: "chaperone_type", Table: "outward", Type: "types.String", IsRelation: false}
-	DelFlag        = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "outward", Type: "types.String", IsRelation: false}
 	Id             = dialect.Field{Name: "id", Json: "id", Table: "outward", Type: "types.BigInt", IsRelation: false}
 	ElderId        = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "outward", Type: "types.BigInt", IsRelation: false}
 	OutwardDate    = dialect.Field{Name: "outward_date", Json: "outward_date", Table: "outward", Type: "types.Time", IsRelation: false}
@@ -20,6 +19,7 @@ var (
 	CreateTime     = dialect.Field{Name: "create_time", Json: "create_time", Table: "outward", Type: "types.Time", IsRelation: false}
 	UpdateId       = dialect.Field{Name: "update_id", Json: "update_id", Table: "outward", Type: "types.BigInt", IsRelation: false}
 	UpdateTime     = dialect.Field{Name: "update_time", Json: "update_time", Table: "outward", Type: "types.Time", IsRelation: false}
+	DelFlag        = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "outward", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -28,7 +28,6 @@ var (
 		ChaperoneName,
 		ChaperonePhone,
 		ChaperoneType,
-		DelFlag,
 		Id,
 		ElderId,
 		OutwardDate,
@@ -38,13 +37,13 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		ChaperoneName,
 		ChaperonePhone,
 		ChaperoneType,
-		DelFlag,
 		Id,
 		ElderId,
 		OutwardDate,
@@ -54,5 +53,6 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 )

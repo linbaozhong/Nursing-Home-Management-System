@@ -8,7 +8,6 @@ import (
 
 var (
 	CommunicationRecord = dialect.Field{Name: "communication_record", Json: "communication_record", Table: "communication_record", Type: "types.String", IsRelation: false}
-	DelFlag             = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "communication_record", Type: "types.String", IsRelation: false}
 	Id                  = dialect.Field{Name: "id", Json: "id", Table: "communication_record", Type: "types.BigInt", IsRelation: false}
 	ElderId             = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "communication_record", Type: "types.BigInt", IsRelation: false}
 	RecordDate          = dialect.Field{Name: "record_date", Json: "record_date", Table: "communication_record", Type: "types.Time", IsRelation: false}
@@ -16,13 +15,13 @@ var (
 	CreateTime          = dialect.Field{Name: "create_time", Json: "create_time", Table: "communication_record", Type: "types.Time", IsRelation: false}
 	UpdateId            = dialect.Field{Name: "update_id", Json: "update_id", Table: "communication_record", Type: "types.BigInt", IsRelation: false}
 	UpdateTime          = dialect.Field{Name: "update_time", Json: "update_time", Table: "communication_record", Type: "types.Time", IsRelation: false}
+	DelFlag             = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "communication_record", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
 		CommunicationRecord,
-		DelFlag,
 		Id,
 		ElderId,
 		RecordDate,
@@ -30,11 +29,11 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		CommunicationRecord,
-		DelFlag,
 		Id,
 		ElderId,
 		RecordDate,
@@ -42,5 +41,6 @@ var (
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
 	}
 )

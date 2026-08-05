@@ -5,16 +5,16 @@ package dto
 // @request
 // PageServiceByKeyQuery 分页查询服务请求
 type PageServiceByKeyQuery struct {
-	PageNum     *int    `json:"pageNum" valid:"required"` // 页码
-	PageSize    *int    `json:"pageSize" valid:"required"` // 条数
-	ServiceName *string `json:"serviceName"` // 服务名称
-	TypeName    *string `json:"typeName"` // 服务类型名称
+	PageNum     *int    `json:"page_num" valid:"required"`  // 页码
+	PageSize    *int    `json:"page_size" valid:"required"` // 条数
+	ServiceName *string `json:"service_name"`               // 服务名称
+	TypeName    *string `json:"type_name"`                  // 服务类型名称
 }
 
 // @request
 // OperateServiceTypeQuery 操作服务类型请求
 type OperateServiceTypeQuery struct {
-	ID   *int64  `json:"id"` // id
+	ID   *int64  `json:"id"`                    // id
 	Name *string `json:"name" valid:"required"` // 服务类型名称
 }
 
@@ -28,10 +28,10 @@ type OperateServiceTypeQuery struct {
 // PageServiceByKeyVO 分页查询服务响应
 type PageServiceByKeyVO struct {
 	Rank
-	ID           int64   `json:"id"` // id
-	TypeName     string  `json:"typeName"` // 服务类型名称
-	ServiceName  string  `json:"serviceName"` // 服务名称
-	ChargeMethod string  `json:"chargeMethod"` // 收费方式
-	Price        float64 `json:"price"` // 服务价格
-	NeedDate     int     `json:"needDate"` // 所需时间
+	ID           int64   `json:"id"`            // id
+	TypeName     string  `json:"type_name"`     // 服务类型名称
+	ServiceName  string  `json:"service_name"`  // 服务名称
+	ChargeMethod string  `json:"charge_method"` // 收费方式
+	Price        float64 `json:"price"`         // 服务价格
+	NeedDate     int     `json:"need_date"`     // 所需时间
 }

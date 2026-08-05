@@ -36,9 +36,6 @@ func (p *ServiceItem) MarshalJSON() ([]byte, error) {
 	if p.ChargeMethod != "" {
 		write.WriteRaw("charge_method", types.Marshal(p.ChargeMethod))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -63,6 +60,9 @@ func (p *ServiceItem) MarshalJSON() ([]byte, error) {
 	if p.NeedDate != 0 {
 		write.WriteRaw("need_date", types.Marshal(p.NeedDate))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -80,8 +80,6 @@ func (p *ServiceItem) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "charge_method":
 			p.ChargeMethod = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "type_id":
@@ -98,6 +96,8 @@ func (p *ServiceItem) UnmarshalJSON(data []byte) error {
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "need_date":
 			p.NeedDate = types.Int32(value.Int())
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -121,7 +121,6 @@ func (p *ServiceItem) Free() {
 func (p *ServiceItem) Reset() {
 	p.Name = ""
 	p.ChargeMethod = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.TypeId = 0
 	p.Price = 0
@@ -130,6 +129,7 @@ func (p *ServiceItem) Reset() {
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.NeedDate = 0
+	p.DelFlag = 0
 
 }
 
@@ -138,18 +138,18 @@ func (p *ServiceItem) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var serviceitemFieldToPtrFunc = map[dialect.Field]func(*ServiceItem) any{
-	tblserviceitem.Name:         func(p *ServiceItem) any { return &p.Name },
-	tblserviceitem.ChargeMethod: func(p *ServiceItem) any { return &p.ChargeMethod },
-	tblserviceitem.DelFlag:      func(p *ServiceItem) any { return &p.DelFlag },
-	tblserviceitem.Id:           func(p *ServiceItem) any { return &p.Id },
-	tblserviceitem.TypeId:       func(p *ServiceItem) any { return &p.TypeId },
-	tblserviceitem.Price:        func(p *ServiceItem) any { return &p.Price },
-	tblserviceitem.CreateId:     func(p *ServiceItem) any { return &p.CreateId },
-	tblserviceitem.CreateTime:   func(p *ServiceItem) any { return &p.CreateTime },
-	tblserviceitem.UpdateId:     func(p *ServiceItem) any { return &p.UpdateId },
-	tblserviceitem.UpdateTime:   func(p *ServiceItem) any { return &p.UpdateTime },
-	tblserviceitem.NeedDate:     func(p *ServiceItem) any { return &p.NeedDate },
+var serviceitemFieldToPtrFunc = map[string]func(*ServiceItem) any{
+	tblserviceitem.Name.Name:         func(p *ServiceItem) any { return &p.Name },
+	tblserviceitem.ChargeMethod.Name: func(p *ServiceItem) any { return &p.ChargeMethod },
+	tblserviceitem.Id.Name:           func(p *ServiceItem) any { return &p.Id },
+	tblserviceitem.TypeId.Name:       func(p *ServiceItem) any { return &p.TypeId },
+	tblserviceitem.Price.Name:        func(p *ServiceItem) any { return &p.Price },
+	tblserviceitem.CreateId.Name:     func(p *ServiceItem) any { return &p.CreateId },
+	tblserviceitem.CreateTime.Name:   func(p *ServiceItem) any { return &p.CreateTime },
+	tblserviceitem.UpdateId.Name:     func(p *ServiceItem) any { return &p.UpdateId },
+	tblserviceitem.UpdateTime.Name:   func(p *ServiceItem) any { return &p.UpdateTime },
+	tblserviceitem.NeedDate.Name:     func(p *ServiceItem) any { return &p.NeedDate },
+	tblserviceitem.DelFlag.Name:      func(p *ServiceItem) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -163,11 +163,28 @@ func (p *ServiceItem) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := serviceitemFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := serviceitemFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *ServiceItem) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := serviceitemFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -214,9 +231,6 @@ var serviceitemFieldToValueFunc = map[dialect.Field]func(*ServiceItem) (any, boo
 	tblserviceitem.ChargeMethod: func(p *ServiceItem) (any, bool) {
 		return p.ChargeMethod, p.ChargeMethod == ""
 	},
-	tblserviceitem.DelFlag: func(p *ServiceItem) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblserviceitem.Id: func(p *ServiceItem) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -240,6 +254,9 @@ var serviceitemFieldToValueFunc = map[dialect.Field]func(*ServiceItem) (any, boo
 	},
 	tblserviceitem.NeedDate: func(p *ServiceItem) (any, bool) {
 		return p.NeedDate, p.NeedDate == 0
+	},
+	tblserviceitem.DelFlag: func(p *ServiceItem) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 
@@ -270,12 +287,10 @@ func (p *ServiceItem) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]
 	return cols, vals
 }
 
-//
 func (p *ServiceItem) AssignKeys() (dialect.Field, any) {
 	return tblserviceitem.PrimaryKey, p.Id
 }
 
-//
 func (p *ServiceItem) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

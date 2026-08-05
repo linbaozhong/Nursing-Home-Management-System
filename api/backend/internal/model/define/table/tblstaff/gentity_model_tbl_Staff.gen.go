@@ -15,7 +15,6 @@ var (
 	Pass       = dialect.Field{Name: "pass", Json: "pass", Table: "staff", Type: "types.String", IsRelation: false}
 	Avator     = dialect.Field{Name: "avator", Json: "avator", Table: "staff", Type: "types.String", IsRelation: false}
 	Address    = dialect.Field{Name: "address", Json: "address", Table: "staff", Type: "types.String", IsRelation: false}
-	LeaveFlag  = dialect.Field{Name: "leave_flag", Json: "leave_flag", Table: "staff", Type: "types.String", IsRelation: false}
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "staff", Type: "types.BigInt", IsRelation: false}
 	RoleId     = dialect.Field{Name: "role_id", Json: "role_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
@@ -23,6 +22,7 @@ var (
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "staff", Type: "types.Time", IsRelation: false}
 	Age        = dialect.Field{Name: "age", Json: "age", Table: "staff", Type: "types.Int32", IsRelation: false}
+	LeaveFlag  = dialect.Field{Name: "leave_flag", Json: "leave_flag", Table: "staff", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -36,7 +36,6 @@ var (
 		Pass,
 		Avator,
 		Address,
-		LeaveFlag,
 		Id,
 		RoleId,
 		CreateId,
@@ -44,6 +43,7 @@ var (
 		UpdateId,
 		UpdateTime,
 		Age,
+		LeaveFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
@@ -55,7 +55,6 @@ var (
 		Pass,
 		Avator,
 		Address,
-		LeaveFlag,
 		Id,
 		RoleId,
 		CreateId,
@@ -63,5 +62,6 @@ var (
 		UpdateId,
 		UpdateTime,
 		Age,
+		LeaveFlag,
 	}
 )

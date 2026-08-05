@@ -36,9 +36,6 @@ func (p *Accident) MarshalJSON() ([]byte, error) {
 	if p.Picture != "" {
 		write.WriteRaw("picture", types.Marshal(p.Picture))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -63,6 +60,9 @@ func (p *Accident) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -80,8 +80,6 @@ func (p *Accident) UnmarshalJSON(data []byte) error {
 			p.Description = types.String(value.Str)
 		case "picture":
 			p.Picture = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -98,6 +96,8 @@ func (p *Accident) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -121,7 +121,6 @@ func (p *Accident) Free() {
 func (p *Accident) Reset() {
 	p.Description = ""
 	p.Picture = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.StaffId = 0
@@ -130,6 +129,7 @@ func (p *Accident) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
 
 }
 
@@ -138,18 +138,18 @@ func (p *Accident) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var accidentFieldToPtrFunc = map[dialect.Field]func(*Accident) any{
-	tblaccident.Description: func(p *Accident) any { return &p.Description },
-	tblaccident.Picture:     func(p *Accident) any { return &p.Picture },
-	tblaccident.DelFlag:     func(p *Accident) any { return &p.DelFlag },
-	tblaccident.Id:          func(p *Accident) any { return &p.Id },
-	tblaccident.ElderId:     func(p *Accident) any { return &p.ElderId },
-	tblaccident.StaffId:     func(p *Accident) any { return &p.StaffId },
-	tblaccident.OccurDate:   func(p *Accident) any { return &p.OccurDate },
-	tblaccident.CreateId:    func(p *Accident) any { return &p.CreateId },
-	tblaccident.CreateTime:  func(p *Accident) any { return &p.CreateTime },
-	tblaccident.UpdateId:    func(p *Accident) any { return &p.UpdateId },
-	tblaccident.UpdateTime:  func(p *Accident) any { return &p.UpdateTime },
+var accidentFieldToPtrFunc = map[string]func(*Accident) any{
+	tblaccident.Description.Name: func(p *Accident) any { return &p.Description },
+	tblaccident.Picture.Name:     func(p *Accident) any { return &p.Picture },
+	tblaccident.Id.Name:          func(p *Accident) any { return &p.Id },
+	tblaccident.ElderId.Name:     func(p *Accident) any { return &p.ElderId },
+	tblaccident.StaffId.Name:     func(p *Accident) any { return &p.StaffId },
+	tblaccident.OccurDate.Name:   func(p *Accident) any { return &p.OccurDate },
+	tblaccident.CreateId.Name:    func(p *Accident) any { return &p.CreateId },
+	tblaccident.CreateTime.Name:  func(p *Accident) any { return &p.CreateTime },
+	tblaccident.UpdateId.Name:    func(p *Accident) any { return &p.UpdateId },
+	tblaccident.UpdateTime.Name:  func(p *Accident) any { return &p.UpdateTime },
+	tblaccident.DelFlag.Name:     func(p *Accident) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -163,11 +163,28 @@ func (p *Accident) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := accidentFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := accidentFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Accident) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := accidentFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -214,9 +231,6 @@ var accidentFieldToValueFunc = map[dialect.Field]func(*Accident) (any, bool){
 	tblaccident.Picture: func(p *Accident) (any, bool) {
 		return p.Picture, p.Picture == ""
 	},
-	tblaccident.DelFlag: func(p *Accident) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblaccident.Id: func(p *Accident) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -240,6 +254,9 @@ var accidentFieldToValueFunc = map[dialect.Field]func(*Accident) (any, bool){
 	},
 	tblaccident.UpdateTime: func(p *Accident) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblaccident.DelFlag: func(p *Accident) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 
@@ -270,12 +287,10 @@ func (p *Accident) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 	return cols, vals
 }
 
-//
 func (p *Accident) AssignKeys() (dialect.Field, any) {
 	return tblaccident.PrimaryKey, p.Id
 }
 
-//
 func (p *Accident) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

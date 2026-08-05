@@ -39,9 +39,6 @@ func (p *Outward) MarshalJSON() ([]byte, error) {
 	if p.ChaperoneType != "" {
 		write.WriteRaw("chaperone_type", types.Marshal(p.ChaperoneType))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -69,6 +66,9 @@ func (p *Outward) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -88,8 +88,6 @@ func (p *Outward) UnmarshalJSON(data []byte) error {
 			p.ChaperonePhone = types.String(value.Str)
 		case "chaperone_type":
 			p.ChaperoneType = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -108,6 +106,8 @@ func (p *Outward) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -132,7 +132,6 @@ func (p *Outward) Reset() {
 	p.ChaperoneName = ""
 	p.ChaperonePhone = ""
 	p.ChaperoneType = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.OutwardDate = types.Time{}
@@ -142,6 +141,7 @@ func (p *Outward) Reset() {
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
 
 }
 
@@ -150,20 +150,20 @@ func (p *Outward) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var outwardFieldToPtrFunc = map[dialect.Field]func(*Outward) any{
-	tbloutward.ChaperoneName:  func(p *Outward) any { return &p.ChaperoneName },
-	tbloutward.ChaperonePhone: func(p *Outward) any { return &p.ChaperonePhone },
-	tbloutward.ChaperoneType:  func(p *Outward) any { return &p.ChaperoneType },
-	tbloutward.DelFlag:        func(p *Outward) any { return &p.DelFlag },
-	tbloutward.Id:             func(p *Outward) any { return &p.Id },
-	tbloutward.ElderId:        func(p *Outward) any { return &p.ElderId },
-	tbloutward.OutwardDate:    func(p *Outward) any { return &p.OutwardDate },
-	tbloutward.PlanReturnDate: func(p *Outward) any { return &p.PlanReturnDate },
-	tbloutward.RealReturnDate: func(p *Outward) any { return &p.RealReturnDate },
-	tbloutward.CreateId:       func(p *Outward) any { return &p.CreateId },
-	tbloutward.CreateTime:     func(p *Outward) any { return &p.CreateTime },
-	tbloutward.UpdateId:       func(p *Outward) any { return &p.UpdateId },
-	tbloutward.UpdateTime:     func(p *Outward) any { return &p.UpdateTime },
+var outwardFieldToPtrFunc = map[string]func(*Outward) any{
+	tbloutward.ChaperoneName.Name:  func(p *Outward) any { return &p.ChaperoneName },
+	tbloutward.ChaperonePhone.Name: func(p *Outward) any { return &p.ChaperonePhone },
+	tbloutward.ChaperoneType.Name:  func(p *Outward) any { return &p.ChaperoneType },
+	tbloutward.Id.Name:             func(p *Outward) any { return &p.Id },
+	tbloutward.ElderId.Name:        func(p *Outward) any { return &p.ElderId },
+	tbloutward.OutwardDate.Name:    func(p *Outward) any { return &p.OutwardDate },
+	tbloutward.PlanReturnDate.Name: func(p *Outward) any { return &p.PlanReturnDate },
+	tbloutward.RealReturnDate.Name: func(p *Outward) any { return &p.RealReturnDate },
+	tbloutward.CreateId.Name:       func(p *Outward) any { return &p.CreateId },
+	tbloutward.CreateTime.Name:     func(p *Outward) any { return &p.CreateTime },
+	tbloutward.UpdateId.Name:       func(p *Outward) any { return &p.UpdateId },
+	tbloutward.UpdateTime.Name:     func(p *Outward) any { return &p.UpdateTime },
+	tbloutward.DelFlag.Name:        func(p *Outward) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -177,11 +177,28 @@ func (p *Outward) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := outwardFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := outwardFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Outward) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := outwardFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -231,9 +248,6 @@ var outwardFieldToValueFunc = map[dialect.Field]func(*Outward) (any, bool){
 	tbloutward.ChaperoneType: func(p *Outward) (any, bool) {
 		return p.ChaperoneType, p.ChaperoneType == ""
 	},
-	tbloutward.DelFlag: func(p *Outward) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tbloutward.Id: func(p *Outward) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -260,6 +274,9 @@ var outwardFieldToValueFunc = map[dialect.Field]func(*Outward) (any, bool){
 	},
 	tbloutward.UpdateTime: func(p *Outward) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tbloutward.DelFlag: func(p *Outward) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 
@@ -290,12 +307,10 @@ func (p *Outward) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]stri
 	return cols, vals
 }
 
-//
 func (p *Outward) AssignKeys() (dialect.Field, any) {
 	return tbloutward.PrimaryKey, p.Id
 }
 
-//
 func (p *Outward) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

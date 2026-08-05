@@ -13,14 +13,14 @@ var (
 	Email       = dialect.Field{Name: "email", Json: "email", Table: "family_member", Type: "types.String", IsRelation: false}
 	Address     = dialect.Field{Name: "address", Json: "address", Table: "family_member", Type: "types.String", IsRelation: false}
 	Relation    = dialect.Field{Name: "relation", Json: "relation", Table: "family_member", Type: "types.String", IsRelation: false}
-	ReceiveFlag = dialect.Field{Name: "receive_flag", Json: "receive_flag", Table: "family_member", Type: "types.String", IsRelation: false}
-	DelFlag     = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "family_member", Type: "types.String", IsRelation: false}
 	Id          = dialect.Field{Name: "id", Json: "id", Table: "family_member", Type: "types.BigInt", IsRelation: false}
 	ElderId     = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "family_member", Type: "types.BigInt", IsRelation: false}
 	CreateId    = dialect.Field{Name: "create_id", Json: "create_id", Table: "family_member", Type: "types.BigInt", IsRelation: false}
 	CreateTime  = dialect.Field{Name: "create_time", Json: "create_time", Table: "family_member", Type: "types.Time", IsRelation: false}
 	UpdateId    = dialect.Field{Name: "update_id", Json: "update_id", Table: "family_member", Type: "types.BigInt", IsRelation: false}
 	UpdateTime  = dialect.Field{Name: "update_time", Json: "update_time", Table: "family_member", Type: "types.Time", IsRelation: false}
+	DelFlag     = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "family_member", Type: "types.Int8", IsRelation: false}
+	ReceiveFlag = dialect.Field{Name: "receive_flag", Json: "receive_flag", Table: "family_member", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -32,14 +32,14 @@ var (
 		Email,
 		Address,
 		Relation,
-		ReceiveFlag,
-		DelFlag,
 		Id,
 		ElderId,
 		CreateId,
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
+		ReceiveFlag,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
@@ -49,13 +49,13 @@ var (
 		Email,
 		Address,
 		Relation,
-		ReceiveFlag,
-		DelFlag,
 		Id,
 		ElderId,
 		CreateId,
 		CreateTime,
 		UpdateId,
 		UpdateTime,
+		DelFlag,
+		ReceiveFlag,
 	}
 )

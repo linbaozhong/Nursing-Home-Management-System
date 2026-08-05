@@ -36,9 +36,6 @@ func (p *NurseGrade) MarshalJSON() ([]byte, error) {
 	if p.Type != "" {
 		write.WriteRaw("type", types.Marshal(p.Type))
 	}
-	if p.DelFlag != "" {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -57,6 +54,9 @@ func (p *NurseGrade) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.DelFlag != 0 {
+		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -74,8 +74,6 @@ func (p *NurseGrade) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "type":
 			p.Type = types.String(value.Str)
-		case "del_flag":
-			p.DelFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "month_price":
@@ -88,6 +86,8 @@ func (p *NurseGrade) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "del_flag":
+			p.DelFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -111,13 +111,13 @@ func (p *NurseGrade) Free() {
 func (p *NurseGrade) Reset() {
 	p.Name = ""
 	p.Type = ""
-	p.DelFlag = ""
 	p.Id = 0
 	p.MonthPrice = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.DelFlag = 0
 
 }
 
@@ -126,16 +126,16 @@ func (p *NurseGrade) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var nursegradeFieldToPtrFunc = map[dialect.Field]func(*NurseGrade) any{
-	tblnursegrade.Name:       func(p *NurseGrade) any { return &p.Name },
-	tblnursegrade.Type:       func(p *NurseGrade) any { return &p.Type },
-	tblnursegrade.DelFlag:    func(p *NurseGrade) any { return &p.DelFlag },
-	tblnursegrade.Id:         func(p *NurseGrade) any { return &p.Id },
-	tblnursegrade.MonthPrice: func(p *NurseGrade) any { return &p.MonthPrice },
-	tblnursegrade.CreateId:   func(p *NurseGrade) any { return &p.CreateId },
-	tblnursegrade.CreateTime: func(p *NurseGrade) any { return &p.CreateTime },
-	tblnursegrade.UpdateId:   func(p *NurseGrade) any { return &p.UpdateId },
-	tblnursegrade.UpdateTime: func(p *NurseGrade) any { return &p.UpdateTime },
+var nursegradeFieldToPtrFunc = map[string]func(*NurseGrade) any{
+	tblnursegrade.Name.Name:       func(p *NurseGrade) any { return &p.Name },
+	tblnursegrade.Type.Name:       func(p *NurseGrade) any { return &p.Type },
+	tblnursegrade.Id.Name:         func(p *NurseGrade) any { return &p.Id },
+	tblnursegrade.MonthPrice.Name: func(p *NurseGrade) any { return &p.MonthPrice },
+	tblnursegrade.CreateId.Name:   func(p *NurseGrade) any { return &p.CreateId },
+	tblnursegrade.CreateTime.Name: func(p *NurseGrade) any { return &p.CreateTime },
+	tblnursegrade.UpdateId.Name:   func(p *NurseGrade) any { return &p.UpdateId },
+	tblnursegrade.UpdateTime.Name: func(p *NurseGrade) any { return &p.UpdateTime },
+	tblnursegrade.DelFlag.Name:    func(p *NurseGrade) any { return &p.DelFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -149,11 +149,28 @@ func (p *NurseGrade) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := nursegradeFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := nursegradeFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *NurseGrade) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := nursegradeFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -200,9 +217,6 @@ var nursegradeFieldToValueFunc = map[dialect.Field]func(*NurseGrade) (any, bool)
 	tblnursegrade.Type: func(p *NurseGrade) (any, bool) {
 		return p.Type, p.Type == ""
 	},
-	tblnursegrade.DelFlag: func(p *NurseGrade) (any, bool) {
-		return p.DelFlag, p.DelFlag == ""
-	},
 	tblnursegrade.Id: func(p *NurseGrade) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -220,6 +234,9 @@ var nursegradeFieldToValueFunc = map[dialect.Field]func(*NurseGrade) (any, bool)
 	},
 	tblnursegrade.UpdateTime: func(p *NurseGrade) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblnursegrade.DelFlag: func(p *NurseGrade) (any, bool) {
+		return p.DelFlag, p.DelFlag == 0
 	},
 }
 
@@ -250,12 +267,10 @@ func (p *NurseGrade) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]s
 	return cols, vals
 }
 
-//
 func (p *NurseGrade) AssignKeys() (dialect.Field, any) {
 	return tblnursegrade.PrimaryKey, p.Id
 }
 
-//
 func (p *NurseGrade) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

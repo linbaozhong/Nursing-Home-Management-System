@@ -36,9 +36,6 @@ func (p *NurseReserve) MarshalJSON() ([]byte, error) {
 	if p.ChargeMethod != "" {
 		write.WriteRaw("charge_method", types.Marshal(p.ChargeMethod))
 	}
-	if p.OrderFlag != "" {
-		write.WriteRaw("order_flag", types.Marshal(p.OrderFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -75,6 +72,9 @@ func (p *NurseReserve) MarshalJSON() ([]byte, error) {
 	if p.Frequency != 0 {
 		write.WriteRaw("frequency", types.Marshal(p.Frequency))
 	}
+	if p.OrderFlag != 0 {
+		write.WriteRaw("order_flag", types.Marshal(p.OrderFlag))
+	}
 	return write.Bytes(), nil
 }
 
@@ -92,8 +92,6 @@ func (p *NurseReserve) UnmarshalJSON(data []byte) error {
 			p.ServiceName = types.String(value.Str)
 		case "charge_method":
 			p.ChargeMethod = types.String(value.Str)
-		case "order_flag":
-			p.OrderFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "elder_id":
@@ -118,6 +116,8 @@ func (p *NurseReserve) UnmarshalJSON(data []byte) error {
 			p.NeedDate = types.Int32(value.Int())
 		case "frequency":
 			p.Frequency = types.Int32(value.Int())
+		case "order_flag":
+			p.OrderFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -141,7 +141,6 @@ func (p *NurseReserve) Free() {
 func (p *NurseReserve) Reset() {
 	p.ServiceName = ""
 	p.ChargeMethod = ""
-	p.OrderFlag = ""
 	p.Id = 0
 	p.ElderId = 0
 	p.StaffId = 0
@@ -154,6 +153,7 @@ func (p *NurseReserve) Reset() {
 	p.UpdateTime = types.Time{}
 	p.NeedDate = 0
 	p.Frequency = 0
+	p.OrderFlag = 0
 
 }
 
@@ -162,22 +162,22 @@ func (p *NurseReserve) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var nursereserveFieldToPtrFunc = map[dialect.Field]func(*NurseReserve) any{
-	tblnursereserve.ServiceName:  func(p *NurseReserve) any { return &p.ServiceName },
-	tblnursereserve.ChargeMethod: func(p *NurseReserve) any { return &p.ChargeMethod },
-	tblnursereserve.OrderFlag:    func(p *NurseReserve) any { return &p.OrderFlag },
-	tblnursereserve.Id:           func(p *NurseReserve) any { return &p.Id },
-	tblnursereserve.ElderId:      func(p *NurseReserve) any { return &p.ElderId },
-	tblnursereserve.StaffId:      func(p *NurseReserve) any { return &p.StaffId },
-	tblnursereserve.ServicePrice: func(p *NurseReserve) any { return &p.ServicePrice },
-	tblnursereserve.PayAmount:    func(p *NurseReserve) any { return &p.PayAmount },
-	tblnursereserve.NurseDate:    func(p *NurseReserve) any { return &p.NurseDate },
-	tblnursereserve.CreateId:     func(p *NurseReserve) any { return &p.CreateId },
-	tblnursereserve.CreateTime:   func(p *NurseReserve) any { return &p.CreateTime },
-	tblnursereserve.UpdateId:     func(p *NurseReserve) any { return &p.UpdateId },
-	tblnursereserve.UpdateTime:   func(p *NurseReserve) any { return &p.UpdateTime },
-	tblnursereserve.NeedDate:     func(p *NurseReserve) any { return &p.NeedDate },
-	tblnursereserve.Frequency:    func(p *NurseReserve) any { return &p.Frequency },
+var nursereserveFieldToPtrFunc = map[string]func(*NurseReserve) any{
+	tblnursereserve.ServiceName.Name:  func(p *NurseReserve) any { return &p.ServiceName },
+	tblnursereserve.ChargeMethod.Name: func(p *NurseReserve) any { return &p.ChargeMethod },
+	tblnursereserve.Id.Name:           func(p *NurseReserve) any { return &p.Id },
+	tblnursereserve.ElderId.Name:      func(p *NurseReserve) any { return &p.ElderId },
+	tblnursereserve.StaffId.Name:      func(p *NurseReserve) any { return &p.StaffId },
+	tblnursereserve.ServicePrice.Name: func(p *NurseReserve) any { return &p.ServicePrice },
+	tblnursereserve.PayAmount.Name:    func(p *NurseReserve) any { return &p.PayAmount },
+	tblnursereserve.NurseDate.Name:    func(p *NurseReserve) any { return &p.NurseDate },
+	tblnursereserve.CreateId.Name:     func(p *NurseReserve) any { return &p.CreateId },
+	tblnursereserve.CreateTime.Name:   func(p *NurseReserve) any { return &p.CreateTime },
+	tblnursereserve.UpdateId.Name:     func(p *NurseReserve) any { return &p.UpdateId },
+	tblnursereserve.UpdateTime.Name:   func(p *NurseReserve) any { return &p.UpdateTime },
+	tblnursereserve.NeedDate.Name:     func(p *NurseReserve) any { return &p.NeedDate },
+	tblnursereserve.Frequency.Name:    func(p *NurseReserve) any { return &p.Frequency },
+	tblnursereserve.OrderFlag.Name:    func(p *NurseReserve) any { return &p.OrderFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -191,11 +191,28 @@ func (p *NurseReserve) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := nursereserveFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := nursereserveFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *NurseReserve) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := nursereserveFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -242,9 +259,6 @@ var nursereserveFieldToValueFunc = map[dialect.Field]func(*NurseReserve) (any, b
 	tblnursereserve.ChargeMethod: func(p *NurseReserve) (any, bool) {
 		return p.ChargeMethod, p.ChargeMethod == ""
 	},
-	tblnursereserve.OrderFlag: func(p *NurseReserve) (any, bool) {
-		return p.OrderFlag, p.OrderFlag == ""
-	},
 	tblnursereserve.Id: func(p *NurseReserve) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -281,6 +295,9 @@ var nursereserveFieldToValueFunc = map[dialect.Field]func(*NurseReserve) (any, b
 	tblnursereserve.Frequency: func(p *NurseReserve) (any, bool) {
 		return p.Frequency, p.Frequency == 0
 	},
+	tblnursereserve.OrderFlag: func(p *NurseReserve) (any, bool) {
+		return p.OrderFlag, p.OrderFlag == 0
+	},
 }
 
 // AssignValues 向数据库写入数据前，为表列赋值。
@@ -310,12 +327,10 @@ func (p *NurseReserve) AssignValues(d dialect.Dialect, args ...dialect.Field) ([
 	return cols, vals
 }
 
-//
 func (p *NurseReserve) AssignKeys() (dialect.Field, any) {
 	return tblnursereserve.PrimaryKey, p.Id
 }
 
-//
 func (p *NurseReserve) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

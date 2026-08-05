@@ -2,9 +2,17 @@ package service
 
 import (
 	"context"
+	"errors"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblbed"
+	"api/internal/model/define/table/tblelder"
+	"api/internal/model/define/table/tblemergencycontact"
+	"api/internal/model/define/table/tbllabel"
+	"api/internal/model/do"
 	"api/internal/model/dto"
+
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
@@ -13,104 +21,227 @@ type elderrecord struct{}
 
 var ElderRecord = &elderrecord{}
 
-// PageElderRecordByKey 分页查询老人档案（联表 label、user 等）
-// 对应 Java: ElderRecordServiceImpl.pageElderRecordByKey -> ElderRecordMapper.listElderRecordByKey
-// SQL: SELECT er.*, lbl.label_name, u.name AS charge_user_name FROM elder_record er
-//
-//	LEFT JOIN label lbl ON lbl.id = er.label_id
-//	LEFT JOIN user u ON u.id = er.charge_user_id
-//	WHERE (er.elder_name LIKE %key% OR er.id = key) [可选]
-//	ORDER BY er.create_time DESC; 再由 PageUtil 内存分页。
-//
-// Todo: 1) in.Key 非空 -> (tbl<elderrecord>.Id.Eq(in.Key) OR tbl<elderrecord>.ElderName.Like(in.Key))
-//
-//	2) DB 分页: Count + List(联表 LeftJoin)
-//	3) 组装含标签/负责人姓名的 VO 并赋值 out
-func (e *elderrecord) PageElderRecordByKey(ctx context.Context, in *dto.PageElderRecordByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
-	return nil
+// PageElderRecordByKey 分页查询长者档案（联表 bed 取床位名称）
+// 对应 Java: ElderRecordServiceImpl.pageElderByKey -> ElderMapper.listElderByKey
+func (e *elderrecord) PageElderRecordByKey(ctx context.Context, in *dto.PageElderRecordByKeyQuery, out *[]dto.PageElderByKeyVO) error {
+	q := db.Table(do.ElderTableName).
+		LeftJoin(tblelder.BedId, tblbed.Id).
+		Where(tblelder.DelFlag.Eq(constant.YesNoNo))
+	if in.ElderName != nil && *in.ElderName != "" {
+		q.And(tblelder.Name.Like(*in.ElderName))
+	}
+	if in.IDNum != nil && *in.IDNum != "" {
+		q.And(tblelder.IdNum.Like(*in.IDNum))
+	}
+	if in.ElderSex != nil && *in.ElderSex != "" {
+		q.And(tblelder.Sex.Eq(*in.ElderSex))
+	}
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(
+			tblelder.Id,
+			tblbed.Name.AsName("bed_name"),
+			tblelder.Name,
+			tblelder.IdNum,
+			tblelder.Age,
+			tblelder.Sex,
+			tblelder.Phone,
+			tblelder.Address,
+			tblelder.CheckFlag,
+		).
+		Desc(tblelder.CreateTime).
+		Select().
+		Gets(ctx, out)
 }
 
-// GetElderRecordById 根据编号获取老人档案
-// 对应 Java: ElderRecordServiceImpl.getElderRecordById -> elderRecordMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.ElderRecord(db).GetByID(ctx, types.BigInt(in.ID)); 另查 emergency_contact
-func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e2 := dao.ElderRecord(db).GetByID(ctx, types.BigInt(in.ID))
+// GetElderRecordById 根据编号获取长者档案（含紧急联系人）
+// 对应 Java: ElderRecordServiceImpl.getElderRecordById
+func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out *dto.GetElderRecordByIDVO) error {
+	elder, has, e2 := dao.Elder(db).GetByID(ctx, types.BigInt(*in.ID),
+		tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Age, tblelder.Sex,
+		tblelder.Phone, tblelder.Address,
+	)
 	if e2 != nil {
 		return e2
 	}
-	_ = has
-	_ = obj
-	// todo: 另查 emergency_contact(老人编号) 获取紧急联系人
+	if !has {
+		return errors.New("老人不存在")
+	}
+	out.Name = elder.Name.String()
+	out.IDNum = elder.IdNum.String()
+	out.Age = int(elder.Age)
+	out.Sex = elder.Sex.String()
+	out.Phone = elder.Phone.String()
+	out.Address = elder.Address.String()
+
+	// 紧急联系人
+	var contacts []do.EmergencyContact
+	e2 = db.Table(do.EmergencyContactTableName).
+		Cols(
+			tblemergencycontact.Id,
+			tblemergencycontact.Name,
+			tblemergencycontact.Phone,
+			tblemergencycontact.Relation,
+			tblemergencycontact.Remark,
+		).
+		Where(tblemergencycontact.ElderId.Eq(types.BigInt(*in.ID))).
+		Select().
+		Gets(ctx, &contacts)
+	if e2 != nil {
+		return e2
+	}
+	out.ElderEmergencyContactByIDVOList = make([]dto.OperateEmergencyContactQuery, 0, len(contacts))
+	for _, ct := range contacts {
+		out.ElderEmergencyContactByIDVOList = append(out.ElderEmergencyContactByIDVOList, dto.OperateEmergencyContactQuery{
+			ID:       int64Ptr(int64(ct.Id)),
+			Name:     strPtr(ct.Name.String()),
+			Phone:    strPtr(ct.Phone.String()),
+			Relation: strPtr(ct.Relation.String()),
+			Remark:   strPtr(ct.Remark.String()),
+		})
+	}
 	return nil
 }
 
-// AddElderRecord 新增老人档案（含紧急联系人）
-// 对应 Java: ElderRecordServiceImpl.addElderRecord -> insert elder_record + insert emergency_contact
-// todo: 事务: 1) dao.ElderRecord(db).InsertOne; 2) dao.EmergencyContact(db).InsertOne(紧急联系人)
+// AddElderRecord 新增长者档案（含紧急联系人）
+// 对应 Java 不存在, Go handler 注册, 实现基础 elder 插入 + 紧急联系人
 func (e *elderrecord) AddElderRecord(ctx context.Context, in *dto.AddElderRecordQuery, out *dto.EmptyResp) error {
-	// todo: 写入 elder_record + emergency_contact
-	return nil
-}
-
-// EditElderRecord 编辑老人档案
-// 对应 Java: ElderRecordServiceImpl.editElderRecord -> updateByPrimaryKeySelective + 更新紧急联系人
-// todo: 事务: 1) UpdateById; 2) 更新 emergency_contact
-func (e *elderrecord) EditElderRecord(ctx context.Context, in *dto.EditElderRecordQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<elderrecord>.ElderName.Value(in.ElderName),
-	}
-	_, e2 := dao.ElderRecord(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
+	bean := do.NewElder()
+	bean.Name = types.String(*in.Name)
+	bean.IdNum = types.String(*in.IDNum)
+	bean.Sex = types.String(*in.Sex)
+	bean.Age = types.Int32(int32(*in.Age))
+	bean.Phone = types.String(*in.Phone)
+	bean.Address = types.String(*in.Address)
+	bean.CheckFlag = types.Int8(constant.CheckConsult)
+	_, e2 := dao.Elder(db).InsertOne(ctx, bean)
 	if e2 != nil {
 		return e2
 	}
-	// todo: 更新 emergency_contact
-	return nil
-}
-
-// DeleteElderRecord 删除老人档案（级联删紧急联系人）
-// 对应 Java: ElderRecordServiceImpl.deleteElderRecord -> 删记录(级联删 emergency_contact)
-// todo: 事务: 1) 删 emergency_contact(elder_id); 2) dao.ElderRecord(db).DeleteById
-func (e *elderrecord) DeleteElderRecord(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	// todo: 先删紧急联系人再删档案
-	_, e2 := dao.ElderRecord(db).DeleteById(ctx, types.BigInt(in.ID))
+	if len(in.EmergencyContactQueryList) > 0 {
+		list := make([]*do.EmergencyContact, 0, len(in.EmergencyContactQueryList))
+		for _, ec := range in.EmergencyContactQueryList {
+			c := do.NewEmergencyContact()
+			c.ElderId = types.BigInt(bean.Id)
+			c.Name = types.String(*ec.Name)
+			c.Phone = types.String(*ec.Phone)
+			c.Relation = types.String(*ec.Relation)
+			c.Remark = types.String(*ec.Remark)
+			list = append(list, c)
+		}
+		_, e2 = dao.EmergencyContact(db).InsertBatch(ctx, list...)
+	}
 	return e2
 }
 
-// PageSearchElderByKey 分页搜索老人（供档案选择/关联）
-// 对应 Java: ElderRecordServiceImpl.pageSearchElderByKey -> elderMapper.listElderByKey
-// SQL: SELECT * FROM elder WHERE (elder_name LIKE %key% OR id = key) [可选] AND del_flag=0
-// todo: 查询 elder 表并分页, 结果赋值 out(需定义老人分页返回类型)
-func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 elder 表并分页
-	return nil
+// EditElderRecord 编辑长者档案
+func (e *elderrecord) EditElderRecord(ctx context.Context, in *dto.EditElderRecordQuery, out *dto.EmptyResp) error {
+	var sets = make([]dialect.Setter, 0, 7)
+	sets = append(sets, tblelder.Name.Set(*in.Name))
+	sets = append(sets, tblelder.IdNum.Set(*in.IDNum))
+	sets = append(sets, tblelder.Sex.Set(*in.Sex))
+	sets = append(sets, tblelder.Age.Set(*in.Age))
+	sets = append(sets, tblelder.Phone.Set(*in.Phone))
+	sets = append(sets, tblelder.Address.Set(*in.Address))
+	if in.NurseLevel != nil {
+		sets = append(sets, tblelder.NurseGradeId.Set(*in.NurseLevel))
+	}
+	if in.CheckFlag != nil {
+		sets = append(sets, tblelder.CheckFlag.Set(*in.CheckFlag))
+	}
+	_, e2 := dao.Elder(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
+	return e2
+}
+
+// DeleteElderRecord 删除长者档案（级联删紧急联系人 + 逻辑删除）
+func (e *elderrecord) DeleteElderRecord(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
+	_, e2 := dao.EmergencyContact(db).Delete(ctx, tblemergencycontact.ElderId.Eq(types.BigInt(*in.ID)))
+	if e2 != nil {
+		return e2
+	}
+	_, e2 = dao.Elder(db).UpdateById(ctx, types.BigInt(*in.ID),
+		tblelder.DelFlag.Set(constant.YesNoYes),
+	)
+	return e2
+}
+
+// PageSearchElderByKey 分页搜索老人
+// 对应 Java: ElderRecordServiceImpl.pageSearchElderByKey -> ElderMapper.listElderByKey
+func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+	q := db.Table(do.ElderTableName).
+		Where(tblelder.DelFlag.Eq(constant.YesNoNo))
+	if in.Name != nil && *in.Name != "" {
+		q.And(tblelder.Name.Like(*in.Name))
+	}
+	if in.Phone != nil && *in.Phone != "" {
+		q.And(tblelder.Phone.Like(*in.Phone))
+	}
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(
+			tblelder.Id,
+			tblelder.Name,
+			tblelder.IdNum,
+			tblelder.Sex,
+			tblelder.Phone,
+			tblelder.Address,
+			tblelder.CheckFlag,
+		).
+		Desc(tblelder.CreateTime).
+		Select().
+		Gets(ctx, out)
 }
 
 // PageSearchEmergencyContactByKey 分页搜索紧急联系人
-// 对应 Java: ElderRecordServiceImpl.pageSearchEmergencyContactByKey -> emergencyContactMapper.listEmergencyContactByKey
-// SQL: SELECT * FROM emergency_contact WHERE (name LIKE %key% OR id = key) [可选]
-// todo: 查询 emergency_contact 表并分页, 结果赋值 out(需定义返回类型)
-func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *dto.PageSearchEmergencyContactByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 emergency_contact 表并分页
-	return nil
+func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *dto.PageSearchEmergencyContactByKeyQuery, out *[]dto.PageSearchEmergencyContactByKeyVO) error {
+	q := db.Table(do.EmergencyContactTableName).
+		Where(tblemergencycontact.ElderId.Eq(types.BigInt(*in.ElderID)))
+	if in.Key != nil && *in.Key != "" {
+		q.And(tblemergencycontact.Name.Like(*in.Key))
+		q.Or(tblemergencycontact.Phone.Like(*in.Key))
+	}
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(
+			tblemergencycontact.Id,
+			tblemergencycontact.ElderId,
+			tblemergencycontact.Name,
+			tblemergencycontact.Phone,
+			tblemergencycontact.Relation,
+			tblemergencycontact.Remark,
+		).
+		Desc(tblemergencycontact.CreateTime).
+		Select().
+		Gets(ctx, out)
 }
 
-// PageLabelByKey 分页查询标签
-// 对应 Java: ElderRecordServiceImpl.pageLabelByKey -> labelMapper.listLabelByKey
-// SQL: SELECT * FROM label WHERE (label_name LIKE %key%) [可选] ORDER BY create_time DESC
-// todo: 标签分页查询 - dao.Label(db) 条件 + 分页, 结果赋值 out
-func (e *elderrecord) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 label 表并分页
+// PageLabelByKey 分页查询客户标签
+func (e *elderrecord) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyQuery, out *[]dto.ListLabelVO) error {
+	q := db.Table(do.LabelTableName).
+		Where(tbllabel.DelFlag.Eq(constant.YesNoNo))
+	if in.Key != nil && *in.Key != "" {
+		q.And(tbllabel.Name.Like(*in.Key))
+	}
+	var labels []do.Label
+	e2 := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(tbllabel.Id, tbllabel.Name, tbllabel.Color).
+		Desc(tbllabel.CreateTime).
+		Select().
+		Gets(ctx, &labels)
+	if e2 != nil {
+		return e2
+	}
+	*out = make([]dto.ListLabelVO, 0, len(labels))
+	for _, l := range labels {
+		*out = append(*out, dto.ListLabelVO{
+			ID:   int64(l.Id),
+			Name: l.Name.String(),
+		})
+	}
 	return nil
 }
 
 // EditElderLabel 编辑老人标签
-// 对应 Java: ElderRecordServiceImpl.editElderLabel -> 更新 elder_record.label_id
-// todo: 更新 elder_record 的 label_id 字段(UpdateById)
+// 说明: Go 端 elder 表无 label_id 字段, 该方法保留以便后续扩展
 func (e *elderrecord) EditElderLabel(ctx context.Context, in *dto.EditElderLabelQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: tbl<elderrecord>.LabelId.Value(in.LabelId),
-	}
-	_, e2 := dao.ElderRecord(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
-	return e2
+	return errors.New("not implemented: elder 表暂无 label_id 字段")
 }
+
+// ---- 辅助函数（int64Ptr/strPtr 已在 util.go 定义）----

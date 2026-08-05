@@ -54,9 +54,6 @@ func (p *Staff) MarshalJSON() ([]byte, error) {
 	if p.Address != "" {
 		write.WriteRaw("address", types.Marshal(p.Address))
 	}
-	if p.LeaveFlag != "" {
-		write.WriteRaw("leave_flag", types.Marshal(p.LeaveFlag))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
@@ -77,6 +74,9 @@ func (p *Staff) MarshalJSON() ([]byte, error) {
 	}
 	if p.Age != 0 {
 		write.WriteRaw("age", types.Marshal(p.Age))
+	}
+	if p.LeaveFlag != 0 {
+		write.WriteRaw("leave_flag", types.Marshal(p.LeaveFlag))
 	}
 	return write.Bytes(), nil
 }
@@ -107,8 +107,6 @@ func (p *Staff) UnmarshalJSON(data []byte) error {
 			p.Avator = types.String(value.Str)
 		case "address":
 			p.Address = types.String(value.Str)
-		case "leave_flag":
-			p.LeaveFlag = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "role_id":
@@ -123,6 +121,8 @@ func (p *Staff) UnmarshalJSON(data []byte) error {
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "age":
 			p.Age = types.Int32(value.Int())
+		case "leave_flag":
+			p.LeaveFlag = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -152,7 +152,6 @@ func (p *Staff) Reset() {
 	p.Pass = ""
 	p.Avator = ""
 	p.Address = ""
-	p.LeaveFlag = ""
 	p.Id = 0
 	p.RoleId = 0
 	p.CreateId = 0
@@ -160,6 +159,7 @@ func (p *Staff) Reset() {
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.Age = 0
+	p.LeaveFlag = 0
 
 }
 
@@ -168,23 +168,23 @@ func (p *Staff) TableName() string {
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var staffFieldToPtrFunc = map[dialect.Field]func(*Staff) any{
-	tblstaff.Name:       func(p *Staff) any { return &p.Name },
-	tblstaff.IdNum:      func(p *Staff) any { return &p.IdNum },
-	tblstaff.Sex:        func(p *Staff) any { return &p.Sex },
-	tblstaff.Phone:      func(p *Staff) any { return &p.Phone },
-	tblstaff.Email:      func(p *Staff) any { return &p.Email },
-	tblstaff.Pass:       func(p *Staff) any { return &p.Pass },
-	tblstaff.Avator:     func(p *Staff) any { return &p.Avator },
-	tblstaff.Address:    func(p *Staff) any { return &p.Address },
-	tblstaff.LeaveFlag:  func(p *Staff) any { return &p.LeaveFlag },
-	tblstaff.Id:         func(p *Staff) any { return &p.Id },
-	tblstaff.RoleId:     func(p *Staff) any { return &p.RoleId },
-	tblstaff.CreateId:   func(p *Staff) any { return &p.CreateId },
-	tblstaff.CreateTime: func(p *Staff) any { return &p.CreateTime },
-	tblstaff.UpdateId:   func(p *Staff) any { return &p.UpdateId },
-	tblstaff.UpdateTime: func(p *Staff) any { return &p.UpdateTime },
-	tblstaff.Age:        func(p *Staff) any { return &p.Age },
+var staffFieldToPtrFunc = map[string]func(*Staff) any{
+	tblstaff.Name.Name:       func(p *Staff) any { return &p.Name },
+	tblstaff.IdNum.Name:      func(p *Staff) any { return &p.IdNum },
+	tblstaff.Sex.Name:        func(p *Staff) any { return &p.Sex },
+	tblstaff.Phone.Name:      func(p *Staff) any { return &p.Phone },
+	tblstaff.Email.Name:      func(p *Staff) any { return &p.Email },
+	tblstaff.Pass.Name:       func(p *Staff) any { return &p.Pass },
+	tblstaff.Avator.Name:     func(p *Staff) any { return &p.Avator },
+	tblstaff.Address.Name:    func(p *Staff) any { return &p.Address },
+	tblstaff.Id.Name:         func(p *Staff) any { return &p.Id },
+	tblstaff.RoleId.Name:     func(p *Staff) any { return &p.RoleId },
+	tblstaff.CreateId.Name:   func(p *Staff) any { return &p.CreateId },
+	tblstaff.CreateTime.Name: func(p *Staff) any { return &p.CreateTime },
+	tblstaff.UpdateId.Name:   func(p *Staff) any { return &p.UpdateId },
+	tblstaff.UpdateTime.Name: func(p *Staff) any { return &p.UpdateTime },
+	tblstaff.Age.Name:        func(p *Staff) any { return &p.Age },
+	tblstaff.LeaveFlag.Name:  func(p *Staff) any { return &p.LeaveFlag },
 }
 
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
@@ -198,11 +198,28 @@ func (p *Staff) AssignPtr(args ...dialect.Field) []any {
 
 	_vals := make([]any, 0, len(args))
 	for _, col := range args {
-		if ptrFunc, ok := staffFieldToPtrFunc[col]; ok {
+		if ptrFunc, ok := staffFieldToPtrFunc[col.Name]; ok {
 			_vals = append(_vals, ptrFunc(p))
 		}
 	}
 
+	return _vals
+}
+
+// AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
+// 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
+// 参数 cols 为 rows.Columns() 返回的列名切片。
+func (p *Staff) AssignPtrByColumns(cols ...string) []any {
+	_vals := make([]any, 0, len(cols))
+	for _, col := range cols {
+		if ptrFunc, ok := staffFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, ptrFunc(p))
+			continue
+		}
+		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
+		var ignore any
+		_vals = append(_vals, &ignore)
+	}
 	return _vals
 }
 
@@ -267,9 +284,6 @@ var staffFieldToValueFunc = map[dialect.Field]func(*Staff) (any, bool){
 	tblstaff.Address: func(p *Staff) (any, bool) {
 		return p.Address, p.Address == ""
 	},
-	tblstaff.LeaveFlag: func(p *Staff) (any, bool) {
-		return p.LeaveFlag, p.LeaveFlag == ""
-	},
 	tblstaff.Id: func(p *Staff) (any, bool) {
 		return p.Id, p.Id == 0
 	},
@@ -290,6 +304,9 @@ var staffFieldToValueFunc = map[dialect.Field]func(*Staff) (any, bool){
 	},
 	tblstaff.Age: func(p *Staff) (any, bool) {
 		return p.Age, p.Age == 0
+	},
+	tblstaff.LeaveFlag: func(p *Staff) (any, bool) {
+		return p.LeaveFlag, p.LeaveFlag == 0
 	},
 }
 
@@ -320,12 +337,10 @@ func (p *Staff) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]string
 	return cols, vals
 }
 
-//
 func (p *Staff) AssignKeys() (dialect.Field, any) {
 	return tblstaff.PrimaryKey, p.Id
 }
 
-//
 func (p *Staff) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }
