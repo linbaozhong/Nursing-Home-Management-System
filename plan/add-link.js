@@ -1,12 +1,82 @@
 (function () {
-    // 可选市场数据源（用于下拉搜索）
-    var MARKETS = [
-        'Germany (DE)', 'France (FR)', 'Italy (IT)', 'Spain (ES)',
-        'United Kingdom (UK)', 'Netherlands (NL)', 'Belgium (BE)',
-        'Poland (PL)', 'Sweden (SE)', 'Denmark (DK)', 'Finland (FI)',
-        'Norway (NO)', 'Switzerland (CH)', 'Austria (AT)', 'Portugal (PT)',
-        'Ireland (IE)', 'Czechia (CZ)', 'Romania (RO)', 'Greece (GR)'
-    ];
+    // 可选数据源（用于下拉搜索），按 input 的 data-source 区分
+    var SOURCES = {
+        market: [
+            'Germany (DE)', 'France (FR)', 'Italy (IT)', 'Spain (ES)',
+            'United Kingdom (UK)', 'Netherlands (NL)', 'Belgium (BE)',
+            'Poland (PL)', 'Sweden (SE)', 'Denmark (DK)', 'Finland (FI)',
+            'Norway (NO)', 'Switzerland (CH)', 'Austria (AT)', 'Portugal (PT)',
+            'Ireland (IE)', 'Czechia (CZ)', 'Romania (RO)', 'Greece (GR)'
+        ],
+        gender: ['Female', 'Male', 'Kids'],
+        placement: [
+            'Meta Story / Link / Reels',
+            'Pinterest Static Ad',
+            'TikTok Top Feed / In-Feed / Spark',
+            'YouTube Video Reach / View',
+            'Meta Collection / Carousel',
+            'TikTok Video Shopping Ad / Smart+'
+        ],
+        'placement-aps': [
+            'Awareness Teaser App',
+            'Awareness Teaser Web',
+            'Sponsored Product Ads',
+            'Collection Teaser Catalog App',
+            'Collection Teaser Catalog Web',
+            'Collection Teaser Homepage App',
+            'Collection Teaser Homepage Video',
+            'Collection Teaser Homepage Web',
+            'In Catalog App',
+            'In Catalog Web'
+        ],
+        account: [
+            'Adidas AG', 'Nike Inc.', 'PUMA SE', 'Under Armour Inc.',
+            'Lululemon Athletica', 'ASICS Corp.', 'New Balance', 'Skechers USA',
+            'Anta Sports', 'Li-Ning Co.', 'Xtep International', 'Fila (Korea)'
+        ],
+        // 各服饰公司对应的全部品牌（用于 Brands 联动）
+        brandByAccount: {
+            'Adidas AG': ['Adidas', 'Adidas Originals', 'Adidas Performance', 'Reebok', 'TaylorMade', 'Salomon', 'Wilson', 'CCM Hockey'],
+            'Nike Inc.': ['Nike', 'Air Jordan', 'Converse', 'Hurley'],
+            'PUMA SE': ['PUMA', 'Cobra Golf'],
+            'Under Armour Inc.': ['Under Armour', 'MapMyRun'],
+            'Lululemon Athletica': ['Lululemon'],
+            'ASICS Corp.': ['ASICS', 'Onitsuka Tiger'],
+            'New Balance': ['New Balance'],
+            'Skechers USA': ['Skechers'],
+            'Anta Sports': ['Anta', 'FILA China', 'Salomon (Anta)'],
+            'Li-Ning Co.': ['Li-Ning'],
+            'Xtep International': ['Xtep'],
+            'Fila (Korea)': ['FILA']
+        }
+    };
+
+    // 未指定 data-source 时默认使用市场数据源
+    function getOptions(input) {
+        var key = input.getAttribute('data-source') || 'market';
+        if (key === 'brand') {
+            // 联动：根据关联的 Account 当前选中值返回对应品牌列表
+            var accInput = document.querySelector('input[data-source="account"]');
+            var accName = accInput ? (accInput.value || '').trim() : '';
+            return SOURCES.brandByAccount[accName] || [];
+        }
+        return SOURCES[key] || SOURCES.market;
+    }
+
+    // Account 改选后，清空各 Brands 列表已选品牌并刷新下拉选项
+    function syncBrandOptions() {
+        var brandInputs = document.querySelectorAll('input[data-source="brand"]');
+        Array.prototype.forEach.call(brandInputs, function (bInput) {
+            var list = bInput.closest('.market-list');
+            if (list) {
+                Array.prototype.forEach.call(list.querySelectorAll('.market-tag'), function (tag) {
+                    tag.remove();
+                });
+                updatePlacementHint(list);
+            }
+            bInput.dispatchEvent(new Event('input')); // 触发对应 combo 的 render 重算
+        });
+    }
 
     // 全局事件委托：处理所有 .market-tag 内 × 按钮的删除（含原有与新增）
     document.addEventListener('click', function (e) {
@@ -16,7 +86,16 @@
             if (tag) {
                 var list = tag.closest('.market-list');
                 tag.remove();
-                if (list) updatePlacementHint(list);
+                if (list) {
+                    updatePlacementHint(list);
+                    if (list.getAttribute('data-gender') === '1') {
+                        updateGenderTotal(list);
+                        refreshGenderPlaceholders(list);
+                    }
+                    // 删除后可能有可选项重新出现，触发对应搜索框的 render 恢复显示
+                    var si = list.querySelector('input.add-input');
+                    if (si) si.dispatchEvent(new Event('input'));
+                }
             }
         }
     });
@@ -62,14 +141,89 @@
         var btn = document.createElement('button');
         btn.textContent = '×';
         tag.appendChild(btn);
-        // 插入到列表内第一个 input 之前（让搜索框始终在末尾）；无 input 则追加到末尾
-        var input = list.querySelector('input');
+        // 若属于 gender 列表，附加一个百分比输入框
+        if (list.getAttribute('data-gender') === '1') {
+            var pct = document.createElement('input');
+            pct.type = 'text';
+            pct.className = 'gender-pct';
+            pct.placeholder = '%';
+            pct.setAttribute('inputmode', 'decimal');
+            bindGenderPct(list, pct);
+            tag.appendChild(pct);
+        }
+        // 插入到列表内搜索框之前（让搜索框始终在末尾）；无搜索框则追加到末尾
+        // 注意：必须用 .add-input 限定，避免选中 tag 内部的 .gender-pct 等输入框
+        var input = list.querySelector('input.add-input');
         if (input) {
             list.insertBefore(tag, input);
         } else {
             list.appendChild(tag);
         }
         updatePlacementHint(list);
+        if (list.getAttribute('data-gender') === '1') updateGenderTotal(list);
+    }
+
+    // 计算并更新 gender 列表的合计行（合计元素由 HTML 静态提供，不再动态新建）
+    function updateGenderTotal(list) {
+        var wrap = list.closest('.market-col') || list.parentElement;
+        var totalEl = list.parentElement.querySelector('.gender-total') ||
+            (wrap && wrap !== list.parentElement ? wrap.querySelector('.gender-total') : null);
+        if (!totalEl) return; // 页面未提供合计元素则不处理
+        var sum = 0;
+        Array.prototype.forEach.call(list.querySelectorAll('.gender-pct'), function (p) {
+            var v = parseFloat((p.value || '').replace('%', ''));
+            if (!isNaN(v)) sum += v;
+        });
+        totalEl.textContent = sum + '%';
+        totalEl.classList.toggle('warn', sum !== 100);
+    }
+
+    // 绑定 gender 百分比框的 input 事件：总数超过 100 时本次输入无效（恢复原值）
+    function bindGenderPct(list, pct) {
+        if (pct._genderBound) return;
+        pct._genderBound = true;
+        pct._last = pct.value || '';
+        pct.addEventListener('input', function () {
+            var raw = (pct.value || '').trim().replace('%', '');
+            var cur = parseFloat(raw);
+            if (raw !== '' && isNaN(cur)) {
+                // 非数字输入：恢复原值
+                pct.value = pct._last;
+                return;
+            }
+            // 计算其它框已填之和
+            var others = 0;
+            Array.prototype.forEach.call(list.querySelectorAll('.gender-pct'), function (p) {
+                if (p === pct) return;
+                var v = parseFloat((p.value || '').replace('%', ''));
+                if (!isNaN(v)) others += v;
+            });
+            if (raw !== '' && others + cur > 100) {
+                // 超过 100：本次输入无效，恢复为上次有效值
+                pct.value = pct._last;
+                return;
+            }
+            pct._last = pct.value;
+            updateGenderTotal(list);
+            refreshGenderPlaceholders(list);
+        });
+    }
+
+    // 根据已填总和，将同列表中仍为空白的百分比框 placeholder 置为剩余量
+    function refreshGenderPlaceholders(list) {
+        var sum = 0;
+        Array.prototype.forEach.call(list.querySelectorAll('.gender-pct'), function (p) {
+            var v = parseFloat((p.value || '').replace('%', ''));
+            if (!isNaN(v)) sum += v;
+        });
+        var remain = Math.max(0, 100 - sum);
+        Array.prototype.forEach.call(list.querySelectorAll('.gender-pct'), function (p) {
+            if ((p.value || '').trim() === '') {
+                p.placeholder = remain > 0 ? remain + '%' : '0%';
+            } else {
+                p.placeholder = '%';
+            }
+        });
     }
 
     // 找到位于 combo 之前、且最近的一个 .market-list（DOM 顺序上的上一个列表）
@@ -117,9 +271,15 @@
         var activeIndex = -1;
         var currentOptions = [];
 
+        var isSingle = input.getAttribute('data-single') === '1';
+
         function render() {
             var q = input.value.trim().toLowerCase();
-            currentOptions = MARKETS.filter(function (m) {
+            var source = getOptions(input);
+            var isGender = (input.getAttribute('data-source') || 'market') === 'gender';
+            // 单选模式：始终展示完整源（可重新选择），不过滤已选项
+            currentOptions = source.filter(function (m) {
+                if (isSingle) return m.toLowerCase().indexOf(q) !== -1;
                 return m.toLowerCase().indexOf(q) !== -1 && !tagExists(list, m);
             });
             dropdown.innerHTML = '';
@@ -127,23 +287,38 @@
             if (currentOptions.length === 0) {
                 var empty = document.createElement('div');
                 empty.className = 'add-option empty';
-                empty.textContent = 'No matching market';
+                var emptyText = isGender ? 'No matching gender'
+                    : isSingle ? 'No matching account'
+                    : 'No matching market';
+                empty.textContent = emptyText;
                 dropdown.appendChild(empty);
-                return;
+            } else {
+                currentOptions.forEach(function (m) {
+                    var opt = document.createElement('div');
+                    opt.className = 'add-option';
+                    opt.dataset.value = m;
+                    opt.textContent = m;
+                    dropdown.appendChild(opt);
+                });
             }
-            currentOptions.forEach(function (m) {
-                var opt = document.createElement('div');
-                opt.className = 'add-option';
-                opt.dataset.value = m;
-                opt.textContent = m;
-                dropdown.appendChild(opt);
-            });
+            if (isSingle) return; // 单选模式不隐藏输入框
+            // 当所有可选项都已被选（无剩余可选项）时，仅隐藏 input 与下拉框；否则显示
+            var hasRemaining = source.some(function (m) { return !tagExists(list, m); });
+            input.style.display = hasRemaining ? '' : 'none';
+            dropdown.style.display = hasRemaining ? '' : 'none';
+            container.classList.toggle('empty-source', !hasRemaining);
         }
 
         dropdown.addEventListener('click', function (e) {
             var opt = e.target.closest('.add-option:not(.empty)');
             if (!opt) return;
             e.stopPropagation();
+            if (isSingle) {
+                input.value = opt.dataset.value;   // 单选：填入搜索框
+                closeDropdown(container);
+                if (input.getAttribute('data-source') === 'account') syncBrandOptions();
+                return;
+            }
             appendTag(list, opt.dataset.value);
             render();           // 已选项从下拉消失，但保留搜索框内容
             input.focus();      // 保持焦点，下拉不关闭；失焦时才清空并隐藏
@@ -174,6 +349,14 @@
                 activeIndex = Math.max(activeIndex - 1, 0);
             } else if (e.key === 'Enter') {
                 e.preventDefault();
+                if (isSingle) {
+                    if (currentOptions.length > 0) {
+                        input.value = currentOptions[activeIndex >= 0 ? activeIndex : 0];
+                        closeDropdown(container);
+                        if (input.getAttribute('data-source') === 'account') syncBrandOptions();
+                    }
+                    return;
+                }
                 if (activeIndex >= 0 && opts[activeIndex]) {
                     appendTag(list, currentOptions[activeIndex]);
                 } else if (currentOptions.length > 0) {
@@ -199,9 +382,9 @@
             if (e.target.closest('.add-option:not(.empty)')) e.preventDefault();
         });
 
-        // 失去焦点后清空输入框并关闭下拉
+        // 失去焦点后关闭下拉；多选模式清空输入框，单选模式保留选中值
         input.addEventListener('blur', function () {
-            input.value = '';
+            if (!isSingle) input.value = '';
             closeDropdown(container);
         });
     }
@@ -291,4 +474,62 @@
             if (down) down.addEventListener('click', function () { change(-1); });
         });
     })();
+
+    // ---- 初始化：给 gender 列表中已有（HTML 静态）的百分比框绑定 input 事件并渲染合计 ----
+        document.querySelectorAll('.market-list[data-gender="1"]').forEach(function (list) {
+            Array.prototype.forEach.call(list.querySelectorAll('.gender-pct'), function (p) {
+                bindGenderPct(list, p);
+            });
+            updateGenderTotal(list);
+            refreshGenderPlaceholders(list);
+        });
+
+    // ---- Offsite placements 顶部的 Copy / Clean 操作 ----
+    function findColByTitle(titleText) {
+        var cols = document.querySelectorAll('.market-col');
+        for (var i = 0; i < cols.length; i++) {
+            var h = cols[i].querySelector('h3');
+            if (h && h.textContent.indexOf(titleText) !== -1) return cols[i];
+        }
+        return null;
+    }
+
+    // 取某个 market-col 内、按 DOM 顺序的前 N 个 .market-list（即 Awareness/Engagement/Performance）
+    function funnelLists(col) {
+        return col ? Array.prototype.slice.call(col.querySelectorAll('.market-list'), 0, 3) : [];
+    }
+
+    // 复制 Onsite 三个相位的已选市场到 Offsite 对应相位
+    function copyFromOnsite() {
+        var srcCol = findColByTitle('Onsite placements');
+        var dstCol = findColByTitle('Offsite placements');
+        if (!srcCol || !dstCol) return;
+        var srcLists = funnelLists(srcCol);
+        var dstLists = funnelLists(dstCol);
+        for (var i = 0; i < srcLists.length; i++) {
+            var src = srcLists[i];
+            var dst = dstLists[i];
+            if (!dst) continue;
+            Array.prototype.forEach.call(src.querySelectorAll('.market-tag'), function (tag) {
+                appendTag(dst, tagText(tag));
+            });
+        }
+    }
+
+    // 清空 Offsite 区块内所有已选 tag（保留输入框），并刷新提示
+    function cleanOffsiteAll() {
+        var dstCol = findColByTitle('Offsite placements');
+        if (!dstCol) return;
+        Array.prototype.forEach.call(dstCol.querySelectorAll('.market-tag'), function (tag) {
+            tag.remove();
+        });
+        Array.prototype.forEach.call(dstCol.querySelectorAll('.market-list'), function (list) {
+            updatePlacementHint(list);
+        });
+    }
+
+    var copyBtn = document.querySelector('.link-btn[data-action="copy-onsite"]');
+    var cleanBtn = document.querySelector('.link-btn[data-action="clean-all"]');
+    if (copyBtn) copyBtn.addEventListener('click', copyFromOnsite);
+    if (cleanBtn) cleanBtn.addEventListener('click', cleanOffsiteAll);
 })();

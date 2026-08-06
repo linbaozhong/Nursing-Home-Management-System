@@ -7,7 +7,7 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: #f8f9fa;
-    color: #1a1a1a;
+    color: #4b5563;
     line-height: 1.5;
 }
 
@@ -62,7 +62,7 @@ header h1 {
 }
 
 .section {
-    margin-bottom: 25px;
+    margin-top: 40px;
 }
 
 .section-header {
@@ -73,7 +73,7 @@ header h1 {
 }
 
 .section-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
 }
 
@@ -149,4 +149,52 @@ header h1 {
 .v-separator{
     width: 1px;height: 100%;
     background: #e5e7eb;
+}
+
+.link-btn{
+    color: #04a7b3;
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.link-btn .link-icon{
+    flex: none;
+    display: block;
+}
+.link-btn:hover{
+    text-decoration: underline;
+}
+
+/* Gender 列表：每项带百分比输入框 */
+.market-tag .gender-pct{
+    width: 42px;
+    margin-left: 6px;
+    padding: 1px 4px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #4b5563;
+    text-align: right;
+}
+.market-tag .gender-pct:focus{
+    outline: none;
+    border-color: #04a7b3;
+}
+.market-tag .gender-pct::placeholder{
+    color: #b0b6bd;
+    opacity: 1;
+}
+.market-tag .gender-pct:focus::placeholder{
+    color: #d1d5db;
+}
+.gender-total{
+    margin: 0 6px;
+    font-size: 12px;
+    color: #c5c5c5;
+    font-weight: normal;
+}
+.gender-total.warn{
+    color: #dc2626;
 }

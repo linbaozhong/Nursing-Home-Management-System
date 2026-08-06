@@ -1,643 +1,862 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>New media plan</title>
     <link rel="stylesheet" href="shared.css" />
     <style>
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 16px;
-        }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 26px;
+        margin-bottom: 16px;
+      }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
 
-        .form-group.full {
-            grid-column: 1 / -1;
-        }
+      .form-group.full {
+        grid-column: 1 / -1;
+      }
 
-        label {
-            font-size: 13px;
-            font-weight: 500;
-            color: #374151;
-        }
+      label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #374151;
+      }
 
-        input,
-        select,
-        textarea {
-            padding: 10px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            background: #fff;
-        }
+      input,
+      select,
+      textarea {
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        background: #fff;
+      }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #1a1a1a;
-        }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #1a1a1a;
+      }
 
-        .checkbox-group {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-top: 8px;
-        }
+      .checkbox-group {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 8px;
+      }
 
-        .checkbox-group input {
-            margin-top: 3px;
-        }
+      .checkbox-group input {
+        margin-top: 3px;
+      }
 
-        .markets-grid {
-            display: grid;
-            grid-template-columns: 1fr 1px 1fr;
-            gap: 24px;
-        }
+      .markets-grid {
+        display: grid;
+        grid-template-columns: 1fr 1px 1fr;
+        gap: 24px;
+      }
 
-        .market-col {
-            /* border: 1px solid #e5e7eb; */
-            /* border-radius: 8px;
-            padding: 16px; */
-        }
+      .market-col h3,
+      .market-col h4 {
+        font-weight: 600;
+        color: #4b5563;
+      }
 
-        .market-col h3,
-        .market-col h4 {
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #4b5563;
-        }
+      .market-col h3 {
+        font-size: 16px;
+        margin-bottom: 1.5rem;
+      }
 
-        .market-col h3 {
-            font-size: 16px;
-        }
+      .market-col h4 {
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      .placement-hint {
+        padding-left: 22px;
+        opacity: 0.5;
+      }
+      .market-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        width: 100%;
+        padding: 12px 0 12px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        box-sizing: border-box;
+      }
 
-        .market-col h4 {
-            font-size: 14px;
-        }
+      .market-list input {
+        flex: 1 1 160px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        font-size: 13px;
+        box-sizing: border-box;
+      }
 
-        .market-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            /* margin-bottom: 12px; */
-            width: 100%;
-            padding: 12px 12px;
-            border-radius: 8px;
-            /* border: 1px solid #e5e7eb; */
-            font-size: 13px;
-            box-sizing: border-box;
-        }
+      .market-list input:focus {
+        outline: none;
+        border-color: #1a1a1a;
+      }
 
-        .market-list input {
-            flex: 1 1 160px;
-            /* min-width: 160px; */
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
-            font-size: 13px;
-            box-sizing: border-box;
-        }
+      .form-group .market-list {
+        padding: 0;
+      }
+      .form-group .market-list input {
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        background: #fff;
+      }
 
-        .market-list input:focus {
-            outline: none;
-            border-color: #1a1a1a;
-        }
+      .number-stepper {
+        display: flex;
+        align-items: stretch;
+        gap: 6px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        background: #e5e7eb;
+        padding: 0 5px 0 5px;
+      }
 
-        .number-stepper {
-            display: flex;
-            align-items: stretch;
-            gap: 6px;
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
-            background: #e5e7eb;
-            padding: 0 5px 0 5px;
-        }
+      .number-stepper input {
+        flex: 1 1 auto;
+        padding: 10px 12px;
+        border: none;
+        border-radius: 0;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
 
-        .number-stepper input {
-            flex: 1 1 auto;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 0;
-            font-size: 13px;
-            box-sizing: border-box;
-        }
+      .number-stepper input:focus {
+        outline: none;
+        border-color: #1a1a1a;
+      }
 
-        .number-stepper input:focus {
-            outline: none;
-            border-color: #1a1a1a;
-        }
+      .stepper-btns {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 1em;
+      }
 
-        .stepper-btns {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            /* gap: 1px; */
-        }
+      .stepper-btns span {
+        width: 2em;
+        text-align: center;
+        vertical-align: middle;
+        padding: 0;
+        border-radius: 0;
+        color: #c5c5c5;
+        font-size: 12px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+        cursor: pointer;
+      }
 
-        .stepper-btns span {
-            width: 20px;
-            height: 18px;
-            text-align: center;
-            vertical-align: middle;
-            /* line-height: 1; */
-            padding: 0;
-            /* border: 1px solid #d1d5db; */
-            border-radius: 0;
-            /* background: #f9fafb; */
-            color: #1a1a1a;
-            font-size: 10px;
-            cursor: pointer;
-        }
+      .stepper-btns span:hover {
+        color: #5e5e5e;
+      }
 
-        .stepper-btns span:hover {
-            background: #f3f4f6;
-        }
+      .market-tag {
+        position: relative;
+        padding: 2px 10px;
+        border-radius: 16px;
+        background: #f3f4f6;
+        font-size: 13px;
+        display: flex;
+        gap: 6px;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-        .market-tag {
-            padding: 2px 6px;
-            border-radius: 16px;
-            background: #f3f4f6;
-            font-size: 13px;
-            display: flex;
-            gap: 6px;
-            justify-content: space-between;
-            align-items: center;
-        }
+      .market-tag button {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 16px;
+        height: 16px;
+        line-height: 14px;
+        text-align: center;
+        padding: 0;
+        border-radius: 50%;
+        background: #f0f0f0;
+        color: #c5c5c5;
+        border: 1px solid #fff;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      .market-tag button:hover {
+        background: #e0e0e0;
+        color: #656565;
+      }
 
-        .market-tag button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #9ca3af;
-            font-size: 14px;
-        }
+      .market-tag:last-child {
+        border-bottom: none;
+      }
 
-        .market-tag:last-child {
-            border-bottom: none;
-        }
+      .add-combo {
+        position: relative;
+        /* margin-bottom: 12px; */
+      }
 
+      .add-combo input {
+        width: 100%;
+        border: none;
+        font-size: 13px;
+        box-sizing: border-box;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+      }
 
+      .add-combo input:focus {
+        outline: none;
+        border-color: #1a1a1a;
+      }
 
-        .add-combo {
-            position: relative;
-            /* margin-bottom: 12px; */
-        }
+      .add-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        z-index: 20;
+        max-height: 220px;
+        overflow-y: auto;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        padding: 4px;
+      }
 
-        .add-combo input {
-            width: 100%;
-            border: none;
-            font-size: 13px;
-            box-sizing: border-box;
-            /* background: #fcfcfc; */
-            border-radius: 16px;
-            border: 1px solid #e5e7eb;
-        }
+      .add-combo.open .add-dropdown {
+        display: block;
+      }
 
-        .add-combo input:focus {
-            outline: none;
-            border-color: #1a1a1a;
-        }
+      .add-option {
+        padding: 8px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+      }
 
-        .add-dropdown {
-            display: none;
-            position: absolute;
-            top: calc(100% + 4px);
-            left: 0;
-            right: 0;
-            z-index: 20;
-            max-height: 220px;
-            overflow-y: auto;
-            background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-            padding: 4px;
-        }
+      .add-option:hover,
+      .add-option.active {
+        background: #f3f4f6;
+      }
 
-        .add-combo.open .add-dropdown {
-            display: block;
-        }
+      .add-option.empty {
+        color: #9ca3af;
+        cursor: default;
+      }
 
-        .add-option {
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            cursor: pointer;
-        }
+      .tiers {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-top: 16px;
+      }
 
-        .add-option:hover,
-        .add-option.active {
-            background: #f3f4f6;
-        }
+      .generate-row {
+        display: flex;
+        justify-content: center;
+        margin-top: 24px;
+      }
 
-        .add-option.empty {
-            color: #9ca3af;
-            cursor: default;
-        }
+      .generate-btn {
+        padding: 12px 32px;
+        border-radius: 24px;
+        background: #1a1a1a;
+        color: #fff;
+        border: none;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+      }
 
-        .tiers {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-top: 16px;
-        }
+      .generate-btn:hover {
+        background: #333;
+      }
 
+      .radio-tabs {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
 
-
-        .generate-row {
-            display: flex;
-            justify-content: center;
-            margin-top: 24px;
-        }
-
-        .generate-btn {
-            padding: 12px 32px;
-            border-radius: 24px;
-            background: #1a1a1a;
-            color: #fff;
-            border: none;
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .generate-btn:hover {
-            background: #333;
-        }
-
-        .radio-tabs {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .radio-tabs label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            font-weight: 400;
-        }
+      .radio-tabs label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        font-weight: 400;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="head-container">
-        <header>
-            <h1>New media plan</h1>
-            <div class="top-actions">
-                <button class="btn">Plan library</button>
-                <button class="btn">Admin configuration</button>
-                <button class="btn">Edit brief</button>
-            </div>
-        </header>
+      <header>
+        <h1>New media plan</h1>
+        <div class="top-actions">
+          <button class="btn">Plan library</button>
+          <button class="btn">Admin configuration</button>
+          <button class="btn">Edit brief</button>
+        </div>
+      </header>
     </div>
     <div class="container">
-        <div class="section">
-            <div class="section-title">Campaign</div>
-            <div class="section-content">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Campaign name</label>
-                        <input type="text" value="FW25 Awareness Burst" />
-                    </div>
-                    <div class="form-group">
-                        <label>Objective</label>
-                        <select>
-                            <option selected>Awareness</option>
-                            <option>Consideration</option>
-                            <option>Conversion</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Account</label>
-                        <input type="text" value="Adobe AG" readonly />
-                        <div class="hint">Account ID 100088. Brands and business partner scope are resolved
-                            automatically.
-                        </div>
-                        <div class="hint">
-                            Search the complete active ZMS account dictionary. Results are loaded in pages of 50.
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Brands</label>
-                        <input type="text" value="Adobe" />
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Media budget (EUR)</label>
-                        <div class="number-stepper">
-                            <div class="stepper-btns">
-                                €
-                            </div>
-                            <input type="text" value="800,000.00" />
-                            <div class="stepper-btns">
-                                <span class="step-up" aria-label="Increase">▲</span>
-                                <span class="step-down" aria-label="Decrease">▼</span>
-                            </div>
-                        </div>
-                        <div class="hint">Adjust in EUR 10,000 steps. Visible and internal service fees are reserved
-                            automatically.</div>
-                    </div>
-                    <div class="form-group">
-                        <label>Start date</label>
-                        <input type="date" value="2027-02-05" />
-                    </div>
-                    <div class="form-group">
-                        <label>End date</label>
-                        <input type="date" value="2027-02-20" />
-                        <div class="hint">Runtime and benchmark period are derived automatically.</div>
-                    </div>
-                </div>
+      <div class="section">
+        <div class="section-title">Campaign</div>
+        <div class="section-content">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Campaign name</label>
+              <input type="text" value="FW25 Awareness Burst" />
             </div>
+            <div class="form-group">
+              <label>Objective</label>
+              <select>
+                <option selected>Awareness</option>
+                <option>Consideration</option>
+                <option>Conversion</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Account</label>
+              <div class="add-combo">
+                <input
+                  type="text"
+                  class="add-input"
+                  data-source="account"
+                  data-single="1"
+                  value="Adidas AG"
+                />
+              </div>
+              <div class="hint">
+                Account ID 100088. Brands and business partner scope are
+                resolved automatically.
+              </div>
+              <div class="hint">
+                Search the complete active ZMS account dictionary. Results are
+                loaded in pages of 50.
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Brands</label>
+              <div class="market-list">
+                <input
+                  type="text"
+                  class="add-input"
+                  data-source="brand"
+                  placeholder="Search brand"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Media budget (EUR)</label>
+              <div class="number-stepper">
+                <div class="stepper-btns">€</div>
+                <input type="text" value="800,000.00" />
+                <div class="stepper-btns">
+                  <span
+                    class="step-up"
+                    title="Increase by 1k"
+                    aria-label="Increase"
+                    >▲</span
+                  >
+                  <span
+                    class="step-down"
+                    title="Decrease by 1k"
+                    aria-label="Decrease"
+                    >▼</span
+                  >
+                </div>
+              </div>
+              <div class="hint">
+                Adjust in EUR 10,000 steps. Visible and internal service fees
+                are reserved automatically.
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Start date</label>
+              <input type="date" value="2027-02-05" />
+            </div>
+            <div class="form-group">
+              <label>End date</label>
+              <input type="date" value="2027-02-20" />
+              <div class="hint">
+                Runtime and benchmark period are derived automatically.
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div class="section">
-            <div class="section-header">
-                <div>
-                    <div class="section-title">Planning rules and fallbacks</div>
-                    <div class="section-subtitle">The engine uses the active campaign-size and minimum daily-bufget
-                        rules.Placements below the recommended daily budget are removed and their budget is
-                        reassigned to eligible placements.</div>
-                </div>
+      <div class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Planning rules and fallbacks</div>
+            <div class="section-subtitle">
+              The engine uses the active campaign-size and minimum daily-bufget
+              rules.Placements below the recommended daily budget are removed
+              and their budget is reassigned to eligible placements.
             </div>
-            <div class="section-content">
-                <div class="section-actions">
-                    <label style="font-weight: normal;font-size: inherit;"><input type="checkbox" checked>Proceed
-                        anyway: keep eligible placements below the recommended daily
-                        budget</label>
-
-                </div>
-                <div>
-                    <div class="hint">Use only as an interim planning suggestion. The forecast will flag any manual
-                        placement for review.</div>
-                    <div class="hint">Historical forecast fallback: if an exact revenue benchmark is unavailable, the
-                        engine may use the approved Engagement benchmark tier, followed by broader comparable evidence.
-                        This changes the forecast evidence only; it does not move bedget between funnel phases.</div>
-                </div>
-            </div>
+          </div>
         </div>
-
-        <div class="section">
-            <div>
-                <div class="section-title">Markets and audience</div>
-                <div class="section-header">
-                    <div class="section-subtitle">Funnel market targeting</div>
-                    <div class="badge section-subtitle">Select margets independently for every funnel phase and channel.
-                        Leaving all three phases empty disables that channel.</div>
-                </div>
-
+        <div class="section-content">
+          <div class="section-actions">
+            <label style="font-weight: normal; font-size: inherit"
+              ><input type="checkbox" checked />Proceed anyway: keep eligible
+              placements below the recommended daily budget</label
+            >
+          </div>
+          <div>
+            <div class="hint">
+              Use only as an interim planning suggestion. The forecast will flag
+              any manual placement for review.
             </div>
-            <div class="section-content">
-                <div class="markets-grid">
-                    <div class="market-col">
-                        <h3>Onsite placements</h3>
-                        <h4>Awareness</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">Germany (DE) <button>×</button></span>
-                            <span class="market-tag">Poland (PL) <button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add Onsite Awareness market...">
-                        </div>
-
-                        <h4 style="margin-top:18px;">Engagement</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">Germany (DE) <button>×</button></span>
-                            <span class="market-tag">Poland (PL) <button>×</button></span>
-                            <span class="market-tag">Netherlands (NL) <button>×</button></span>
-                            <span class="market-tag">Switzerland (CH) <button>×</button></span>
-                            <span class="market-tag">Belgium (BE) <button>×</button></span>
-                            <span class="market-tag">France (FR) <button>×</button></span>
-                            <span class="market-tag">Italy (IT) <button>×</button></span>
-                            <span class="market-tag">Spain (ES) <button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add Onsite Engagement market...">
-                        </div>
-
-                        <h4 style="margin-top:18px;">Performance</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">Germany (DE) <button>×</button></span>
-                            <span class="market-tag">Netherlands (NL) <button>×</button></span>
-                            <span class="market-tag">Switzerland (CH) <button>×</button></span>
-                            <span class="market-tag">Belgium (BE) <button>×</button></span>
-                            <span class="market-tag">Poland (PL) <button>×</button></span>
-                            <span class="market-tag">Sweden (SE) <button>×</button></span>
-                            <span class="market-tag">Denmark (DK) <button>×</button></span>
-                            <span class="market-tag">Finland (FI) <button>×</button></span>
-                            <span class="market-tag">France (FR) <button>×</button></span>
-                            <span class="market-tag">Italy (IT) <button>×</button></span>
-                            <span class="market-tag">Spain (ES) <button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add Onsite Performance market...">
-                        </div>
-                    </div>
-                    <div class="v-separator"></div>
-                    <div class="market-col">
-                        <h3>Offsite placements</h3>
-                        <h4>Awareness</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">Germany (DE) <button>×</button></span>
-                            <span class="market-tag">Poland (PL) <button>×</button></span>
-                            <span class="market-tag">France (FR) <button>×</button></span>
-                            <span class="market-tag">Italy (IT) <button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add Offsite Awareness market...">
-                        </div>
-
-                        <h4 style="margin-top:18px;">Engagement</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">Germany (DE) <button>×</button></span>
-                            <span class="market-tag">Poland (PL) <button>×</button></span>
-                            <span class="market-tag">France (FR) <button>×</button></span>
-                            <span class="market-tag">Italy (IT) <button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add Offsite Engagement market...">
-                        </div>
-
-                        <h4 style="margin-top:18px;">Performance</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">Germany (DE) <button>×</button></span>
-                            <span class="market-tag">Poland (PL) <button>×</button></span>
-                            <span class="market-tag">France (FR) <button>×</button></span>
-                            <span class="market-tag">Italy (IT) <button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add Offsite Performance market...">
-                        </div>
-                    </div>
-                </div>
+            <div class="hint">
+              Historical forecast fallback: if an exact revenue benchmark is
+              unavailable, the engine may use the approved Engagement benchmark
+              tier, followed by broader comparable evidence. This changes the
+              forecast evidence only; it does not move bedget between funnel
+              phases.
             </div>
+          </div>
         </div>
-        <div class="section">
-            <div>
-                <!-- <div class="section-title">Markets and audience</div> -->
-                <div class="section-header">
-                    <div class="section-subtitle">Onsite market priority</div>
-                    <div class="badge section-subtitle">Assign every selected Onsite market to exactly one tier.
-                        Priority affects placement eligibility, scoring and the generated output.</div>
-                </div>
+      </div>
+
+      <div class="section">
+        <div>
+          <div class="section-title">Markets and audience</div>
+          <div class="section-header">
+            <div class="section-subtitle">Funnel market targeting</div>
+            <div class="badge hint">
+              Select margets independently for every funnel phase and channel.
+              Leaving all three phases empty disables that channel.
             </div>
-            <div class="section-content">
-                <div class="markets-grid" style="grid-template-columns: 1fr 1px 1fr 1px 1fr;">
-                    <div class="market-col">
-                        <h4 style="font-size:14px;margin-bottom:8px;">Primary markets</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">Germany (DE) <button>×</button></span>
-                            <span class="market-tag">Poland (PL) <button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add Primary market...">
-                        </div>
-                    </div>
-                    <div class="v-separator"></div>
-                    <div class="market-col">
-                        <h4 style="font-size:14px;margin-bottom:8px;">Secondary markets</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">France (FR) <button>×</button></span>
-                            <span class="market-tag">Italy (IT) <button>×</button></span>
-                            <span class="market-tag">Spain (ES) <button>×</button></span>
-                            <span class="market-tag">Switzerland (CH) <button>×</button></span>
-                            <span class="market-tag">Netherlands (NL) <button>×</button></span>
-                            <span class="market-tag">Belgium (BE) <button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add Secondary market...">
-                        </div>
-                    </div>
-                    <div class="v-separator"></div>
-                    <div class="market-col">
-                        <h4 style="font-size:14px;margin-bottom:8px;">Tertiary markets</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">Sweden (SE) <button>×</button></span>
-                            <span class="market-tag">Denmark (DK) <button>×</button></span>
-                            <span class="market-tag">Finland (FI) <button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add Tertiary market...">
-                        </div>
-                    </div>
-                </div>
+          </div>
+        </div>
+        <div class="section-content">
+          <div class="markets-grid">
+            <div class="market-col">
+              <h3>Onsite placements</h3>
+              <h4>Awareness</h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <span class="market-tag">Germany (DE) <button>×</button></span>
+                <span class="market-tag">Poland (PL) <button>×</button></span>
+                <input
+                  type="text"
+                  class="add-input"
+                  placeholder="Add Onsite Awareness market..."
+                />
+              </div>
 
-                <div style="margin-top:20px;">
-                    <label>Audience segments</label>
-                    <input type="text" value="25-45 runners" />
-                    <div class="hint">Optional manual segments; gender is handled separately.</div>
-                </div>
+              <h4 style="margin-top: 18px">Engagement</h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <span class="market-tag">Germany (DE) <button>×</button></span>
+                <span class="market-tag">Poland (PL) <button>×</button></span>
+                <span class="market-tag"
+                  >Netherlands (NL) <button>×</button></span
+                >
+                <span class="market-tag"
+                  >Switzerland (CH) <button>×</button></span
+                >
+                <span class="market-tag">Belgium (BE) <button>×</button></span>
+                <span class="market-tag">France (FR) <button>×</button></span>
+                <span class="market-tag">Italy (IT) <button>×</button></span>
+                <span class="market-tag">Spain (ES) <button>×</button></span>
+                <input
+                  type="text"
+                  class="add-input"
+                  placeholder="Add Onsite Engagement market..."
+                />
+              </div>
+
+              <h4 style="margin-top: 18px">Performance</h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <span class="market-tag">Germany (DE) <button>×</button></span>
+                <span class="market-tag"
+                  >Netherlands (NL) <button>×</button></span
+                >
+                <span class="market-tag"
+                  >Switzerland (CH) <button>×</button></span
+                >
+                <span class="market-tag">Belgium (BE) <button>×</button></span>
+                <span class="market-tag">Poland (PL) <button>×</button></span>
+                <span class="market-tag">Sweden (SE) <button>×</button></span>
+                <span class="market-tag">Denmark (DK) <button>×</button></span>
+                <span class="market-tag">Finland (FI) <button>×</button></span>
+                <span class="market-tag">France (FR) <button>×</button></span>
+                <span class="market-tag">Italy (IT) <button>×</button></span>
+                <span class="market-tag">Spain (ES) <button>×</button></span>
+                <input
+                  type="text"
+                  class="add-input"
+                  placeholder="Add Onsite Performance market..."
+                />
+              </div>
             </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Placements (optional)</div>
-            <div class="section-subtitle">Leave empty to let the Planning Engine select eligible
-                placements automatically from workbook rules.</div>
-            <div class="section-content">
-                <div>
-                    <input type="text" style="width: 100%;"
-                        placeholder="Search placements by name, channel or product...">
+            <div class="v-separator"></div>
+            <div class="market-col">
+              <div class="section-header" style="margin-bottom: 0">
+                <h3>Offsite placements</h3>
+                <div class="badge hint" style="display: flex; gap: 20px">
+                  <span class="link-btn" data-action="copy-onsite">
+                    <svg
+                      class="link-icon"
+                      viewBox="0 0 24 24"
+                      width="14"
+                      height="14"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 9h10v10H9zM5 15H4V5h10v1"
+                      />
+                    </svg>
+                    Copy the data from Onsite placements
+                  </span>
+                  <span class="link-btn" data-action="clean-all">
+                    <svg
+                      class="link-icon"
+                      viewBox="0 0 24 24"
+                      width="14"
+                      height="14"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"
+                      />
+                    </svg>
+                    Clean All
+                  </span>
                 </div>
+              </div>
+              <h4>Awareness</h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <input
+                  type="text"
+                  class="add-input"
+                  placeholder="Add Offsite Awareness market..."
+                />
+              </div>
 
-                <div class="markets-grid" style="margin-top:16px;">
-                    <div class="market-col">
-                        <h4>Standard onsite</h4>
-                        <div class="hint" style="margin-bottom: 16px;">
-                            Automatic recommendation: Awareness Teaser App, Awareness Teaser Web, Sponsored Product Ads,
-                            Collection Teaser Catalog App, Collection Teaser Catalog Web, Collection Teaser Homepage
-                            App, Collection Teaser Homepage Video, Collection Teaser Homepage Web, In Catalog App, In
-                            Catalog Web
-                        </div>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">Sponsored Product Ads (APS) ·
-                                SPONSORED_PRODUCT_ADS<button>×</button></span>
-                            <span class="market-tag">Display Ads (APS) ·DISPLAY_ADS<button>×</button></span>
-                            <span class="market-tag">Video Ads (APS) ·VIDEO_ADS<button>×</button></span>
-                            <span class="market-tag">Collection Ads (APS) ·DISPLAY_ADS<button>×</button></span>
-                            <span class="market-tag">Homepage Ads (APS) ·DISPLAY_ADS<button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add placement...">
-                        </div>
-                    </div>
-                    <div class="v-separator"></div>
-                    <div class="market-col">
-                        <h4>Standard offsite</h4>
-                        <div class="hint" style="margin-bottom: 16px;">
-                            Automatic recommendation: Meta Story / Link / Reels, Pinterest Static Ad, TikTok Top Feed /
-                            In-Feed / Spark, YouTube Video Reach / View, Meta Collection / Carousel, TikTok Video
-                            Shopping Ad / Smart+
-                        </div>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">Meta Story / Link / Reels ·META_AWARENESS<button>×</button>
-                            </span>
-                            <span class="market-tag">TikTok Top Feed / In-Feed / Spark
-                                ·TIKTOK_AWARENESS<button>×</button>
-                            </span>
-                            <span class="market-tag">Meta Collection / Carousel ·META_TRAFFIC<button>×</button>
-                            </span>
-                            <span class="market-tag">TikTok Video Shopping Ads / Spark ·TIKTOK_TRAFFIC<button>×</button>
-                            </span>
-                            <span class="market-tag">YouTube Video Reach / View ·GOOGLE_AWARENESS<button>×</button>
-                            </span>
-                            <input type="text" class="add-input" placeholder="Add placement...">
-                        </div>
-                    </div>
-                </div>
+              <h4 style="margin-top: 18px">Engagement</h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <input
+                  type="text"
+                  class="add-input"
+                  placeholder="Add Offsite Engagement market..."
+                />
+              </div>
 
-                <div class="markets-grid" style="margin-top:16px;">
-                    <div class="market-col">
-                        <h4>Premium onsite</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">M1 Takeover ·DISPLAY_ADS<button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add placement...">
-                        </div>
-
-
-                        <h4 style="margin-top:18px;">Markets</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">DE <button>×</button></span>
-                            <span class="market-tag">PL <button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add market for M1 Takeover...">
-                        </div>
-
-
-                        <h4 style="margin-top:18px;">Gender</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <span class="market-tag">Female <button>×</button></span>
-                            <span class="market-tag">Male <button>×</button></span>
-                            <input type="text" class="add-input" placeholder="Add gender for M1 Takeover..." />
-                        </div>
-                    </div>
-                    <div class="v-separator"></div>
-                    <div class="market-col">
-                        <h4>Premium offsite (incl. ATL)</h4>
-                        <div class="hint placement-hint">No placement selected.</div>
-                        <div class="market-list">
-                            <input type="text" class="add-input" placeholder="Add placement...">
-                        </div>
-
-                    </div>
-                </div>
+              <h4 style="margin-top: 18px">Performance</h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <input
+                  type="text"
+                  class="add-input"
+                  placeholder="Add Offsite Performance market..."
+                />
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+      <div class="section">
+        <div>
+          <!-- <div class="section-title">Markets and audience</div> -->
+          <div class="section-header">
+            <div class="section-subtitle">Onsite market priority</div>
+            <div class="badge hint">
+              Assign every selected Onsite market to exactly one tier. Priority
+              affects placement eligibility, scoring and the generated output.
+            </div>
+          </div>
+        </div>
+        <div class="section-content">
+          <div
+            class="markets-grid"
+            style="grid-template-columns: 1fr 1px 1fr 1px 1fr"
+          >
+            <div class="market-col">
+              <h4 style="font-size: 14px; margin-bottom: 8px">
+                Primary markets
+              </h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <span class="market-tag">Germany (DE) <button>×</button></span>
+                <span class="market-tag">Poland (PL) <button>×</button></span>
+                <input
+                  type="text"
+                  class="add-input"
+                  placeholder="Add Primary market..."
+                />
+              </div>
+            </div>
+            <div class="v-separator"></div>
+            <div class="market-col">
+              <h4 style="font-size: 14px; margin-bottom: 8px">
+                Secondary markets
+              </h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <span class="market-tag">France (FR) <button>×</button></span>
+                <span class="market-tag">Italy (IT) <button>×</button></span>
+                <span class="market-tag">Spain (ES) <button>×</button></span>
+                <span class="market-tag"
+                  >Switzerland (CH) <button>×</button></span
+                >
+                <span class="market-tag"
+                  >Netherlands (NL) <button>×</button></span
+                >
+                <span class="market-tag">Belgium (BE) <button>×</button></span>
+                <input
+                  type="text"
+                  class="add-input"
+                  placeholder="Add Secondary market..."
+                />
+              </div>
+            </div>
+            <div class="v-separator"></div>
+            <div class="market-col">
+              <h4 style="font-size: 14px; margin-bottom: 8px">
+                Tertiary markets
+              </h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <span class="market-tag">Sweden (SE) <button>×</button></span>
+                <span class="market-tag">Denmark (DK) <button>×</button></span>
+                <span class="market-tag">Finland (FI) <button>×</button></span>
+                <input
+                  type="text"
+                  class="add-input"
+                  placeholder="Add Tertiary market..."
+                />
+              </div>
+            </div>
+          </div>
 
-        <div class="generate-row">
-            <button class="generate-btn">Generate media plan</button>
+          <div style="margin-top: 20px">
+            <label>Audience segments</label>
+            <input type="text" value="25-45 runners" />
+            <div class="hint">
+              Optional manual segments; gender is handled separately.
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Placements (optional)</div>
+        <div class="section-subtitle">
+          Leave empty to let the Planning Engine select eligible placements
+          automatically from workbook rules.
+        </div>
+        <div class="section-content">
+          <!-- <div>
+            <input
+              type="text"
+              style="width: 100%"
+              placeholder="Search placements by name, channel or product..."
+            />
+          </div> -->
+
+          <div class="markets-grid" style="margin-top: 18px">
+            <div class="market-col">
+              <h4>Standard onsite</h4>
+              <!-- <div class="hint" style="margin-bottom: 16px">
+                Automatic recommendation: Awareness Teaser App, Awareness Teaser
+                Web, Sponsored Product Ads, Collection Teaser Catalog App,
+                Collection Teaser Catalog Web, Collection Teaser Homepage App,
+                Collection Teaser Homepage Video, Collection Teaser Homepage
+                Web, In Catalog App, In Catalog Web
+              </div> -->
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <span class="market-tag"
+                  >Sponsored Product Ads (APS) · SPONSORED_PRODUCT_ADS<button>
+                    ×
+                  </button></span
+                >
+                <span class="market-tag"
+                  >Display Ads (APS) ·DISPLAY_ADS<button>×</button></span
+                >
+                <span class="market-tag"
+                  >Video Ads (APS) ·VIDEO_ADS<button>×</button></span
+                >
+                <span class="market-tag"
+                  >Collection Ads (APS) ·DISPLAY_ADS<button>×</button></span
+                >
+                <span class="market-tag"
+                  >Homepage Ads (APS) ·DISPLAY_ADS<button>×</button></span
+                >
+                <input
+                  type="text"
+                  class="add-input"
+                  data-source="placement-aps"
+                  placeholder="Add placement..."
+                />
+              </div>
+            </div>
+            <div class="v-separator"></div>
+            <div class="market-col">
+              <h4>Standard offsite</h4>
+              <!-- <div class="hint" style="margin-bottom: 16px">
+                Automatic recommendation: Meta Story / Link / Reels, Pinterest
+                Static Ad, TikTok Top Feed / In-Feed / Spark, YouTube Video
+                Reach / View, Meta Collection / Carousel, TikTok Video Shopping
+                Ad / Smart+
+              </div> -->
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <span class="market-tag"
+                  >Meta Story / Link / Reels ·META_AWARENESS<button>×</button>
+                </span>
+                <span class="market-tag"
+                  >TikTok Top Feed / In-Feed / Spark ·TIKTOK_AWARENESS<button>
+                    ×
+                  </button>
+                </span>
+                <span class="market-tag"
+                  >Meta Collection / Carousel ·META_TRAFFIC<button>×</button>
+                </span>
+                <span class="market-tag"
+                  >TikTok Video Shopping Ads / Spark ·TIKTOK_TRAFFIC<button>
+                    ×
+                  </button>
+                </span>
+                <span class="market-tag"
+                  >YouTube Video Reach / View ·GOOGLE_AWARENESS<button>
+                    ×
+                  </button>
+                </span>
+                <input
+                  type="text"
+                  class="add-input"
+                  data-source="placement"
+                  placeholder="Add placement..."
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="markets-grid" style="margin-top: 18px">
+            <div class="market-col">
+              <h4>Premium onsite</h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <span class="market-tag"
+                  >M1 Takeover ·DISPLAY_ADS<button>×</button></span
+                >
+                <input
+                  type="text"
+                  class="add-input"
+                  data-source="placement-aps"
+                  placeholder="Add placement..."
+                />
+              </div>
+
+              <h4 style="margin-top: 18px">Markets</h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <span class="market-tag">DE <button>×</button></span>
+                <span class="market-tag">PL <button>×</button></span>
+                <input
+                  type="text"
+                  class="add-input"
+                  placeholder="Add market for M1 Takeover..."
+                />
+              </div>
+
+              <h4 style="margin-top: 18px">
+                Gender<span class="gender-total"></span>
+              </h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list" data-gender="1">
+                <span class="market-tag"
+                  >Female
+                  <input
+                    type="text"
+                    class="gender-pct"
+                    placeholder="%"
+                    inputmode="decimal"
+                  />
+                  <button>×</button></span
+                >
+                <span class="market-tag"
+                  >Male
+                  <input
+                    type="text"
+                    class="gender-pct"
+                    placeholder="%"
+                    inputmode="decimal"
+                  />
+                  <button>×</button></span
+                >
+                <input
+                  type="text"
+                  class="add-input"
+                  data-source="gender"
+                  placeholder="Add gender for M1 Takeover..."
+                />
+              </div>
+            </div>
+            <div class="v-separator"></div>
+            <div class="market-col">
+              <h4>Premium offsite (incl. ATL)</h4>
+              <div class="hint placement-hint">No placement selected.</div>
+              <div class="market-list">
+                <input
+                  type="text"
+                  class="add-input"
+                  data-source="placement"
+                  placeholder="Add placement..."
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="generate-row">
+        <button class="generate-btn">Generate media plan</button>
+      </div>
     </div>
-</body>
-<script src="scenarios.js"></script>
-<script src="add-link.js"></script>
-
+  </body>
+  <script src="scenarios.js"></script>
+  <script src="add-link.js"></script>
 </html>
