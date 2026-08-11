@@ -74,7 +74,6 @@ type PageMaterialTypeByKeyQuery struct {
 // @response
 // PageMaterialByKeyVO 分页查询物资响应
 type PageMaterialByKeyVO struct {
-	Rank
 	ID       int64   `json:"id"`        // id
 	Name     string  `json:"name"`      // 物资名称
 	TypeName string  `json:"type_name"` // 物资分类
@@ -85,4 +84,11 @@ type PageMaterialByKeyVO struct {
 // OperateMaterialVO 操作物资响应（继承 OperateMaterialQuery）
 type OperateMaterialVO struct {
 	OperateMaterialQuery
+}
+
+// @response
+// PageMaterialTypeVO 分页查询物资分类响应
+type PageMaterialTypeVO struct {
+	ID   int64  `json:"id"`   // 物资分类编号
+	Name string `json:"name"` // 物资分类名称
 }

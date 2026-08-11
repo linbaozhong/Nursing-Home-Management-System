@@ -19,9 +19,9 @@ var Source = &source{}
 // 对应 Java: SourceServiceImpl.pageSourceByKey -> SourceFunc.listNotDelSource
 // 逻辑: 查询未删除(del_flag=N)的来源, 可选按名称模糊匹配, 按创建时间倒序, 分页返回
 func (s *source) PageSourceByKey(ctx context.Context, in *dto.PageSourceByKeyQuery, out *[]dto.PageSourceByKeyVO) error {
-	q := db.Table(do.SourceTableName).
+	q := db.Table(tblsource.TableName).
 		Where(
-			tblsource.DelFlag.Eq(constant.YesNoNo.String()),
+			tblsource.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 		).
 		Desc(tblsource.CreateTime)
 	if in.SourceName != nil {
@@ -39,7 +39,7 @@ func (s *source) AddSource(ctx context.Context, in *dto.StringReq, out *dto.Empt
 	// 判断来源渠道是否已存在
 	has, e := dao.Source(db).Exists(ctx,
 		tblsource.Name.Eq(*in.Value),
-		tblsource.DelFlag.Eq(constant.YesNoNo.String()),
+		tblsource.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 	)
 	if e != nil {
 		return e
@@ -52,7 +52,7 @@ func (s *source) AddSource(ctx context.Context, in *dto.StringReq, out *dto.Empt
 	defer bean.Free()
 
 	bean.Name = types.String(*in.Value)
-	bean.DelFlag = types.String(constant.YesNoNo.String())
+	bean.DelFlag = types.Int8(constant.YesNoNo)
 	// 新增
 	_, e = dao.Source(db).InsertOne(ctx, bean)
 	return e
@@ -61,7 +61,7 @@ func (s *source) AddSource(ctx context.Context, in *dto.StringReq, out *dto.Empt
 // GetSourceById 根据编号获取来源渠道
 // 对应 Java: SourceServiceImpl.getSourceById -> sourceMapper.selectById
 func (s *source) GetSourceById(ctx context.Context, in *dto.IDReq, out *dto.OperateSourceVo) error {
-	return db.Table(do.SourceTableName).
+	return db.Table(tblsource.TableName).
 		Where(tblsource.Id.Eq(*in.ID)).
 		Cols(
 			tblsource.Id,
@@ -75,7 +75,7 @@ func (s *source) EditSource(ctx context.Context, in *dto.OperateSourceQuery, out
 	// 判断来源渠道是否已存在(排除自身)
 	has, e := dao.Source(db).Exists(ctx,
 		tblsource.Name.Eq(*in.Name),
-		tblsource.DelFlag.Eq(constant.YesNoNo.String()),
+		tblsource.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 		tblsource.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -96,7 +96,7 @@ func (s *source) EditSource(ctx context.Context, in *dto.OperateSourceQuery, out
 // 对应 Java: SourceServiceImpl.deleteSource -> sourceMapper.updateById(delFlag=YES)
 func (s *source) DeleteSource(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	_, e := dao.Source(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tblsource.DelFlag.Set(constant.YesNoYes.String()),
+		tblsource.DelFlag.Set(types.Int8(constant.YesNoYes)),
 	)
 	return e
 }

@@ -61,7 +61,7 @@ func (p *healthinfo) Insert(ctx context.Context, sets ...dialect.Setter) (int64,
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.HealthInfoTableName).
+	_result, e := p.x.Table(tblhealthinfo.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *healthinfo) Insert(ctx context.Context, sets ...dialect.Setter) (int64,
 // cols: 要插入的列名
 func (p *healthinfo) InsertOne(ctx context.Context, bean *do.HealthInfo, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.HealthInfoTableName).
+	_result, e := p.x.Table(tblhealthinfo.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *healthinfo) InsertBatch(ctx context.Context, beans []*do.HealthInfo, co
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.HealthInfoTableName).
+	_result, e := p.x.Table(tblhealthinfo.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *healthinfo) Update(ctx context.Context, sets []dialect.Setter, cond ...
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.HealthInfoTableName).
+	_result, e := p.x.Table(tblhealthinfo.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *healthinfo) UpdateById(ctx context.Context, id types.BigInt, sets ...di
 // cols: 要插入的列名
 func (p *healthinfo) UpdateOne(ctx context.Context, bean *do.HealthInfo, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.HealthInfoTableName).
+	_result, e := p.x.Table(tblhealthinfo.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *healthinfo) UpdateBatch(ctx context.Context, beans []*do.HealthInfo, co
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.HealthInfoTableName).
+	_result, e := p.x.Table(tblhealthinfo.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *healthinfo) UpdateBatch(ctx context.Context, beans []*do.HealthInfo, co
 // Delete
 func (p *healthinfo) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.HealthInfoTableName).
+	_result, e := p.x.Table(tblhealthinfo.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *healthinfo) DeleteByIds(ctx context.Context, ids []any) (int64, error) 
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.HealthInfoTableName).
+	_result, e := p.x.Table(tblhealthinfo.TableName).
 		Where(tblhealthinfo.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *healthinfo) DeleteByIds(ctx context.Context, ids []any) (int64, error) 
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.HealthInfoTableName
+//  1. 如果没有指定表名，则默认使用tblhealthinfo.TableName
 //  2. 如果没有指定查询列，则默认使用tblhealthinfo.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *healthinfo) DeleteByIds(ctx context.Context, ids []any) (int64, error) 
 func (p *healthinfo) Get(ctx context.Context, s ace.SelectBuilder) (*do.HealthInfo, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.HealthInfoTableName)
+		s.Table(tblhealthinfo.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *healthinfo) Get(ctx context.Context, s ace.SelectBuilder) (*do.HealthIn
 // GetByID 按主键读取一个health_info对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *healthinfo) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.HealthInfo, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.HealthInfoTableName).Where(tblhealthinfo.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblhealthinfo.TableName).Where(tblhealthinfo.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *healthinfo) GetByIds(ctx context.Context, ids []any, cols ...dialect.Fi
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.HealthInfoTableName
+//  1. 如果没有指定表名，则默认使用tblhealthinfo.TableName
 //  2. 如果没有指定查询列，则默认使用tblhealthinfo.PrimaryKey
 func (p *healthinfo) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.HealthInfoTableName)
+		s.Table(tblhealthinfo.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *healthinfo) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, 
 func (p *healthinfo) List(ctx context.Context, s ace.SelectBuilder) ([]*do.HealthInfo, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.HealthInfoTableName)
+		s.Table(tblhealthinfo.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *healthinfo) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Healt
 func (p *healthinfo) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.HealthInfoTableName)
+		s.Table(tblhealthinfo.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *healthinfo) Column(ctx context.Context, s ace.SelectBuilder) ([]any, er
 // Count
 func (p *healthinfo) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.HealthInfoTableName).
+	return p.x.Table(tblhealthinfo.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *healthinfo) Count(ctx context.Context, cond ...dialect.Condition) (int6
 // Sum
 func (p *healthinfo) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.HealthInfoTableName).
+	return p.x.Table(tblhealthinfo.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *healthinfo) Sum(ctx context.Context, cols []dialect.Field, cond ...dial
 // Exists
 func (p *healthinfo) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.HealthInfoTableName).Cols(tblhealthinfo.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblhealthinfo.TableName).Cols(tblhealthinfo.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

@@ -6,6 +6,8 @@ import (
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 )
 
+const TableName = "warehouse_material"
+
 var (
 	Id                = dialect.Field{Name: "id", Json: "id", Table: "warehouse_material", Type: "types.BigInt", IsRelation: false}
 	WarehouseRecordId = dialect.Field{Name: "warehouse_record_id", Json: "warehouse_record_id", Table: "warehouse_material", Type: "types.BigInt", IsRelation: false}

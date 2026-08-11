@@ -61,7 +61,7 @@ func (p *elderlabel) Insert(ctx context.Context, sets ...dialect.Setter) (int64,
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.ElderLabelTableName).
+	_result, e := p.x.Table(tblelderlabel.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *elderlabel) Insert(ctx context.Context, sets ...dialect.Setter) (int64,
 // cols: 要插入的列名
 func (p *elderlabel) InsertOne(ctx context.Context, bean *do.ElderLabel, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.ElderLabelTableName).
+	_result, e := p.x.Table(tblelderlabel.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *elderlabel) InsertBatch(ctx context.Context, beans []*do.ElderLabel, co
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.ElderLabelTableName).
+	_result, e := p.x.Table(tblelderlabel.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *elderlabel) Update(ctx context.Context, sets []dialect.Setter, cond ...
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.ElderLabelTableName).
+	_result, e := p.x.Table(tblelderlabel.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *elderlabel) UpdateById(ctx context.Context, id types.BigInt, sets ...di
 // cols: 要插入的列名
 func (p *elderlabel) UpdateOne(ctx context.Context, bean *do.ElderLabel, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.ElderLabelTableName).
+	_result, e := p.x.Table(tblelderlabel.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *elderlabel) UpdateBatch(ctx context.Context, beans []*do.ElderLabel, co
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.ElderLabelTableName).
+	_result, e := p.x.Table(tblelderlabel.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *elderlabel) UpdateBatch(ctx context.Context, beans []*do.ElderLabel, co
 // Delete
 func (p *elderlabel) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.ElderLabelTableName).
+	_result, e := p.x.Table(tblelderlabel.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *elderlabel) DeleteByIds(ctx context.Context, ids []any) (int64, error) 
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.ElderLabelTableName).
+	_result, e := p.x.Table(tblelderlabel.TableName).
 		Where(tblelderlabel.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *elderlabel) DeleteByIds(ctx context.Context, ids []any) (int64, error) 
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.ElderLabelTableName
+//  1. 如果没有指定表名，则默认使用tblelderlabel.TableName
 //  2. 如果没有指定查询列，则默认使用tblelderlabel.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *elderlabel) DeleteByIds(ctx context.Context, ids []any) (int64, error) 
 func (p *elderlabel) Get(ctx context.Context, s ace.SelectBuilder) (*do.ElderLabel, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.ElderLabelTableName)
+		s.Table(tblelderlabel.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *elderlabel) Get(ctx context.Context, s ace.SelectBuilder) (*do.ElderLab
 // GetByID 按主键读取一个elder_label对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *elderlabel) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.ElderLabel, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.ElderLabelTableName).Where(tblelderlabel.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblelderlabel.TableName).Where(tblelderlabel.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *elderlabel) GetByIds(ctx context.Context, ids []any, cols ...dialect.Fi
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.ElderLabelTableName
+//  1. 如果没有指定表名，则默认使用tblelderlabel.TableName
 //  2. 如果没有指定查询列，则默认使用tblelderlabel.PrimaryKey
 func (p *elderlabel) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.ElderLabelTableName)
+		s.Table(tblelderlabel.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *elderlabel) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, 
 func (p *elderlabel) List(ctx context.Context, s ace.SelectBuilder) ([]*do.ElderLabel, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.ElderLabelTableName)
+		s.Table(tblelderlabel.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *elderlabel) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Elder
 func (p *elderlabel) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.ElderLabelTableName)
+		s.Table(tblelderlabel.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *elderlabel) Column(ctx context.Context, s ace.SelectBuilder) ([]any, er
 // Count
 func (p *elderlabel) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.ElderLabelTableName).
+	return p.x.Table(tblelderlabel.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *elderlabel) Count(ctx context.Context, cond ...dialect.Condition) (int6
 // Sum
 func (p *elderlabel) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.ElderLabelTableName).
+	return p.x.Table(tblelderlabel.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *elderlabel) Sum(ctx context.Context, cols []dialect.Field, cond ...dial
 // Exists
 func (p *elderlabel) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.ElderLabelTableName).Cols(tblelderlabel.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblelderlabel.TableName).Cols(tblelderlabel.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

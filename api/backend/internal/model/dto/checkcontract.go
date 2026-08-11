@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 // ============ CheckContractController 请求 ============
 
 // @request
@@ -26,9 +28,9 @@ type OperateCheckContractQuery struct {
 	Phone                     *string                        `json:"phone" valid:"required"`                                // 电话
 	Address                   *string                        `json:"address" valid:"required"`                              // 地址
 	StaffID                   *int64                         `json:"staff_id" valid:"required"`                             // 营销人员编号
-	SignDate                  *string                        `json:"sign_date" valid:"required"`                            // 合同签订日期
-	StartDate                 *string                        `json:"start_date" valid:"required"`                           // 合同开始日期
-	EndDate                   *string                        `json:"end_date" valid:"required"`                             // 合同结束日期
+	SignDate                  *time.Time                     `json:"sign_date" valid:"required"`                            // 合同签订日期
+	StartDate                 *time.Time                     `json:"start_date" valid:"required"`                           // 合同开始日期
+	EndDate                   *time.Time                     `json:"end_date" valid:"required"`                             // 合同结束日期
 	EmergencyContactQueryList []OperateEmergencyContactQuery `json:"operate_emergency_contact_query_list" valid:"required"` // 紧急联系人
 }
 
@@ -73,8 +75,8 @@ type PageSearchElderByKeyVO struct {
 type GetCheckContractByIDVO struct {
 	OperateCheckContractQuery
 	StaffID                          *int64                         `json:"staff_id"`                             // 营销人员编号
-	SignDate                         *string                        `json:"sign_date"`                            // 合同签订日期
-	StartDate                        *string                        `json:"start_date"`                           // 合同开始日期
-	EndDate                          *string                        `json:"end_date"`                             // 合同结束日期
+	SignDate                         *time.Time                     `json:"sign_date"`                            // 合同签订日期
+	StartDate                        *time.Time                     `json:"start_date"`                           // 合同开始日期
+	EndDate                          *time.Time                     `json:"end_date"`                             // 合同结束日期
 	OperateEmergencyContactQueryList []OperateEmergencyContactQuery `json:"operate_emergency_contact_query_list"` // 紧急联系人
 }

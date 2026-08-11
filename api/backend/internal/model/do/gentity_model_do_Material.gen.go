@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const MaterialTableName = "material"
+// const MaterialTableName = "material"
 
 var (
 	materialPool = pool.New[*Material](func() any {
@@ -122,7 +122,7 @@ func (p *Material) Reset() {
 }
 
 func (p *Material) TableName() string {
-	return MaterialTableName
+	return "material"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

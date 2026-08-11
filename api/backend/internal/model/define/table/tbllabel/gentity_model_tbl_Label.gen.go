@@ -6,6 +6,8 @@ import (
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 )
 
+const TableName = "label"
+
 var (
 	Name       = dialect.Field{Name: "name", Json: "name", Table: "label", Type: "types.String", IsRelation: false}
 	Color      = dialect.Field{Name: "color", Json: "color", Table: "label", Type: "types.String", IsRelation: false}

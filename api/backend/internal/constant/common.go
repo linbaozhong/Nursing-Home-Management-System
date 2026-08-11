@@ -20,6 +20,7 @@ var (
 	ErrSysError           = types.NewError(500, "系统繁忙")
 	ErrNotExist           = types.NewError(404, "资源不存在")
 	ErrDataNotExist       = types.NewError(404, "数据不存在")
+	ErrPhoneOrEmailRepeat = types.NewError(500, "手机号或邮箱已注册")
 	ErrMethodError        = types.NewError(500, "请求方式错误")
 	ErrParamError         = types.NewError(500, "请求参数异常")
 	ErrAccessError        = types.NewError(500, "非法访问")

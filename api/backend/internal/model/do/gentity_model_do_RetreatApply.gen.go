@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const RetreatApplyTableName = "retreat_apply"
+// const RetreatApplyTableName = "retreat_apply"
 
 var (
 	retreatapplyPool = pool.New[*RetreatApply](func() any {
@@ -110,7 +110,7 @@ func (p *RetreatApply) Reset() {
 }
 
 func (p *RetreatApply) TableName() string {
-	return RetreatApplyTableName
+	return "retreat_apply"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

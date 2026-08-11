@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const ConsumeTableName = "consume"
+// const ConsumeTableName = "consume"
 
 var (
 	consumePool = pool.New[*Consume](func() any {
@@ -39,7 +39,7 @@ func (p *Consume) MarshalJSON() ([]byte, error) {
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
 	}
-	if p.ConsumeAmount != 0.0 {
+	if p.ConsumeAmount != 0 {
 		write.WriteRaw("consume_amount", types.Marshal(p.ConsumeAmount))
 	}
 	if !p.ConsumeDate.IsZero() {
@@ -77,7 +77,7 @@ func (p *Consume) UnmarshalJSON(data []byte) error {
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "consume_amount":
-			p.ConsumeAmount = types.Float64(value.Float())
+			e = types.Unmarshal(value, &p.ConsumeAmount)
 		case "consume_date":
 			p.ConsumeDate = types.Time{Time: value.Time()}
 		case "create_id":
@@ -122,7 +122,7 @@ func (p *Consume) Reset() {
 }
 
 func (p *Consume) TableName() string {
-	return ConsumeTableName
+	return "consume"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
@@ -221,7 +221,7 @@ var consumeFieldToValueFunc = map[dialect.Field]func(*Consume) (any, bool){
 		return p.ElderId, p.ElderId == 0
 	},
 	tblconsume.ConsumeAmount: func(p *Consume) (any, bool) {
-		return p.ConsumeAmount, p.ConsumeAmount == 0.0
+		return p.ConsumeAmount, p.ConsumeAmount == 0
 	},
 	tblconsume.ConsumeDate: func(p *Consume) (any, bool) {
 		return p.ConsumeDate, p.ConsumeDate.IsZero()

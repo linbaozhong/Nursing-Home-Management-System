@@ -61,7 +61,7 @@ func (p *medicinerecord) Insert(ctx context.Context, sets ...dialect.Setter) (in
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.MedicineRecordTableName).
+	_result, e := p.x.Table(tblmedicinerecord.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *medicinerecord) Insert(ctx context.Context, sets ...dialect.Setter) (in
 // cols: 要插入的列名
 func (p *medicinerecord) InsertOne(ctx context.Context, bean *do.MedicineRecord, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.MedicineRecordTableName).
+	_result, e := p.x.Table(tblmedicinerecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *medicinerecord) InsertBatch(ctx context.Context, beans []*do.MedicineRe
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.MedicineRecordTableName).
+	_result, e := p.x.Table(tblmedicinerecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *medicinerecord) Update(ctx context.Context, sets []dialect.Setter, cond
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.MedicineRecordTableName).
+	_result, e := p.x.Table(tblmedicinerecord.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *medicinerecord) UpdateById(ctx context.Context, id types.BigInt, sets .
 // cols: 要插入的列名
 func (p *medicinerecord) UpdateOne(ctx context.Context, bean *do.MedicineRecord, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.MedicineRecordTableName).
+	_result, e := p.x.Table(tblmedicinerecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *medicinerecord) UpdateBatch(ctx context.Context, beans []*do.MedicineRe
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.MedicineRecordTableName).
+	_result, e := p.x.Table(tblmedicinerecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *medicinerecord) UpdateBatch(ctx context.Context, beans []*do.MedicineRe
 // Delete
 func (p *medicinerecord) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.MedicineRecordTableName).
+	_result, e := p.x.Table(tblmedicinerecord.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *medicinerecord) DeleteByIds(ctx context.Context, ids []any) (int64, err
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.MedicineRecordTableName).
+	_result, e := p.x.Table(tblmedicinerecord.TableName).
 		Where(tblmedicinerecord.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *medicinerecord) DeleteByIds(ctx context.Context, ids []any) (int64, err
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.MedicineRecordTableName
+//  1. 如果没有指定表名，则默认使用tblmedicinerecord.TableName
 //  2. 如果没有指定查询列，则默认使用tblmedicinerecord.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *medicinerecord) DeleteByIds(ctx context.Context, ids []any) (int64, err
 func (p *medicinerecord) Get(ctx context.Context, s ace.SelectBuilder) (*do.MedicineRecord, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.MedicineRecordTableName)
+		s.Table(tblmedicinerecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *medicinerecord) Get(ctx context.Context, s ace.SelectBuilder) (*do.Medi
 // GetByID 按主键读取一个medicine_record对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *medicinerecord) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.MedicineRecord, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.MedicineRecordTableName).Where(tblmedicinerecord.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblmedicinerecord.TableName).Where(tblmedicinerecord.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *medicinerecord) GetByIds(ctx context.Context, ids []any, cols ...dialec
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.MedicineRecordTableName
+//  1. 如果没有指定表名，则默认使用tblmedicinerecord.TableName
 //  2. 如果没有指定查询列，则默认使用tblmedicinerecord.PrimaryKey
 func (p *medicinerecord) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.MedicineRecordTableName)
+		s.Table(tblmedicinerecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *medicinerecord) Cell(ctx context.Context, s ace.SelectBuilder) (any, bo
 func (p *medicinerecord) List(ctx context.Context, s ace.SelectBuilder) ([]*do.MedicineRecord, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.MedicineRecordTableName)
+		s.Table(tblmedicinerecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *medicinerecord) List(ctx context.Context, s ace.SelectBuilder) ([]*do.M
 func (p *medicinerecord) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.MedicineRecordTableName)
+		s.Table(tblmedicinerecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *medicinerecord) Column(ctx context.Context, s ace.SelectBuilder) ([]any
 // Count
 func (p *medicinerecord) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.MedicineRecordTableName).
+	return p.x.Table(tblmedicinerecord.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *medicinerecord) Count(ctx context.Context, cond ...dialect.Condition) (
 // Sum
 func (p *medicinerecord) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.MedicineRecordTableName).
+	return p.x.Table(tblmedicinerecord.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *medicinerecord) Sum(ctx context.Context, cols []dialect.Field, cond ...
 // Exists
 func (p *medicinerecord) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.MedicineRecordTableName).Cols(tblmedicinerecord.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblmedicinerecord.TableName).Cols(tblmedicinerecord.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

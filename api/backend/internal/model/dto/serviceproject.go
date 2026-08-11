@@ -27,7 +27,6 @@ type OperateServiceTypeQuery struct {
 // @response
 // PageServiceByKeyVO 分页查询服务响应
 type PageServiceByKeyVO struct {
-	Rank
 	ID           int64   `json:"id"`            // id
 	TypeName     string  `json:"type_name"`     // 服务类型名称
 	ServiceName  string  `json:"service_name"`  // 服务名称

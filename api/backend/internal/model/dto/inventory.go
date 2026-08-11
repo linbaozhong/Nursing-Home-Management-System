@@ -16,7 +16,6 @@ type PageInventoryByKeyQuery struct {
 // @response
 // PageInventoryByKeyVO 分页查询库存响应
 type PageInventoryByKeyVO struct {
-	Rank
 	WarehouseName string  `json:"warehouse_name"` // 仓库名称
 	MaterialID    int64   `json:"material_id"`    // 物资编号
 	MaterialName  string  `json:"material_name"`  // 物资名称

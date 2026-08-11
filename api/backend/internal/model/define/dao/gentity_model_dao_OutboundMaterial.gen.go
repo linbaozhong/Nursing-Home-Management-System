@@ -61,7 +61,7 @@ func (p *outboundmaterial) Insert(ctx context.Context, sets ...dialect.Setter) (
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.OutboundMaterialTableName).
+	_result, e := p.x.Table(tbloutboundmaterial.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *outboundmaterial) Insert(ctx context.Context, sets ...dialect.Setter) (
 // cols: 要插入的列名
 func (p *outboundmaterial) InsertOne(ctx context.Context, bean *do.OutboundMaterial, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.OutboundMaterialTableName).
+	_result, e := p.x.Table(tbloutboundmaterial.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *outboundmaterial) InsertBatch(ctx context.Context, beans []*do.Outbound
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.OutboundMaterialTableName).
+	_result, e := p.x.Table(tbloutboundmaterial.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *outboundmaterial) Update(ctx context.Context, sets []dialect.Setter, co
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.OutboundMaterialTableName).
+	_result, e := p.x.Table(tbloutboundmaterial.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *outboundmaterial) UpdateById(ctx context.Context, id types.BigInt, sets
 // cols: 要插入的列名
 func (p *outboundmaterial) UpdateOne(ctx context.Context, bean *do.OutboundMaterial, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.OutboundMaterialTableName).
+	_result, e := p.x.Table(tbloutboundmaterial.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *outboundmaterial) UpdateBatch(ctx context.Context, beans []*do.Outbound
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.OutboundMaterialTableName).
+	_result, e := p.x.Table(tbloutboundmaterial.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *outboundmaterial) UpdateBatch(ctx context.Context, beans []*do.Outbound
 // Delete
 func (p *outboundmaterial) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.OutboundMaterialTableName).
+	_result, e := p.x.Table(tbloutboundmaterial.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *outboundmaterial) DeleteByIds(ctx context.Context, ids []any) (int64, e
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.OutboundMaterialTableName).
+	_result, e := p.x.Table(tbloutboundmaterial.TableName).
 		Where(tbloutboundmaterial.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *outboundmaterial) DeleteByIds(ctx context.Context, ids []any) (int64, e
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.OutboundMaterialTableName
+//  1. 如果没有指定表名，则默认使用tbloutboundmaterial.TableName
 //  2. 如果没有指定查询列，则默认使用tbloutboundmaterial.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *outboundmaterial) DeleteByIds(ctx context.Context, ids []any) (int64, e
 func (p *outboundmaterial) Get(ctx context.Context, s ace.SelectBuilder) (*do.OutboundMaterial, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.OutboundMaterialTableName)
+		s.Table(tbloutboundmaterial.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *outboundmaterial) Get(ctx context.Context, s ace.SelectBuilder) (*do.Ou
 // GetByID 按主键读取一个outbound_material对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *outboundmaterial) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.OutboundMaterial, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.OutboundMaterialTableName).Where(tbloutboundmaterial.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tbloutboundmaterial.TableName).Where(tbloutboundmaterial.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *outboundmaterial) GetByIds(ctx context.Context, ids []any, cols ...dial
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.OutboundMaterialTableName
+//  1. 如果没有指定表名，则默认使用tbloutboundmaterial.TableName
 //  2. 如果没有指定查询列，则默认使用tbloutboundmaterial.PrimaryKey
 func (p *outboundmaterial) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.OutboundMaterialTableName)
+		s.Table(tbloutboundmaterial.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *outboundmaterial) Cell(ctx context.Context, s ace.SelectBuilder) (any, 
 func (p *outboundmaterial) List(ctx context.Context, s ace.SelectBuilder) ([]*do.OutboundMaterial, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.OutboundMaterialTableName)
+		s.Table(tbloutboundmaterial.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *outboundmaterial) List(ctx context.Context, s ace.SelectBuilder) ([]*do
 func (p *outboundmaterial) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.OutboundMaterialTableName)
+		s.Table(tbloutboundmaterial.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *outboundmaterial) Column(ctx context.Context, s ace.SelectBuilder) ([]a
 // Count
 func (p *outboundmaterial) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.OutboundMaterialTableName).
+	return p.x.Table(tbloutboundmaterial.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *outboundmaterial) Count(ctx context.Context, cond ...dialect.Condition)
 // Sum
 func (p *outboundmaterial) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.OutboundMaterialTableName).
+	return p.x.Table(tbloutboundmaterial.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *outboundmaterial) Sum(ctx context.Context, cols []dialect.Field, cond .
 // Exists
 func (p *outboundmaterial) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.OutboundMaterialTableName).Cols(tbloutboundmaterial.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tbloutboundmaterial.TableName).Cols(tbloutboundmaterial.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

@@ -7,13 +7,13 @@ import "time"
 // @request
 // PageOutboundRecordByKeyQuery 分页查询出库记录请求
 type PageOutboundRecordByKeyQuery struct {
-	PageNum       *int    `json:"page_num" valid:"required"`  // 页码
-	PageSize      *int    `json:"page_size" valid:"required"` // 条数
-	WarehouseName *string `json:"warehouse_name"`             // 仓库名称
-	MaterialName  *string `json:"material_name"`              // 物资名称
-	StartTime     *string `json:"start_time"`                 // 开始时间
-	EndTime       *string `json:"end_time"`                   // 结束时间
-	Recipient     *string `json:"recipient"`                  // 领用人
+	PageNum       *int       `json:"page_num" valid:"required"`  // 页码
+	PageSize      *int       `json:"page_size" valid:"required"` // 条数
+	WarehouseName *string    `json:"warehouse_name"`             // 仓库名称
+	MaterialName  *string    `json:"material_name"`              // 物资名称
+	StartTime     *time.Time `json:"start_time"`                 // 开始时间
+	EndTime       *time.Time `json:"end_time"`                   // 结束时间
+	Recipient     *string    `json:"recipient"`                  // 领用人
 }
 
 // @request
@@ -22,7 +22,7 @@ type AddOutboundRecordQuery struct {
 	RecipientType             *string                    `json:"recipient_type" valid:"required"`               // 领用人类型
 	RecipientID               *int64                     `json:"recipient_id" valid:"required"`                 // 领用人编号
 	WarehouseID               *int64                     `json:"warehouse_id" valid:"required"`                 // 仓库编号
-	OutboundDate              *string                    `json:"outbound_date" valid:"required"`                // 出库时间
+	OutboundDate              *time.Time                 `json:"outbound_date" valid:"required"`                // 出库时间
 	MaterialUse               *string                    `json:"material_use" valid:"required"`                 // 物资去向
 	StaffID                   *int64                     `json:"staff_id" valid:"required"`                     // 登记人编号
 	OutboundMaterialQueryList []AddOutboundMaterialQuery `json:"outbound_material_query_list" valid:"required"` // 出库物资列表
@@ -47,7 +47,6 @@ type AuditOutboundRecordQuery struct {
 // @response
 // PageOutboundRecordByKeyVO 分页查询出库记录响应
 type PageOutboundRecordByKeyVO struct {
-	Rank
 	ID            int64     `json:"id"`             // id
 	WarehouseName string    `json:"warehouse_name"` // 仓库名称
 	MaterialName  string    `json:"material_name"`  // 物资名称
@@ -74,7 +73,6 @@ type GetOutboundRecordByIDVO struct {
 // @response
 // GetOutboundMaterialByIDVO 出库物资响应（嵌套，继承 Rank）
 type GetOutboundMaterialByIDVO struct {
-	Rank
 	MaterialName string `json:"material_name"` // 物资名称
 	OutboundNum  int    `json:"outbound_num"`  // 出库数量
 }

@@ -23,7 +23,7 @@ var BedPanorama = &bedpanorama{}
 // ListBuilding 获取楼栋列表
 // 对应 Java: BedPanoramaServiceImpl.listBuilding -> buildingFunc.listNotDelBuilding
 func (b *bedpanorama) ListBuilding(ctx context.Context, in *dto.EmptyReq, out *[]dto.DropDown) error {
-	return db.Table(do.BuildingTableName).
+	return db.Table(tblbuilding.TableName).
 		Cols(tblbuilding.Id, tblbuilding.Name).
 		Where(tblbuilding.DelFlag.Eq(constant.YesNoNo)).
 		Select().
@@ -33,7 +33,7 @@ func (b *bedpanorama) ListBuilding(ctx context.Context, in *dto.EmptyReq, out *[
 // ListFloorByBuildingId 获取楼层列表
 // 对应 Java: BedPanoramaServiceImpl.listFloorByBuildingId -> floorFunc.listNotDelFloorByBuildingId
 func (b *bedpanorama) ListFloorByBuildingId(ctx context.Context, in *dto.ListFloorByBuildingIdQuery, out *[]dto.DropDown) error {
-	q := db.Table(do.FloorTableName).
+	q := db.Table(tblfloor.TableName).
 		Cols(tblfloor.Id, tblfloor.Name).
 		Where(tblfloor.DelFlag.Eq(constant.YesNoNo))
 	if in.BuildingID != nil {

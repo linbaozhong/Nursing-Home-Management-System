@@ -61,7 +61,7 @@ func (p *warehouserecord) Insert(ctx context.Context, sets ...dialect.Setter) (i
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.WarehouseRecordTableName).
+	_result, e := p.x.Table(tblwarehouserecord.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *warehouserecord) Insert(ctx context.Context, sets ...dialect.Setter) (i
 // cols: 要插入的列名
 func (p *warehouserecord) InsertOne(ctx context.Context, bean *do.WarehouseRecord, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.WarehouseRecordTableName).
+	_result, e := p.x.Table(tblwarehouserecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *warehouserecord) InsertBatch(ctx context.Context, beans []*do.Warehouse
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.WarehouseRecordTableName).
+	_result, e := p.x.Table(tblwarehouserecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *warehouserecord) Update(ctx context.Context, sets []dialect.Setter, con
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.WarehouseRecordTableName).
+	_result, e := p.x.Table(tblwarehouserecord.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *warehouserecord) UpdateById(ctx context.Context, id types.BigInt, sets 
 // cols: 要插入的列名
 func (p *warehouserecord) UpdateOne(ctx context.Context, bean *do.WarehouseRecord, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.WarehouseRecordTableName).
+	_result, e := p.x.Table(tblwarehouserecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *warehouserecord) UpdateBatch(ctx context.Context, beans []*do.Warehouse
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.WarehouseRecordTableName).
+	_result, e := p.x.Table(tblwarehouserecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *warehouserecord) UpdateBatch(ctx context.Context, beans []*do.Warehouse
 // Delete
 func (p *warehouserecord) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.WarehouseRecordTableName).
+	_result, e := p.x.Table(tblwarehouserecord.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *warehouserecord) DeleteByIds(ctx context.Context, ids []any) (int64, er
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.WarehouseRecordTableName).
+	_result, e := p.x.Table(tblwarehouserecord.TableName).
 		Where(tblwarehouserecord.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *warehouserecord) DeleteByIds(ctx context.Context, ids []any) (int64, er
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.WarehouseRecordTableName
+//  1. 如果没有指定表名，则默认使用tblwarehouserecord.TableName
 //  2. 如果没有指定查询列，则默认使用tblwarehouserecord.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *warehouserecord) DeleteByIds(ctx context.Context, ids []any) (int64, er
 func (p *warehouserecord) Get(ctx context.Context, s ace.SelectBuilder) (*do.WarehouseRecord, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.WarehouseRecordTableName)
+		s.Table(tblwarehouserecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *warehouserecord) Get(ctx context.Context, s ace.SelectBuilder) (*do.War
 // GetByID 按主键读取一个warehouse_record对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *warehouserecord) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.WarehouseRecord, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.WarehouseRecordTableName).Where(tblwarehouserecord.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblwarehouserecord.TableName).Where(tblwarehouserecord.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *warehouserecord) GetByIds(ctx context.Context, ids []any, cols ...diale
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.WarehouseRecordTableName
+//  1. 如果没有指定表名，则默认使用tblwarehouserecord.TableName
 //  2. 如果没有指定查询列，则默认使用tblwarehouserecord.PrimaryKey
 func (p *warehouserecord) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.WarehouseRecordTableName)
+		s.Table(tblwarehouserecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *warehouserecord) Cell(ctx context.Context, s ace.SelectBuilder) (any, b
 func (p *warehouserecord) List(ctx context.Context, s ace.SelectBuilder) ([]*do.WarehouseRecord, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.WarehouseRecordTableName)
+		s.Table(tblwarehouserecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *warehouserecord) List(ctx context.Context, s ace.SelectBuilder) ([]*do.
 func (p *warehouserecord) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.WarehouseRecordTableName)
+		s.Table(tblwarehouserecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *warehouserecord) Column(ctx context.Context, s ace.SelectBuilder) ([]an
 // Count
 func (p *warehouserecord) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.WarehouseRecordTableName).
+	return p.x.Table(tblwarehouserecord.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *warehouserecord) Count(ctx context.Context, cond ...dialect.Condition) 
 // Sum
 func (p *warehouserecord) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.WarehouseRecordTableName).
+	return p.x.Table(tblwarehouserecord.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *warehouserecord) Sum(ctx context.Context, cols []dialect.Field, cond ..
 // Exists
 func (p *warehouserecord) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.WarehouseRecordTableName).Cols(tblwarehouserecord.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblwarehouserecord.TableName).Cols(tblwarehouserecord.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

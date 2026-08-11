@@ -61,7 +61,7 @@ func (p *rolecopy1) Insert(ctx context.Context, sets ...dialect.Setter) (int64, 
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.RoleCopy1TableName).
+	_result, e := p.x.Table(tblrolecopy1.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *rolecopy1) Insert(ctx context.Context, sets ...dialect.Setter) (int64, 
 // cols: 要插入的列名
 func (p *rolecopy1) InsertOne(ctx context.Context, bean *do.RoleCopy1, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.RoleCopy1TableName).
+	_result, e := p.x.Table(tblrolecopy1.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *rolecopy1) InsertBatch(ctx context.Context, beans []*do.RoleCopy1, cols
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.RoleCopy1TableName).
+	_result, e := p.x.Table(tblrolecopy1.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *rolecopy1) Update(ctx context.Context, sets []dialect.Setter, cond ...d
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.RoleCopy1TableName).
+	_result, e := p.x.Table(tblrolecopy1.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *rolecopy1) UpdateById(ctx context.Context, id types.BigInt, sets ...dia
 // cols: 要插入的列名
 func (p *rolecopy1) UpdateOne(ctx context.Context, bean *do.RoleCopy1, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.RoleCopy1TableName).
+	_result, e := p.x.Table(tblrolecopy1.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *rolecopy1) UpdateBatch(ctx context.Context, beans []*do.RoleCopy1, cols
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.RoleCopy1TableName).
+	_result, e := p.x.Table(tblrolecopy1.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *rolecopy1) UpdateBatch(ctx context.Context, beans []*do.RoleCopy1, cols
 // Delete
 func (p *rolecopy1) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.RoleCopy1TableName).
+	_result, e := p.x.Table(tblrolecopy1.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *rolecopy1) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.RoleCopy1TableName).
+	_result, e := p.x.Table(tblrolecopy1.TableName).
 		Where(tblrolecopy1.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *rolecopy1) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.RoleCopy1TableName
+//  1. 如果没有指定表名，则默认使用tblrolecopy1.TableName
 //  2. 如果没有指定查询列，则默认使用tblrolecopy1.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *rolecopy1) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 func (p *rolecopy1) Get(ctx context.Context, s ace.SelectBuilder) (*do.RoleCopy1, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RoleCopy1TableName)
+		s.Table(tblrolecopy1.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *rolecopy1) Get(ctx context.Context, s ace.SelectBuilder) (*do.RoleCopy1
 // GetByID 按主键读取一个role_copy1对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *rolecopy1) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.RoleCopy1, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.RoleCopy1TableName).Where(tblrolecopy1.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblrolecopy1.TableName).Where(tblrolecopy1.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *rolecopy1) GetByIds(ctx context.Context, ids []any, cols ...dialect.Fie
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.RoleCopy1TableName
+//  1. 如果没有指定表名，则默认使用tblrolecopy1.TableName
 //  2. 如果没有指定查询列，则默认使用tblrolecopy1.PrimaryKey
 func (p *rolecopy1) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RoleCopy1TableName)
+		s.Table(tblrolecopy1.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *rolecopy1) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, e
 func (p *rolecopy1) List(ctx context.Context, s ace.SelectBuilder) ([]*do.RoleCopy1, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RoleCopy1TableName)
+		s.Table(tblrolecopy1.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *rolecopy1) List(ctx context.Context, s ace.SelectBuilder) ([]*do.RoleCo
 func (p *rolecopy1) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RoleCopy1TableName)
+		s.Table(tblrolecopy1.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *rolecopy1) Column(ctx context.Context, s ace.SelectBuilder) ([]any, err
 // Count
 func (p *rolecopy1) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.RoleCopy1TableName).
+	return p.x.Table(tblrolecopy1.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *rolecopy1) Count(ctx context.Context, cond ...dialect.Condition) (int64
 // Sum
 func (p *rolecopy1) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.RoleCopy1TableName).
+	return p.x.Table(tblrolecopy1.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *rolecopy1) Sum(ctx context.Context, cols []dialect.Field, cond ...diale
 // Exists
 func (p *rolecopy1) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.RoleCopy1TableName).Cols(tblrolecopy1.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblrolecopy1.TableName).Cols(tblrolecopy1.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

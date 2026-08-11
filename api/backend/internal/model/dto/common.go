@@ -81,7 +81,7 @@ type OperateEmergencyContactQuery struct {
 	Phone       *string `json:"phone" valid:"required"`        // 紧急联系人电话
 	Email       *string `json:"email" valid:"required"`        // 紧急联系人邮箱
 	Relation    *string `json:"relation" valid:"required"`     // 与老人关系
-	ReceiveFlag *string `json:"receive_flag" valid:"required"` // 是否接收消息
+	ReceiveFlag *int8   `json:"receive_flag" valid:"required"` // 是否接收消息
 }
 
 // @request

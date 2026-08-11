@@ -24,9 +24,9 @@ var ElderRecord = &elderrecord{}
 // PageElderRecordByKey 分页查询长者档案（联表 bed 取床位名称）
 // 对应 Java: ElderRecordServiceImpl.pageElderByKey -> ElderMapper.listElderByKey
 func (e *elderrecord) PageElderRecordByKey(ctx context.Context, in *dto.PageElderRecordByKeyQuery, out *[]dto.PageElderByKeyVO) error {
-	q := db.Table(do.ElderTableName).
+	q := db.Table(tblelder.TableName).
 		LeftJoin(tblelder.BedId, tblbed.Id).
-		Where(tblelder.DelFlag.Eq(constant.YesNoNo))
+		Where(tblelder.Id.Gt(types.BigInt(0)))
 	if in.ElderName != nil && *in.ElderName != "" {
 		q.And(tblelder.Name.Like(*in.ElderName))
 	}
@@ -75,7 +75,7 @@ func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out
 
 	// 紧急联系人
 	var contacts []do.EmergencyContact
-	e2 = db.Table(do.EmergencyContactTableName).
+	e2 = db.Table(tblemergencycontact.TableName).
 		Cols(
 			tblemergencycontact.Id,
 			tblemergencycontact.Name,
@@ -158,17 +158,15 @@ func (e *elderrecord) DeleteElderRecord(ctx context.Context, in *dto.IDReq, out 
 	if e2 != nil {
 		return e2
 	}
-	_, e2 = dao.Elder(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tblelder.DelFlag.Set(constant.YesNoYes),
-	)
+	_, e2 = dao.Elder(db).DeleteById(ctx, types.BigInt(*in.ID))
 	return e2
 }
 
 // PageSearchElderByKey 分页搜索老人
 // 对应 Java: ElderRecordServiceImpl.pageSearchElderByKey -> ElderMapper.listElderByKey
 func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
-	q := db.Table(do.ElderTableName).
-		Where(tblelder.DelFlag.Eq(constant.YesNoNo))
+	q := db.Table(tblelder.TableName).
+		Where(tblelder.Id.Gt(types.BigInt(0)))
 	if in.Name != nil && *in.Name != "" {
 		q.And(tblelder.Name.Like(*in.Name))
 	}
@@ -192,7 +190,7 @@ func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSear
 
 // PageSearchEmergencyContactByKey 分页搜索紧急联系人
 func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *dto.PageSearchEmergencyContactByKeyQuery, out *[]dto.PageSearchEmergencyContactByKeyVO) error {
-	q := db.Table(do.EmergencyContactTableName).
+	q := db.Table(tblemergencycontact.TableName).
 		Where(tblemergencycontact.ElderId.Eq(types.BigInt(*in.ElderID)))
 	if in.Key != nil && *in.Key != "" {
 		q.And(tblemergencycontact.Name.Like(*in.Key))
@@ -214,8 +212,8 @@ func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *d
 
 // PageLabelByKey 分页查询客户标签
 func (e *elderrecord) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyQuery, out *[]dto.ListLabelVO) error {
-	q := db.Table(do.LabelTableName).
-		Where(tbllabel.DelFlag.Eq(constant.YesNoNo))
+	q := db.Table(tbllabel.TableName).
+		Where(tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)))
 	if in.Key != nil && *in.Key != "" {
 		q.And(tbllabel.Name.Like(*in.Key))
 	}

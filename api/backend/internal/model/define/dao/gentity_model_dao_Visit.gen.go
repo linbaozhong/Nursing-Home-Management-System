@@ -61,7 +61,7 @@ func (p *visit) Insert(ctx context.Context, sets ...dialect.Setter) (int64, erro
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.VisitTableName).
+	_result, e := p.x.Table(tblvisit.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *visit) Insert(ctx context.Context, sets ...dialect.Setter) (int64, erro
 // cols: 要插入的列名
 func (p *visit) InsertOne(ctx context.Context, bean *do.Visit, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.VisitTableName).
+	_result, e := p.x.Table(tblvisit.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *visit) InsertBatch(ctx context.Context, beans []*do.Visit, cols ...dial
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.VisitTableName).
+	_result, e := p.x.Table(tblvisit.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *visit) Update(ctx context.Context, sets []dialect.Setter, cond ...diale
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.VisitTableName).
+	_result, e := p.x.Table(tblvisit.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *visit) UpdateById(ctx context.Context, id types.BigInt, sets ...dialect
 // cols: 要插入的列名
 func (p *visit) UpdateOne(ctx context.Context, bean *do.Visit, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.VisitTableName).
+	_result, e := p.x.Table(tblvisit.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *visit) UpdateBatch(ctx context.Context, beans []*do.Visit, cols ...dial
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.VisitTableName).
+	_result, e := p.x.Table(tblvisit.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *visit) UpdateBatch(ctx context.Context, beans []*do.Visit, cols ...dial
 // Delete
 func (p *visit) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.VisitTableName).
+	_result, e := p.x.Table(tblvisit.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *visit) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.VisitTableName).
+	_result, e := p.x.Table(tblvisit.TableName).
 		Where(tblvisit.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *visit) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.VisitTableName
+//  1. 如果没有指定表名，则默认使用tblvisit.TableName
 //  2. 如果没有指定查询列，则默认使用tblvisit.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *visit) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 func (p *visit) Get(ctx context.Context, s ace.SelectBuilder) (*do.Visit, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.VisitTableName)
+		s.Table(tblvisit.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *visit) Get(ctx context.Context, s ace.SelectBuilder) (*do.Visit, bool, 
 // GetByID 按主键读取一个visit对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *visit) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.Visit, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.VisitTableName).Where(tblvisit.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblvisit.TableName).Where(tblvisit.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *visit) GetByIds(ctx context.Context, ids []any, cols ...dialect.Field) 
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.VisitTableName
+//  1. 如果没有指定表名，则默认使用tblvisit.TableName
 //  2. 如果没有指定查询列，则默认使用tblvisit.PrimaryKey
 func (p *visit) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.VisitTableName)
+		s.Table(tblvisit.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *visit) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error
 func (p *visit) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Visit, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.VisitTableName)
+		s.Table(tblvisit.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *visit) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Visit, boo
 func (p *visit) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.VisitTableName)
+		s.Table(tblvisit.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *visit) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) 
 // Count
 func (p *visit) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.VisitTableName).
+	return p.x.Table(tblvisit.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *visit) Count(ctx context.Context, cond ...dialect.Condition) (int64, er
 // Sum
 func (p *visit) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.VisitTableName).
+	return p.x.Table(tblvisit.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *visit) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.C
 // Exists
 func (p *visit) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.VisitTableName).Cols(tblvisit.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblvisit.TableName).Cols(tblvisit.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const FamilyMemberTableName = "family_member"
+// const FamilyMemberTableName = "family_member"
 
 var (
 	familymemberPool = pool.New[*FamilyMember](func() any {
@@ -152,7 +152,7 @@ func (p *FamilyMember) Reset() {
 }
 
 func (p *FamilyMember) TableName() string {
-	return FamilyMemberTableName
+	return "family_member"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

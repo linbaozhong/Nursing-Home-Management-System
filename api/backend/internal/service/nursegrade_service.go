@@ -1,112 +1,257 @@
 package service
 
 import (
-	"context"
-
+	"api/internal/constant"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblnursegrade"
+	"api/internal/model/define/table/tblnurseitem"
+	"api/internal/model/define/table/tblserviceitem"
+	"api/internal/model/define/table/tblstaff"
+	"api/internal/model/do"
 	"api/internal/model/dto"
-	"github.com/linbaozhong/gentity/pkg/ace/dialect"
+	"context"
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-type nursegrade struct{}
+// nurseRoleID 护理员角色编号（对应用户端 role=护理员）
+const nurseRoleID = 6
 
-var NurseGrade = &nursegrade{}
+var _ = (*nurseGradeService)(nil)
+
+type nurseGradeService struct{}
 
 // PageNurseGradeByKey 分页查询护理等级
-// 对应 Java: NurseGradeServiceImpl.pageNurseGradeByKey -> NurseGradeMapper.listNurseGradeByKey
-// SQL: SELECT * FROM nurse_grade WHERE (grade_name LIKE %key%) [可选] ORDER BY create_time DESC
-// todo: 护理等级分页查询 - dao.NurseGrade(db) 条件 + 分页, 结果赋值 out
-func (n *nursegrade) PageNurseGradeByKey(ctx context.Context, in *dto.PageNurseGradeByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 nurse_grade 表并分页
-	return nil
+func (s *nurseGradeService) PageNurseGradeByKey(ctx context.Context, in *dto.PageNurseGradeByKeyQuery, out *[]dto.PageNurseGradeByKeyVO) error {
+	q := db.Table(tblnursegrade.TableName)
+	q = q.Where(ace.Where(tblnursegrade.DelFlag.Eq(types.Int8(constant.YesNoNo))))
+	if in.GradeName != nil {
+		q = q.And(tblnursegrade.Name.Like(*in.GradeName))
+	}
+	if in.NurseType != nil {
+		q = q.And(tblnursegrade.Type.Like(*in.NurseType))
+	}
+	return q.Page(in.PageNum, in.PageSize).
+		Cols(
+			tblnursegrade.Id.As("id"),
+			tblnursegrade.Name.As("name"),
+			tblnursegrade.Type.As("type"),
+			tblnursegrade.MonthPrice.As("month_price"),
+		).
+		OrderBy(tblnursegrade.CreateTime, false).
+		Select().Gets(ctx, out)
 }
 
-// GetNurseGradeById 根据编号获取护理等级
-// 对应 Java: NurseGradeServiceImpl.getNurseGradeById -> nurseGradeMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.NurseGrade(db).GetByID(ctx, types.BigInt(in.ID))
-func (n *nursegrade) GetNurseGradeById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.NurseGrade(db).GetByID(ctx, types.BigInt(in.ID))
+// GetNurseGradeById 查询护理等级详情（含护理服务列表）
+func (s *nurseGradeService) GetNurseGradeById(ctx context.Context, in *dto.IDReq, out *dto.GetNurseGradeByIDVO) error {
+	bean := new(do.NurseGrade)
+	has, e := dao.NurseGrade(db).GetByID(ctx, types.BigInt(*in.ID), tblnursegrade.Id, tblnursegrade.Name, tblnursegrade.Type, tblnursegrade.MonthPrice, tblnursegrade.DelFlag)
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
+	if !has {
+		return nil
+	}
+	out.ID = int64(bean.Id)
+	out.Name = bean.Name.String()
+	out.Type = bean.Type.String()
+	out.MonthPrice = bean.MonthPrice.Float64()
+	// 关联护理服务
+	items, _, e := dao.NurseItem(db).List(ctx, ace.Where(tblnurseitem.NurseGradeId.Eq(types.BigInt(*in.ID))).Cols(tblnurseitem.ServiceItemId))
+	if e != nil {
+		return e
+	}
+	if len(items) == 0 {
+		return nil
+	}
+	ids := make([]any, 0, len(items))
+	for _, it := range items {
+		ids = append(ids, it.ServiceItemId)
+	}
+	services, _, e := dao.ServiceItem(db).List(ctx, ace.Where(tblserviceitem.Id.In(ids...)).
+		And(tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo))).
+		Cols(tblserviceitem.Id, tblserviceitem.TypeId, tblserviceitem.Name, tblserviceitem.ChargeMethod, tblserviceitem.Price, tblserviceitem.NeedDate))
+	if e != nil {
+		return e
+	}
+	list := make([]dto.NurseGradeServiceVO, 0, len(services))
+	for _, sv := range services {
+		vo := dto.NurseGradeServiceVO{}
+		vo.ID = int64(sv.Id)
+		vo.TypeID = int64(sv.TypeId)
+		vo.Name = sv.Name.String()
+		vo.ChargeMethod = sv.ChargeMethod.String()
+		vo.Price = sv.Price.Float64()
+		vo.NeedDate = int(sv.NeedDate)
+		list = append(list, vo)
+	}
+	out.NurseGradeServiceVOList = list
 	return nil
 }
 
 // AddNurseGrade 新增护理等级
-// 对应 Java: NurseGradeServiceImpl.addNurseGrade -> nurseGradeMapper.insertSelective
-// todo: 标准 CRUD - dao.NurseGrade(db).InsertOne 写入 nurse_grade 表
-func (n *nursegrade) AddNurseGrade(ctx context.Context, in *dto.AddNurseGradeQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewNurseGrade(); 填充 in; dao.NurseGrade(db).InsertOne(ctx, bean)
-	return nil
+func (s *nurseGradeService) AddNurseGrade(ctx context.Context, in *dto.AddNurseGradeQuery) (*dto.EmptyResp, error) {
+	has, e := dao.NurseGrade(db).Exists(ctx,
+		tblnursegrade.Name.Eq(types.String(*in.Name)),
+		tblnursegrade.Type.Eq(types.String(*in.Type)),
+		tblnursegrade.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+	)
+	if e != nil {
+		return nil, e
+	}
+	if has {
+		return nil, constant.ErrNurseGradeRepeat
+	}
+	bean := new(do.NurseGrade)
+	bean.Name = types.String(*in.Name)
+	bean.Type = types.String(*in.Type)
+	bean.MonthPrice = types.Float64(*in.MonthPrice)
+	bean.DelFlag = types.Int8(constant.YesNoNo)
+	ok, e := dao.NurseGrade(db).InsertOne(ctx, bean, tblnursegrade.Name, tblnursegrade.Type, tblnursegrade.MonthPrice, tblnursegrade.DelFlag, tblnursegrade.CreateId, tblnursegrade.CreateTime)
+	if e != nil {
+		return nil, e
+	}
+	if !ok {
+		return nil, constant.ErrNurseGradeRepeat
+	}
+	// 关联护理服务
+	if len(in.ServiceIDList) > 0 {
+		beans := make([]*do.NurseItem, 0, len(in.ServiceIDList))
+		for _, sid := range in.ServiceIDList {
+			ni := new(do.NurseItem)
+			ni.NurseGradeId = bean.Id
+			ni.ServiceItemId = types.BigInt(sid)
+			beans = append(beans, ni)
+		}
+		if _, e = dao.NurseItem(db).InsertBatch(ctx, beans, tblnurseitem.NurseGradeId, tblnurseitem.ServiceItemId); e != nil {
+			return nil, e
+		}
+	}
+	return new(dto.EmptyResp), nil
 }
 
 // EditNurseGrade 编辑护理等级
-// 对应 Java: NurseGradeServiceImpl.editNurseGrade -> nurseGradeMapper.updateByPrimaryKeySelective
-// todo: 标准 CRUD - 按主键更新 nurse_grade 表
-func (n *nursegrade) EditNurseGrade(ctx context.Context, in *dto.EditNurseGradeQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<nursegrade>.GradeName.Value(in.GradeName),
+func (s *nurseGradeService) EditNurseGrade(ctx context.Context, in *dto.EditNurseGradeQuery) (*dto.EmptyResp, error) {
+	has, e := dao.NurseGrade(db).Exists(ctx,
+		tblnursegrade.Name.Eq(types.String(*in.Name)),
+		tblnursegrade.Type.Eq(types.String(*in.Type)),
+		tblnursegrade.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblnursegrade.Id.NotEq(types.BigInt(*in.ID)),
+	)
+	if e != nil {
+		return nil, e
 	}
-	_, e := dao.NurseGrade(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
-	return e
+	if has {
+		return nil, constant.ErrNurseGradeRepeat
+	}
+	ok, e := dao.NurseGrade(db).UpdateById(ctx, types.BigInt(*in.ID),
+		tblnursegrade.Name.Set(types.String(*in.Name)),
+		tblnursegrade.Type.Set(types.String(*in.Type)),
+		tblnursegrade.MonthPrice.Set(types.Float64(*in.MonthPrice)),
+	)
+	if e != nil {
+		return nil, e
+	}
+	if !ok {
+		return nil, constant.ErrNurseGradeRepeat
+	}
+	// 重建关联护理服务
+	if _, e = dao.NurseItem(db).Delete(ctx, tblnurseitem.NurseGradeId.Eq(types.BigInt(*in.ID))); e != nil {
+		return nil, e
+	}
+	if len(in.ServiceIDList) > 0 {
+		beans := make([]*do.NurseItem, 0, len(in.ServiceIDList))
+		for _, sid := range in.ServiceIDList {
+			ni := new(do.NurseItem)
+			ni.NurseGradeId = types.BigInt(*in.ID)
+			ni.ServiceItemId = types.BigInt(sid)
+			beans = append(beans, ni)
+		}
+		if _, e = dao.NurseItem(db).InsertBatch(ctx, beans, tblnurseitem.NurseGradeId, tblnurseitem.ServiceItemId); e != nil {
+			return nil, e
+		}
+	}
+	return new(dto.EmptyResp), nil
 }
 
-// DeleteNurseGrade 删除护理等级
-// 对应 Java: NurseGradeServiceImpl.deleteNurseGrade -> nurseGradeMapper.deleteByPrimaryKey
-// todo: 标准 CRUD - dao.NurseGrade(db).DeleteById(ctx, types.BigInt(in.ID))
-func (n *nursegrade) DeleteNurseGrade(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.NurseGrade(db).DeleteById(ctx, types.BigInt(in.ID))
-	return e
+// DeleteNurseGrade 删除护理等级（逻辑删除）
+func (s *nurseGradeService) DeleteNurseGrade(ctx context.Context, in *dto.IDReq) (*dto.EmptyResp, error) {
+	_, e := dao.NurseGrade(db).UpdateById(ctx, types.BigInt(*in.ID),
+		tblnursegrade.DelFlag.Set(types.Int8(constant.YesNoYes)),
+	)
+	if e != nil {
+		return nil, e
+	}
+	return new(dto.EmptyResp), nil
 }
 
-// PageNurseByKey 分页查询护理员（user 表中角色为护理员）
-// 对应 Java: NurseGradeServiceImpl.pageNurseByKey -> UserMapper.listNurseByKey
-// SQL: SELECT * FROM user WHERE (name LIKE %key% OR id = key) [可选] AND role = 护理员
-// todo: 查询 user(护理员)表并分页, 结果赋值 out(需定义护理员分页返回类型)
-func (n *nursegrade) PageNurseByKey(ctx context.Context, in *dto.PageNurseByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 user 护理员并分页
-	return nil
+// PageNurseByKey 分页查询护理员（staff 表中 role=护理员）
+func (s *nurseGradeService) PageNurseByKey(ctx context.Context, in *dto.PageNurseByKeyQuery, out *[]dto.PageNurseByKeyVO) error {
+	q := db.Table(tblstaff.TableName).
+		Where(ace.Where(tblstaff.RoleId.Eq(types.BigInt(nurseRoleID))).
+			And(tblstaff.LeaveFlag.Eq(types.Int8(constant.YesNoNo))))
+	if in.NurseName != nil {
+		q = q.And(tblstaff.Name.Like(*in.NurseName))
+	}
+	if in.Key != nil {
+		q = q.And(tblstaff.Name.Like(*in.Key))
+	}
+	return q.Page(in.PageNum, in.PageSize).
+		Cols(
+			tblstaff.Id.As("id"),
+			tblstaff.Name.As("name"),
+			tblstaff.Phone.As("phone"),
+		).
+		OrderBy(tblstaff.CreateTime, false).
+		Select().Gets(ctx, out)
 }
 
-// GetNurseById 根据编号获取护理员
-// 对应 Java: NurseGradeServiceImpl.getNurseById -> userMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.User(db).GetByID(ctx, types.BigInt(in.ID))
-func (n *nursegrade) GetNurseById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.User(db).GetByID(ctx, types.BigInt(in.ID))
+// GetNurseById 查询护理员详情
+func (s *nurseGradeService) GetNurseById(ctx context.Context, in *dto.IDReq, out *dto.GetNurseByIdVO) error {
+	bean, has, e := dao.Staff(db).GetByID(ctx, types.BigInt(*in.ID), tblstaff.Id, tblstaff.Name, tblstaff.Phone)
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
+	if !has {
+		return nil
+	}
+	out.ID = int64(bean.Id)
+	out.Name = bean.Name.String()
+	out.Phone = bean.Phone.String()
 	return nil
 }
 
-// AddNurse 新增护理员（写 user 表）
-// 对应 Java: NurseGradeServiceImpl.addNurse -> userMapper.insertSelective
-// todo: 标准 CRUD - dao.User(db).InsertOne 写入 user(角色=护理员)
-func (n *nursegrade) AddNurse(ctx context.Context, in *dto.AddNurseQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewUser(); 填充 in(角色=护理员); dao.User(db).InsertOne(ctx, bean)
-	return nil
+// AddNurse 新增护理员
+func (s *nurseGradeService) AddNurse(ctx context.Context, in *dto.AddNurseQuery) (*dto.EmptyResp, error) {
+	bean := new(do.Staff)
+	bean.Name = types.String(*in.NurseName)
+	bean.Phone = types.String(*in.Phone)
+	bean.RoleId = types.BigInt(nurseRoleID)
+	bean.LeaveFlag = types.Int8(constant.YesNoNo)
+	_, e := dao.Staff(db).InsertOne(ctx, bean, tblstaff.Name, tblstaff.Phone, tblstaff.RoleId, tblstaff.LeaveFlag, tblstaff.CreateId, tblstaff.CreateTime)
+	if e != nil {
+		return nil, e
+	}
+	return new(dto.EmptyResp), nil
 }
 
 // EditNurse 编辑护理员
-// 对应 Java: NurseGradeServiceImpl.editNurse -> userMapper.updateByPrimaryKeySelective
-// todo: 标准 CRUD - 按主键更新 user 表
-func (n *nursegrade) EditNurse(ctx context.Context, in *dto.EditNurseQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbluser.Name.Value(in.Name),
+func (s *nurseGradeService) EditNurse(ctx context.Context, in *dto.EditNurseQuery) (*dto.EmptyResp, error) {
+	_, e := dao.Staff(db).UpdateById(ctx, types.BigInt(*in.ID),
+		tblstaff.Name.Set(types.String(*in.NurseName)),
+		tblstaff.Phone.Set(types.String(*in.Phone)),
+	)
+	if e != nil {
+		return nil, e
 	}
-	_, e := dao.User(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
-	return e
+	return new(dto.EmptyResp), nil
 }
 
 // DeleteNurse 删除护理员
-// 对应 Java: NurseGradeServiceImpl.deleteNurse -> userMapper.deleteByPrimaryKey
-// todo: 标准 CRUD - dao.User(db).DeleteById(ctx, types.BigInt(in.ID))
-func (n *nursegrade) DeleteNurse(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.User(db).DeleteById(ctx, types.BigInt(in.ID))
-	return e
+func (s *nurseGradeService) DeleteNurse(ctx context.Context, in *dto.IDReq) (*dto.EmptyResp, error) {
+	_, e := dao.Staff(db).DeleteById(ctx, types.BigInt(*in.ID))
+	if e != nil {
+		return nil, e
+	}
+	return new(dto.EmptyResp), nil
 }

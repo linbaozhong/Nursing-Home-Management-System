@@ -1,10 +1,6 @@
 package service
 
 import (
-	"context"
-	"errors"
-	"github.com/linbaozhong/gentity/pkg/conv"
-
 	"api/internal/constant"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblactive"
@@ -13,6 +9,8 @@ import (
 	"api/internal/model/define/table/tblelder"
 	"api/internal/model/do"
 	"api/internal/model/dto"
+	"context"
+	"errors"
 
 	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
@@ -43,7 +41,7 @@ func (a *active) PageActiveByKey(ctx context.Context, in *dto.PageActiveByKeyQue
 	}
 
 	// 2) 条件构造 + 分页
-	q := db.Table(do.ActiveTableName).Where(tblactive.DelFlag.Eq(constant.YesNoNo))
+	q := db.Table(tblactive.TableName).Where(tblactive.DelFlag.Eq(constant.YesNoNo))
 	if in.TypeID != nil {
 		q.And(tblactive.TypeId.Eq(types.BigInt(*in.TypeID)))
 	}
@@ -86,7 +84,7 @@ func (a *active) GetActiveById(ctx context.Context, in *dto.IDReq, out *dto.GetA
 	address := string(obj.Address)
 	organizer := string(obj.Organizer)
 	phone := string(obj.Phone)
-	activeDate := obj.ActiveDate.Format("2006-01-02 15:04:05")
+	activeDate := obj.ActiveDate.Time
 	activePicture := string(obj.ActivePicture)
 	typeID := int64(obj.TypeId)
 	out.ID = &id
@@ -149,7 +147,7 @@ func (a *active) AddActive(ctx context.Context, in *dto.OperateActiveQuery, out 
 	bean.Address = types.String(*in.Address)
 	bean.Organizer = types.String(*in.Organizer)
 	bean.Phone = types.String(*in.Phone)
-	bean.ActiveDate = types.Time{conv.String2Time(*in.ActiveDate)}
+	bean.ActiveDate = types.Time{*in.ActiveDate}
 	bean.ActivePicture = types.String(*in.ActivePicture)
 	bean.DelFlag = types.Int8(int8(constant.YesNoYes))
 	_, e := dao.Active(db).InsertOne(ctx, bean)

@@ -61,7 +61,7 @@ func (p *source) Insert(ctx context.Context, sets ...dialect.Setter) (int64, err
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.SourceTableName).
+	_result, e := p.x.Table(tblsource.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *source) Insert(ctx context.Context, sets ...dialect.Setter) (int64, err
 // cols: 要插入的列名
 func (p *source) InsertOne(ctx context.Context, bean *do.Source, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.SourceTableName).
+	_result, e := p.x.Table(tblsource.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *source) InsertBatch(ctx context.Context, beans []*do.Source, cols ...di
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.SourceTableName).
+	_result, e := p.x.Table(tblsource.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *source) Update(ctx context.Context, sets []dialect.Setter, cond ...dial
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.SourceTableName).
+	_result, e := p.x.Table(tblsource.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *source) UpdateById(ctx context.Context, id types.BigInt, sets ...dialec
 // cols: 要插入的列名
 func (p *source) UpdateOne(ctx context.Context, bean *do.Source, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.SourceTableName).
+	_result, e := p.x.Table(tblsource.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *source) UpdateBatch(ctx context.Context, beans []*do.Source, cols ...di
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.SourceTableName).
+	_result, e := p.x.Table(tblsource.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *source) UpdateBatch(ctx context.Context, beans []*do.Source, cols ...di
 // Delete
 func (p *source) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.SourceTableName).
+	_result, e := p.x.Table(tblsource.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *source) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.SourceTableName).
+	_result, e := p.x.Table(tblsource.TableName).
 		Where(tblsource.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *source) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.SourceTableName
+//  1. 如果没有指定表名，则默认使用tblsource.TableName
 //  2. 如果没有指定查询列，则默认使用tblsource.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *source) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 func (p *source) Get(ctx context.Context, s ace.SelectBuilder) (*do.Source, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.SourceTableName)
+		s.Table(tblsource.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *source) Get(ctx context.Context, s ace.SelectBuilder) (*do.Source, bool
 // GetByID 按主键读取一个source对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *source) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.Source, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.SourceTableName).Where(tblsource.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblsource.TableName).Where(tblsource.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *source) GetByIds(ctx context.Context, ids []any, cols ...dialect.Field)
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.SourceTableName
+//  1. 如果没有指定表名，则默认使用tblsource.TableName
 //  2. 如果没有指定查询列，则默认使用tblsource.PrimaryKey
 func (p *source) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.SourceTableName)
+		s.Table(tblsource.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *source) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, erro
 func (p *source) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Source, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.SourceTableName)
+		s.Table(tblsource.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *source) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Source, b
 func (p *source) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.SourceTableName)
+		s.Table(tblsource.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *source) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error)
 // Count
 func (p *source) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.SourceTableName).
+	return p.x.Table(tblsource.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *source) Count(ctx context.Context, cond ...dialect.Condition) (int64, e
 // Sum
 func (p *source) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.SourceTableName).
+	return p.x.Table(tblsource.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *source) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.
 // Exists
 func (p *source) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.SourceTableName).Cols(tblsource.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblsource.TableName).Cols(tblsource.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

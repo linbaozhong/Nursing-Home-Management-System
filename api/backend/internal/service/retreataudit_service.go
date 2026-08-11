@@ -3,70 +3,116 @@ package service
 import (
 	"context"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblelder"
+	"api/internal/model/define/table/tblretreatapply"
+	"api/internal/model/define/table/tblstaff"
+	"api/internal/model/do"
 	"api/internal/model/dto"
-	"github.com/linbaozhong/gentity/pkg/ace/dialect"
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-type retreataudit struct{}
+var _ = (*retreatAuditService)(nil)
 
-var RetreatAudit = &retreataudit{}
+type retreatAuditService struct{}
 
-// PageRetreatAuditByKey 分页查询退住审核（联表 elder、user、retreat_apply）
-// 对应 Java: RetreatAuditServiceImpl.pageRetreatAuditByKey -> RetreatAuditMapper.listRetreatAuditByKey
-// SQL: SELECT ra.*, e.elder_name, u.name AS audit_user_name, a.retreat_reason
-//
-//	FROM retreat_audit ra
-//	LEFT JOIN retreat_apply a ON a.id = ra.retreat_apply_id
-//	LEFT JOIN elder e ON e.id = ra.elder_id
-//	LEFT JOIN user u ON u.id = ra.audit_user_id
-//	WHERE (e.elder_name LIKE %key% OR ra.id = key) [可选]
-//	ORDER BY ra.create_time DESC; 再由 PageUtil 内存分页。
-//
-// Todo: 1) in.Key 非空 -> (tbl<retreataudit>.Id.Eq(in.Key) OR tbl<elder>.ElderName.Like(in.Key))
-//
-//	2) DB 分页: Count + List(联表 LeftJoin)
-//	3) 组装含老人/审核人/退住原因的 VO 并赋值 out
-func (r *retreataudit) PageRetreatAuditByKey(ctx context.Context, in *dto.PageRetreatAuditByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
-	return nil
+// retreatAuditJoin 接收入住审核联表（老人姓名、申请人姓名）查询结果的中间结构体
+type retreatAuditJoin struct {
+	ID        types.BigInt `json:"id"`
+	ElderName types.String `json:"elder_name"`
+	ApplyFlag types.Int8   `json:"apply_flag"`
+	ApplyName types.String `json:"apply_name"`
 }
 
-// GetRetreatAuditById 根据编号获取退住审核
-// 对应 Java: RetreatAuditServiceImpl.getRetreatAuditById -> retreatAuditMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.RetreatAudit(db).GetByID(ctx, types.BigInt(in.ID))
-func (r *retreataudit) GetRetreatAuditById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.RetreatAudit(db).GetByID(ctx, types.BigInt(in.ID))
+// PageRetreatAuditByKey 分页查询退住审核
+func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto.PageRetreatAuditByKeyQuery, out *[]dto.PageRetreatAuditByKeyVO) error {
+	if in.PageNum == nil || in.PageSize == nil {
+		return constant.ErrParamInvalid
+	}
+	q := ace.NewSelectBuilder(db).From(tblretreatapply.TableName).
+		LeftJoin(tblretreatapply.ElderId, tblelder.Id).
+		LeftJoin(tblretreatapply.CreateId, tblstaff.Id)
+	if in.Key != nil && *in.Key != "" {
+		q = q.Where(tblelder.Name.Like(*in.Key))
+	}
+	var joins []retreatAuditJoin
+	has, e := q.Page(*in.PageNum, *in.PageSize).
+		Cols(
+			tblretreatapply.Id,
+			tblretreatapply.ApplyFlag,
+			tblelder.Name.As("elder_name"),
+			tblstaff.Name.As("apply_name"),
+		).
+		OrderBy(tblretreatapply.Id, false).
+		Select().Gets(ctx, &joins)
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
+	if !has {
+		return nil
+	}
+	res := make([]dto.PageRetreatAuditByKeyVO, 0, len(joins))
+	for _, j := range joins {
+		res = append(res, dto.PageRetreatAuditByKeyVO{
+			ID:        int64(j.ID),
+			ElderName: j.ElderName.String(),
+			ApplyFlag: constant.AuditStatus(j.ApplyFlag).String(),
+			ApplyName: j.ApplyName.String(),
+		})
+	}
+	*out = res
 	return nil
 }
 
-// AuditRetreat 审核退住（审核通过时结算费用/释放床位）
-// 对应 Java: RetreatAuditServiceImpl.auditRetreat -> 更新 retreat_audit 审核结果 + 结算 + 更新退住申请状态
-// todo: 事务: 1) UpdateById(retreat_audit 审核结果); 2) 结算老人费用(更新 elder_account/order_fee); 3) 释放床位(更新 bed/room 状态)
-func (r *retreataudit) AuditRetreat(ctx context.Context, in *dto.AuditRetreatQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: tbl<retreataudit>.AuditResult.Value(in.AuditResult),
-		//       tbl<retreataudit>.AuditRemark.Value(in.AuditRemark),
-	}
-	_, e := dao.RetreatAudit(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
+// GetRetreatAuditById 查询退住审核详情（含老人信息）
+func (s *retreatAuditService) GetRetreatAuditById(ctx context.Context, in *dto.IDReq, out *dto.GetRetreatAuditByIDVO) error {
+	apply := new(do.RetreatApply)
+	has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
-	// todo: 审核通过 -> 结算费用、释放床位、更新 retreat_apply 状态
+	if !has {
+		return constant.ErrDataNotExist
+	}
+	out.ID = int64(apply.Id)
+	out.ElderID = int64(apply.ElderId)
+	out.ApplyFlag = constant.AuditStatus(apply.ApplyFlag).String()
+	// 关联老人姓名
+	elder := new(do.Elder)
+	if eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(apply.ElderId))); ee == nil && eh {
+		out.ElderName = elder.Name.String()
+	}
 	return nil
 }
 
-// PageSearchElderByKey 分页搜索老人（供选择老人）
-// 对应 Java: RetreatAuditServiceImpl.pageSearchElderByKey -> elderMapper.listElderByKey
-// SQL: SELECT * FROM elder WHERE (elder_name LIKE %key% OR id = key) [可选] AND del_flag=0
-// todo: 查询 elder 表并分页, 结果赋值 out(需定义老人分页返回类型)
-func (r *retreataudit) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 elder 表并分页
+// AuditRetreat 审核退住申请（通过/不通过）
+func (s *retreatAuditService) AuditRetreat(ctx context.Context, in *dto.AuditRetreatQuery) error {
+	if in.ID == nil || in.AuditResult == nil {
+		return constant.ErrParamInvalid
+	}
+	apply := new(do.RetreatApply)
+	has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return constant.ErrDataNotExist
+	}
+	if *in.AuditResult == "不通过" {
+		if _, e = dao.RetreatApply(db).UpdateById(ctx, *in.ID, tblretreatapply.ApplyFlag.Set(types.Int8(constant.AuditNotPass))); e != nil {
+			return e
+		}
+		return nil
+	}
+	// 审核通过
+	if _, e = dao.RetreatApply(db).UpdateById(ctx, *in.ID, tblretreatapply.ApplyFlag.Set(types.Int8(constant.AuditPass))); e != nil {
+		return e
+	}
+	// 同步老人状态为退住审核
+	if _, e = dao.Elder(db).UpdateById(ctx, int64(apply.ElderId), tblelder.CheckFlag.Set(types.Int8(constant.CheckExitAudit))); e != nil {
+		return e
+	}
 	return nil
 }

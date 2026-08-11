@@ -1,12 +1,14 @@
 package dto
 
+import "time"
+
 // ============ HomeController 请求 ============
 
 // @request
 // ClientSourceQuery 客户来源渠道请求
 type ClientSourceQuery struct {
-	StartTime *string `json:"start_time"` // 开始时间
-	EndTime   *string `json:"end_time"`   // 结束时间
+	StartTime *time.Time `json:"start_time"` // 开始时间
+	EndTime   *time.Time `json:"end_time"`   // 结束时间
 }
 
 // ============ HomeController 响应 ============

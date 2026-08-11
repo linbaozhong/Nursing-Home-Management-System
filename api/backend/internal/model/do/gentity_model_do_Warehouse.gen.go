@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const WarehouseTableName = "warehouse"
+// const WarehouseTableName = "warehouse"
 
 var (
 	warehousePool = pool.New[*Warehouse](func() any {
@@ -116,7 +116,7 @@ func (p *Warehouse) Reset() {
 }
 
 func (p *Warehouse) TableName() string {
-	return WarehouseTableName
+	return "warehouse"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

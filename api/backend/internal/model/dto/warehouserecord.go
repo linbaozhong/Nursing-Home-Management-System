@@ -7,13 +7,13 @@ import "time"
 // @request
 // PageWarehouseRecordByKeyQuery 分页查询入库记录请求
 type PageWarehouseRecordByKeyQuery struct {
-	PageNum       *int    `json:"page_num" valid:"required"`  // 页码
-	PageSize      *int    `json:"page_size" valid:"required"` // 条数
-	WarehouseName *string `json:"warehouse_name"`             // 仓库名称
-	MaterialName  *string `json:"material_name"`              // 物资名称
-	StartTime     *string `json:"start_time"`                 // 开始时间
-	EndTime       *string `json:"end_time"`                   // 结束时间
-	StaffName     *string `json:"staff_name"`                 // 经办人
+	PageNum       *int       `json:"page_num" valid:"required"`  // 页码
+	PageSize      *int       `json:"page_size" valid:"required"` // 条数
+	WarehouseName *string    `json:"warehouse_name"`             // 仓库名称
+	MaterialName  *string    `json:"material_name"`              // 物资名称
+	StartTime     *time.Time `json:"start_time"`                 // 开始时间
+	EndTime       *time.Time `json:"end_time"`                   // 结束时间
+	StaffName     *string    `json:"staff_name"`                 // 经办人
 }
 
 // @request
@@ -31,17 +31,17 @@ type AddWarehouseRecordQuery struct {
 	WarehouseID                *int64                      `json:"warehouse_id" valid:"required"`                  // 仓库编号
 	StaffID                    *int64                      `json:"staff_id" valid:"required"`                      // 经办人编号
 	Source                     *string                     `json:"source" valid:"required"`                        // 物资来源
-	WarehouseDate              *string                     `json:"warehouse_date" valid:"required"`                // 入库时间
+	WarehouseDate              *time.Time                  `json:"warehouse_date" valid:"required"`                // 入库时间
 	WarehouseMaterialQueryList []AddWarehouseMaterialQuery `json:"warehouse_material_query_list" valid:"required"` // 入库物资列表
 }
 
 // @request
 // AddWarehouseMaterialQuery 新增入库物资请求（嵌套）
 type AddWarehouseMaterialQuery struct {
-	MaterialID   *int64  `json:"material_id" valid:"required"`   // 物资编号
-	WarehouseNum *int    `json:"warehouse_num" valid:"required"` // 入库数量
-	ProductDate  *string `json:"product_date" valid:"required"`  // 生产日期
-	ExpireDate   *string `json:"expire_date" valid:"required"`   // 有效期
+	MaterialID   *int64     `json:"material_id" valid:"required"`   // 物资编号
+	WarehouseNum *int       `json:"warehouse_num" valid:"required"` // 入库数量
+	ProductDate  *time.Time `json:"product_date" valid:"required"`  // 生产日期
+	ExpireDate   *time.Time `json:"expire_date" valid:"required"`   // 有效期
 }
 
 // @request
@@ -58,7 +58,6 @@ type AuditWarehouseRecordQuery struct {
 // @response
 // PageWarehouseRecordByKeyVO 入库记录响应
 type PageWarehouseRecordByKeyVO struct {
-	Rank
 	ID            int64     `json:"id"`             // id
 	WarehouseName string    `json:"warehouse_name"` // 仓库名称
 	MaterialName  string    `json:"material_name"`  // 物资名称
@@ -71,7 +70,6 @@ type PageWarehouseRecordByKeyVO struct {
 // @response
 // PageWarehouseMaterialByKeyVO 分页查询仓库物资响应
 type PageWarehouseMaterialByKeyVO struct {
-	Rank
 	ID           int64     `json:"id"`            // id
 	MaterialName string    `json:"material_name"` // 物资名称
 	Price        float64   `json:"price"`         // 物资单价
@@ -93,7 +91,6 @@ type GetWarehouseRecordByIDVO struct {
 // @response
 // GetWarehouseMaterialByIDVO 入库物资响应（嵌套，继承 Rank）
 type GetWarehouseMaterialByIDVO struct {
-	Rank
 	MaterialName string    `json:"material_name"` // 物资名称
 	WarehouseNum int       `json:"warehouse_num"` // 入库数量
 	ProductDate  time.Time `json:"product_date"`  // 生产日期

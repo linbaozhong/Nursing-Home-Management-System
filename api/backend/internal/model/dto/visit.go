@@ -18,12 +18,12 @@ type PageVisitByKeyQuery struct {
 // @request
 // EditVisitQuery 编辑来访登记请求
 type EditVisitQuery struct {
-	ID        *int64  `json:"id"`                          // id
-	Name      *string `json:"name" valid:"required"`       // 来访者姓名
-	Phone     *string `json:"phone" valid:"required"`      // 来访者电话
-	Relation  *string `json:"relation" valid:"required"`   // 与老人关系
-	VisitDate *string `json:"visit_date" valid:"required"` // 来访时间
-	VisitNum  *int64  `json:"visit_num" valid:"required"`  // 来访者人数
+	ID        *int64     `json:"id"`                          // id
+	Name      *string    `json:"name" valid:"required"`       // 来访者姓名
+	Phone     *string    `json:"phone" valid:"required"`      // 来访者电话
+	Relation  *string    `json:"relation" valid:"required"`   // 与老人关系
+	VisitDate *time.Time `json:"visit_date" valid:"required"` // 来访时间
+	VisitNum  *int64     `json:"visit_num" valid:"required"`  // 来访者人数
 }
 
 // @request
@@ -36,8 +36,8 @@ type AddVisitQuery struct {
 // @request
 // RecordLeaveQuery 登记离开请求
 type RecordLeaveQuery struct {
-	ID        *int64  `json:"id" valid:"required"`         // id
-	LeaveDate *string `json:"leave_date" valid:"required"` // 离开时间
+	ID        *int64     `json:"id" valid:"required"`         // id
+	LeaveDate *time.Time `json:"leave_date" valid:"required"` // 离开时间
 }
 
 // PageSearchElderByKeyQuery 分页搜索老人请求（定义见 elderrecord.go）
@@ -47,7 +47,6 @@ type RecordLeaveQuery struct {
 // @response
 // PageVisitByKeyVO 分页查询来访登记响应
 type PageVisitByKeyVO struct {
-	Rank
 	ID         int64     `json:"id"`          // id
 	ElderName  string    `json:"elder_name"`  // 老人姓名
 	VisitName  string    `json:"visit_name"`  // 来访者姓名
@@ -56,7 +55,7 @@ type PageVisitByKeyVO struct {
 	VisitDate  time.Time `json:"visit_date"`  // 来访时间
 	LeaveDate  time.Time `json:"leave_date"`  // 离开时间
 	VisitNum   int64     `json:"visit_num"`   // 来访者人数
-	VisitFlag  string    `json:"visit_flag"`  // 来访状态
+	VisitFlag  *int8     `json:"visit_flag"`  // 来访状态（0-在院 1-已离开）
 }
 
 // @response

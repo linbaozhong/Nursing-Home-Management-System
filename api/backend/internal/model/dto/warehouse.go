@@ -23,7 +23,6 @@ type OperateWarehouseQuery struct {
 // @response
 // PageWarehouseByKeyVO 分页查询仓库响应
 type PageWarehouseByKeyVO struct {
-	Rank
 	ID        int64  `json:"id"`         // id
 	Name      string `json:"name"`       // 仓库名称
 	StaffName string `json:"staff_name"` // 仓库管理员

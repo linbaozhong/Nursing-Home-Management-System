@@ -2,119 +2,257 @@ package service
 
 import (
 	"context"
+	"errors"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblserviceitem"
+	"api/internal/model/define/table/tblservicetype"
+	"api/internal/model/do"
 	"api/internal/model/dto"
-	"github.com/linbaozhong/gentity/pkg/ace/dialect"
+
 	"github.com/linbaozhong/gentity/pkg/types"
 )
+
+// serviceTotalLimit 服务 / 服务类型数量上限（对应 Java Constant.TOTAL_LIMIT）
+const serviceTotalLimit = 10
 
 type serviceproject struct{}
 
 var ServiceProject = &serviceproject{}
 
-// ListServiceType 获取服务类型列表
-// 对应 Java: ServiceProjectServiceImpl.listServiceType -> serviceTypeMapper.selectAll(按 name 过滤)
-// SQL: SELECT * FROM service_type WHERE (type_name LIKE %name%) [可选]
-// todo: 查询 service_type 列表, 结果赋值 out(需定义返回类型)
-func (s *serviceproject) ListServiceType(ctx context.Context, in *dto.NameReq, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 service_type 列表
-	return nil
-}
-
-// PageServiceByKey 分页查询服务（联表 service_type 获取类型名）
-// 对应 Java: ServiceProjectServiceImpl.pageServiceByKey -> ServiceProjectMapper.listServiceByKey
-// SQL: SELECT sp.*, st.type_name FROM service_project sp
-//
-//	LEFT JOIN service_type st ON st.id = sp.service_type_id
-//	WHERE (st.type_name LIKE %key% OR sp.service_name LIKE %key%) [可选]
-//	ORDER BY sp.create_time DESC; 再由 PageUtil 内存分页。
-//
-// todo: 1) in.Key 非空 -> (tbl<servicetype>.TypeName.Like(in.Key) OR tbl<serviceproject>.ServiceName.Like(in.Key))
-//
-//	2) DB 分页: Count + List(联表 LeftJoin service_type)
-//	3) 组装含类型名的 VO 并赋值 out
-func (s *serviceproject) PageServiceByKey(ctx context.Context, in *dto.PageServiceByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
-	return nil
-}
-
-// AddServiceType 新增服务类型
-// 对应 Java: ServiceProjectServiceImpl.addServiceType -> serviceTypeMapper.insertSelective
-// todo: 标准 CRUD - dao.ServiceType(db).InsertOne 写入 service_type 表
-func (s *serviceproject) AddServiceType(ctx context.Context, in *dto.OperateServiceTypeQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewServiceType(); 填充 in; dao.ServiceType(db).InsertOne(ctx, bean)
-	return nil
-}
-
-// GetServiceTypeById 根据编号获取服务类型
-// 对应 Java: ServiceProjectServiceImpl.getServiceTypeById -> serviceTypeMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.ServiceType(db).GetByID(ctx, types.BigInt(in.ID))
-func (s *serviceproject) GetServiceTypeById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.ServiceType(db).GetByID(ctx, types.BigInt(in.ID))
+// ListServiceType 获取服务类型下拉列表（未删除）
+// 对应 Java: ServiceProjectServiceImpl.listServiceType -> ServiceTypeFunc.listNotDelServiceType
+func (s *serviceproject) ListServiceType(ctx context.Context, in *dto.OperateServiceTypeQuery, out *[]dto.DropDown) error {
+	list, _, e := dao.ServiceType(db).List(ctx,
+		db.Table(tblservicetype.TableName).
+			Where(tblservicetype.DelFlag.Eq(constant.YesNoNo)),
+	)
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
+	*out = make([]dto.DropDown, 0, len(list))
+	for _, v := range list {
+		*out = append(*out, dto.DropDown{
+			ID:   int64(v.Id),
+			Name: v.Name.String(),
+		})
+	}
 	return nil
 }
 
-// EditServiceType 编辑服务类型
-// 对应 Java: ServiceProjectServiceImpl.editServiceType -> serviceTypeMapper.updateByPrimaryKeySelective
-// todo: 标准 CRUD - 按主键更新 service_type 表
-func (s *serviceproject) EditServiceType(ctx context.Context, in *dto.OperateServiceTypeQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<servicetype>.TypeName.Value(in.TypeName),
+// PageServiceByKey 分页查询服务项目（关联服务类型名称）
+// 对应 Java: ServiceProjectServiceImpl.pageServiceByKey -> ServiceItemFunc.listNotDelServiceItemByKey (ChargeEnum.ALL)
+func (s *serviceproject) PageServiceByKey(ctx context.Context, in *dto.PageServiceByKeyQuery, out *[]dto.PageServiceByKeyVO) error {
+	q := db.Table(tblserviceitem.TableName).
+		LeftJoin(tblserviceitem.TypeId, tblservicetype.Id).
+		Where(tblserviceitem.DelFlag.Eq(constant.YesNoNo))
+	if in.ServiceName != nil && *in.ServiceName != "" {
+		q.And(tblserviceitem.Name.Like(*in.ServiceName))
 	}
-	_, e := dao.ServiceType(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
-	return e
+	if in.TypeName != nil && *in.TypeName != "" {
+		q.And(tblservicetype.Name.Like(*in.TypeName))
+	}
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(
+			tblserviceitem.Id.AsName("id"),
+			tblservicetype.Name.AsName("type_name"),
+			tblserviceitem.Name.AsName("service_name"),
+			tblserviceitem.ChargeMethod.AsName("charge_method"),
+			tblserviceitem.Price.AsName("price"),
+			tblserviceitem.NeedDate.AsName("need_date"),
+		).
+		Desc(tblserviceitem.UpdateTime).
+		Select().
+		Gets(ctx, out)
 }
 
-// DeleteServiceType 删除服务类型
-// 对应 Java: ServiceProjectServiceImpl.deleteServiceType -> serviceTypeMapper.deleteByPrimaryKey
-// todo: 标准 CRUD - dao.ServiceType(db).DeleteById(ctx, types.BigInt(in.ID))
-func (s *serviceproject) DeleteServiceType(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.ServiceType(db).DeleteById(ctx, types.BigInt(in.ID))
-	return e
+// GetServiceById 根据编号获取服务项目（编辑回显）
+// 对应 Java: ServiceProjectServiceImpl.getServiceById
+func (s *serviceproject) GetServiceById(ctx context.Context, in *dto.IDReq, out *dto.OperateServiceQuery) error {
+	obj, has, e := dao.ServiceItem(db).GetByID(ctx, types.BigInt(*in.ID))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return errors.New("服务项目不存在")
+	}
+	out.ID = int64Ptr(int64(obj.Id))
+	out.TypeID = int64Ptr(int64(obj.TypeId))
+	out.Name = strPtr(obj.Name.String())
+	out.ChargeMethod = strPtr(obj.ChargeMethod.String())
+	out.Price = float64Ptr(obj.Price.Float64())
+	out.NeedDate = intPtr(int(obj.NeedDate))
+	return nil
 }
 
-// AddService 新增服务
-// 对应 Java: ServiceProjectServiceImpl.addService -> serviceProjectMapper.insertSelective
-// todo: 标准 CRUD - dao.ServiceProject(db).InsertOne 写入 service_project 表(含 serviceName/serviceTypeId/price 等)
+// AddService 新增服务项目（同一类型下名称不重复 + 类型数量上限）
+// 对应 Java: ServiceProjectServiceImpl.addService -> ServiceItemFunc.getServiceItemByName / checkServiceTotal
 func (s *serviceproject) AddService(ctx context.Context, in *dto.OperateServiceQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewServiceProject(); 填充 in; dao.ServiceProject(db).InsertOne(ctx, bean)
-	return nil
-}
-
-// GetServiceById 根据编号获取服务
-// 对应 Java: ServiceProjectServiceImpl.getServiceById -> serviceProjectMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.ServiceProject(db).GetByID(ctx, types.BigInt(in.ID))
-func (s *serviceproject) GetServiceById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.ServiceProject(db).GetByID(ctx, types.BigInt(in.ID))
+	repeat, e := dao.ServiceItem(db).Exists(ctx,
+		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
+		tblserviceitem.Name.Eq(*in.Name),
+		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+	)
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
-	return nil
-}
-
-// EditService 编辑服务
-// 对应 Java: ServiceProjectServiceImpl.editService -> serviceProjectMapper.updateByPrimaryKeySelective
-// todo: 标准 CRUD - 按主键更新 service_project 表
-func (s *serviceproject) EditService(ctx context.Context, in *dto.OperateServiceQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<serviceproject>.ServiceName.Value(in.ServiceName),
+	if repeat {
+		return errors.New("该服务类型下服务名称已存在")
 	}
-	_, e := dao.ServiceProject(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
+	total, e := dao.ServiceItem(db).Count(ctx,
+		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
+		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+	)
+	if e != nil {
+		return e
+	}
+	if int(total) >= serviceTotalLimit {
+		return errors.New("该服务类型下服务项目数量已达上限")
+	}
+	bean := do.NewServiceItem()
+	bean.TypeId = types.BigInt(*in.TypeID)
+	bean.Name = types.String(*in.Name)
+	bean.ChargeMethod = types.String(*in.ChargeMethod)
+	bean.Price = types.Float64(*in.Price)
+	bean.NeedDate = types.Int32(*in.NeedDate)
+	bean.DelFlag = types.Int8(constant.YesNoNo)
+	_, e = dao.ServiceItem(db).InsertOne(ctx, bean)
 	return e
 }
 
-// DeleteService 删除服务
-// 对应 Java: ServiceProjectServiceImpl.deleteService -> serviceProjectMapper.deleteByPrimaryKey
-// todo: 标准 CRUD - dao.ServiceProject(db).DeleteById(ctx, types.BigInt(in.ID))
+// EditService 编辑服务项目（同一类型下名称不重复排除自身 + 类型数量上限）
+// 对应 Java: ServiceProjectServiceImpl.editService
+func (s *serviceproject) EditService(ctx context.Context, in *dto.OperateServiceQuery, out *dto.EmptyResp) error {
+	repeat, e := dao.ServiceItem(db).Exists(ctx,
+		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
+		tblserviceitem.Name.Eq(*in.Name),
+		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblserviceitem.Id.NotEq(types.BigInt(*in.ID)),
+	)
+	if e != nil {
+		return e
+	}
+	if repeat {
+		return errors.New("该服务类型下服务名称已存在")
+	}
+	total, e := dao.ServiceItem(db).Count(ctx,
+		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
+		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+	)
+	if e != nil {
+		return e
+	}
+	if int(total) >= serviceTotalLimit {
+		return errors.New("该服务类型下服务项目数量已达上限")
+	}
+	bean := do.NewServiceItem()
+	bean.Id = types.BigInt(*in.ID)
+	bean.TypeId = types.BigInt(*in.TypeID)
+	bean.Name = types.String(*in.Name)
+	bean.ChargeMethod = types.String(*in.ChargeMethod)
+	bean.Price = types.Float64(*in.Price)
+	bean.NeedDate = types.Int32(*in.NeedDate)
+	_, e = dao.ServiceItem(db).UpdateOne(ctx, bean)
+	return e
+}
+
+// DeleteService 删除服务项目（逻辑删除）
+// 对应 Java: ServiceProjectServiceImpl.deleteService -> del_flag = YES
 func (s *serviceproject) DeleteService(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.ServiceProject(db).DeleteById(ctx, types.BigInt(in.ID))
+	bean := do.NewServiceItem()
+	bean.Id = types.BigInt(*in.ID)
+	bean.DelFlag = types.Int8(constant.YesNoYes)
+	_, e := dao.ServiceItem(db).UpdateOne(ctx, bean)
+	return e
+}
+
+// AddServiceType 新增服务类型（名称不重复 + 总数上限）
+// 对应 Java: ServiceProjectServiceImpl.addServiceType -> ServiceTypeFunc.getServiceTypeByName / checkTypeTotal
+func (s *serviceproject) AddServiceType(ctx context.Context, in *dto.OperateServiceTypeQuery, out *dto.EmptyResp) error {
+	repeat, e := dao.ServiceType(db).Exists(ctx,
+		tblservicetype.Name.Eq(*in.Name),
+		tblservicetype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+	)
+	if e != nil {
+		return e
+	}
+	if repeat {
+		return errors.New("服务类型名称已存在")
+	}
+	total, e := dao.ServiceType(db).Count(ctx, tblservicetype.DelFlag.Eq(constant.YesNoNo))
+	if e != nil {
+		return e
+	}
+	if int(total) >= serviceTotalLimit {
+		return errors.New("服务类型数量已达上限")
+	}
+	bean := do.NewServiceType()
+	bean.Name = types.String(*in.Name)
+	bean.DelFlag = types.Int8(constant.YesNoNo)
+	_, e = dao.ServiceType(db).InsertOne(ctx, bean)
+	return e
+}
+
+// GetServiceTypeById 根据编号获取服务类型（编辑回显）
+// 对应 Java: ServiceProjectServiceImpl.getServiceTypeById
+func (s *serviceproject) GetServiceTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateServiceTypeQuery) error {
+	obj, has, e := dao.ServiceType(db).GetByID(ctx, types.BigInt(*in.ID))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return errors.New("服务类型不存在")
+	}
+	out.ID = int64Ptr(int64(obj.Id))
+	out.Name = strPtr(obj.Name.String())
+	return nil
+}
+
+// EditServiceType 编辑服务类型（名称不重复排除自身 + 总数上限）
+// 对应 Java: ServiceProjectServiceImpl.editServiceType
+func (s *serviceproject) EditServiceType(ctx context.Context, in *dto.OperateServiceTypeQuery, out *dto.EmptyResp) error {
+	repeat, e := dao.ServiceType(db).Exists(ctx,
+		tblservicetype.Name.Eq(*in.Name),
+		tblservicetype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblservicetype.Id.NotEq(types.BigInt(*in.ID)),
+	)
+	if e != nil {
+		return e
+	}
+	if repeat {
+		return errors.New("服务类型名称已存在")
+	}
+	total, e := dao.ServiceType(db).Count(ctx, tblservicetype.DelFlag.Eq(constant.YesNoNo))
+	if e != nil {
+		return e
+	}
+	if int(total) >= serviceTotalLimit {
+		return errors.New("服务类型数量已达上限")
+	}
+	bean := do.NewServiceType()
+	bean.Id = types.BigInt(*in.ID)
+	bean.Name = types.String(*in.Name)
+	_, e = dao.ServiceType(db).UpdateOne(ctx, bean)
+	return e
+}
+
+// DeleteServiceType 删除服务类型（存在子服务则不允许删除）
+// 对应 Java: ServiceProjectServiceImpl.deleteServiceType -> ServiceItemFunc.checkServiceItem
+func (s *serviceproject) DeleteServiceType(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
+	hasChild, e := dao.ServiceItem(db).Exists(ctx,
+		tblserviceitem.TypeId.Eq(types.BigInt(*in.ID)),
+		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+	)
+	if e != nil {
+		return e
+	}
+	if hasChild {
+		return errors.New("该服务类型下存在服务项目，无法删除")
+	}
+	bean := do.NewServiceType()
+	bean.Id = types.BigInt(*in.ID)
+	bean.DelFlag = types.Int8(constant.YesNoYes)
+	_, e = dao.ServiceType(db).UpdateOne(ctx, bean)
 	return e
 }

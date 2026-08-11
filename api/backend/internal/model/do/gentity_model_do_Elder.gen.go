@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const ElderTableName = "elder"
+// const ElderTableName = "elder"
 
 var (
 	elderPool = pool.New[*Elder](func() any {
@@ -164,7 +164,7 @@ func (p *Elder) Reset() {
 }
 
 func (p *Elder) TableName() string {
-	return ElderTableName
+	return "elder"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

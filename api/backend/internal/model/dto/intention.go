@@ -48,6 +48,7 @@ type IntentionLabelVO struct {
 // OperateIntentionVO 操作意向客户响应（继承 OperateIntentionQuery）
 type OperateIntentionVO struct {
 	OperateIntentionQuery
+	IntentionLabelVOList []IntentionLabelVO `json:"intention_label_vo_list"` // 客户标签
 }
 
 // @request

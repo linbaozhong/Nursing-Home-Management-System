@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const BaseAttachmentTableName = "base_attachment"
+// const BaseAttachmentTableName = "base_attachment"
 
 var (
 	baseattachmentPool = pool.New[*BaseAttachment](func() any {
@@ -140,7 +140,7 @@ func (p *BaseAttachment) Reset() {
 }
 
 func (p *BaseAttachment) TableName() string {
-	return BaseAttachmentTableName
+	return "base_attachment"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

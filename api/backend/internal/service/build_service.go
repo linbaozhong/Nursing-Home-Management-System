@@ -180,7 +180,7 @@ func (b *build) buildTree(buildings []*do.Building, floors []*do.Floor, rooms []
 // PageBuildingByKey 分页查询楼宇
 // 对应 Java: BuildServiceImpl.pageBuildingByKey -> BuildingMapper.listBuildingByKey
 func (b *build) PageBuildingByKey(ctx context.Context, in *dto.PageBuildingByKeyQuery, out *[]dto.PageBuildingByKeyVO) error {
-	q := db.Table(do.BuildingTableName).
+	q := db.Table(tblbuilding.TableName).
 		Where(tblbuilding.DelFlag.Eq(constant.YesNoNo)).
 		Desc(tblbuilding.Id)
 	if in.Key != nil {
@@ -277,7 +277,7 @@ func (b *build) DeleteBuilding(ctx context.Context, in *dto.IDReq, out *dto.Empt
 // PageFloorByKey 分页查询楼层
 // 对应 Java: BuildServiceImpl.pageFloorByKey -> FloorMapper.listFloorByKey
 func (b *build) PageFloorByKey(ctx context.Context, in *dto.PageFloorByKeyQuery, out *[]dto.PageFloorByKeyVO) error {
-	q := db.Table(do.FloorTableName).Where(tblfloor.DelFlag.Eq(constant.YesNoNo))
+	q := db.Table(tblfloor.TableName).Where(tblfloor.DelFlag.Eq(constant.YesNoNo))
 	if in.BuildID != nil {
 		q.And(tblfloor.BuildingId.Eq(types.BigInt(*in.BuildID)))
 	}
@@ -398,7 +398,7 @@ func (b *build) DeleteFloor(ctx context.Context, in *dto.IDReq, out *dto.EmptyRe
 // PageRoomByKey 分页查询房间
 // 对应 Java: BuildServiceImpl.pageRoomByKey -> RoomMapper.listRoomByKey
 func (b *build) PageRoomByKey(ctx context.Context, in *dto.PageRoomByKeyQuery, out *[]dto.PageRoomByKeyVO) error {
-	q := db.Table(do.RoomTableName).Where(tblroom.DelFlag.Eq(constant.YesNoNo))
+	q := db.Table(tblroom.TableName).Where(tblroom.DelFlag.Eq(constant.YesNoNo))
 	if in.BuildID != nil {
 		floors, _, e := dao.Floor(db).List(ctx, ace.Where(tblfloor.BuildingId.Eq(types.BigInt(*in.BuildID)), tblfloor.DelFlag.Eq(constant.YesNoNo)))
 		if e != nil {

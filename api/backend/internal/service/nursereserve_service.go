@@ -3,90 +3,248 @@ package service
 import (
 	"context"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblbed"
+	"api/internal/model/define/table/tblelder"
+	"api/internal/model/define/table/tblnursereserve"
+	"api/internal/model/define/table/tblstaff"
+	"api/internal/model/do"
 	"api/internal/model/dto"
-	"github.com/linbaozhong/gentity/pkg/ace/dialect"
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-type nursereserve struct{}
+var _ = (*nurseReserveService)(nil)
 
-var NurseReserve = &nursereserve{}
+type nurseReserveService struct{}
 
-// PageNurseReserveByKey 分页查询护理预订（联表 elder、user、reserve、nurse_grade）
-// 对应 Java: NurseReserveServiceImpl.pageNurseReserveByKey -> NurseReserveMapper.listNurseReserveByKey
-// SQL: SELECT nr.*, e.elder_name, u.name AS nurse_user_name, r.reserve_no, ng.grade_name
-//
-//	FROM nurse_reserve nr
-//	LEFT JOIN elder e ON e.id = nr.elder_id
-//	LEFT JOIN user u ON u.id = nr.nurse_user_id
-//	LEFT JOIN reserve r ON r.id = nr.reserve_id
-//	LEFT JOIN nurse_grade ng ON ng.id = nr.nurse_grade_id
-//	WHERE (e.elder_name LIKE %key% OR nr.id = key) [可选]
-//	ORDER BY nr.create_time DESC; 再由 PageUtil 内存分页。
-//
-// Todo: 1) in.Key 非空 -> (tbl<nursereserve>.Id.Eq(in.Key) OR tbl<elder>.ElderName.Like(in.Key))
-//
-//	2) DB 分页: Count + List(联表 LeftJoin)
-//	3) 组装含老人/护理员/护理等级名的 VO 并赋值 out
-func (n *nursereserve) PageNurseReserveByKey(ctx context.Context, in *dto.PageNurseReserveByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
-	return nil
+// nurseReserveJoin 接收护理预定联表（老人姓名、床位名、护理员姓名）查询结果的中间结构体
+type nurseReserveJoin struct {
+	ID           types.BigInt  `json:"id"`
+	ElderName    types.String  `json:"elder_name"`
+	BedName      types.String  `json:"bed_name"`
+	ServiceName  types.String  `json:"service_name"`
+	NeedDate     types.Int32   `json:"need_date"`
+	ServicePrice types.Float64 `json:"service_price"`
+	ChargeMethod types.String  `json:"charge_method"`
+	Frequency    types.Int32   `json:"frequency"`
+	PayAmount    types.Float64 `json:"pay_amount"`
+	NurseDate    types.Time    `json:"nurse_date"`
+	OrderFlag    types.Int8    `json:"order_flag"`
 }
 
-// GetNurseReserveByReserveIdAndElderId 根据预订编号与老人编号获取护理预订（编辑回显）
-// 对应 Java: NurseReserveServiceImpl.getNurseReserveByReserveIdAndElderId
-// SQL: SELECT * FROM nurse_reserve WHERE reserve_id = #{reserveId} AND elder_id = #{elderId}
-// todo: 标准查询 - dao.NurseReserve(db).Get(ctx, ace.Where(tbl<nursereserve>.ReserveId.Eq(in.ReserveId), tbl<nursereserve>.ElderId.Eq(in.ElderId)))
-func (n *nursereserve) GetNurseReserveByReserveIdAndElderId(ctx context.Context, in *dto.GetNurseReserveByReserveIdAndElderIdQuery, out *dto.EmptyResp) error {
-	// todo: obj, has, e := dao.NurseReserve(db).Get(ctx, ace.Where(
-	//	tbl<nursereserve>.ReserveId.Eq(in.ReserveId),
-	//	tbl<nursereserve>.ElderId.Eq(in.ElderId),
-	// ))
-	return nil
-}
-
-// AddNurseReserve 新增护理预订
-// 对应 Java: NurseReserveServiceImpl.addNurseReserve -> nurseReserveMapper.insertSelective
-// todo: 标准 CRUD - dao.NurseReserve(db).InsertOne 写入 nurse_reserve 表
-func (n *nursereserve) AddNurseReserve(ctx context.Context, in *dto.AddNurseReserveQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewNurseReserve(); 填充 in; dao.NurseReserve(db).InsertOne(ctx, bean)
-	return nil
-}
-
-// EditNurseReserve 编辑护理预订
-// 对应 Java: NurseReserveServiceImpl.editNurseReserve -> nurseReserveMapper.updateByPrimaryKeySelective
-// todo: 标准 CRUD - 按主键更新 nurse_reserve 表
-func (n *nursereserve) EditNurseReserve(ctx context.Context, in *dto.EditNurseReserveQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<nursereserve>.NurseGradeId.Value(in.NurseGradeId),
+// PageNurseReserveByKey 分页查询护理预定
+func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto.PageNurseReserveByKeyQuery, out *[]dto.PageNurseReserveByKeyVO) error {
+	if in.PageNum == nil || in.PageSize == nil {
+		return constant.ErrParamInvalid
 	}
-	_, e := dao.NurseReserve(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
-	return e
-}
-
-// DeleteNurseReserve 删除护理预订
-// 对应 Java: NurseReserveServiceImpl.deleteNurseReserve -> nurseReserveMapper.deleteByPrimaryKey
-// todo: 标准 CRUD - dao.NurseReserve(db).DeleteById(ctx, types.BigInt(in.ID))
-func (n *nursereserve) DeleteNurseReserve(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.NurseReserve(db).DeleteById(ctx, types.BigInt(in.ID))
-	return e
-}
-
-// PageSearchElderByKey 分页搜索老人（供护理预订选择老人）
-// 对应 Java: NurseReserveServiceImpl.pageSearchElderByKey -> elderMapper.listElderByKey
-// SQL: SELECT * FROM elder WHERE (elder_name LIKE %key% OR id = key) [可选] AND del_flag=0
-// todo: 查询 elder 表并分页, 结果赋值 out(需定义老人分页返回类型)
-func (n *nursereserve) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 elder 表并分页
+	q := ace.NewSelectBuilder(db).From(tblnursereserve.TableName).
+		LeftJoin(tblnursereserve.ElderId, tblelder.Id).
+		LeftJoin(tblelder.BedId, tblbed.Id)
+	if in.ElderName != nil && *in.ElderName != "" {
+		q = q.Where(tblelder.Name.Like(*in.ElderName))
+	}
+	if in.ServiceName != nil && *in.ServiceName != "" {
+		q = q.And(tblnursereserve.ServiceName.Like(*in.ServiceName))
+	}
+	if in.BedName != nil && *in.BedName != "" {
+		q = q.And(tblbed.Name.Like(*in.BedName))
+	}
+	var joins []nurseReserveJoin
+	has, e := q.Page(*in.PageNum, *in.PageSize).
+		Cols(
+			tblnursereserve.Id,
+			tblnursereserve.ServiceName,
+			tblnursereserve.NeedDate,
+			tblnursereserve.ServicePrice,
+			tblnursereserve.ChargeMethod,
+			tblnursereserve.Frequency,
+			tblnursereserve.PayAmount,
+			tblnursereserve.NurseDate,
+			tblnursereserve.OrderFlag,
+			tblelder.Name.As("elder_name"),
+			tblbed.Name.As("bed_name"),
+		).
+		OrderBy(tblnursereserve.Id, false).
+		Select().Gets(ctx, &joins)
+	if e != nil {
+		return e
+	}
+	if !has {
+		return nil
+	}
+	res := make([]dto.PageNurseReserveByKeyVO, 0, len(joins))
+	for _, j := range joins {
+		res = append(res, dto.PageNurseReserveByKeyVO{
+			ID:           int64(j.ID),
+			ElderName:    j.ElderName.String(),
+			BedName:      j.BedName.String(),
+			ServiceName:  j.ServiceName.String(),
+			NeedDate:     int(j.NeedDate),
+			ServicePrice: j.ServicePrice.Float64(),
+			ChargeMethod: j.ChargeMethod.String(),
+			Frequency:    int(j.Frequency),
+			PayAmount:    j.PayAmount.Float64(),
+			NurseDate:    j.NurseDate.Time(),
+			OrderFlag:    constant.YesNo(j.OrderFlag).String(),
+		})
+	}
+	*out = res
 	return nil
 }
 
-// ListNurseStaff 护理员工列表
-// 对应 Java: NurseReserveServiceImpl.listNurseStaff -> userMapper.listNurseStaff(角色=护理员)
-// SQL: SELECT * FROM user WHERE role = 护理员
-// todo: 查询 user(护理员)列表, 结果赋值 out(需定义返回类型)
-func (n *nursereserve) ListNurseStaff(ctx context.Context, in *dto.EmptyReq, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 user 护理员列表
+// GetNurseReserveByReserveIdAndElderId 按护理预定/老人编号查询护理预定
+func (s *nurseReserveService) GetNurseReserveByReserveIdAndElderId(ctx context.Context, in *dto.GetNurseReserveByReserveIdAndElderIdQuery, out *dto.GetNurseReserveByReserveIdAndElderIdVO) error {
+	if in.ReserveID == nil || in.ElderID == nil {
+		return constant.ErrParamInvalid
+	}
+	nr := new(do.NurseReserve)
+	has, e := dao.NurseReserve(db).Get(ctx, ace.Where(tblnursereserve.Id.Eq(types.BigInt(*in.ReserveID))).
+		And(tblnursereserve.ElderId.Eq(types.BigInt(*in.ElderID))))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return constant.ErrDataNotExist
+	}
+	out.ID = int64(nr.Id)
+	out.ServiceName = nr.ServiceName.String()
+	out.NeedDate = int(nr.NeedDate)
+	out.ServicePrice = nr.ServicePrice.Float64()
+	out.ChargeMethod = nr.ChargeMethod.String()
+	out.Frequency = int(nr.Frequency)
+	out.PayAmount = nr.PayAmount.Float64()
+	out.NurseDate = nr.NurseDate.Time()
+	out.OrderFlag = constant.YesNo(nr.OrderFlag).String()
+	// 老人姓名、床位名
+	if el := new(do.Elder); eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(nr.ElderId))); ee == nil && eh {
+		out.ElderName = el.Name.String()
+		if el.BedId != 0 {
+			if b := new(do.Bed); bh, be := dao.Bed(db).Get(ctx, ace.Where(tblbed.Id.Eq(el.BedId))); be == nil && bh {
+				out.BedName = b.Name.String()
+			}
+		}
+	}
+	return nil
+}
+
+// AddNurseReserve 新增护理预定
+func (s *nurseReserveService) AddNurseReserve(ctx context.Context, in *dto.AddNurseReserveQuery, out *dto.EmptyResp) error {
+	if in.ElderID == nil || in.ServiceName == nil || in.PayAmount == nil {
+		return constant.ErrParamInvalid
+	}
+	rec := &do.NurseReserve{
+		ElderId:     types.BigInt(*in.ElderID),
+		ServiceName: types.String(orEmpty(in.ServiceName)),
+		NeedDate:    types.Int32(int32(orInt(in.NeedDate))),
+		ServicePrice: types.Float64(orFloat64(in.ServicePrice)),
+		ChargeMethod: types.String(orEmpty(in.ChargeMethod)),
+		Frequency:    types.Int32(int32(orInt(in.Frequency))),
+		PayAmount:    types.Float64(orFloat64(in.PayAmount)),
+		OrderFlag:    types.Int8(constant.YesNoNo),
+		CreateId:     types.BigInt(*in.ElderID),
+	}
+	if _, e := dao.NurseReserve(db).InsertOne(ctx, rec); e != nil {
+		return e
+	}
+	return nil
+}
+
+// EditNurseReserve 编辑护理预定
+func (s *nurseReserveService) EditNurseReserve(ctx context.Context, in *dto.EditNurseReserveQuery, out *dto.EmptyResp) error {
+	if in.ID == nil {
+		return constant.ErrParamInvalid
+	}
+	if _, e := dao.NurseReserve(db).UpdateById(ctx, types.BigInt(*in.ID),
+		tblnursereserve.ElderId.Set(types.BigInt(orInt64(in.ElderID))),
+		tblnursereserve.NeedDate.Set(types.Int32(int32(orInt(in.NeedDate)))),
+		tblnursereserve.ChargeMethod.Set(types.String(orEmpty(in.ChargeMethod))),
+		tblnursereserve.Frequency.Set(types.Int32(int32(orInt(in.Frequency)))),
+		tblnursereserve.ServicePrice.Set(types.Float64(orFloat64(in.ServicePrice))),
+		tblnursereserve.PayAmount.Set(types.Float64(orFloat64(in.PayAmount))),
+	); e != nil {
+		return e
+	}
+	return nil
+}
+
+// DeleteNurseReserve 删除护理预定（物理删除）
+func (s *nurseReserveService) DeleteNurseReserve(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
+	if _, e := dao.NurseReserve(db).DeleteById(ctx, types.BigInt(*in.ID)); e != nil {
+		return e
+	}
+	return nil
+}
+
+// PageSearchElderByKey 分页查询老人（供护理预定选择）
+func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+	if in.PageNum == nil || in.PageSize == nil {
+		return constant.ErrParamInvalid
+	}
+	q := ace.NewSelectBuilder(db).From(tblelder.TableName)
+	if in.Name != nil && *in.Name != "" {
+		q = q.Where(tblelder.Name.Like(*in.Name))
+	}
+	if in.Phone != nil && *in.Phone != "" {
+		q = q.And(tblelder.Phone.Like(*in.Phone))
+	}
+	if in.CheckFlag != nil {
+		q = q.And(tblelder.CheckFlag.Eq(types.Int8(*in.CheckFlag)))
+	}
+	var elders []do.Elder
+	has, e := q.Page(*in.PageNum, *in.PageSize).
+		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.CheckFlag, tblelder.BedId).
+		OrderBy(tblelder.Id, false).
+		Select().Gets(ctx, &elders)
+	if e != nil {
+		return e
+	}
+	if !has {
+		return nil
+	}
+	res := make([]dto.PageSearchElderByKeyVO, 0, len(elders))
+	for _, el := range elders {
+		bedName := ""
+		if el.BedId != 0 {
+			if b := new(do.Bed); bh, be := dao.Bed(db).Get(ctx, ace.Where(tblbed.Id.Eq(el.BedId))); be == nil && bh {
+				bedName = b.Name.String()
+			}
+		}
+		res = append(res, dto.PageSearchElderByKeyVO{
+			ID:        int64(el.Id),
+			Name:      el.Name.String(),
+			IDNum:     el.IdNum.String(),
+			Sex:       el.Sex.String(),
+			Phone:     el.Phone.String(),
+			Address:   el.Address.String(),
+			CheckFlag: constant.CheckStatus(el.CheckFlag).String(),
+			BedName:   bedName,
+		})
+	}
+	*out = res
+	return nil
+}
+
+// ListNurseStaff 查询护理员工（护理员列表）
+func (s *nurseReserveService) ListNurseStaff(ctx context.Context, in *dto.EmptyReq, out *[]dto.PageSearchStaffByKeyVO) error {
+	var staffs []do.Staff
+	has, e := dao.Staff(db).List(ctx, ace.NewSelectBuilder(db).From(tblstaff.TableName).
+		OrderBy(tblstaff.Id, false))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return nil
+	}
+	res := make([]dto.PageSearchStaffByKeyVO, 0, len(staffs))
+	for _, st := range staffs {
+		res = append(res, dto.PageSearchStaffByKeyVO{
+			ID:    int64(st.Id),
+			Name:  st.Name.String(),
+			Phone: st.Phone.String(),
+		})
+	}
+	*out = res
 	return nil
 }

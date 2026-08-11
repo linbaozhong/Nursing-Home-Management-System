@@ -11,6 +11,7 @@ import (
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -24,7 +25,7 @@ var Label = &label{}
 // PageLabelByKey 分页查询标签（关联标签类型名称）
 // 对应 Java: LabelServiceImpl.pageLabelByKey -> LabelFunc.listLabelByKey
 func (l *label) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyQuery, out *[]dto.PageLabelByKeyVO) error {
-	q := db.Table(do.LabelTableName).
+	q := db.Table(tbllabel.TableName).
 		LeftJoin(tbllabel.TypeId, tbllabeltype.Id).
 		Where(tbllabel.DelFlag.Eq(constant.YesNoNo))
 	if in.Key != nil && *in.Key != "" {
@@ -47,7 +48,7 @@ func (l *label) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyQuery,
 // GetLabelById 根据编号获取标签（编辑回显）
 // 对应 Java: LabelServiceImpl.getLabelById
 func (l *label) GetLabelById(ctx context.Context, in *dto.IDReq, out *dto.OperateLabelVO) error {
-	obj, has, e := dao.Label(db).Get(ctx, tbllabel.Id.Eq(types.BigInt(*in.ID)))
+	obj, has, e := dao.Label(db).Get(ctx, ace.Where(tbllabel.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -65,7 +66,7 @@ func (l *label) GetLabelById(ctx context.Context, in *dto.IDReq, out *dto.Operat
 // 对应 Java: LabelServiceImpl.addLabel -> LabelFunc.checkLabelLimit / checkLabelType
 func (l *label) AddLabel(ctx context.Context, in *dto.AddLabelQuery, out *dto.EmptyResp) error {
 	// 校验标签类型存在
-	_, has, e := dao.LabelType(db).Get(ctx, tbllabeltype.Id.Eq(types.BigInt(*in.TypeID)))
+	_, has, e := dao.LabelType(db).Get(ctx, ace.Where(tbllabeltype.Id.Eq(types.BigInt(*in.TypeID))))
 	if e != nil {
 		return e
 	}
@@ -76,7 +77,7 @@ func (l *label) AddLabel(ctx context.Context, in *dto.AddLabelQuery, out *dto.Em
 	repeat, e := dao.Label(db).Exists(ctx,
 		tbllabel.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tbllabel.Name.Eq(*in.Name),
-		tbllabel.DelFlag.Eq(constant.YesNoNo),
+		tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 	)
 	if e != nil {
 		return e
@@ -103,7 +104,7 @@ func (l *label) AddLabel(ctx context.Context, in *dto.AddLabelQuery, out *dto.Em
 // EditLabel 修改标签（校验类型存在、名称不重复排除自身、总数不超上限）
 // 对应 Java: LabelServiceImpl.updateLabel
 func (l *label) EditLabel(ctx context.Context, in *dto.EditLabelQuery, out *dto.EmptyResp) error {
-	_, has, e := dao.LabelType(db).Get(ctx, tbllabeltype.Id.Eq(types.BigInt(*in.TypeID)))
+	_, has, e := dao.LabelType(db).Get(ctx, ace.Where(tbllabeltype.Id.Eq(types.BigInt(*in.TypeID))))
 	if e != nil {
 		return e
 	}
@@ -113,8 +114,8 @@ func (l *label) EditLabel(ctx context.Context, in *dto.EditLabelQuery, out *dto.
 	repeat, e := dao.Label(db).Exists(ctx,
 		tbllabel.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tbllabel.Name.Eq(*in.Name),
-		tbllabel.DelFlag.Eq(constant.YesNoNo),
-		tbllabel.Id.Neq(types.BigInt(*in.ID)),
+		tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tbllabel.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
 		return e
@@ -148,7 +149,7 @@ func (l *label) DeleteLabel(ctx context.Context, in *dto.IDReq, out *dto.EmptyRe
 // PageLabelType 分页查询标签类型
 // 对应 Java: LabelServiceImpl.pageLabelTypeByKey -> LabelTypeFunc.listLabelTypeByKey
 func (l *label) PageLabelType(ctx context.Context, in *dto.PageLabelTypeByKeyQuery, out *[]dto.PageLabelTypeVO) error {
-	q := db.Table(do.LabelTypeTableName).
+	q := db.Table(tbllabeltype.TableName).
 		Where(tbllabeltype.DelFlag.Eq(constant.YesNoNo))
 	if in.Name != nil && *in.Name != "" {
 		q.And(tbllabeltype.Name.Like(*in.Name))
@@ -168,7 +169,7 @@ func (l *label) PageLabelType(ctx context.Context, in *dto.PageLabelTypeByKeyQue
 // GetLabelTypeById 根据编号获取标签类型（编辑回显）
 // 对应 Java: LabelServiceImpl.getLabelTypeById
 func (l *label) GetLabelTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateLabelTypeVO) error {
-	obj, has, e := dao.LabelType(db).Get(ctx, tbllabeltype.Id.Eq(types.BigInt(*in.ID)))
+	obj, has, e := dao.LabelType(db).Get(ctx, ace.Where(tbllabeltype.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -185,7 +186,7 @@ func (l *label) GetLabelTypeById(ctx context.Context, in *dto.IDReq, out *dto.Op
 func (l *label) AddLabelType(ctx context.Context, in *dto.AddLabelTypeQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.LabelType(db).Exists(ctx,
 		tbllabeltype.Name.Eq(*in.Name),
-		tbllabeltype.DelFlag.Eq(constant.YesNoNo),
+		tbllabeltype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 	)
 	if e != nil {
 		return e
@@ -211,8 +212,8 @@ func (l *label) AddLabelType(ctx context.Context, in *dto.AddLabelTypeQuery, out
 func (l *label) EditLabelType(ctx context.Context, in *dto.EditLabelTypeQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.LabelType(db).Exists(ctx,
 		tbllabeltype.Name.Eq(*in.Name),
-		tbllabeltype.DelFlag.Eq(constant.YesNoNo),
-		tbllabeltype.Id.Neq(types.BigInt(*in.ID)),
+		tbllabeltype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tbllabeltype.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
 		return e
@@ -239,7 +240,7 @@ func (l *label) EditLabelType(ctx context.Context, in *dto.EditLabelTypeQuery, o
 func (l *label) DeleteLabelType(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	hasChild, e := dao.Label(db).Exists(ctx,
 		tbllabel.TypeId.Eq(types.BigInt(*in.ID)),
-		tbllabel.DelFlag.Eq(constant.YesNoNo),
+		tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 	)
 	if e != nil {
 		return e

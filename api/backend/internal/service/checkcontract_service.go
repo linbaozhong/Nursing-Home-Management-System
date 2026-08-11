@@ -1,8 +1,8 @@
 package service
 
 import (
-  "api/internal/model/define/table/tblcommunicationrecord"
-  "context"
+	"api/internal/model/define/table/tblcommunicationrecord"
+	"context"
 	"errors"
 
 	"api/internal/constant"
@@ -22,7 +22,6 @@ import (
 	"api/internal/model/dto"
 
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
-	"github.com/linbaozhong/gentity/pkg/conv"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -34,7 +33,7 @@ var CheckContract = &checkcontract{}
 // PageCheckContractByKey 分页查询入住签约老人（入住中 + 退住审核）
 // 对应 Java: CheckContractFunc.listCheckContract
 func (c *checkcontract) PageCheckContractByKey(ctx context.Context, in *dto.PageCheckContractByKeyQuery, out *[]dto.PageCheckContractByKeyVO) error {
-	q := db.Table(do.ElderTableName).
+	q := db.Table(tblelder.TableName).
 		Where(
 			// tblelder.DelFlag.Eq(constant.YesNoNo),
 			tblelder.CheckFlag.In(
@@ -67,7 +66,7 @@ func (c *checkcontract) PageCheckContractByKey(ctx context.Context, in *dto.Page
 // PageSearchElderByKey 分页查询搜索老人（咨询/意向/预定/退住）
 // 对应 Java: CheckContractFunc.listSearchElder
 func (c *checkcontract) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
-	q := db.Table(do.ElderTableName).
+	q := db.Table(tblelder.TableName).
 		Where(
 			// tblelder.DelFlag.Eq(constant.YesNoNo),
 			tblelder.CheckFlag.In(
@@ -100,7 +99,7 @@ func (c *checkcontract) PageSearchElderByKey(ctx context.Context, in *dto.PageSe
 
 // ListNurseGrade 护理等级下拉
 func (c *checkcontract) ListNurseGrade(ctx context.Context, in *dto.EmptyReq, out *[]dto.DropDown) error {
-	return db.Table(do.NurseGradeTableName).
+	return db.Table(tblnursegrade.TableName).
 		Cols(tblnursegrade.Id, tblnursegrade.Name).
 		Where(tblnursegrade.DelFlag.Eq(constant.YesNoNo)).
 		Select().
@@ -109,7 +108,7 @@ func (c *checkcontract) ListNurseGrade(ctx context.Context, in *dto.EmptyReq, ou
 
 // ListCateringSet 餐饮套餐下拉
 func (c *checkcontract) ListCateringSet(ctx context.Context, in *dto.EmptyReq, out *[]dto.DropDown) error {
-	return db.Table(do.CateringSetTableName).
+	return db.Table(tblcateringset.TableName).
 		Cols(tblcateringset.Id, tblcateringset.Name).
 		Where(tblcateringset.DelFlag.Eq(constant.YesNoNo)).
 		Select().
@@ -119,7 +118,7 @@ func (c *checkcontract) ListCateringSet(ctx context.Context, in *dto.EmptyReq, o
 // GetBuildTree 楼宇三层下拉树（楼栋 -> 楼层 -> 房间）
 func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out *[]dto.BuildingVO) error {
 	var buildings []do.Building
-	e := db.Table(do.BuildingTableName).
+	e := db.Table(tblbuilding.TableName).
 		Cols(tblbuilding.Id, tblbuilding.Name).
 		Where(tblbuilding.DelFlag.Eq(constant.YesNoNo)).
 		Select().
@@ -136,7 +135,7 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 		buildingIds = append(buildingIds, b.Id)
 	}
 	var floors []do.Floor
-	e = db.Table(do.FloorTableName).
+	e = db.Table(tblfloor.TableName).
 		Cols(tblfloor.Id, tblfloor.Name, tblfloor.BuildingId).
 		Where(
 			tblfloor.DelFlag.Eq(constant.YesNoNo),
@@ -153,7 +152,7 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 	}
 	var rooms []do.Room
 	if len(floorIds) > 0 {
-		e = db.Table(do.RoomTableName).
+		e = db.Table(tblroom.TableName).
 			Cols(tblroom.Id, tblroom.Name, tblroom.FloorId).
 			Where(
 				tblroom.DelFlag.Eq(constant.YesNoNo),
@@ -166,32 +165,32 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 		}
 	}
 
-  // 将房间列表转换为 map[楼层编号][]房间
-  roomMap := make(map[int64][]dto.FloorItemVO, len(rooms))
+	// 将房间列表转换为 map[楼层编号][]房间
+	roomMap := make(map[int64][]dto.FloorItemVO, len(rooms))
 	for _, f := range rooms {
-    roomMap[int64(f.FloorId)] = append(roomMap[int64(f.FloorId)], dto.FloorItemVO{
-			ID:    int64(f.Id),
-			Name:  f.Name.String(),
+		roomMap[int64(f.FloorId)] = append(roomMap[int64(f.FloorId)], dto.FloorItemVO{
+			ID:   int64(f.Id),
+			Name: f.Name.String(),
 		})
 	}
-  // 将楼层列表转换为 map[楼栋编号][]楼层
-  floorMap := make(map[int64][]dto.BuildingItemVO, len(floors))
-  for _, b := range floors {
-    floorMap[int64(b.BuildingId)] = append(floorMap[int64(b.BuildingId)], dto.BuildingItemVO{
-      ID:     int64(b.Id),
-      Name:   b.Name.String(),
-      RoomList: roomMap[int64(b.Id)],
-    })
-  }
-  // 将楼栋列表转换为树形结构
-  tree := make([]dto.BuildingVO, 0, len(buildings))
-  for _, b := range buildings {
-    tree = append(tree, dto.BuildingVO{
-      ID:     int64(b.Id),
-      Name:   b.Name.String(),
-      FloorList: floorMap[int64(b.Id)],
-    })
-  }
+	// 将楼层列表转换为 map[楼栋编号][]楼层
+	floorMap := make(map[int64][]dto.BuildingItemVO, len(floors))
+	for _, b := range floors {
+		floorMap[int64(b.BuildingId)] = append(floorMap[int64(b.BuildingId)], dto.BuildingItemVO{
+			ID:       int64(b.Id),
+			Name:     b.Name.String(),
+			RoomList: roomMap[int64(b.Id)],
+		})
+	}
+	// 将楼栋列表转换为树形结构
+	tree := make([]dto.BuildingVO, 0, len(buildings))
+	for _, b := range buildings {
+		tree = append(tree, dto.BuildingVO{
+			ID:        int64(b.Id),
+			Name:      b.Name.String(),
+			FloorList: floorMap[int64(b.Id)],
+		})
+	}
 	*out = tree
 	return nil
 }
@@ -199,7 +198,7 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 // GetBedById 根据编号获取床位（含房间类型信息）
 // 对应 Java: BedFunc.getBedById
 func (c *checkcontract) GetBedById(ctx context.Context, in *dto.IDReq, out *dto.GetBedByIDVO) error {
-	return db.Table(do.BedTableName).
+	return db.Table(tblbed.TableName).
 		LeftJoin(tblbed.RoomId, tblroom.Id).
 		LeftJoin(tblroom.TypeId, tblroomtype.Id).
 		Where(tblbed.Id.Eq(types.BigInt(*in.ID))).
@@ -252,14 +251,14 @@ func (c *checkcontract) AddCheckContract(ctx context.Context, in *dto.OperateChe
 	// 新增合同
 	contract := do.NewContract()
 	contract.ElderId = types.BigInt(*in.ID)
-	contract.BedId = types.BigInt(*in.BedID)
 	contract.StaffId = types.BigInt(*in.StaffID)
-	contract.NurseGradeId = types.BigInt(*in.NurseGradeID)
-	contract.CateringSetId = types.BigInt(*in.CateringSetID)
-	contract.SignDate = types.Time{conv.String2Time(*in.SignDate)}
-	contract.StartDate = types.Time{conv.String2Time(*in.StartDate)}
-	contract.EndDate = types.Time{conv.String2Time(*in.EndDate)}
-	contract.Remark = types.String(*in.Remark)
+	// contract.NursingGradeId = types.BigInt(*in.NursingGradeID)
+	// contract.CateringSetId = types.BigInt(*in.CateringSetID)
+	contract.SignDate = types.Time{*in.SignDate}
+	contract.StartDate = types.Time{*in.StartDate}
+	contract.EndDate = types.Time{*in.EndDate}
+	// contract.Remark = types.String(*in.Remark)
+
 	_, e = dao.Contract(db).InsertOne(ctx, contract)
 	if e != nil {
 		return e
@@ -272,18 +271,18 @@ func (c *checkcontract) AddCheckContract(ctx context.Context, in *dto.OperateChe
 		return e
 	}
 	// 批量添加紧急联系人
-	if len(in.OperateEmergencyContactQueryList) > 0 {
-		list := make([]*do.EmergencyContact, 0, len(in.OperateEmergencyContactQueryList))
-		for _, ec := range in.OperateEmergencyContactQueryList {
+	if len(in.EmergencyContactQueryList) > 0 {
+		list := make([]*do.EmergencyContact, 0, len(in.EmergencyContactQueryList))
+		for _, ec := range in.EmergencyContactQueryList {
 			bean := do.NewEmergencyContact()
 			bean.ElderId = types.BigInt(*in.ID)
 			bean.Name = types.String(*ec.Name)
 			bean.Phone = types.String(*ec.Phone)
 			bean.Relation = types.String(*ec.Relation)
-			bean.Remark = types.String(*ec.Remark)
+			bean.ReceiveFlag = types.Int8(*ec.ReceiveFlag)
 			list = append(list, bean)
 		}
-		_, e = dao.EmergencyContact(db).InsertBatch(ctx, list...)
+		_, e = dao.EmergencyContact(db).InsertBatch(ctx, list)
 		if e != nil {
 			return e
 		}
@@ -291,6 +290,7 @@ func (c *checkcontract) AddCheckContract(ctx context.Context, in *dto.OperateChe
 	// 修改客户状态为入住
 	_, e = dao.Elder(db).UpdateById(ctx, types.BigInt(*in.ID),
 		tblelder.CheckFlag.Set(constant.CheckEnter),
+		tblelder.BedId.Set(*in.BedID),
 	)
 	return e
 }
@@ -308,39 +308,33 @@ func (c *checkcontract) GetCheckContractById(ctx context.Context, in *dto.IDReq,
 	if !has {
 		return errors.New("客户不存在")
 	}
-	out.ID = int64(elder.Id)
-	out.Name = elder.Name.String()
-	out.IDNum = elder.IdNum.String()
-	out.Sex = elder.Sex.String()
-	out.Age = int(elder.Age)
-	out.Phone = elder.Phone.String()
-	out.Address = elder.Address.String()
-	out.CheckFlag = string(elder.CheckFlag)
+	out.ID = int64Ptr(int64(elder.Id))
+	out.Name = strPtr(elder.Name.String())
+	out.IDNum = strPtr(elder.IdNum.String())
+	out.Sex = strPtr(elder.Sex.String())
+	out.Age = intPtr(int(elder.Age))
+	out.Phone = strPtr(elder.Phone.String())
+	out.Address = strPtr(elder.Address.String())
 
 	contract, has, e := dao.Contract(db).GetByID(ctx, types.BigInt(*in.ID),
-		tblcontract.ElderId, tblcontract.StaffId, tblcontract.NurseGradeId,
-		tblcontract.CateringSetId, tblcontract.BedId, tblcontract.SignDate,
-		tblcontract.StartDate, tblcontract.EndDate, tblcontract.Remark,
+		tblcontract.ElderId, tblcontract.StaffId, tblcontract.SignDate,
+		tblcontract.StartDate, tblcontract.EndDate,
 	)
 	if e != nil {
 		return e
 	}
 	if has {
 		out.StaffID = int64Ptr(int64(contract.StaffId))
-		out.SignDate = strPtr(contract.SignDate.String())
-		out.StartDate = strPtr(contract.StartDate.String())
-		out.EndDate = strPtr(contract.EndDate.String())
-		out.NurseGradeID = int64Ptr(int64(contract.NurseGradeId))
-		out.CateringSetID = int64Ptr(int64(contract.CateringSetId))
-		out.BedID = int64Ptr(int64(contract.BedId))
-		out.Remark = strPtr(contract.Remark.String())
+		out.SignDate = &contract.SignDate.Time
+		out.StartDate = &contract.StartDate.Time
+		out.EndDate = &contract.EndDate.Time
 	}
 
 	var contacts []do.EmergencyContact
-	e = db.Table(do.EmergencyContactTableName).
+	e = db.Table(tblemergencycontact.TableName).
 		Cols(
 			tblemergencycontact.Id, tblemergencycontact.Name,
-			tblemergencycontact.Phone, tblemergencycontact.Relation, tblemergencycontact.Remark,
+			tblemergencycontact.Phone, tblemergencycontact.Relation, tblemergencycontact.ReceiveFlag,
 		).
 		Where(tblemergencycontact.ElderId.Eq(types.BigInt(*in.ID))).
 		Select().
@@ -351,11 +345,10 @@ func (c *checkcontract) GetCheckContractById(ctx context.Context, in *dto.IDReq,
 	out.OperateEmergencyContactQueryList = make([]dto.OperateEmergencyContactQuery, 0, len(contacts))
 	for _, ct := range contacts {
 		out.OperateEmergencyContactQueryList = append(out.OperateEmergencyContactQueryList, dto.OperateEmergencyContactQuery{
-			ID:       int64Ptr(int64(ct.Id)),
-			Name:     strPtr(ct.Name.String()),
-			Phone:    strPtr(ct.Phone.String()),
-			Relation: strPtr(ct.Relation.String()),
-			Remark:   strPtr(ct.Remark.String()),
+			Name:        strPtr(ct.Name.String()),
+			Phone:       strPtr(ct.Phone.String()),
+			Relation:    strPtr(ct.Relation.String()),
+			ReceiveFlag: int8Ptr(ct.ReceiveFlag.Int8()),
 		})
 	}
 	return nil
@@ -383,15 +376,11 @@ func (c *checkcontract) EditCheckContract(ctx context.Context, in *dto.OperateCh
 		return e
 	}
 	var contractSets = make([]dialect.Setter, 0, 8)
-	contractSets = append(contractSets, tblcontract.BedId.Set(*in.BedID))
 	contractSets = append(contractSets, tblcontract.StaffId.Set(*in.StaffID))
-	contractSets = append(contractSets, tblcontract.NurseGradeId.Set(*in.NurseGradeID))
-	contractSets = append(contractSets, tblcontract.CateringSetId.Set(*in.CateringSetID))
-	contractSets = append(contractSets, tblcontract.SignDate.Set(conv.String2Time(*in.SignDate)))
-	contractSets = append(contractSets, tblcontract.StartDate.Set(conv.String2Time(*in.StartDate)))
-	contractSets = append(contractSets, tblcontract.EndDate.Set(conv.String2Time(*in.EndDate)))
-	contractSets = append(contractSets, tblcontract.Remark.Set(*in.Remark))
-	_, e = dao.Contract(db).Update(ctx, contractSets...,
+	contractSets = append(contractSets, tblcontract.SignDate.Set(*in.SignDate))
+	contractSets = append(contractSets, tblcontract.StartDate.Set(*in.StartDate))
+	contractSets = append(contractSets, tblcontract.EndDate.Set(*in.EndDate))
+	_, e = dao.Contract(db).Update(ctx, contractSets,
 		tblcontract.ElderId.Eq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -402,18 +391,18 @@ func (c *checkcontract) EditCheckContract(ctx context.Context, in *dto.OperateCh
 	if e != nil {
 		return e
 	}
-	if len(in.OperateEmergencyContactQueryList) > 0 {
-		list := make([]*do.EmergencyContact, 0, len(in.OperateEmergencyContactQueryList))
-		for _, ec := range in.OperateEmergencyContactQueryList {
+	if len(in.EmergencyContactQueryList) > 0 {
+		list := make([]*do.EmergencyContact, 0, len(in.EmergencyContactQueryList))
+		for _, ec := range in.EmergencyContactQueryList {
 			bean := do.NewEmergencyContact()
 			bean.ElderId = types.BigInt(*in.ID)
 			bean.Name = types.String(*ec.Name)
 			bean.Phone = types.String(*ec.Phone)
 			bean.Relation = types.String(*ec.Relation)
-			bean.Remark = types.String(*ec.Remark)
+			bean.ReceiveFlag = types.Int8(*ec.ReceiveFlag)
 			list = append(list, bean)
 		}
-		_, e = dao.EmergencyContact(db).InsertBatch(ctx, list...)
+		_, e = dao.EmergencyContact(db).InsertBatch(ctx, list)
 		if e != nil {
 			return e
 		}
@@ -437,14 +426,9 @@ func (c *checkcontract) DeleteCheckContract(ctx context.Context, in *dto.IDReq, 
 	if e != nil {
 		return e
 	}
-	contract, has, e := dao.Contract(db).GetByID(ctx, types.BigInt(*in.ID),
-		tblcontract.ElderId, tblcontract.BedId,
-	)
-	if e != nil {
-		return e
-	}
+
 	if has {
-		_, e = dao.Bed(db).UpdateById(ctx, contract.BedId,
+		_, e = dao.Bed(db).UpdateById(ctx, elder.BedId,
 			tblbed.BedFlag.Set(constant.BedIdle),
 		)
 		if e != nil {
@@ -460,16 +444,16 @@ func (c *checkcontract) DeleteCheckContract(ctx context.Context, in *dto.IDReq, 
 
 // PageVisitPlanByKey 分页查询回访计划
 func (c *checkcontract) PageVisitPlanByKey(ctx context.Context, in *dto.PageVisitPlanQuery, out *[]dto.PageVisitPlanVO) error {
-	q := db.Table(do.VisitPlanTableName).
+	q := db.Table(tblvisitplan.TableName).
 		Where(tblvisitplan.DelFlag.Eq(constant.YesNoNo))
 	if in.ElderID != nil {
 		q.And(tblvisitplan.ElderId.Eq(types.BigInt(*in.ElderID)))
 	}
 	if in.CompleteFlag != nil {
 		if *in.CompleteFlag {
-			q.And(tblvisitplan.CompleteDate.IsNotNull())
+			q.And(tblvisitplan.CompleteDate.NotNull())
 		} else {
-			q.And(tblvisitplan.CompleteDate.IsNull())
+			q.And(tblvisitplan.CompleteDate.Null())
 		}
 	}
 	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
@@ -491,7 +475,7 @@ func (c *checkcontract) AddVisitPlan(ctx context.Context, in *dto.AddVisitPlanQu
 	bean := do.NewVisitPlan()
 	bean.ElderId = types.BigInt(*in.ElderID)
 	bean.Title = types.String(*in.Title)
-	bean.PlanDate = types.Time{conv.String2Time(*in.PlanDate)}
+	bean.PlanDate = types.Time{*in.PlanDate}
 	_, e := dao.VisitPlan(db).InsertOne(ctx, bean)
 	return e
 }
@@ -500,7 +484,7 @@ func (c *checkcontract) AddVisitPlan(ctx context.Context, in *dto.AddVisitPlanQu
 func (c *checkcontract) CompleteVisitPlan(ctx context.Context, in *dto.CompleteVisitPlanQuery, out *dto.EmptyResp) error {
 	_, e := dao.VisitPlan(db).UpdateById(ctx, types.BigInt(*in.ID),
 		tblvisitplan.Content.Set(*in.Content),
-		tblvisitplan.CompleteDate.Set(conv.String2Time(*in.CompleteDate)),
+		tblvisitplan.CompleteDate.Set(*in.CompleteDate),
 	)
 	return e
 }
@@ -513,7 +497,7 @@ func (c *checkcontract) DeleteVisitPlan(ctx context.Context, in *dto.DeleteVisit
 
 // PageCommunicationRecordByKey 分页查询沟通记录
 func (c *checkcontract) PageCommunicationRecordByKey(ctx context.Context, in *dto.PageCommunicationRecordQuery, out *[]dto.PageCommunicationRecordVO) error {
-	q := db.Table(do.CommunicationRecordTableName).
+	q := db.Table(tblcommunicationrecord.TableName).
 		Where(tblcommunicationrecord.DelFlag.Eq(constant.YesNoNo))
 	if in.ElderID != nil {
 		q.And(tblcommunicationrecord.ElderId.Eq(types.BigInt(*in.ElderID)))
@@ -533,7 +517,7 @@ func (c *checkcontract) PageCommunicationRecordByKey(ctx context.Context, in *dt
 func (c *checkcontract) AddCommunicationRecord(ctx context.Context, in *dto.AddCommunicationRecordQuery, out *dto.EmptyResp) error {
 	bean := do.NewCommunicationRecord()
 	bean.ElderId = types.BigInt(*in.ElderID)
-	bean.RecordDate = types.Time{conv.String2Time(*in.RecordDate)}
+	bean.RecordDate = types.Time{*in.RecordDate}
 	bean.CommunicationRecord = types.String(*in.CommunicationRecord)
 	_, e := dao.CommunicationRecord(db).InsertOne(ctx, bean)
 	return e
@@ -542,7 +526,7 @@ func (c *checkcontract) AddCommunicationRecord(ctx context.Context, in *dto.AddC
 // EditCommunicationRecord 编辑沟通记录
 func (c *checkcontract) EditCommunicationRecord(ctx context.Context, in *dto.EditCommunicationRecordQuery, out *dto.EmptyResp) error {
 	var sets = make([]dialect.Setter, 0, 2)
-	sets = append(sets, tblcommunicationrecord.RecordDate.Set(conv.String2Time(*in.RecordDate)))
+	sets = append(sets, tblcommunicationrecord.RecordDate.Set(*in.RecordDate))
 	sets = append(sets, tblcommunicationrecord.CommunicationRecord.Set(*in.CommunicationRecord))
 	_, e := dao.CommunicationRecord(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
 	return e

@@ -20,7 +20,7 @@ var ActiveType = &activetype{}
 // PageActiveTypeByKey 分页查询活动类型
 // 对应 Java: ActiveTypeServiceImpl.pageActiveTypeByKey -> ActiveTypeFunc.listNotDelActiveType
 func (a *activetype) PageActiveTypeByKey(ctx context.Context, in *dto.PageActiveTypeByKeyQuery, out *[]dto.PageActiveTypeByKeyVO) error {
-	q := db.Table(do.ActiveTypeTableName).Where(tblactivetype.DelFlag.Eq(constant.YesNoNo))
+	q := db.Table(tblactivetype.TableName).Where(tblactivetype.DelFlag.Eq(constant.YesNoNo))
 	if in.ActiveTypeName != nil {
 		q.And(tblactivetype.Name.Like(*in.ActiveTypeName))
 	}

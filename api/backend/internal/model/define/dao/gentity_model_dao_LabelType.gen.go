@@ -61,7 +61,7 @@ func (p *labeltype) Insert(ctx context.Context, sets ...dialect.Setter) (int64, 
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.LabelTypeTableName).
+	_result, e := p.x.Table(tbllabeltype.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *labeltype) Insert(ctx context.Context, sets ...dialect.Setter) (int64, 
 // cols: 要插入的列名
 func (p *labeltype) InsertOne(ctx context.Context, bean *do.LabelType, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.LabelTypeTableName).
+	_result, e := p.x.Table(tbllabeltype.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *labeltype) InsertBatch(ctx context.Context, beans []*do.LabelType, cols
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.LabelTypeTableName).
+	_result, e := p.x.Table(tbllabeltype.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *labeltype) Update(ctx context.Context, sets []dialect.Setter, cond ...d
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.LabelTypeTableName).
+	_result, e := p.x.Table(tbllabeltype.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *labeltype) UpdateById(ctx context.Context, id types.BigInt, sets ...dia
 // cols: 要插入的列名
 func (p *labeltype) UpdateOne(ctx context.Context, bean *do.LabelType, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.LabelTypeTableName).
+	_result, e := p.x.Table(tbllabeltype.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *labeltype) UpdateBatch(ctx context.Context, beans []*do.LabelType, cols
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.LabelTypeTableName).
+	_result, e := p.x.Table(tbllabeltype.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *labeltype) UpdateBatch(ctx context.Context, beans []*do.LabelType, cols
 // Delete
 func (p *labeltype) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.LabelTypeTableName).
+	_result, e := p.x.Table(tbllabeltype.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *labeltype) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.LabelTypeTableName).
+	_result, e := p.x.Table(tbllabeltype.TableName).
 		Where(tbllabeltype.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *labeltype) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.LabelTypeTableName
+//  1. 如果没有指定表名，则默认使用tbllabeltype.TableName
 //  2. 如果没有指定查询列，则默认使用tbllabeltype.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *labeltype) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 func (p *labeltype) Get(ctx context.Context, s ace.SelectBuilder) (*do.LabelType, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.LabelTypeTableName)
+		s.Table(tbllabeltype.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *labeltype) Get(ctx context.Context, s ace.SelectBuilder) (*do.LabelType
 // GetByID 按主键读取一个label_type对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *labeltype) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.LabelType, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.LabelTypeTableName).Where(tbllabeltype.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tbllabeltype.TableName).Where(tbllabeltype.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *labeltype) GetByIds(ctx context.Context, ids []any, cols ...dialect.Fie
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.LabelTypeTableName
+//  1. 如果没有指定表名，则默认使用tbllabeltype.TableName
 //  2. 如果没有指定查询列，则默认使用tbllabeltype.PrimaryKey
 func (p *labeltype) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.LabelTypeTableName)
+		s.Table(tbllabeltype.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *labeltype) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, e
 func (p *labeltype) List(ctx context.Context, s ace.SelectBuilder) ([]*do.LabelType, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.LabelTypeTableName)
+		s.Table(tbllabeltype.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *labeltype) List(ctx context.Context, s ace.SelectBuilder) ([]*do.LabelT
 func (p *labeltype) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.LabelTypeTableName)
+		s.Table(tbllabeltype.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *labeltype) Column(ctx context.Context, s ace.SelectBuilder) ([]any, err
 // Count
 func (p *labeltype) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.LabelTypeTableName).
+	return p.x.Table(tbllabeltype.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *labeltype) Count(ctx context.Context, cond ...dialect.Condition) (int64
 // Sum
 func (p *labeltype) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.LabelTypeTableName).
+	return p.x.Table(tbllabeltype.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *labeltype) Sum(ctx context.Context, cols []dialect.Field, cond ...diale
 // Exists
 func (p *labeltype) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.LabelTypeTableName).Cols(tbllabeltype.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tbllabeltype.TableName).Cols(tbllabeltype.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

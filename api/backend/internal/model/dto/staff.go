@@ -41,7 +41,6 @@ type OperateStaffQuery struct {
 // @response
 // PageStaffByKeyVO 分页查询员工响应
 type PageStaffByKeyVO struct {
-	Rank
 	ID        int64  `json:"id"`         // id
 	Name      string `json:"name"`       // 员工姓名
 	RoleName  string `json:"role_name"`  // 角色名称
@@ -56,4 +55,12 @@ type PageStaffByKeyVO struct {
 // OperateStaffVO 操作员工响应（继承 OperateStaffQuery）
 type OperateStaffVO struct {
 	OperateStaffQuery
+}
+
+// @response
+// PageSearchStaffByKeyVO 分页搜索员工响应
+type PageSearchStaffByKeyVO struct {
+	ID    int64  `json:"id"`    // id
+	Name  string `json:"name"`  // 员工姓名
+	Phone string `json:"phone"` // 员工电话
 }

@@ -2,17 +2,15 @@ package service
 
 import (
 	"api/internal/constant"
+	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblaccident"
 	"api/internal/model/define/table/tblelder"
 	"api/internal/model/define/table/tblstaff"
 	"api/internal/model/do"
+	"api/internal/model/dto"
 	"context"
 	"errors"
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
-	"github.com/linbaozhong/gentity/pkg/conv"
-
-	"api/internal/model/define/dao"
-	"api/internal/model/dto"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -23,7 +21,7 @@ var Accident = &accident{}
 // PageAccidentByKey 分页查询事故记录（联表 elder 获取老人姓名）
 func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentByKeyQuery, out *[]dto.PageAccidentByKeyVO) error {
 	// 构造查询
-	q := db.Table(do.AccidentTableName).
+	q := db.Table(tblaccident.TableName).
 		LeftJoin(tblaccident.ElderId, tblelder.Id).
 		LeftJoin(tblaccident.StaffId, tblstaff.Id).
 		Where(
@@ -55,7 +53,7 @@ func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentBy
 
 // GetAccidentById 根据编号获取事故
 func (a *accident) GetAccidentById(ctx context.Context, in *dto.IDReq, out *dto.GetAccidentByIDVO) error {
-	return db.Table(do.AccidentTableName).
+	return db.Table(tblaccident.TableName).
 		LeftJoin(tblaccident.ElderId, tblelder.Id).
 		Where(tblaccident.Id.Eq(*in.ID)).
 		Cols(
@@ -81,7 +79,7 @@ func (a *accident) AddAccident(ctx context.Context, in *dto.AddAccidentQuery, ou
 		bean.StaffId = types.BigInt(*in.StaffID)
 	}
 	if in.OccurDate != nil {
-		bean.OccurDate = types.Time{conv.String2Time(*in.OccurDate)}
+		bean.OccurDate = types.Time{*in.OccurDate}
 	}
 	if in.Description != nil {
 		bean.Description = types.String(*in.Description)
@@ -114,8 +112,8 @@ func (a *accident) EditAccident(ctx context.Context, in *dto.EditAccidentQuery, 
 	if in.StaffID != nil && obj.StaffId.Int64() != *in.StaffID {
 		sets = append(sets, tblaccident.StaffId.Set(*in.StaffID))
 	}
-	if in.OccurDate != nil && !obj.OccurDate.Time.Equal(conv.String2Time(*in.OccurDate)) {
-		sets = append(sets, tblaccident.OccurDate.Set(conv.String2Time(*in.OccurDate)))
+	if in.OccurDate != nil && !obj.OccurDate.Time.Equal(*in.OccurDate) {
+		sets = append(sets, tblaccident.OccurDate.Set(*in.OccurDate))
 	}
 	if in.Description != nil && obj.Description.String() != *in.Description {
 		sets = append(sets, tblaccident.Description.Set(*in.Description))

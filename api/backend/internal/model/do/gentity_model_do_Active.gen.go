@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const ActiveTableName = "active"
+// const ActiveTableName = "active"
 
 var (
 	activePool = pool.New[*Active](func() any {
@@ -158,7 +158,7 @@ func (p *Active) Reset() {
 }
 
 func (p *Active) TableName() string {
-	return ActiveTableName
+	return "active"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

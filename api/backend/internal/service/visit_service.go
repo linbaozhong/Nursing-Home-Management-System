@@ -2,9 +2,16 @@ package service
 
 import (
 	"context"
+	"errors"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblelder"
+	"api/internal/model/define/table/tblvisit"
+	"api/internal/model/do"
 	"api/internal/model/dto"
+
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
@@ -13,80 +20,152 @@ type visit struct{}
 
 var Visit = &visit{}
 
-// PageVisitByKey 分页查询来访登记（联表 elder、user）
-// 对应 Java: VisitServiceImpl.pageVisitByKey -> VisitMapper.listVisitByKey
-// SQL: SELECT v.*, e.elder_name, u.name AS visitor_user_name FROM visit v
-//
-//	LEFT JOIN elder e ON e.id = v.elder_id
-//	LEFT JOIN user u ON u.id = v.visitor_user_id
-//	WHERE (e.elder_name LIKE %key% OR v.id = key) [可选]
-//	ORDER BY v.create_time DESC; 再由 PageUtil 内存分页。
-//
-// Todo: 1) in.Key 非空 -> (tbl<visit>.Id.Eq(in.Key) OR tbl<elder>.ElderName.Like(in.Key))
-//
-//	2) DB 分页: Count + List(联表 LeftJoin)
-//	3) 组装含老人/访客姓名的 VO 并赋值 out
-func (v *visit) PageVisitByKey(ctx context.Context, in *dto.PageVisitByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
-	return nil
+// PageVisitByKey 分页查询来访登记（关联老人姓名）
+// 对应 Java: VisitServiceImpl.pageVisitByKey -> VisitFunc.listVisitByKey
+func (v *visit) PageVisitByKey(ctx context.Context, in *dto.PageVisitByKeyQuery, out *[]dto.PageVisitByKeyVO) error {
+	q := db.Table(tblvisit.TableName).
+		LeftJoin(tblvisit.ElderId, tblelder.Id).
+		Where(tblvisit.DelFlag.Eq(constant.YesNoNo))
+	if in.ElderName != nil && *in.ElderName != "" {
+		q.And(tblelder.Name.Like(*in.ElderName))
+	}
+	if in.VisitName != nil && *in.VisitName != "" {
+		q.And(tblvisit.Name.Like(*in.VisitName))
+	}
+	if in.VisitPhone != nil && *in.VisitPhone != "" {
+		q.And(tblvisit.Phone.Like(*in.VisitPhone))
+	}
+	if in.VisitFlag != nil && *in.VisitFlag != "" {
+		q.And(tblvisit.VisitFlag.Eq(types.Int8(parseVisitFlag(*in.VisitFlag))))
+	}
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(
+			tblvisit.Id.AsName("id"),
+			tblelder.Name.AsName("elder_name"),
+			tblvisit.Name.AsName("visit_name"),
+			tblvisit.Phone.AsName("visit_phone"),
+			tblvisit.Relation.AsName("relation"),
+			tblvisit.VisitDate.AsName("visit_date"),
+			tblvisit.LeaveDate.AsName("leave_date"),
+			tblvisit.VisitNum.AsName("visit_num"),
+			tblvisit.VisitFlag.AsName("visit_flag"),
+		).
+		Desc(tblvisit.CreateTime).
+		Select().
+		Gets(ctx, out)
 }
 
-// PageSearchElderByKey 分页搜索老人（供来访选择老人）
-// 对应 Java: VisitServiceImpl.pageSearchElderByKey -> elderMapper.listElderByKey
-// SQL: SELECT * FROM elder WHERE (elder_name LIKE %key% OR id = key) [可选] AND del_flag=0
-// todo: 查询 elder 表并分页, 结果赋值 out(需定义老人分页返回类型)
-func (v *visit) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 elder 表并分页
-	return nil
+// parseVisitFlag 将前端传入的来访状态字符串转为常量值
+func parseVisitFlag(s string) int8 {
+	if s == "ALREADY_LEAVE" {
+		return int8(constant.VisitAlreadyLeave)
+	}
+	return int8(constant.VisitStayLeave)
 }
 
-// AddVisit 新增来访登记
-// 对应 Java: VisitServiceImpl.addVisit -> visitMapper.insertSelective
-// todo: 标准 CRUD - dao.Visit(db).InsertOne 写入 visit 表(含 elderId/visitorName/visitTime 等)
+// AddVisit 新增来访登记（校验老人存在、设置来访状态为在院）
+// 对应 Java: VisitServiceImpl.addVisit -> VisitFunc.checkElderByVisit
 func (v *visit) AddVisit(ctx context.Context, in *dto.AddVisitQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewVisit(); 填充 in; dao.Visit(db).InsertOne(ctx, bean)
-	return nil
-}
-
-// GetVisitById 根据编号获取来访登记
-// 对应 Java: VisitServiceImpl.getVisitById -> visitMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.Visit(db).GetByID(ctx, types.BigInt(in.ID))
-func (v *visit) GetVisitById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.Visit(db).GetByID(ctx, types.BigInt(in.ID))
+	_, has, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(types.BigInt(*in.ElderID))))
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
+	if !has {
+		return errors.New("老人不存在")
+	}
+	bean := do.NewVisit()
+	bean.ElderId = types.BigInt(*in.ElderID)
+	bean.Name = types.String(*in.Name)
+	bean.Phone = types.String(*in.Phone)
+	bean.Relation = types.String(*in.Relation)
+	bean.VisitDate = types.Time{Time: *in.VisitDate}
+	bean.VisitNum = types.Int32(int32(*in.VisitNum))
+	bean.VisitFlag = types.Int8(constant.VisitStayLeave)
+	bean.DelFlag = types.Int8(constant.YesNoNo)
+	_, e = dao.Visit(db).InsertOne(ctx, bean)
+	return e
+}
+
+// GetVisitById 根据编号获取来访登记（编辑回显，关联老人姓名）
+// 对应 Java: VisitServiceImpl.getVisitById
+func (v *visit) GetVisitById(ctx context.Context, in *dto.IDReq, out *dto.GetVisitByIDVO) error {
+	obj, has, e := dao.Visit(db).Get(ctx, ace.Where(tblvisit.Id.Eq(types.BigInt(*in.ID))))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return errors.New("来访登记不存在")
+	}
+	out.ID = int64(obj.Id)
+	out.VisitName = obj.Name.String()
+	out.VisitPhone = obj.Phone.String()
+	out.Relation = obj.Relation.String()
+	out.VisitDate = obj.VisitDate.Time
+	out.VisitNum = int64(obj.VisitNum)
+	elder, hasE, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(obj.ElderId)))
+	if e != nil {
+		return e
+	}
+	if hasE {
+		out.ElderName = elder.Name.String()
+	}
 	return nil
 }
 
-// EditVisit 编辑来访登记
-// 对应 Java: VisitServiceImpl.editVisit -> visitMapper.updateByPrimaryKeySelective
-// todo: 标准 CRUD - 按主键更新 visit 表
+// EditVisit 修改来访登记（不含老人编号、来访状态）
+// 对应 Java: VisitServiceImpl.updateVisit
 func (v *visit) EditVisit(ctx context.Context, in *dto.EditVisitQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<visit>.VisitorName.Value(in.VisitorName),
+	_, has, e := dao.Visit(db).Get(ctx, ace.Where(tblvisit.Id.Eq(types.BigInt(*in.ID))))
+	if e != nil {
+		return e
 	}
-	_, e := dao.Visit(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
+	if !has {
+		return errors.New("来访登记不存在")
+	}
+	bean := do.NewVisit()
+	bean.Id = types.BigInt(*in.ID)
+	bean.Name = types.String(*in.Name)
+	bean.Phone = types.String(*in.Phone)
+	bean.Relation = types.String(*in.Relation)
+	bean.VisitDate = types.Time{Time: *in.VisitDate}
+	bean.VisitNum = types.Int32(int32(*in.VisitNum))
+	_, e = dao.Visit(db).UpdateOne(ctx, bean,
+		tblvisit.Name,
+		tblvisit.Phone,
+		tblvisit.Relation,
+		tblvisit.VisitDate,
+		tblvisit.VisitNum,
+	)
 	return e
 }
 
-// RecordLeave 登记离开
-// 对应 Java: VisitServiceImpl.recordLeave -> 更新 visit 离开时间/状态
-// todo: 更新 visit 的离开时间字段(UpdateById), 结果赋值 out
+// RecordLeave 登记离开（更新离开时间、置来访状态为已离开）
+// 对应 Java: VisitServiceImpl.recordLeave
 func (v *visit) RecordLeave(ctx context.Context, in *dto.RecordLeaveQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: tbl<visit>.LeaveTime.Value(in.LeaveTime),
+	_, has, e := dao.Visit(db).Get(ctx, ace.Where(tblvisit.Id.Eq(types.BigInt(*in.ID))))
+	if e != nil {
+		return e
 	}
-	_, e := dao.Visit(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
+	if !has {
+		return errors.New("来访登记不存在")
+	}
+	bean := do.NewVisit()
+	bean.Id = types.BigInt(*in.ID)
+	bean.LeaveDate = types.Time{Time: *in.LeaveDate}
+	bean.VisitFlag = types.Int8(constant.VisitAlreadyLeave)
+	_, e = dao.Visit(db).UpdateOne(ctx, bean,
+		tblvisit.LeaveDate,
+		tblvisit.VisitFlag,
+	)
 	return e
 }
 
-// DeleteVisit 删除来访登记
-// 对应 Java: VisitServiceImpl.deleteVisit -> visitMapper.deleteByPrimaryKey
-// todo: 标准 CRUD - dao.Visit(db).DeleteById(ctx, types.BigInt(in.ID))
+// DeleteVisit 删除来访登记（逻辑删除）
+// 对应 Java: VisitServiceImpl.deleteVisit
 func (v *visit) DeleteVisit(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.Visit(db).DeleteById(ctx, types.BigInt(in.ID))
+	sets := []dialect.Setter{
+		tblvisit.DelFlag.Set(types.Int8(constant.YesNoYes)),
+	}
+	_, e := dao.Visit(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
 	return e
 }

@@ -2,14 +2,13 @@ package service
 
 import (
 	"context"
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"time"
 
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblcontract"
 	"api/internal/model/define/table/tblemergencycontact"
 	"api/internal/model/dto"
-
-	"github.com/linbaozhong/gentity/pkg/types"
 )
 
 type contract struct{}
@@ -25,22 +24,22 @@ var Contract = &contract{}
 //
 // 说明：Go 侧暂无 SMTP/邮件发送工具，发邮件部分以 //todo 标注。
 func (c *contract) ContractExpireJob(ctx context.Context, in *dto.EmptyReq, out *dto.EmptyResp) error {
-	now := time.Now()
-	start := parseTimeStr(now.Format("2006-01-02 15:04:05"))
-	end := parseTimeStr(now.AddDate(0, 0, 7).Format("2006-01-02 15:04:05"))
+	start := time.Now()
+	end := start.AddDate(0, 0, 7)
 	// 1) 查 7 天内即将到期的合同
 	contracts, _, e := dao.Contract(db).List(ctx,
-		tblcontract.EndDate.Gte(start),
-		tblcontract.EndDate.Lte(end),
-	)
+		ace.Where(
+			tblcontract.EndDate.Gte(start),
+			tblcontract.EndDate.Lte(end),
+		))
 	if e != nil {
 		return e
 	}
 	for _, ct := range contracts {
 		// 2) 查该合同老人的紧急联系人邮箱
-		contacts, _, e := dao.EmergencyContact(db).List(ctx,
+		contacts, _, e := dao.EmergencyContact(db).List(ctx, ace.Where(
 			tblemergencycontact.ElderId.Eq(ct.ElderId),
-		)
+		))
 		if e != nil {
 			return e
 		}
@@ -51,13 +50,4 @@ func (c *contract) ContractExpireJob(ctx context.Context, in *dto.EmptyReq, out 
 		}
 	}
 	return nil
-}
-
-// parseTimeStr 解析时间字符串为 types.Time
-func parseTimeStr(s string) types.Time {
-	t, err := time.ParseInLocation("2006-01-02 15:04:05", s, time.Local)
-	if err != nil {
-		return types.Time{}
-	}
-	return types.Time(t)
 }

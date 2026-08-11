@@ -22,15 +22,15 @@ type ActiveParticipant struct {
 // @tablename consume
 type Consume struct {
 	pool.Model
-	ConsumeType   types.String  `json:"consume_type,omitempty" db:"'consume_type' size:10"`       // 消费类别
-	Id            types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`                   // 编号
-	ElderId       types.BigInt  `json:"elder_id,omitempty" db:"'elder_id' size:20"`               // 老人编号
-	ConsumeAmount types.Float64 `json:"consume_amount,omitempty" db:"'consume_amount' size:10|2"` // 消费金额
-	ConsumeDate   types.Time    `json:"consume_date,omitempty" db:"'consume_date'"`               // 消费日期
-	CreateId      types.BigInt  `json:"create_id,omitempty" db:"'create_id' size:20"`             // 创建人编号
-	CreateTime    types.Time    `json:"create_time,omitempty" db:"'create_time'"`                 // 创建时间
-	UpdateId      types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"`             // 修改人编号
-	UpdateTime    types.Time    `json:"update_time,omitempty" db:"'update_time'"`                 // 修改时间
+	ConsumeType   types.String `json:"consume_type,omitempty" db:"'consume_type' size:10"`       // 消费类别
+	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                   // 编号
+	ElderId       types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`               // 老人编号
+	ConsumeAmount types.Money  `json:"consume_amount,omitempty" db:"'consume_amount' size:10|2"` // 消费金额
+	ConsumeDate   types.Time   `json:"consume_date,omitempty" db:"'consume_date'"`               // 消费日期
+	CreateId      types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`             // 创建人编号
+	CreateTime    types.Time   `json:"create_time,omitempty" db:"'create_time'"`                 // 创建时间
+	UpdateId      types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`             // 修改人编号
+	UpdateTime    types.Time   `json:"update_time,omitempty" db:"'update_time'"`                 // 修改时间
 }
 
 // Contract

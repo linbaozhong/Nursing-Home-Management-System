@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const AuthTableName = "auth"
+// const AuthTableName = "auth"
 
 var (
 	authPool = pool.New[*Auth](func() any {
@@ -146,7 +146,7 @@ func (p *Auth) Reset() {
 }
 
 func (p *Auth) TableName() string {
-	return AuthTableName
+	return "auth"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

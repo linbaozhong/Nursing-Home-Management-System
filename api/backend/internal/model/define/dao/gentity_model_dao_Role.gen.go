@@ -61,7 +61,7 @@ func (p *role) Insert(ctx context.Context, sets ...dialect.Setter) (int64, error
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.RoleTableName).
+	_result, e := p.x.Table(tblrole.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *role) Insert(ctx context.Context, sets ...dialect.Setter) (int64, error
 // cols: 要插入的列名
 func (p *role) InsertOne(ctx context.Context, bean *do.Role, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.RoleTableName).
+	_result, e := p.x.Table(tblrole.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *role) InsertBatch(ctx context.Context, beans []*do.Role, cols ...dialec
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.RoleTableName).
+	_result, e := p.x.Table(tblrole.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *role) Update(ctx context.Context, sets []dialect.Setter, cond ...dialec
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.RoleTableName).
+	_result, e := p.x.Table(tblrole.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *role) UpdateById(ctx context.Context, id types.BigInt, sets ...dialect.
 // cols: 要插入的列名
 func (p *role) UpdateOne(ctx context.Context, bean *do.Role, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.RoleTableName).
+	_result, e := p.x.Table(tblrole.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *role) UpdateBatch(ctx context.Context, beans []*do.Role, cols ...dialec
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.RoleTableName).
+	_result, e := p.x.Table(tblrole.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *role) UpdateBatch(ctx context.Context, beans []*do.Role, cols ...dialec
 // Delete
 func (p *role) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.RoleTableName).
+	_result, e := p.x.Table(tblrole.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *role) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.RoleTableName).
+	_result, e := p.x.Table(tblrole.TableName).
 		Where(tblrole.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *role) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.RoleTableName
+//  1. 如果没有指定表名，则默认使用tblrole.TableName
 //  2. 如果没有指定查询列，则默认使用tblrole.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *role) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 func (p *role) Get(ctx context.Context, s ace.SelectBuilder) (*do.Role, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RoleTableName)
+		s.Table(tblrole.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *role) Get(ctx context.Context, s ace.SelectBuilder) (*do.Role, bool, er
 // GetByID 按主键读取一个role对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *role) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.Role, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.RoleTableName).Where(tblrole.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblrole.TableName).Where(tblrole.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *role) GetByIds(ctx context.Context, ids []any, cols ...dialect.Field) (
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.RoleTableName
+//  1. 如果没有指定表名，则默认使用tblrole.TableName
 //  2. 如果没有指定查询列，则默认使用tblrole.PrimaryKey
 func (p *role) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RoleTableName)
+		s.Table(tblrole.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *role) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error)
 func (p *role) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Role, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RoleTableName)
+		s.Table(tblrole.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *role) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Role, bool,
 func (p *role) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RoleTableName)
+		s.Table(tblrole.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *role) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 // Count
 func (p *role) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.RoleTableName).
+	return p.x.Table(tblrole.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *role) Count(ctx context.Context, cond ...dialect.Condition) (int64, err
 // Sum
 func (p *role) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.RoleTableName).
+	return p.x.Table(tblrole.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *role) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Co
 // Exists
 func (p *role) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.RoleTableName).Cols(tblrole.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblrole.TableName).Cols(tblrole.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

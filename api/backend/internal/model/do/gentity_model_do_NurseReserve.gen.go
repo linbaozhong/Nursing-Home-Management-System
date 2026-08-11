@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const NurseReserveTableName = "nurse_reserve"
+// const NurseReserveTableName = "nurse_reserve"
 
 var (
 	nursereservePool = pool.New[*NurseReserve](func() any {
@@ -158,7 +158,7 @@ func (p *NurseReserve) Reset() {
 }
 
 func (p *NurseReserve) TableName() string {
-	return NurseReserveTableName
+	return "nurse_reserve"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

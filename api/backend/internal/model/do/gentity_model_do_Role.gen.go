@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const RoleTableName = "role"
+// const RoleTableName = "role"
 
 var (
 	rolePool = pool.New[*Role](func() any {
@@ -104,7 +104,7 @@ func (p *Role) Reset() {
 }
 
 func (p *Role) TableName() string {
-	return RoleTableName
+	return "role"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

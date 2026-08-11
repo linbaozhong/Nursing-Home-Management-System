@@ -61,7 +61,7 @@ func (p *cateringset) Insert(ctx context.Context, sets ...dialect.Setter) (int64
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.CateringSetTableName).
+	_result, e := p.x.Table(tblcateringset.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *cateringset) Insert(ctx context.Context, sets ...dialect.Setter) (int64
 // cols: 要插入的列名
 func (p *cateringset) InsertOne(ctx context.Context, bean *do.CateringSet, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.CateringSetTableName).
+	_result, e := p.x.Table(tblcateringset.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *cateringset) InsertBatch(ctx context.Context, beans []*do.CateringSet, 
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.CateringSetTableName).
+	_result, e := p.x.Table(tblcateringset.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *cateringset) Update(ctx context.Context, sets []dialect.Setter, cond ..
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.CateringSetTableName).
+	_result, e := p.x.Table(tblcateringset.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *cateringset) UpdateById(ctx context.Context, id types.BigInt, sets ...d
 // cols: 要插入的列名
 func (p *cateringset) UpdateOne(ctx context.Context, bean *do.CateringSet, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.CateringSetTableName).
+	_result, e := p.x.Table(tblcateringset.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *cateringset) UpdateBatch(ctx context.Context, beans []*do.CateringSet, 
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.CateringSetTableName).
+	_result, e := p.x.Table(tblcateringset.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *cateringset) UpdateBatch(ctx context.Context, beans []*do.CateringSet, 
 // Delete
 func (p *cateringset) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.CateringSetTableName).
+	_result, e := p.x.Table(tblcateringset.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *cateringset) DeleteByIds(ctx context.Context, ids []any) (int64, error)
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.CateringSetTableName).
+	_result, e := p.x.Table(tblcateringset.TableName).
 		Where(tblcateringset.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *cateringset) DeleteByIds(ctx context.Context, ids []any) (int64, error)
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.CateringSetTableName
+//  1. 如果没有指定表名，则默认使用tblcateringset.TableName
 //  2. 如果没有指定查询列，则默认使用tblcateringset.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *cateringset) DeleteByIds(ctx context.Context, ids []any) (int64, error)
 func (p *cateringset) Get(ctx context.Context, s ace.SelectBuilder) (*do.CateringSet, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.CateringSetTableName)
+		s.Table(tblcateringset.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *cateringset) Get(ctx context.Context, s ace.SelectBuilder) (*do.Caterin
 // GetByID 按主键读取一个catering_set对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *cateringset) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.CateringSet, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.CateringSetTableName).Where(tblcateringset.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblcateringset.TableName).Where(tblcateringset.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *cateringset) GetByIds(ctx context.Context, ids []any, cols ...dialect.F
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.CateringSetTableName
+//  1. 如果没有指定表名，则默认使用tblcateringset.TableName
 //  2. 如果没有指定查询列，则默认使用tblcateringset.PrimaryKey
 func (p *cateringset) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.CateringSetTableName)
+		s.Table(tblcateringset.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *cateringset) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool,
 func (p *cateringset) List(ctx context.Context, s ace.SelectBuilder) ([]*do.CateringSet, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.CateringSetTableName)
+		s.Table(tblcateringset.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *cateringset) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Cate
 func (p *cateringset) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.CateringSetTableName)
+		s.Table(tblcateringset.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *cateringset) Column(ctx context.Context, s ace.SelectBuilder) ([]any, e
 // Count
 func (p *cateringset) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.CateringSetTableName).
+	return p.x.Table(tblcateringset.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *cateringset) Count(ctx context.Context, cond ...dialect.Condition) (int
 // Sum
 func (p *cateringset) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.CateringSetTableName).
+	return p.x.Table(tblcateringset.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *cateringset) Sum(ctx context.Context, cols []dialect.Field, cond ...dia
 // Exists
 func (p *cateringset) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.CateringSetTableName).Cols(tblcateringset.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblcateringset.TableName).Cols(tblcateringset.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

@@ -61,7 +61,7 @@ func (p *dishestype) Insert(ctx context.Context, sets ...dialect.Setter) (int64,
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.DishesTypeTableName).
+	_result, e := p.x.Table(tbldishestype.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *dishestype) Insert(ctx context.Context, sets ...dialect.Setter) (int64,
 // cols: 要插入的列名
 func (p *dishestype) InsertOne(ctx context.Context, bean *do.DishesType, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.DishesTypeTableName).
+	_result, e := p.x.Table(tbldishestype.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *dishestype) InsertBatch(ctx context.Context, beans []*do.DishesType, co
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.DishesTypeTableName).
+	_result, e := p.x.Table(tbldishestype.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *dishestype) Update(ctx context.Context, sets []dialect.Setter, cond ...
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.DishesTypeTableName).
+	_result, e := p.x.Table(tbldishestype.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *dishestype) UpdateById(ctx context.Context, id types.BigInt, sets ...di
 // cols: 要插入的列名
 func (p *dishestype) UpdateOne(ctx context.Context, bean *do.DishesType, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.DishesTypeTableName).
+	_result, e := p.x.Table(tbldishestype.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *dishestype) UpdateBatch(ctx context.Context, beans []*do.DishesType, co
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.DishesTypeTableName).
+	_result, e := p.x.Table(tbldishestype.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *dishestype) UpdateBatch(ctx context.Context, beans []*do.DishesType, co
 // Delete
 func (p *dishestype) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.DishesTypeTableName).
+	_result, e := p.x.Table(tbldishestype.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *dishestype) DeleteByIds(ctx context.Context, ids []any) (int64, error) 
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.DishesTypeTableName).
+	_result, e := p.x.Table(tbldishestype.TableName).
 		Where(tbldishestype.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *dishestype) DeleteByIds(ctx context.Context, ids []any) (int64, error) 
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.DishesTypeTableName
+//  1. 如果没有指定表名，则默认使用tbldishestype.TableName
 //  2. 如果没有指定查询列，则默认使用tbldishestype.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *dishestype) DeleteByIds(ctx context.Context, ids []any) (int64, error) 
 func (p *dishestype) Get(ctx context.Context, s ace.SelectBuilder) (*do.DishesType, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.DishesTypeTableName)
+		s.Table(tbldishestype.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *dishestype) Get(ctx context.Context, s ace.SelectBuilder) (*do.DishesTy
 // GetByID 按主键读取一个dishes_type对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *dishestype) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.DishesType, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.DishesTypeTableName).Where(tbldishestype.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tbldishestype.TableName).Where(tbldishestype.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *dishestype) GetByIds(ctx context.Context, ids []any, cols ...dialect.Fi
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.DishesTypeTableName
+//  1. 如果没有指定表名，则默认使用tbldishestype.TableName
 //  2. 如果没有指定查询列，则默认使用tbldishestype.PrimaryKey
 func (p *dishestype) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.DishesTypeTableName)
+		s.Table(tbldishestype.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *dishestype) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, 
 func (p *dishestype) List(ctx context.Context, s ace.SelectBuilder) ([]*do.DishesType, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.DishesTypeTableName)
+		s.Table(tbldishestype.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *dishestype) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Dishe
 func (p *dishestype) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.DishesTypeTableName)
+		s.Table(tbldishestype.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *dishestype) Column(ctx context.Context, s ace.SelectBuilder) ([]any, er
 // Count
 func (p *dishestype) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.DishesTypeTableName).
+	return p.x.Table(tbldishestype.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *dishestype) Count(ctx context.Context, cond ...dialect.Condition) (int6
 // Sum
 func (p *dishestype) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.DishesTypeTableName).
+	return p.x.Table(tbldishestype.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *dishestype) Sum(ctx context.Context, cols []dialect.Field, cond ...dial
 // Exists
 func (p *dishestype) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.DishesTypeTableName).Cols(tbldishestype.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tbldishestype.TableName).Cols(tbldishestype.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

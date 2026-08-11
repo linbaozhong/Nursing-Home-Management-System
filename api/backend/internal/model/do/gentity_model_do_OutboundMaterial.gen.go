@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const OutboundMaterialTableName = "outbound_material"
+// const OutboundMaterialTableName = "outbound_material"
 
 var (
 	outboundmaterialPool = pool.New[*OutboundMaterial](func() any {
@@ -122,7 +122,7 @@ func (p *OutboundMaterial) Reset() {
 }
 
 func (p *OutboundMaterial) TableName() string {
-	return OutboundMaterialTableName
+	return "outbound_material"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

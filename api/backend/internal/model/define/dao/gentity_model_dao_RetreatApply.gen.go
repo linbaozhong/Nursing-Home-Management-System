@@ -61,7 +61,7 @@ func (p *retreatapply) Insert(ctx context.Context, sets ...dialect.Setter) (int6
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.RetreatApplyTableName).
+	_result, e := p.x.Table(tblretreatapply.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *retreatapply) Insert(ctx context.Context, sets ...dialect.Setter) (int6
 // cols: 要插入的列名
 func (p *retreatapply) InsertOne(ctx context.Context, bean *do.RetreatApply, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.RetreatApplyTableName).
+	_result, e := p.x.Table(tblretreatapply.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *retreatapply) InsertBatch(ctx context.Context, beans []*do.RetreatApply
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.RetreatApplyTableName).
+	_result, e := p.x.Table(tblretreatapply.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *retreatapply) Update(ctx context.Context, sets []dialect.Setter, cond .
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.RetreatApplyTableName).
+	_result, e := p.x.Table(tblretreatapply.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *retreatapply) UpdateById(ctx context.Context, id types.BigInt, sets ...
 // cols: 要插入的列名
 func (p *retreatapply) UpdateOne(ctx context.Context, bean *do.RetreatApply, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.RetreatApplyTableName).
+	_result, e := p.x.Table(tblretreatapply.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *retreatapply) UpdateBatch(ctx context.Context, beans []*do.RetreatApply
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.RetreatApplyTableName).
+	_result, e := p.x.Table(tblretreatapply.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *retreatapply) UpdateBatch(ctx context.Context, beans []*do.RetreatApply
 // Delete
 func (p *retreatapply) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.RetreatApplyTableName).
+	_result, e := p.x.Table(tblretreatapply.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *retreatapply) DeleteByIds(ctx context.Context, ids []any) (int64, error
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.RetreatApplyTableName).
+	_result, e := p.x.Table(tblretreatapply.TableName).
 		Where(tblretreatapply.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *retreatapply) DeleteByIds(ctx context.Context, ids []any) (int64, error
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.RetreatApplyTableName
+//  1. 如果没有指定表名，则默认使用tblretreatapply.TableName
 //  2. 如果没有指定查询列，则默认使用tblretreatapply.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *retreatapply) DeleteByIds(ctx context.Context, ids []any) (int64, error
 func (p *retreatapply) Get(ctx context.Context, s ace.SelectBuilder) (*do.RetreatApply, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RetreatApplyTableName)
+		s.Table(tblretreatapply.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *retreatapply) Get(ctx context.Context, s ace.SelectBuilder) (*do.Retrea
 // GetByID 按主键读取一个retreat_apply对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *retreatapply) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.RetreatApply, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.RetreatApplyTableName).Where(tblretreatapply.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblretreatapply.TableName).Where(tblretreatapply.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *retreatapply) GetByIds(ctx context.Context, ids []any, cols ...dialect.
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.RetreatApplyTableName
+//  1. 如果没有指定表名，则默认使用tblretreatapply.TableName
 //  2. 如果没有指定查询列，则默认使用tblretreatapply.PrimaryKey
 func (p *retreatapply) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RetreatApplyTableName)
+		s.Table(tblretreatapply.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *retreatapply) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool
 func (p *retreatapply) List(ctx context.Context, s ace.SelectBuilder) ([]*do.RetreatApply, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RetreatApplyTableName)
+		s.Table(tblretreatapply.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *retreatapply) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Ret
 func (p *retreatapply) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.RetreatApplyTableName)
+		s.Table(tblretreatapply.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *retreatapply) Column(ctx context.Context, s ace.SelectBuilder) ([]any, 
 // Count
 func (p *retreatapply) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.RetreatApplyTableName).
+	return p.x.Table(tblretreatapply.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *retreatapply) Count(ctx context.Context, cond ...dialect.Condition) (in
 // Sum
 func (p *retreatapply) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.RetreatApplyTableName).
+	return p.x.Table(tblretreatapply.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *retreatapply) Sum(ctx context.Context, cols []dialect.Field, cond ...di
 // Exists
 func (p *retreatapply) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.RetreatApplyTableName).Cols(tblretreatapply.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblretreatapply.TableName).Cols(tblretreatapply.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

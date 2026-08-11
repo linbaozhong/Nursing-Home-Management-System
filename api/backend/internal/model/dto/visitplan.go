@@ -14,17 +14,17 @@ type PageVisitPlanQuery struct {
 // @request
 // AddVisitPlanQuery 新增回访计划（Java: AddVisitPlanQuery）
 type AddVisitPlanQuery struct {
-	ElderID  *int64  `json:"elder_id"`  // 老人编号
-	Title    *string `json:"title"`     // 回访计划标题
-	PlanDate *string `json:"plan_date"` // 计划回访时间 yyyy-MM-dd HH:mm:ss
+	ElderID  *int64     `json:"elder_id"`  // 老人编号
+	Title    *string    `json:"title"`     // 回访计划标题
+	PlanDate *time.Time `json:"plan_date"` // 计划回访时间 yyyy-MM-dd HH:mm:ss
 }
 
 // @request
 // CompleteVisitPlanQuery 执行回访计划（Java: CompleteVisitPlanQuery）
 type CompleteVisitPlanQuery struct {
-	ID           *int64  `json:"id"`            // 回访计划编号
-	Content      *string `json:"content"`       // 回访内容
-	CompleteDate *string `json:"complete_date"` // 完成时间 yyyy-MM-dd HH:mm:ss
+	ID           *int64     `json:"id"`            // 回访计划编号
+	Content      *string    `json:"content"`       // 回访内容
+	CompleteDate *time.Time `json:"complete_date"` // 完成时间 yyyy-MM-dd HH:mm:ss
 }
 
 // @request

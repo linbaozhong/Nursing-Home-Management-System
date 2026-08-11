@@ -61,7 +61,7 @@ func (p *nurseitem) Insert(ctx context.Context, sets ...dialect.Setter) (int64, 
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.NurseItemTableName).
+	_result, e := p.x.Table(tblnurseitem.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *nurseitem) Insert(ctx context.Context, sets ...dialect.Setter) (int64, 
 // cols: 要插入的列名
 func (p *nurseitem) InsertOne(ctx context.Context, bean *do.NurseItem, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.NurseItemTableName).
+	_result, e := p.x.Table(tblnurseitem.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *nurseitem) InsertBatch(ctx context.Context, beans []*do.NurseItem, cols
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.NurseItemTableName).
+	_result, e := p.x.Table(tblnurseitem.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *nurseitem) Update(ctx context.Context, sets []dialect.Setter, cond ...d
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.NurseItemTableName).
+	_result, e := p.x.Table(tblnurseitem.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *nurseitem) UpdateById(ctx context.Context, id types.BigInt, sets ...dia
 // cols: 要插入的列名
 func (p *nurseitem) UpdateOne(ctx context.Context, bean *do.NurseItem, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.NurseItemTableName).
+	_result, e := p.x.Table(tblnurseitem.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *nurseitem) UpdateBatch(ctx context.Context, beans []*do.NurseItem, cols
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.NurseItemTableName).
+	_result, e := p.x.Table(tblnurseitem.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *nurseitem) UpdateBatch(ctx context.Context, beans []*do.NurseItem, cols
 // Delete
 func (p *nurseitem) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.NurseItemTableName).
+	_result, e := p.x.Table(tblnurseitem.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *nurseitem) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.NurseItemTableName).
+	_result, e := p.x.Table(tblnurseitem.TableName).
 		Where(tblnurseitem.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *nurseitem) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.NurseItemTableName
+//  1. 如果没有指定表名，则默认使用tblnurseitem.TableName
 //  2. 如果没有指定查询列，则默认使用tblnurseitem.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *nurseitem) DeleteByIds(ctx context.Context, ids []any) (int64, error) {
 func (p *nurseitem) Get(ctx context.Context, s ace.SelectBuilder) (*do.NurseItem, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.NurseItemTableName)
+		s.Table(tblnurseitem.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *nurseitem) Get(ctx context.Context, s ace.SelectBuilder) (*do.NurseItem
 // GetByID 按主键读取一个nurse_item对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *nurseitem) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.NurseItem, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.NurseItemTableName).Where(tblnurseitem.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblnurseitem.TableName).Where(tblnurseitem.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *nurseitem) GetByIds(ctx context.Context, ids []any, cols ...dialect.Fie
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.NurseItemTableName
+//  1. 如果没有指定表名，则默认使用tblnurseitem.TableName
 //  2. 如果没有指定查询列，则默认使用tblnurseitem.PrimaryKey
 func (p *nurseitem) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.NurseItemTableName)
+		s.Table(tblnurseitem.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *nurseitem) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, e
 func (p *nurseitem) List(ctx context.Context, s ace.SelectBuilder) ([]*do.NurseItem, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.NurseItemTableName)
+		s.Table(tblnurseitem.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *nurseitem) List(ctx context.Context, s ace.SelectBuilder) ([]*do.NurseI
 func (p *nurseitem) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.NurseItemTableName)
+		s.Table(tblnurseitem.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *nurseitem) Column(ctx context.Context, s ace.SelectBuilder) ([]any, err
 // Count
 func (p *nurseitem) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.NurseItemTableName).
+	return p.x.Table(tblnurseitem.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *nurseitem) Count(ctx context.Context, cond ...dialect.Condition) (int64
 // Sum
 func (p *nurseitem) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.NurseItemTableName).
+	return p.x.Table(tblnurseitem.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *nurseitem) Sum(ctx context.Context, cols []dialect.Field, cond ...diale
 // Exists
 func (p *nurseitem) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.NurseItemTableName).Cols(tblnurseitem.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblnurseitem.TableName).Cols(tblnurseitem.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

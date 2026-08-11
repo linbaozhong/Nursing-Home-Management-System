@@ -113,4 +113,15 @@ type PageLabelByKeyQuery struct {
 	Key      *string `json:"key"`                        // 关键字(标签名称), 可选
 }
 
+// @response
+// PageSearchEmergencyContactByKeyVO 分页查询紧急联系人响应
+type PageSearchEmergencyContactByKeyVO struct {
+	ID       int64  `json:"id"`       // 紧急联系人编号
+	ElderId  int64  `json:"elder_id"` // 老人编号
+	Name     string `json:"name"`     // 联系人姓名
+	Phone    string `json:"phone"`    // 联系人电话
+	Relation string `json:"relation"` // 与老人关系
+	Remark   string `json:"remark"`   // 备注
+}
+
 // ListLabelVO 客户标签分类列表响应（定义见 common.go）

@@ -28,10 +28,10 @@ type AddAccidentQuery struct {
 }
 
 type AccidentQuery struct {
-	StaffID     *int64  `json:"staff_id" valid:"required"`    // 护工编号
-	OccurDate   *string `json:"occur_date" valid:"required"`  // 发生时间
-	Description *string `json:"description" valid:"required"` // 事故描述
-	Picture     *string `json:"picture" valid:"required"`     // 事故图片
+	StaffID     *int64     `json:"staff_id" valid:"required"`    // 护工编号
+	OccurDate   *time.Time `json:"occur_date" valid:"required"`  // 发生时间
+	Description *string    `json:"description" valid:"required"` // 事故描述
+	Picture     *string    `json:"picture" valid:"required"`     // 事故图片
 }
 
 // ============ AccidentController 响应 ============
@@ -39,7 +39,6 @@ type AccidentQuery struct {
 // @response
 // PageAccidentByKeyVO 分页查询事故登记响应
 type PageAccidentByKeyVO struct {
-	// Rank
 	ID        int64     `json:"id"`         // id
 	ElderName string    `json:"elder_name"` // 老人姓名
 	StaffName string    `json:"staff_name"` // 护工姓名

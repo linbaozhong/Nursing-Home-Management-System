@@ -6,10 +6,8 @@ import (
 	"strconv"
 
 	"api/internal/constant"
-	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblbed"
 	"api/internal/model/define/table/tblelder"
-	"api/internal/model/do"
 	"api/internal/model/dto"
 
 	"github.com/linbaozhong/gentity/pkg/types"
@@ -32,10 +30,9 @@ var DepositRecharge = &depositrecharge{}
 // PageDepositRechargeByKey 分页查询预存充值（入住/退住审核老人，联表床位）
 // 对应 Java: DepositRechargeServiceImpl.pageDepositRechargeByKey -> ElderMapper.listDepositRechargeByKey
 func (d *depositrecharge) PageDepositRechargeByKey(ctx context.Context, in *dto.PageDepositRechargeByKeyQuery, out *[]dto.PageDepositRechargeByKeyVO) error {
-	q := db.Table(do.ElderTableName).
+	q := db.Table(tblelder.TableName).
 		LeftJoin(tblelder.BedId, tblbed.Id).
 		Where(
-			tblelder.DelFlag.Eq(constant.YesNoNo),
 			tblelder.CheckFlag.In(
 				types.Int8(constant.CheckEnter),
 				types.Int8(constant.CheckExitAudit),
@@ -83,17 +80,15 @@ func (d *depositrecharge) PageDepositRechargeByKey(ctx context.Context, in *dto.
 // PageSearchElderByKey 分页搜索老人（入住/退住审核老人，供选择）
 // 对应 Java: DepositRechargeServiceImpl.pageSearchElderByKey -> CommonFunc.pageSearchElderByKeyResult
 func (d *depositrecharge) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
-	q := db.Table(do.ElderTableName).
+	q := db.Table(tblelder.TableName).
 		Where(
-			tblelder.DelFlag.Eq(constant.YesNoNo),
 			tblelder.CheckFlag.In(
 				types.Int8(constant.CheckEnter),
 				types.Int8(constant.CheckExitAudit),
 			),
 		)
-	if in.Key != nil && *in.Key != "" {
-		q.And(tblelder.Name.Like(*in.Key))
-		q.Or(tblelder.Phone.Like(*in.Key))
+	if in.Name != nil && in.Phone != nil {
+		q.AndOr(tblelder.Name.Like(*in.Name), tblelder.Phone.Like(*in.Phone))
 	}
 	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(

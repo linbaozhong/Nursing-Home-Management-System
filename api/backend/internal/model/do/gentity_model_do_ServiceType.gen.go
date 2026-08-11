@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const ServiceTypeTableName = "service_type"
+// const ServiceTypeTableName = "service_type"
 
 var (
 	servicetypePool = pool.New[*ServiceType](func() any {
@@ -110,7 +110,7 @@ func (p *ServiceType) Reset() {
 }
 
 func (p *ServiceType) TableName() string {
-	return ServiceTypeTableName
+	return "service_type"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

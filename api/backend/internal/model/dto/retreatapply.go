@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 // ============ RetreatApplyController 请求 ============
 
 // @request
@@ -34,18 +36,18 @@ type PageRetreatApplyByKeyQuery struct {
 // @request
 // AddRetreatApplyQuery 新增退住申请请求
 type AddRetreatApplyQuery struct {
-	ElderID     *int64  `json:"elder_id" valid:"required"`     // 老人编号
-	ApplyReason *string `json:"apply_reason" valid:"required"` // 退住原因
-	ApplyDate   *string `json:"apply_date" valid:"required"`   // 申请日期
+	ElderID     *int64     `json:"elder_id" valid:"required"`     // 老人编号
+	ApplyReason *string    `json:"apply_reason" valid:"required"` // 退住原因
+	ApplyDate   *time.Time `json:"apply_date" valid:"required"`   // 申请日期
 }
 
 // @request
 // EditRetreatApplyQuery 编辑退住申请请求
 type EditRetreatApplyQuery struct {
-	ID          *int64  `json:"id"`                            // id
-	ElderID     *int64  `json:"elder_id" valid:"required"`     // 老人编号
-	ApplyReason *string `json:"apply_reason" valid:"required"` // 退住原因
-	ApplyDate   *string `json:"apply_date" valid:"required"`   // 申请日期
+	ID          *int64     `json:"id"`                            // id
+	ElderID     *int64     `json:"elder_id" valid:"required"`     // 老人编号
+	ApplyReason *string    `json:"apply_reason" valid:"required"` // 退住原因
+	ApplyDate   *time.Time `json:"apply_date" valid:"required"`   // 申请日期
 }
 
 // PageSearchElderByKeyQuery 分页搜索老人请求（定义见 elderrecord.go）
@@ -55,12 +57,21 @@ type EditRetreatApplyQuery struct {
 // @response
 // PageRetreatByKeyVO 分页查询退住响应（RetreatApply / RetreatAudit 共用）
 type PageRetreatByKeyVO struct {
-	Rank
 	ApplyID   int64  `json:"apply_id"`   // 申请编号
 	ElderID   int64  `json:"elder_id"`   // 老人编号
 	ElderName string `json:"elder_name"` // 老人姓名
 	ElderSex  string `json:"elder_sex"`  // 老人性别
 	IDNum     string `json:"id_num"`     // 身份证号
 	BedName   string `json:"bed_name"`   // 床位名称
-	ApplyFlag string `json:"apply_flag"` // 审核状态
+	ApplyFlag *int8  `json:"apply_flag"` // 审核状态（0-待审核 1-审核中 2-通过 -1-不通过）
+}
+
+// @response
+// PageSearchElderByKeyVO 分页搜索老人响应（供退住申请选择老人）
+type PageSearchElderByKeyVO struct {
+	ElderID   int64  `json:"elder_id"`   // 老人编号
+	ElderName string `json:"elder_name"` // 老人姓名
+	ElderSex  string `json:"elder_sex"`  // 老人性别
+	IDNum     string `json:"id_num"`     // 身份证号
+	BedName   string `json:"bed_name"`   // 床位名称
 }

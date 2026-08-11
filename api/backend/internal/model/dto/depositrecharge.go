@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 // ============ DepositRechargeController 请求 ============
 
 // @request
@@ -22,21 +24,21 @@ type RechargeQuery struct {
 // @request
 // AddDepositRechargeQuery 新增预存充值请求
 type AddDepositRechargeQuery struct {
-	ID           *int64   `json:"id"`                             // id
-	ElderID      *int64   `json:"elder_id" valid:"required"`      // 老人编号
-	Amount       *float64 `json:"amount" valid:"required"`        // 充值金额
-	RechargeDate *string  `json:"recharge_date" valid:"required"` // 充值日期
-	Remark       *string  `json:"remark"`                         // 备注
+	ID           *int64     `json:"id"`                             // id
+	ElderID      *int64     `json:"elder_id" valid:"required"`      // 老人编号
+	Amount       *float64   `json:"amount" valid:"required"`        // 充值金额
+	RechargeDate *time.Time `json:"recharge_date" valid:"required"` // 充值日期
+	Remark       *string    `json:"remark"`                         // 备注
 }
 
 // @request
 // EditDepositRechargeQuery 编辑预存充值请求
 type EditDepositRechargeQuery struct {
-	ID           *int64   `json:"id"`                             // id
-	ElderID      *int64   `json:"elder_id" valid:"required"`      // 老人编号
-	Amount       *float64 `json:"amount" valid:"required"`        // 充值金额
-	RechargeDate *string  `json:"recharge_date" valid:"required"` // 充值日期
-	Remark       *string  `json:"remark"`                         // 备注
+	ID           *int64     `json:"id"`                             // id
+	ElderID      *int64     `json:"elder_id" valid:"required"`      // 老人编号
+	Amount       *float64   `json:"amount" valid:"required"`        // 充值金额
+	RechargeDate *time.Time `json:"recharge_date" valid:"required"` // 充值日期
+	Remark       *string    `json:"remark"`                         // 备注
 }
 
 // ============ DepositRechargeController 响应 ============

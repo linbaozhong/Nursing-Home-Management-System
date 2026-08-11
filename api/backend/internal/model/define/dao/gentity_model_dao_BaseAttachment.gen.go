@@ -61,7 +61,7 @@ func (p *baseattachment) Insert(ctx context.Context, sets ...dialect.Setter) (in
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.BaseAttachmentTableName).
+	_result, e := p.x.Table(tblbaseattachment.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *baseattachment) Insert(ctx context.Context, sets ...dialect.Setter) (in
 // cols: 要插入的列名
 func (p *baseattachment) InsertOne(ctx context.Context, bean *do.BaseAttachment, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.BaseAttachmentTableName).
+	_result, e := p.x.Table(tblbaseattachment.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *baseattachment) InsertBatch(ctx context.Context, beans []*do.BaseAttach
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.BaseAttachmentTableName).
+	_result, e := p.x.Table(tblbaseattachment.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *baseattachment) Update(ctx context.Context, sets []dialect.Setter, cond
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.BaseAttachmentTableName).
+	_result, e := p.x.Table(tblbaseattachment.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *baseattachment) UpdateById(ctx context.Context, id types.BigInt, sets .
 // cols: 要插入的列名
 func (p *baseattachment) UpdateOne(ctx context.Context, bean *do.BaseAttachment, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.BaseAttachmentTableName).
+	_result, e := p.x.Table(tblbaseattachment.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *baseattachment) UpdateBatch(ctx context.Context, beans []*do.BaseAttach
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.BaseAttachmentTableName).
+	_result, e := p.x.Table(tblbaseattachment.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *baseattachment) UpdateBatch(ctx context.Context, beans []*do.BaseAttach
 // Delete
 func (p *baseattachment) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.BaseAttachmentTableName).
+	_result, e := p.x.Table(tblbaseattachment.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *baseattachment) DeleteByIds(ctx context.Context, ids []any) (int64, err
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.BaseAttachmentTableName).
+	_result, e := p.x.Table(tblbaseattachment.TableName).
 		Where(tblbaseattachment.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *baseattachment) DeleteByIds(ctx context.Context, ids []any) (int64, err
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.BaseAttachmentTableName
+//  1. 如果没有指定表名，则默认使用tblbaseattachment.TableName
 //  2. 如果没有指定查询列，则默认使用tblbaseattachment.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *baseattachment) DeleteByIds(ctx context.Context, ids []any) (int64, err
 func (p *baseattachment) Get(ctx context.Context, s ace.SelectBuilder) (*do.BaseAttachment, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.BaseAttachmentTableName)
+		s.Table(tblbaseattachment.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *baseattachment) Get(ctx context.Context, s ace.SelectBuilder) (*do.Base
 // GetByID 按主键读取一个base_attachment对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *baseattachment) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.BaseAttachment, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.BaseAttachmentTableName).Where(tblbaseattachment.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblbaseattachment.TableName).Where(tblbaseattachment.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *baseattachment) GetByIds(ctx context.Context, ids []any, cols ...dialec
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.BaseAttachmentTableName
+//  1. 如果没有指定表名，则默认使用tblbaseattachment.TableName
 //  2. 如果没有指定查询列，则默认使用tblbaseattachment.PrimaryKey
 func (p *baseattachment) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.BaseAttachmentTableName)
+		s.Table(tblbaseattachment.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *baseattachment) Cell(ctx context.Context, s ace.SelectBuilder) (any, bo
 func (p *baseattachment) List(ctx context.Context, s ace.SelectBuilder) ([]*do.BaseAttachment, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.BaseAttachmentTableName)
+		s.Table(tblbaseattachment.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *baseattachment) List(ctx context.Context, s ace.SelectBuilder) ([]*do.B
 func (p *baseattachment) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.BaseAttachmentTableName)
+		s.Table(tblbaseattachment.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *baseattachment) Column(ctx context.Context, s ace.SelectBuilder) ([]any
 // Count
 func (p *baseattachment) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.BaseAttachmentTableName).
+	return p.x.Table(tblbaseattachment.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *baseattachment) Count(ctx context.Context, cond ...dialect.Condition) (
 // Sum
 func (p *baseattachment) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.BaseAttachmentTableName).
+	return p.x.Table(tblbaseattachment.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *baseattachment) Sum(ctx context.Context, cols []dialect.Field, cond ...
 // Exists
 func (p *baseattachment) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.BaseAttachmentTableName).Cols(tblbaseattachment.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblbaseattachment.TableName).Cols(tblbaseattachment.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

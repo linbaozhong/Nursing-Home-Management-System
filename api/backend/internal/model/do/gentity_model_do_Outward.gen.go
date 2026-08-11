@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const OutwardTableName = "outward"
+// const OutwardTableName = "outward"
 
 var (
 	outwardPool = pool.New[*Outward](func() any {
@@ -146,7 +146,7 @@ func (p *Outward) Reset() {
 }
 
 func (p *Outward) TableName() string {
-	return OutwardTableName
+	return "outward"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

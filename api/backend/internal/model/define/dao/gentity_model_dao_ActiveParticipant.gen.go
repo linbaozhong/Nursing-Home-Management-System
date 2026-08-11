@@ -61,7 +61,7 @@ func (p *activeparticipant) Insert(ctx context.Context, sets ...dialect.Setter) 
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.ActiveParticipantTableName).
+	_result, e := p.x.Table(tblactiveparticipant.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *activeparticipant) Insert(ctx context.Context, sets ...dialect.Setter) 
 // cols: 要插入的列名
 func (p *activeparticipant) InsertOne(ctx context.Context, bean *do.ActiveParticipant, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.ActiveParticipantTableName).
+	_result, e := p.x.Table(tblactiveparticipant.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *activeparticipant) InsertBatch(ctx context.Context, beans []*do.ActiveP
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.ActiveParticipantTableName).
+	_result, e := p.x.Table(tblactiveparticipant.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *activeparticipant) Update(ctx context.Context, sets []dialect.Setter, c
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.ActiveParticipantTableName).
+	_result, e := p.x.Table(tblactiveparticipant.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *activeparticipant) UpdateById(ctx context.Context, id types.BigInt, set
 // cols: 要插入的列名
 func (p *activeparticipant) UpdateOne(ctx context.Context, bean *do.ActiveParticipant, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.ActiveParticipantTableName).
+	_result, e := p.x.Table(tblactiveparticipant.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *activeparticipant) UpdateBatch(ctx context.Context, beans []*do.ActiveP
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.ActiveParticipantTableName).
+	_result, e := p.x.Table(tblactiveparticipant.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *activeparticipant) UpdateBatch(ctx context.Context, beans []*do.ActiveP
 // Delete
 func (p *activeparticipant) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.ActiveParticipantTableName).
+	_result, e := p.x.Table(tblactiveparticipant.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *activeparticipant) DeleteByIds(ctx context.Context, ids []any) (int64, 
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.ActiveParticipantTableName).
+	_result, e := p.x.Table(tblactiveparticipant.TableName).
 		Where(tblactiveparticipant.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *activeparticipant) DeleteByIds(ctx context.Context, ids []any) (int64, 
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.ActiveParticipantTableName
+//  1. 如果没有指定表名，则默认使用tblactiveparticipant.TableName
 //  2. 如果没有指定查询列，则默认使用tblactiveparticipant.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *activeparticipant) DeleteByIds(ctx context.Context, ids []any) (int64, 
 func (p *activeparticipant) Get(ctx context.Context, s ace.SelectBuilder) (*do.ActiveParticipant, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.ActiveParticipantTableName)
+		s.Table(tblactiveparticipant.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *activeparticipant) Get(ctx context.Context, s ace.SelectBuilder) (*do.A
 // GetByID 按主键读取一个active_participant对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *activeparticipant) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.ActiveParticipant, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.ActiveParticipantTableName).Where(tblactiveparticipant.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblactiveparticipant.TableName).Where(tblactiveparticipant.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *activeparticipant) GetByIds(ctx context.Context, ids []any, cols ...dia
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.ActiveParticipantTableName
+//  1. 如果没有指定表名，则默认使用tblactiveparticipant.TableName
 //  2. 如果没有指定查询列，则默认使用tblactiveparticipant.PrimaryKey
 func (p *activeparticipant) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.ActiveParticipantTableName)
+		s.Table(tblactiveparticipant.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *activeparticipant) Cell(ctx context.Context, s ace.SelectBuilder) (any,
 func (p *activeparticipant) List(ctx context.Context, s ace.SelectBuilder) ([]*do.ActiveParticipant, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.ActiveParticipantTableName)
+		s.Table(tblactiveparticipant.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *activeparticipant) List(ctx context.Context, s ace.SelectBuilder) ([]*d
 func (p *activeparticipant) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.ActiveParticipantTableName)
+		s.Table(tblactiveparticipant.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *activeparticipant) Column(ctx context.Context, s ace.SelectBuilder) ([]
 // Count
 func (p *activeparticipant) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.ActiveParticipantTableName).
+	return p.x.Table(tblactiveparticipant.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *activeparticipant) Count(ctx context.Context, cond ...dialect.Condition
 // Sum
 func (p *activeparticipant) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.ActiveParticipantTableName).
+	return p.x.Table(tblactiveparticipant.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *activeparticipant) Sum(ctx context.Context, cols []dialect.Field, cond 
 // Exists
 func (p *activeparticipant) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.ActiveParticipantTableName).Cols(tblactiveparticipant.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblactiveparticipant.TableName).Cols(tblactiveparticipant.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

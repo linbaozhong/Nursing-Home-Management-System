@@ -3,96 +3,292 @@ package service
 import (
 	"context"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblelder"
+	"api/internal/model/define/table/tblmaterial"
+	"api/internal/model/define/table/tbloutboundmaterial"
+	"api/internal/model/define/table/tbloutboundrecord"
+	"api/internal/model/define/table/tblstaff"
+	"api/internal/model/define/table/tblwarehouse"
+	"api/internal/model/define/table/tblwarehousematerial"
+	"api/internal/model/do"
 	"api/internal/model/dto"
-	"github.com/linbaozhong/gentity/pkg/ace/dialect"
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-type outboundrecord struct{}
+var _ = (*outboundRecordService)(nil)
 
-var OutboundRecord = &outboundrecord{}
+type outboundRecordService struct{}
 
-// PageOutboundRecordByKey 分页查询出库记录（联表 material、warehouse、elder、user）
-// 对应 Java: OutboundRecordServiceImpl.pageOutboundRecordByKey -> OutboundRecordMapper.listOutboundRecordByKey
-// SQL: SELECT ob.*, m.material_name, w.warehouse_name, e.elder_name, u.name AS charge_user_name
-//
-//	FROM outbound_record ob
-//	LEFT JOIN material m ON m.id = ob.material_id
-//	LEFT JOIN warehouse w ON w.id = ob.warehouse_id
-//	LEFT JOIN elder e ON e.id = ob.elder_id
-//	LEFT JOIN user u ON u.id = ob.charge_user_id
-//	WHERE (m.material_name LIKE %key% OR ob.id = key) [可选]
-//	ORDER BY ob.create_time DESC; 再由 PageUtil 内存分页。
-//
-// Todo: 1) in.Key 非空 -> (tbl<outboundrecord>.Id.Eq(in.Key) OR tbl<material>.MaterialName.Like(in.Key))
-//
-//	2) DB 分页: Count + List(联表 LeftJoin)
-//	3) 组装含物资/仓库/老人/负责人名的 VO 并赋值 out
-func (o *outboundrecord) PageOutboundRecordByKey(ctx context.Context, in *dto.PageOutboundRecordByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
-	return nil
+// outboundRecordJoin 接收入库记录联表（仓库名/经办人名/领用人名）查询结果的中间结构体
+type outboundRecordJoin struct {
+	ID            types.BigInt `json:"id"`
+	RecipientType types.String `json:"recipient_type"`
+	OutboundDate  types.Time   `json:"outbound_date"`
+	OutboundFlag  types.Int8   `json:"outbound_flag"`
+	WarehouseName types.String `json:"warehouse_name"`
+	StaffName     types.String `json:"staff_name"`
+	ElderName     types.String `json:"elder_name"`
 }
 
-// GetOutboundRecordById 根据编号获取出库记录
-// 对应 Java: OutboundRecordServiceImpl.getOutboundRecordById -> outboundRecordMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.OutboundRecord(db).GetByID(ctx, types.BigInt(in.ID))
-func (o *outboundrecord) GetOutboundRecordById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.OutboundRecord(db).GetByID(ctx, types.BigInt(in.ID))
+// PageOutboundRecordByKey 分页查询出库记录
+func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in *dto.PageOutboundRecordByKeyQuery, out *[]dto.PageOutboundRecordByKeyVO) error {
+	if in.PageNum == nil || in.PageSize == nil {
+		return constant.ErrParamInvalid
+	}
+	q := ace.NewSelectBuilder(db).From(tbloutboundrecord.TableName).
+		LeftJoin(tbloutboundrecord.WarehouseId, tblwarehouse.Id).
+		LeftJoin(tbloutboundrecord.StaffId, tblstaff.Id).
+		LeftJoin(tbloutboundrecord.RecipientId, tblelder.Id)
+	if in.WarehouseName != nil && *in.WarehouseName != "" {
+		q = q.Where(tblwarehouse.Name.Like(*in.WarehouseName))
+	}
+	if in.Recipient != nil && *in.Recipient != "" {
+		q = q.And(tblelder.Name.Like(*in.Recipient))
+	}
+	if in.StartTime != nil {
+		q = q.And(tbloutboundrecord.OutboundDate.Gte(types.Time{Time: *in.StartTime}))
+	}
+	if in.EndTime != nil {
+		q = q.And(tbloutboundrecord.OutboundDate.Lte(types.Time{Time: *in.EndTime}))
+	}
+	var joins []outboundRecordJoin
+	has, e := q.Page(*in.PageNum, *in.PageSize).
+		Cols(
+			tbloutboundrecord.Id,
+			tbloutboundrecord.RecipientType,
+			tbloutboundrecord.OutboundDate,
+			tbloutboundrecord.OutboundFlag,
+			tblwarehouse.Name.As("warehouse_name"),
+			tblstaff.Name.As("staff_name"),
+			tblelder.Name.As("elder_name"),
+		).
+		OrderBy(tbloutboundrecord.OutboundDate, false).
+		Select().Gets(ctx, &joins)
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
-	return nil
-}
-
-// PageSearchElderByKey 分页搜索老人（供出库选择老人）
-// 对应 Java: OutboundRecordServiceImpl.pageSearchElderByKey -> elderMapper.listElderByKey
-// SQL: SELECT * FROM elder WHERE (elder_name LIKE %key% OR id = key) [可选] AND del_flag=0
-// todo: 查询 elder 表并分页, 结果赋值 out(需定义老人分页返回类型)
-func (o *outboundrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 elder 表并分页
-	return nil
-}
-
-// PageWarehouseMaterialByKey 分页查询仓库物资（供出库选择物资）
-// 对应 Java: OutboundRecordServiceImpl.pageWarehouseMaterialByKey -> warehouseMaterialMapper.listWarehouseMaterialByKey
-// SQL: SELECT wm.*, m.material_name, w.warehouse_name FROM warehouse_material wm
-//
-//	LEFT JOIN material m ON m.id = wm.material_id
-//	LEFT JOIN warehouse w ON w.id = wm.warehouse_id
-//	WHERE (m.material_name LIKE %key%) [可选]
-//
-// todo: 仓库物资分页查询 - 联表 material/warehouse + 分页, 结果赋值 out
-func (o *outboundrecord) PageWarehouseMaterialByKey(ctx context.Context, in *dto.PageWarehouseMaterialByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 warehouse_material 联表并分页
-	return nil
-}
-
-// AddOutboundRecord 新增出库记录（扣减仓库物资库存）
-// 对应 Java: OutboundRecordServiceImpl.addOutboundRecord -> insert outbound_record + 扣减 warehouse_material.stock
-// todo: 事务: 1) dao.OutboundRecord(db).InsertOne; 2) 扣减对应 warehouse_material 库存
-func (o *outboundrecord) AddOutboundRecord(ctx context.Context, in *dto.AddOutboundRecordQuery, out *dto.EmptyResp) error {
-	// todo: 写入 outbound_record 并扣减 warehouse_material 库存
-	return nil
-}
-
-// AuditOutboundRecord 审核出库记录
-// 对应 Java: OutboundRecordServiceImpl.auditOutboundRecord -> 更新审核状态
-// todo: 更新 outbound_record 审核状态字段(UpdateById), 结果赋值 out
-func (o *outboundrecord) AuditOutboundRecord(ctx context.Context, in *dto.AuditOutboundRecordQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: tbl<outboundrecord>.AuditStatus.Value(in.AuditStatus),
+	if !has {
+		return nil
 	}
-	_, e := dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
-	return e
+	res := make([]dto.PageOutboundRecordByKeyVO, 0, len(joins))
+	for _, j := range joins {
+		res = append(res, dto.PageOutboundRecordByKeyVO{
+			ID:            int64(j.ID),
+			WarehouseName: j.WarehouseName.String(),
+			OutboundDate:  j.OutboundDate.Time(),
+			Recipient:     j.ElderName.String(),
+			StaffName:     j.StaffName.String(),
+			OutboundFlag:  constant.AuditStatus(j.OutboundFlag).String(),
+		})
+	}
+	*out = res
+	return nil
 }
 
-// DeleteOutboundRecord 删除出库记录（回冲仓库物资库存）
-// 对应 Java: OutboundRecordServiceImpl.deleteOutboundRecord -> 删记录 + 回冲 warehouse_material.stock
-// todo: 事务: 1) 查原记录; 2) 回冲库存; 3) dao.OutboundRecord(db).DeleteById
-func (o *outboundrecord) DeleteOutboundRecord(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.OutboundRecord(db).DeleteById(ctx, types.BigInt(in.ID))
-	return e
+// GetOutboundRecordById 查询出库记录详情
+func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *dto.IDReq, out *dto.GetOutboundRecordByIDVO) error {
+	rec := new(do.OutboundRecord)
+	has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.Id.Eq(types.BigInt(*in.ID))))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return constant.ErrDataNotExist
+	}
+	out.ID = int64(rec.Id)
+	out.RecipientType = rec.RecipientType.String()
+	out.MaterialUse = rec.MaterialUse.String()
+	out.OutboundDate = rec.OutboundDate.Time()
+	// 仓库名
+	w := new(do.Warehouse)
+	if wh, we := dao.Warehouse(db).Get(ctx, ace.Where(tblwarehouse.Id.Eq(rec.WarehouseId))); we == nil && wh {
+		out.WarehouseName = w.Name.String()
+	}
+	// 登记人
+	st := new(do.Staff)
+	if sh, se := dao.Staff(db).Get(ctx, ace.Where(tblstaff.Id.Eq(rec.StaffId))); se == nil && sh {
+		out.StaffName = st.Name.String()
+	}
+	// 出库物资明细
+	materials, _, me := dao.OutboundMaterial(db).List(ctx, ace.Where(tbloutboundmaterial.OutboundRecordId.Eq(rec.Id)))
+	if me == nil {
+		for _, m := range materials {
+			mn := ""
+			if mh, merr := dao.Material(db).Get(ctx, ace.Where(tblmaterial.Id.Eq(m.MaterialId))); merr == nil && mh {
+				mn = mh.Name.String()
+			}
+			out.OutboundMaterialByIDVOList = append(out.OutboundMaterialByIDVOList, dto.GetOutboundMaterialByIDVO{
+				MaterialName: mn,
+				OutboundNum:  int(m.OutboundNum),
+			})
+		}
+	}
+	return nil
+}
+
+// PageSearchElderByKey 分页查询老人（供出库选择领用人）
+func (s *outboundRecordService) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+	if in.PageNum == nil || in.PageSize == nil {
+		return constant.ErrParamInvalid
+	}
+	q := ace.NewSelectBuilder(db).From(tblelder.TableName)
+	if in.Name != nil && *in.Name != "" {
+		q = q.Where(tblelder.Name.Like(*in.Name))
+	}
+	if in.Phone != nil && *in.Phone != "" {
+		q = q.And(tblelder.Phone.Like(*in.Phone))
+	}
+	var elders []do.Elder
+	has, e := q.Page(*in.PageNum, *in.PageSize).
+		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.CheckFlag).
+		OrderBy(tblelder.Id, false).
+		Select().Gets(ctx, &elders)
+	if e != nil {
+		return e
+	}
+	if !has {
+		return nil
+	}
+	res := make([]dto.PageSearchElderByKeyVO, 0, len(elders))
+	for _, el := range elders {
+		res = append(res, dto.PageSearchElderByKeyVO{
+			ID:        int64(el.Id),
+			Name:      el.Name.String(),
+			IDNum:     el.IdNum.String(),
+			Sex:       el.Sex.String(),
+			Phone:     el.Phone.String(),
+			Address:   el.Address.String(),
+			CheckFlag: constant.CheckStatus(el.CheckFlag).String(),
+		})
+	}
+	*out = res
+	return nil
+}
+
+// PageWarehouseMaterialByKey 分页查询仓库物资（供出库选择）
+func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, in *dto.PageWarehouseMaterialByKeyQuery, out *[]dto.PageWarehouseMaterialByKeyVO) error {
+	if in.PageNum == nil || in.PageSize == nil || in.WarehouseID == nil {
+		return constant.ErrParamInvalid
+	}
+	q := ace.NewSelectBuilder(db).From(tblwarehousematerial.TableName).
+		LeftJoin(tblwarehousematerial.MaterialId, tblmaterial.Id)
+	if in.MaterialName != nil && *in.MaterialName != "" {
+		q = q.Where(tblmaterial.Name.Like(*in.MaterialName))
+	}
+	var list []struct {
+		ID           types.BigInt  `json:"id"`
+		MaterialName types.String  `json:"material_name"`
+		Price        types.Float64 `json:"price"`
+		WarehouseNum types.Int     `json:"warehouse_num"`
+		Inventory    types.BigInt  `json:"inventory"`
+		ExpireDate   types.Time    `json:"expire_date"`
+	}
+	has, e := q.Page(*in.PageNum, *in.PageSize).
+		Cols(
+			tblwarehousematerial.Id,
+			tblwarehousematerial.Price,
+			tblwarehousematerial.WarehouseNum,
+			tblwarehousematerial.Inventory,
+			tblwarehousematerial.ExpireDate,
+			tblmaterial.Name.As("material_name"),
+		).
+		OrderBy(tblwarehousematerial.Id, false).
+		Select().Gets(ctx, &list)
+	if e != nil {
+		return e
+	}
+	if !has {
+		return nil
+	}
+	res := make([]dto.PageWarehouseMaterialByKeyVO, 0, len(list))
+	for _, m := range list {
+		res = append(res, dto.PageWarehouseMaterialByKeyVO{
+			ID:           int64(m.ID),
+			MaterialName: m.MaterialName.String(),
+			Price:        m.Price.Float64(),
+			WarehouseNum: int(m.WarehouseNum),
+			Inventory:    int(m.Inventory),
+			ExpireDate:   m.ExpireDate.Time(),
+		})
+	}
+	*out = res
+	return nil
+}
+
+// AddOutboundRecord 新增出库记录并扣减库存
+func (s *outboundRecordService) AddOutboundRecord(ctx context.Context, in *dto.AddOutboundRecordQuery, out *dto.EmptyResp) error {
+	if in.WarehouseID == nil || in.StaffID == nil || len(in.OutboundMaterialQueryList) == 0 {
+		return constant.ErrParamInvalid
+	}
+	rec := &do.OutboundRecord{
+		RecipientType: types.String(orEmpty(in.RecipientType)),
+		MaterialUse:   types.String(orEmpty(in.MaterialUse)),
+		WarehouseId:   types.BigInt(*in.WarehouseID),
+		StaffId:       types.BigInt(*in.StaffID),
+		RecipientId:   types.BigInt(orInt64(in.RecipientID)),
+		OutboundDate:  types.Time{Time: timePtr(in.OutboundDate)},
+		OutboundFlag:  types.Int8(constant.AuditStay),
+		CreateId:      types.BigInt(*in.StaffID),
+	}
+	if _, e := dao.OutboundRecord(db).InsertOne(ctx, rec); e != nil {
+		return e
+	}
+	for _, m := range in.OutboundMaterialQueryList {
+		if m.WarehouseMaterialID != nil && m.OutboundNum != nil {
+			// 扣减对应仓库物资库存
+			wm := new(do.WarehouseMaterial)
+			if has, e := dao.WarehouseMaterial(db).Get(ctx, ace.Where(tblwarehousematerial.Id.Eq(types.BigInt(*m.WarehouseMaterialID)))); e == nil && has {
+				newInv := int32(wm.Inventory) - int32(*m.OutboundNum)
+				if newInv < 0 {
+					newInv = 0
+				}
+				_, _ = dao.WarehouseMaterial(db).UpdateById(ctx, int64(wm.Id), tblwarehousematerial.Inventory.Set(types.Int32(newInv)))
+			}
+			om := &do.OutboundMaterial{
+				OutboundRecordId:    rec.Id,
+				WarehouseMaterialId: types.BigInt(orInt64(m.WarehouseMaterialID)),
+				MaterialId:          wm.MaterialId,
+				OutboundNum:         types.Int32(int32(*m.OutboundNum)),
+				CreateId:            rec.CreateId,
+			}
+			_, _ = dao.OutboundMaterial(db).InsertOne(ctx, om)
+		}
+	}
+	return nil
+}
+
+// AuditOutboundRecord 审核出库记录（通过/不通过）
+func (s *outboundRecordService) AuditOutboundRecord(ctx context.Context, in *dto.AuditOutboundRecordQuery, out *dto.EmptyResp) error {
+	if in.OutboundRecordID == nil || in.AuditResult == nil {
+		return constant.ErrParamInvalid
+	}
+	rec := new(do.OutboundRecord)
+	has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.Id.Eq(types.BigInt(*in.OutboundRecordID))))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return constant.ErrDataNotExist
+	}
+	if *in.AuditResult == "不通过" {
+		if _, e = dao.OutboundRecord(db).UpdateById(ctx, *in.OutboundRecordID, tbloutboundrecord.OutboundFlag.Set(types.Int8(constant.AuditNotPass))); e != nil {
+			return e
+		}
+		return nil
+	}
+	if _, e = dao.OutboundRecord(db).UpdateById(ctx, *in.OutboundRecordID, tbloutboundrecord.OutboundFlag.Set(types.Int8(constant.AuditPass))); e != nil {
+		return e
+	}
+	return nil
+}
+
+// DeleteOutboundRecord 删除出库记录（逻辑删除）
+func (s *outboundRecordService) DeleteOutboundRecord(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
+	if _, e := dao.OutboundRecord(db).UpdateById(ctx, *in.ID, tbloutboundrecord.DelFlag.Set(types.Int8(constant.YesNoYes))); e != nil {
+		return e
+	}
+	return nil
 }

@@ -2,10 +2,14 @@ package service
 
 import (
 	"context"
+	"errors"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblroomtype"
+	"api/internal/model/do"
 	"api/internal/model/dto"
-	"github.com/linbaozhong/gentity/pkg/ace/dialect"
+
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -13,51 +17,90 @@ type roomtype struct{}
 
 var RoomType = &roomtype{}
 
-// PageRoomTypeByKey 分页查询房间类型
-// 对应 Java: RoomTypeServiceImpl.pageRoomTypeByKey -> RoomTypeMapper.listRoomTypeByKey
-// SQL: SELECT * FROM room_type WHERE (type_name LIKE %key%) [可选] ORDER BY create_time DESC
-// todo: 房间类型分页查询 - dao.RoomType(db) 条件 + 分页, 结果赋值 out
-func (r *roomtype) PageRoomTypeByKey(ctx context.Context, in *dto.PageRoomTypeByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 room_type 表并分页
-	return nil
+// PageRoomTypeByKey 分页查询房间类型（按名称模糊过滤 + 未删除）
+// 对应 Java: RoomTypeServiceImpl.pageRoomTypeByKey -> RoomTypeFunc.listNotDelRoomType
+func (r *roomtype) PageRoomTypeByKey(ctx context.Context, in *dto.PageRoomTypeByKeyQuery, out *[]dto.PageRoomTypeByKeyVO) error {
+	q := db.Table(tblroomtype.TableName).
+		Where(tblroomtype.DelFlag.Eq(constant.YesNoNo))
+	if in.RoomTypeName != nil && *in.RoomTypeName != "" {
+		q.And(tblroomtype.Name.Like(*in.RoomTypeName))
+	}
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(
+			tblroomtype.Id.AsName("id"),
+			tblroomtype.Name.AsName("name"),
+			tblroomtype.MonthPrice.AsName("month_price"),
+		).
+		Desc(tblroomtype.CreateTime).
+		Select().
+		Gets(ctx, out)
 }
 
-// GetRoomTypeById 根据编号获取房间类型
-// 对应 Java: RoomTypeServiceImpl.getRoomTypeById -> roomTypeMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.RoomType(db).GetByID(ctx, types.BigInt(in.ID))
-func (r *roomtype) GetRoomTypeById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.RoomType(db).GetByID(ctx, types.BigInt(in.ID))
+// GetRoomTypeById 根据编号获取房间类型（编辑回显）
+// 对应 Java: RoomTypeServiceImpl.getRoomTypeById -> OperateRoomTypeVo
+func (r *roomtype) GetRoomTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateRoomTypeVo) error {
+	obj, has, e := dao.RoomType(db).GetByID(ctx, types.BigInt(*in.ID))
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
-	return nil
-}
-
-// AddRoomType 新增房间类型
-// 对应 Java: RoomTypeServiceImpl.addRoomType -> roomTypeMapper.insertSelective
-// todo: 标准 CRUD - dao.RoomType(db).InsertOne 写入 room_type 表(含 typeName/price 等)
-func (r *roomtype) AddRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewRoomType(); 填充 in; dao.RoomType(db).InsertOne(ctx, bean)
-	return nil
-}
-
-// EditRoomType 编辑房间类型
-// 对应 Java: RoomTypeServiceImpl.editRoomType -> roomTypeMapper.updateByPrimaryKeySelective
-// todo: 标准 CRUD - 按主键更新 room_type 表
-func (r *roomtype) EditRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<roomtype>.TypeName.Value(in.TypeName),
+	if !has {
+		return errors.New("房间类型不存在")
 	}
-	_, e := dao.RoomType(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
+	out.ID = int64Ptr(int64(obj.Id))
+	out.Name = strPtr(obj.Name.String())
+	out.MonthPrice = float64Ptr(obj.MonthPrice.Float64())
+	return nil
+}
+
+// AddRoomType 新增房间类型（校验名称不重复）
+// 对应 Java: RoomTypeServiceImpl.addRoomType -> RoomTypeFunc.getRoomTypeByName
+func (r *roomtype) AddRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery, out *dto.EmptyResp) error {
+	repeat, e := dao.RoomType(db).Exists(ctx,
+		tblroomtype.Name.Eq(*in.Name),
+		tblroomtype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+	)
+	if e != nil {
+		return e
+	}
+	if repeat {
+		return errors.New("房间类型名称已存在")
+	}
+	bean := do.NewRoomType()
+	bean.Name = types.String(*in.Name)
+	bean.MonthPrice = types.Float64(*in.MonthPrice)
+	bean.DelFlag = types.Int8(constant.YesNoNo)
+	_, e = dao.RoomType(db).InsertOne(ctx, bean)
 	return e
 }
 
-// DeleteRoomType 删除房间类型
-// 对应 Java: RoomTypeServiceImpl.deleteRoomType -> roomTypeMapper.deleteByPrimaryKey
-// todo: 标准 CRUD - dao.RoomType(db).DeleteById(ctx, types.BigInt(in.ID))
+// EditRoomType 编辑房间类型（校验名称不重复排除自身）
+// 对应 Java: RoomTypeServiceImpl.editRoomType
+func (r *roomtype) EditRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery, out *dto.EmptyResp) error {
+	repeat, e := dao.RoomType(db).Exists(ctx,
+		tblroomtype.Name.Eq(*in.Name),
+		tblroomtype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblroomtype.Id.NotEq(types.BigInt(*in.ID)),
+	)
+	if e != nil {
+		return e
+	}
+	if repeat {
+		return errors.New("房间类型名称已存在")
+	}
+	bean := do.NewRoomType()
+	bean.Id = types.BigInt(*in.ID)
+	bean.Name = types.String(*in.Name)
+	bean.MonthPrice = types.Float64(*in.MonthPrice)
+	_, e = dao.RoomType(db).UpdateOne(ctx, bean)
+	return e
+}
+
+// DeleteRoomType 删除房间类型（逻辑删除）
+// 对应 Java: RoomTypeServiceImpl.deleteRoomType -> del_flag = YES
 func (r *roomtype) DeleteRoomType(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.RoomType(db).DeleteById(ctx, types.BigInt(in.ID))
+	bean := do.NewRoomType()
+	bean.Id = types.BigInt(*in.ID)
+	bean.DelFlag = types.Int8(constant.YesNoYes)
+	_, e := dao.RoomType(db).UpdateOne(ctx, bean)
 	return e
 }

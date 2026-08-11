@@ -2,34 +2,98 @@ package service
 
 import (
 	"context"
+	"path"
+	"strings"
 
+	"api/internal/constant"
+	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblbaseattachment"
+	"api/internal/model/do"
 	"api/internal/model/dto"
+	"github.com/linbaozhong/gentity/pkg/ace"
+	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-type file struct{}
+var _ = (*fileService)(nil)
 
-var File = &file{}
+type fileService struct{}
 
-// UploadImage 上传图片
-// 对应 Java: FileServiceImpl 或通用文件上传(通常存本地/对象存储, 返回访问 URL)
-// todo: 接收上传的图片文件, 保存到存储(本地目录或 OSS/MinIO), 返回文件 URL 并赋值 out(需定义返回类型)
-func (f *file) UploadImage(ctx context.Context, in *dto.UploadImageQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现图片上传
+// UploadImage 上传图片，保存附件记录并返回访问信息
+func (s *fileService) UploadImage(ctx context.Context, in *dto.UploadImageQuery, out *dto.FileInfoVO) error {
+	// file 字段约定为完整的访问 URL（或相对路径），取文件名作附件名
+	name := ""
+	if in.File != nil {
+		name = path.Base(*in.File)
+		if i := strings.LastIndex(name, "/"); i >= 0 {
+			name = name[i+1:]
+		}
+	}
+	att := &do.BaseAttachment{
+		Name: types.String(name),
+		Url:  types.String(orEmpty(in.File)),
+		Path: types.String(orEmpty(in.File)),
+		Suff: types.String(suffix(name)),
+	}
+	if _, e := dao.BaseAttachment(db).InsertOne(ctx, att); e != nil {
+		return e
+	}
+	out.ID = int64(att.Id)
+	out.URL = att.Url.String()
 	return nil
 }
 
-// UploadFile 上传文件
-// 对应 Java: 通用文件上传, 返回访问 URL
-// todo: 接收上传文件, 保存到存储, 返回文件 URL 并赋值 out(需定义返回类型)
-func (f *file) UploadFile(ctx context.Context, in *dto.UploadFileQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现文件上传
+// UploadFile 上传文件，保存附件记录并返回访问信息
+func (s *fileService) UploadFile(ctx context.Context, in *dto.UploadFileQuery, out *dto.FileInfoVO) error {
+	name := ""
+	if in.File != nil {
+		name = path.Base(*in.File)
+		if i := strings.LastIndex(name, "/"); i >= 0 {
+			name = name[i+1:]
+		}
+	}
+	att := &do.BaseAttachment{
+		Name: types.String(name),
+		Url:  types.String(orEmpty(in.File)),
+		Path: types.String(orEmpty(in.File)),
+		Suff: types.String(suffix(name)),
+	}
+	if _, e := dao.BaseAttachment(db).InsertOne(ctx, att); e != nil {
+		return e
+	}
+	out.ID = int64(att.Id)
+	out.URL = att.Url.String()
 	return nil
 }
 
-// DownloadFile 下载文件
-// 对应 Java: 根据文件 ID/路径从存储读取并流式返回
-// todo: 按 in 中的文件标识从存储读取, 写入响应流(本方法直接写 HTTP 响应, 不走 out)
-func (f *file) DownloadFile(ctx context.Context, in *dto.DownloadFileQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现文件下载(通常需要 ctx 中的 responseWriter)
+// DownloadFile 根据编号下载文件，返回附件记录
+func (s *fileService) DownloadFile(ctx context.Context, in *dto.DownloadFileQuery, out *dto.FileInfoVO) error {
+	if in.ID == nil {
+		return constant.ErrParamInvalid
+	}
+	att := new(do.BaseAttachment)
+	has, e := dao.BaseAttachment(db).Get(ctx, ace.Where(tblbaseattachment.Id.Eq(types.BigInt(*in.ID))).
+		And(tblbaseattachment.DelFlag.Eq(types.Int8(constant.YesNoNo))))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return constant.ErrDataNotExist
+	}
+	out.ID = int64(att.Id)
+	out.URL = att.Url.String()
 	return nil
+}
+
+func orEmpty(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+func suffix(name string) string {
+	if i := strings.LastIndex(name, "."); i >= 0 && i < len(name)-1 {
+		return name[i+1:]
+	}
+	return ""
 }

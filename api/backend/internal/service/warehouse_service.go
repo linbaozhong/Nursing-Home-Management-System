@@ -2,10 +2,15 @@ package service
 
 import (
 	"context"
+	"errors"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblwarehouse"
+	"api/internal/model/define/table/tblwarehousematerial"
+	"api/internal/model/do"
 	"api/internal/model/dto"
-	"github.com/linbaozhong/gentity/pkg/ace/dialect"
+
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -15,58 +20,105 @@ var Warehouse = &warehouse{}
 
 // PageWarehouseByKey 分页查询仓库
 // 对应 Java: WarehouseServiceImpl.pageWarehouseByKey -> WarehouseMapper.listWarehouseByKey
-// SQL: SELECT * FROM warehouse WHERE (warehouse_name LIKE %key%) [可选] ORDER BY create_time DESC
-// todo: 仓库分页查询 - dao.Warehouse(db) 条件 + 分页, 结果赋值 out
-func (w *warehouse) PageWarehouseByKey(ctx context.Context, in *dto.PageWarehouseByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 warehouse 表并分页
-	return nil
+// 注: staff_name 需联表 user 表(仓库管理员名), 因 user 表尚未在 Go 侧生成, 暂未联表, staff_name 留空。
+func (w *warehouse) PageWarehouseByKey(ctx context.Context, in *dto.PageWarehouseByKeyQuery, out *[]dto.PageWarehouseByKeyVO) error {
+	q := db.Table(tblwarehouse.TableName).
+		Where(tblwarehouse.DelFlag.Eq(constant.YesNoNo))
+	if in.WarehouseName != nil && *in.WarehouseName != "" {
+		q.And(tblwarehouse.Name.Like(*in.WarehouseName))
+	}
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+		Cols(
+			tblwarehouse.Id.AsName("id"),
+			tblwarehouse.Name.AsName("name"),
+		).
+		Desc(tblwarehouse.CreateTime).
+		Select().
+		Gets(ctx, out)
 }
 
 // ListWarehouseStaff 仓库管理员列表
-// 对应 Java: WarehouseServiceImpl.listWarehouseStaff -> userMapper.listWarehouseStaff(角色=仓库管理员)
-// SQL: SELECT * FROM user WHERE role = 仓库管理员
-// todo: 查询 user(仓库管理员)列表, 结果赋值 out(需定义返回类型)
+// 对应 Java: WarehouseServiceImpl.listWarehouseStaff -> StaffFunc.listStaffByRoleId(6)
+// 注: 需查询 user 表(role = 仓库管理员), 因 user 表尚未在 Go 侧生成, 暂留待 account/user 体系完成后补充。
 func (w *warehouse) ListWarehouseStaff(ctx context.Context, in *dto.EmptyReq, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 user 仓库管理员列表
+	// todo: 查询 user 表 role = 仓库管理员(角色编号 6), 返回人员下拉列表
 	return nil
 }
 
-// AddWarehouse 新增仓库
-// 对应 Java: WarehouseServiceImpl.addWarehouse -> warehouseMapper.insertSelective
-// todo: 标准 CRUD - dao.Warehouse(db).InsertOne 写入 warehouse 表(含 warehouseName/managerUserId 等)
+// AddWarehouse 新增仓库（校验名称不重复）
+// 对应 Java: WarehouseServiceImpl.addWarehouse -> WarehouseFunc.getWarehouseByName
 func (w *warehouse) AddWarehouse(ctx context.Context, in *dto.OperateWarehouseQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewWarehouse(); 填充 in; dao.Warehouse(db).InsertOne(ctx, bean)
-	return nil
-}
-
-// GetWarehouseById 根据编号获取仓库
-// 对应 Java: WarehouseServiceImpl.getWarehouseById -> warehouseMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.Warehouse(db).GetByID(ctx, types.BigInt(in.ID))
-func (w *warehouse) GetWarehouseById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.Warehouse(db).GetByID(ctx, types.BigInt(in.ID))
+	repeat, e := dao.Warehouse(db).Exists(ctx,
+		tblwarehouse.Name.Eq(*in.Name),
+		tblwarehouse.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+	)
 	if e != nil {
 		return e
 	}
-	_ = has
-	_ = obj
-	return nil
-}
-
-// EditWarehouse 编辑仓库
-// 对应 Java: WarehouseServiceImpl.editWarehouse -> warehouseMapper.updateByPrimaryKeySelective
-// todo: 标准 CRUD - 按主键更新 warehouse 表
-func (w *warehouse) EditWarehouse(ctx context.Context, in *dto.OperateWarehouseQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<warehouse>.WarehouseName.Value(in.WarehouseName),
+	if repeat {
+		return errors.New("仓库名称已存在")
 	}
-	_, e := dao.Warehouse(db).UpdateById(ctx, types.BigInt(in.ID), sets...)
+	bean := do.NewWarehouse()
+	bean.StaffId = types.BigInt(*in.StaffID)
+	bean.Name = types.String(*in.Name)
+	bean.DelFlag = types.Int8(constant.YesNoNo)
+	_, e = dao.Warehouse(db).InsertOne(ctx, bean)
 	return e
 }
 
-// DeleteWarehouse 删除仓库
-// 对应 Java: WarehouseServiceImpl.deleteWarehouse -> warehouseMapper.deleteByPrimaryKey
-// todo: 标准 CRUD - dao.Warehouse(db).DeleteById(ctx, types.BigInt(in.ID))
+// GetWarehouseById 根据编号获取仓库（编辑回显）
+// 对应 Java: WarehouseServiceImpl.getWarehouseById
+func (w *warehouse) GetWarehouseById(ctx context.Context, in *dto.IDReq, out *dto.OperateWarehouseVO) error {
+	obj, has, e := dao.Warehouse(db).GetByID(ctx, types.BigInt(*in.ID))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return errors.New("仓库不存在")
+	}
+	out.ID = int64Ptr(int64(obj.Id))
+	out.StaffID = int64Ptr(int64(obj.StaffId))
+	out.Name = strPtr(obj.Name.String())
+	return nil
+}
+
+// EditWarehouse 编辑仓库（校验名称不重复排除自身）
+// 对应 Java: WarehouseServiceImpl.editWarehouse
+func (w *warehouse) EditWarehouse(ctx context.Context, in *dto.OperateWarehouseQuery, out *dto.EmptyResp) error {
+	repeat, e := dao.Warehouse(db).Exists(ctx,
+		tblwarehouse.Name.Eq(*in.Name),
+		tblwarehouse.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblwarehouse.Id.NotEq(types.BigInt(*in.ID)),
+	)
+	if e != nil {
+		return e
+	}
+	if repeat {
+		return errors.New("仓库名称已存在")
+	}
+	bean := do.NewWarehouse()
+	bean.Id = types.BigInt(*in.ID)
+	bean.StaffId = types.BigInt(*in.StaffID)
+	bean.Name = types.String(*in.Name)
+	_, e = dao.Warehouse(db).UpdateOne(ctx, bean)
+	return e
+}
+
+// DeleteWarehouse 删除仓库（存在关联物资记录则不允许删除）
+// 对应 Java: WarehouseServiceImpl.deleteWarehouse -> warehouseMaterialMapper.sumWarehouseMaterialNumByWarehouseId
 func (w *warehouse) DeleteWarehouse(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.Warehouse(db).DeleteById(ctx, types.BigInt(in.ID))
+	hasMaterial, e := dao.WarehouseMaterial(db).Exists(ctx,
+		tblwarehousematerial.WarehouseRecordId.Eq(types.BigInt(*in.ID)),
+	)
+	if e != nil {
+		return e
+	}
+	if hasMaterial {
+		return errors.New("该仓库下存在物资，无法删除")
+	}
+	bean := do.NewWarehouse()
+	bean.Id = types.BigInt(*in.ID)
+	bean.DelFlag = types.Int8(constant.YesNoYes)
+	_, e = dao.Warehouse(db).UpdateOne(ctx, bean)
 	return e
 }

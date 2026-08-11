@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const OutboundRecordTableName = "outbound_record"
+// const OutboundRecordTableName = "outbound_record"
 
 var (
 	outboundrecordPool = pool.New[*OutboundRecord](func() any {
@@ -146,7 +146,7 @@ func (p *OutboundRecord) Reset() {
 }
 
 func (p *OutboundRecord) TableName() string {
-	return OutboundRecordTableName
+	return "outbound_record"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

@@ -24,7 +24,7 @@ var CateringSet = &cateringset{}
 // PageCateringSetByKey 分页查询套餐
 // 对应 Java: CateringSetServiceImpl.pageCateringSetByKey -> CateringSetFunc.listNotDelCateringSet
 func (c *cateringset) PageCateringSetByKey(ctx context.Context, in *dto.PageCateringSetByKeyQuery, out *[]dto.PageCateringSetByKeyVO) error {
-	q := db.Table(do.CateringSetTableName).
+	q := db.Table(tblcateringset.TableName).
 		Where(tblcateringset.DelFlag.Eq(constant.YesNoNo))
 	if in.SetName != nil {
 		q.And(tblcateringset.Name.Like(*in.SetName))
@@ -65,7 +65,7 @@ func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out
 
 	// 2. 联表查询菜品明细（set_dishes LEFT JOIN dishes）
 	var dishes []do.Dishes
-	e = db.Table(do.SetDishesTableName).
+	e = db.Table(tblsetdishes.TableName).
 		LeftJoin(tblsetdishes.DishesId, tbldishes.Id).
 		Where(
 			tblsetdishes.SetId.Eq(types.BigInt(*in.ID)),
@@ -81,9 +81,9 @@ func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out
 	if e != nil {
 		return e
 	}
-	out.SetDishesVOList = make([]dto.SetDishesVO, 0, len(dishes))
+	out.SetDishes = make([]dto.SetDishesVO, 0, len(dishes))
 	for _, d := range dishes {
-		out.SetDishesVOList = append(out.SetDishesVOList, dto.SetDishesVO{
+		out.SetDishes = append(out.SetDishes, dto.SetDishesVO{
 			ID:    int64(d.Id),
 			Name:  d.Name.String(),
 			Price: d.Price.Float64(),

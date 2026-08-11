@@ -23,7 +23,6 @@ type OperateRoomTypeQuery struct {
 // @response
 // PageRoomTypeByKeyVO 分页查询房间类型响应
 type PageRoomTypeByKeyVO struct {
-	Rank
 	ID         int64   `json:"id"`
 	Name       string  `json:"name"`
 	MonthPrice float64 `json:"month_price"`

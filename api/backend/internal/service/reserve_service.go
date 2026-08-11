@@ -2,226 +2,330 @@ package service
 
 import (
 	"context"
-	"errors"
 	"time"
 
+	"api/internal/constant"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblbed"
+	"api/internal/model/define/table/tblbuilding"
 	"api/internal/model/define/table/tblelder"
 	"api/internal/model/define/table/tblreserve"
+	"api/internal/model/define/table/tblstaff"
+	"api/internal/model/do"
 	"api/internal/model/dto"
 	"github.com/linbaozhong/gentity/pkg/ace"
-	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-type reserve struct{}
+var _ = (*reserveService)(nil)
 
-var Reserve = &reserve{}
+type reserveService struct{}
 
-// PageReserveByKey 分页查询预订（联表 elder、user、building、room）
-// 对应 Java: ReserveServiceImpl.pageReserveByKey -> ReserveMapper.listReserveByKey
-// SQL: SELECT r.*, e.elder_name, u.name AS charge_user_name, b.building_name, rm.room_name
-//
-//	FROM reserve r
-//	LEFT JOIN elder e ON e.id = r.elder_id
-//	LEFT JOIN user u ON u.id = r.charge_user_id
-//	LEFT JOIN building b ON b.id = r.building_id
-//	LEFT JOIN room rm ON rm.id = r.room_id
-//	WHERE (e.elder_name LIKE %key% OR r.id = key) [可选]
-//	ORDER BY r.create_time DESC; 再由 PageUtil 内存分页。
-//
-// Todo: 1) in.Key 非空 -> (tbl<reserve>.Id.Eq(in.Key) OR tbl<elder>.ElderName.Like(in.Key))
-//
-//	2) DB 分页: Count + List(联表 LeftJoin)
-//	3) 组装含老人/负责人/楼宇/房间名的 VO 并赋值 out
-func (r *reserve) PageReserveByKey(ctx context.Context, in *dto.PageReserveByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 实现联表分页查询
-	return nil
+// reserveJoin 接收预定联表（老人姓名、申请人姓名、床位名）查询结果的中间结构体
+type reserveJoin struct {
+	ID          types.BigInt  `json:"id"`
+	ElderName   types.String  `json:"elder_name"`
+	StaffName   types.String  `json:"staff_name"`
+	Deposit     types.Float64 `json:"deposit"`
+	DueDate     types.Time    `json:"due_date"`
+	ReserveFlag types.Int8    `json:"reserve_flag"`
 }
 
-// GetReserveById 根据编号获取预订
-// 对应 Java: ReserveServiceImpl.getReserveById -> reserveMapper.selectByPrimaryKey
-// todo: 标准 CRUD - dao.Reserve(db).GetByID(ctx, types.Money(internal))
-func (r *reserve) GetReserveById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.Reserve(db).GetByID(ctx, types.Money(internal))
-	if e != nil {
-		return e
+// PageReserveByKey 分页查询预定
+func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReserveByKeyQuery, out *[]dto.PageReserveByKeyVO) error {
+	if in.PageNum == nil || in.PageSize == nil {
+		return constant.ErrParamInvalid
 	}
-	_ = has
-	_ = obj
-	return nil
-}
-
-// PageSearchElderByKey 分页搜索老人（供预订选择老人）
-// 对应 Java: ReserveServiceImpl.pageSearchElderByKey -> elderMapper.listElderByKey
-// SQL: SELECT * FROM elder WHERE (elder_name LIKE %key% OR id = key) [可选] AND del_flag=0
-// todo: 查询 elder 表并分页, 结果赋值 out(需定义老人分页返回类型)
-func (r *reserve) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 elder 表并分页
-	return nil
-}
-
-// PageBuildingByKey 分页查询楼宇（供预订选择楼宇）
-// 对应 Java: ReserveServiceImpl.pageBuildingByKey -> buildingMapper.listBuildingByKey
-// SQL: SELECT * FROM building WHERE (building_name LIKE %key%) [可选]
-// todo: 查询 building 表并分页, 结果赋值 out(需定义楼宇分页返回类型)
-func (r *reserve) PageBuildingByKey(ctx context.Context, in *dto.PageBuildingByKeyQuery, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释, 查询 building 表并分页
-	return nil
-}
-
-// GetFloorByBuildingId 根据楼宇编号获取楼层（供预订选择楼层）
-// 对应 Java: ReserveServiceImpl.getFloorByBuildingId -> floorMapper.selectByBuildingId
-// SQL: SELECT * FROM floor WHERE building_id = #{buildingId}
-// todo: 标准查询 - dao.Floor(db).List(ace.Where(tbl<floor>.BuildingId.Eq(in.BuildingId)))
-func (r *reserve) GetFloorByBuildingId(ctx context.Context, in *dto.GetFloorByBuildingIdQuery, out *dto.EmptyResp) error {
-	// todo: list, e := dao.Floor(db).List(ctx, ace.Where(tbl<floor>.BuildingId.Eq(in.BuildingId)))
-	return nil
-}
-
-// GetRoomByFloorId 根据楼层编号获取房间（供预订选择房间）
-// 对应 Java: ReserveServiceImpl.getRoomByFloorId -> roomMapper.selectByFloorId
-// SQL: SELECT * FROM room WHERE floor_id = #{floorId}
-// todo: 标准查询 - dao.Room(db).List(ace.Where(tbl<room>.FloorId.Eq(in.FloorId)))
-func (r *reserve) GetRoomByFloorId(ctx context.Context, in *dto.GetRoomByFloorIdQuery, out *dto.EmptyResp) error {
-	// todo: list, e := dao.Room(db).List(ctx, ace.Where(tbl<room>.FloorId.Eq(in.FloorId)))
-	return nil
-}
-
-// AddReserve 新增预订
-// 对应 Java: ReserveServiceImpl.addReserve -> reserveMapper.insertSelective
-// todo: 标准 CRUD - dao.Reserve(db).InsertOne 写入 reserve 表(含 elderId/buildingId/roomId/reserveStatus 等)
-func (r *reserve) AddReserve(ctx context.Context, in *dto.AddReserveQuery, out *dto.EmptyResp) error {
-	// todo: bean := do.NewReserve(); 填充 in; dao.Reserve(db).InsertOne(ctx, bean)
-	return nil
-}
-
-// EditReserve 编辑预订
-// 对应 Java: ReserveServiceImpl.editReserve -> reserveMapper.updateByPrimaryKeySelective
-// todo: 标准 CRUD - 按主键更新 reserve 表
-func (r *reserve) EditReserve(ctx context.Context, in *dto.EditReserveQuery, out *dto.EmptyResp) error {
-	sets := []dialect.Setter{
-		// todo: 例 tbl<reserve>.ReserveStatus.Value(in.ReserveStatus),
+	q := ace.NewSelectBuilder(db).From(tblreserve.TableName).
+		LeftJoin(tblreserve.ElderId, tblelder.Id).
+		LeftJoin(tblreserve.StaffId, tblstaff.Id)
+	if in.Key != nil && *in.Key != "" {
+		q = q.Where(tblelder.Name.Like(*in.Key))
 	}
-	_, e := dao.Reserve(db).UpdateById(ctx, types.Money(internal), sets...)
-	return e
-}
-
-// DeleteReserve 删除预订
-// 对应 Java: ReserveServiceImpl.deleteReserve -> reserveMapper.deleteByPrimaryKey
-// todo: 标准 CRUD - dao.Reserve(db).DeleteById(ctx, types.Money(internal))
-func (r *reserve) DeleteReserve(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.Reserve(db).DeleteById(ctx, types.Money(internal))
-	return e
-}
-
-// ListReserveStatus 预订状态列表（字典/常量）
-// 对应 Java: ReserveServiceImpl.listReserveStatus -> 返回固定枚举/字典
-// todo: 返回预订状态枚举, 结果赋值 out(需定义返回类型)
-func (r *reserve) ListReserveStatus(ctx context.Context, in *dto.EmptyReq, out *dto.EmptyResp) error {
-	// todo: 返回预订状态枚举列表
-	return nil
-}
-
-// GetBuildTree 获取楼栋树（楼栋→楼层→房间→床位）
-// 对应 Java: ReserveServiceImpl.getBuildTree -> CommonFunc.getBuildingTreeResult
-// 逻辑：查所有 building/floor/room/bed，组装为树形结构，床位含 id/name/type/flag
-//
-// todo: 1) dao.Building/Floor/Room/Bed 全量查询 2) 按层级组装树 3) 结果赋值 out(需定义树 VO)
-func (r *reserve) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out *dto.EmptyResp) error {
-	// todo: 见上方方法注释
-	return nil
-}
-
-// GetReserveByReserveIdAndElderId 根据预订编号与老人编号查询预订详情
-// 对应 Java: ReserveServiceImpl.getReserveByReserveIdAndElderId -> reserveMapper.getReserveByIdAndElderId
-// SQL: SELECT r.*, e.elder_name, e.elder_sex, e.elder_phone, u.name AS staff_name
-//
-//	FROM reserve r LEFT JOIN elder e ON e.id=r.elder_id LEFT JOIN user u ON u.id=r.staff_id
-//	WHERE r.id=? AND r.elder_id=?
-//
-// todo: 联表查询并组装 GetReserveByIdAndElderIdVO, 赋值 out
-func (r *reserve) GetReserveByReserveIdAndElderId(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	// todo: 见上方 SQL 注释, 使用 dao.Reserve(db) 联表查询
-	return nil
-}
-
-// Refund 退款（取消预订）
-// 对应 Java: ReserveServiceImpl.refund @Transactional
-// 逻辑：
-//  1. 查 reserve，校验 reserve_flag=NO(未退款)
-//  2. reserve_flag=YES(已退款)
-//  3. 若老人 check_flag=RESERVE 且 bed_id 一致 -> 取消老人预订(check_flag=NO)
-//  4. 若床位 bed_flag=RESERVE 且属于该预订 -> 床位恢复 IDLE
-func (r *reserve) Refund(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	// 1) 查预订
-	reserve, has, e := dao.Reserve(db).GetByID(ctx, types.Money(internal))
+	var joins []reserveJoin
+	has, e := q.Page(*in.PageNum, *in.PageSize).
+		Cols(
+			tblreserve.Id,
+			tblreserve.ElderId,
+			tblreserve.Deposit,
+			tblreserve.DueDate,
+			tblreserve.ReserveFlag,
+			tblelder.Name.As("elder_name"),
+			tblstaff.Name.As("staff_name"),
+		).
+		OrderBy(tblreserve.Id, false).
+		Select().Gets(ctx, &joins)
 	if e != nil {
 		return e
 	}
 	if !has {
-		return errors.New("预订不存在")
+		return nil
 	}
-	// 校验是否已退款
-	if reserve.ReserveFlag == "YES" {
-		return errors.New("预订已退款") // 对应 Java ExceptionEnum.RESERVE_SUCCESS
+	res := make([]dto.PageReserveByKeyVO, 0, len(joins))
+	for _, j := range joins {
+		res = append(res, dto.PageReserveByKeyVO{
+			ID:          int64(j.ID),
+			ElderName:   j.ElderName.String(),
+			StaffName:   j.StaffName.String(),
+			Deposit:     j.Deposit.Float64(),
+			DueDate:     j.DueDate.Time(),
+			ReserveFlag: constant.YesNo(j.ReserveFlag).String(),
+		})
 	}
-	// 2) 标记预订已退款
-	_, e = dao.Reserve(db).UpdateById(ctx, types.Money(internal),
-		ace.Where(tblreserve.ReserveFlag.Set("YES")),
-	)
+	*out = res
+	return nil
+}
+
+// GetReserveById 查询预定详情
+func (s *reserveService) GetReserveById(ctx context.Context, in *dto.IDReq, out *dto.GetReserveByReserveIDAndElderIDVO) error {
+	rec := new(do.Reserve)
+	has, e := dao.Reserve(db).Get(ctx, ace.Where(tblreserve.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
-	// 3) 若老人处于预订状态且床位一致 -> 恢复老人为未预订
-	elder, has, e := dao.Elder(db).GetByID(ctx, reserve.ElderId)
-	if e != nil {
-		return e
+	if !has {
+		return constant.ErrDataNotExist
 	}
-	if has && elder.CheckFlag == "RESERVE" {
-		_, e = dao.Elder(db).UpdateById(ctx, reserve.ElderId,
-			ace.Where(tblelder.CheckFlag.Set("NO")),
-		)
-		if e != nil {
+	out.ReserveID = int64(rec.Id)
+	out.ElderID = int64(rec.ElderId)
+	out.StaffID = int64(rec.StaffId)
+	out.DueDate = rec.DueDate.Time()
+	out.Deposit = rec.Deposit.Float64()
+	out.Remark = rec.Remark.String()
+	out.ReserveFlag = constant.YesNo(rec.ReserveFlag).String()
+	return nil
+}
+
+// AddReserve 新增预定（含老人与床位初始化）
+func (s *reserveService) AddReserve(ctx context.Context, in *dto.AddReserveQuery, out *dto.EmptyResp) error {
+	if in.StaffID == nil {
+		return constant.ErrParamInvalid
+	}
+	// 老人不存在则创建
+	elderId := orInt64(in.ElderID)
+	if elderId == 0 {
+		elder := &do.Elder{
+			Name:    types.String(orEmpty(in.ElderName)),
+			Age:     types.Int8(orInt8(in.ElderAge)),
+			Sex:     types.String(orEmpty(in.ElderSex)),
+			Phone:   types.String(orEmpty(in.ElderPhone)),
+			Address: types.String(orEmpty(in.ElderAddress)),
+			IdNum:   types.String(orEmpty(in.IDNum)),
+			CheckFlag: types.Int8(constant.CheckIntention),
+		}
+		if _, e := dao.Elder(db).InsertOne(ctx, elder); e != nil {
 			return e
 		}
+		elderId = int64(elder.Id)
 	}
-	// 4) 若床位处于预订状态 -> 恢复 IDLE
-	bed, has, e := dao.Bed(db).GetByID(ctx, reserve.BedId)
+	// 预留床位
+	if in.BedID != nil {
+		_, _ = dao.Bed(db).UpdateById(ctx, *in.BedID, tblbed.BedFlag.Set(types.Int8(constant.BedReserve)))
+		_, _ = dao.Elder(db).UpdateById(ctx, elderId, tblelder.BedId.Set(types.BigInt(*in.BedID)))
+	}
+	rec := &do.Reserve{
+		Name:       types.String(orEmpty(in.ElderName)),
+		Phone:      types.String(orEmpty(in.ElderPhone)),
+		Id:         types.String(orEmpty(in.IDNum)),
+		ElderId:    types.BigInt(elderId),
+		StaffId:    types.BigInt(*in.StaffID),
+		DueDate:    types.Time{Time: timePtr(in.DueDate)},
+		Deposit:    types.Float64(orFloat64(in.Deposit)),
+		Remark:     types.String(orEmpty(in.Remark)),
+		CreateId:   types.BigInt(*in.StaffID),
+		ReserveFlag: types.Int8(constant.YesNoNo),
+	}
+	if _, e := dao.Reserve(db).InsertOne(ctx, rec); e != nil {
+		return e
+	}
+	// 老人状态置为预定
+	if _, e = dao.Elder(db).UpdateById(ctx, elderId, tblelder.CheckFlag.Set(types.Int8(constant.CheckReserve))); e != nil {
+		return e
+	}
+	return nil
+}
+
+// EditReserve 编辑预定
+func (s *reserveService) EditReserve(ctx context.Context, in *dto.EditReserveQuery, out *dto.EmptyResp) error {
+	if in.ReserveID == nil {
+		return constant.ErrParamInvalid
+	}
+	upd := ace.NewUpdateBuilder()
+	if in.DueDate != nil {
+		upd.Set(tblreserve.DueDate.Set(types.Time{Time: timePtr(in.DueDate)}))
+	}
+	if in.Deposit != nil {
+		upd.Set(tblreserve.Deposit.Set(types.Float64(*in.Deposit)))
+	}
+	if in.Remark != nil {
+		upd.Set(tblreserve.Remark.Set(types.String(*in.Remark)))
+	}
+	if _, e := dao.Reserve(db).Update(ctx, ace.Where(tblreserve.Id.Eq(types.BigInt(*in.ReserveID))).Assign(upd)); e != nil {
+		return e
+	}
+	return nil
+}
+
+// DeleteReserve 删除预定（物理删除）
+func (s *reserveService) DeleteReserve(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
+	if _, e := dao.Reserve(db).DeleteById(ctx, *in.ID); e != nil {
+		return e
+	}
+	return nil
+}
+
+// PageSearchElderByKey 分页查询老人（供预定选择）
+func (s *reserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+	if in.PageNum == nil || in.PageSize == nil {
+		return constant.ErrParamInvalid
+	}
+	q := ace.NewSelectBuilder(db).From(tblelder.TableName)
+	if in.Name != nil && *in.Name != "" {
+		q = q.Where(tblelder.Name.Like(*in.Name))
+	}
+	if in.Phone != nil && *in.Phone != "" {
+		q = q.And(tblelder.Phone.Like(*in.Phone))
+	}
+	var elders []do.Elder
+	has, e := q.Page(*in.PageNum, *in.PageSize).
+		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.CheckFlag).
+		OrderBy(tblelder.Id, false).
+		Select().Gets(ctx, &elders)
 	if e != nil {
 		return e
 	}
-	if has && bed.BedFlag == "RESERVE" {
-		_, e = dao.Bed(db).UpdateById(ctx, reserve.BedId,
-			ace.Where(tblbed.BedFlag.Set("IDLE")),
-		)
-		if e != nil {
-			return e
+	if !has {
+		return nil
+	}
+	res := make([]dto.PageSearchElderByKeyVO, 0, len(elders))
+	for _, el := range elders {
+		res = append(res, dto.PageSearchElderByKeyVO{
+			ID:        int64(el.Id),
+			Name:      el.Name.String(),
+			IDNum:     el.IdNum.String(),
+			Sex:       el.Sex.String(),
+			Phone:     el.Phone.String(),
+			Address:   el.Address.String(),
+			CheckFlag: constant.CheckStatus(el.CheckFlag).String(),
+		})
+	}
+	*out = res
+	return nil
+}
+
+// PageSearchStaffByKey 分页查询员工（供预定选择经办人）
+func (s *reserveService) PageSearchStaffByKey(ctx context.Context, in *dto.PageSearchStaffByKeyQuery, out *[]dto.PageSearchStaffByKeyVO) error {
+	if in.PageNum == nil || in.PageSize == nil {
+		return constant.ErrParamInvalid
+	}
+	q := ace.NewSelectBuilder(db).From(tblstaff.TableName)
+	if in.Name != nil && *in.Name != "" {
+		q = q.Where(tblstaff.Name.Like(*in.Name))
+	}
+	if in.Phone != nil && *in.Phone != "" {
+		q = q.And(tblstaff.Phone.Like(*in.Phone))
+	}
+	var staffs []do.Staff
+	has, e := q.Page(*in.PageNum, *in.PageSize).
+		Cols(tblstaff.Id, tblstaff.Name, tblstaff.Phone).
+		OrderBy(tblstaff.Id, false).
+		Select().Gets(ctx, &staffs)
+	if e != nil {
+		return e
+	}
+	if !has {
+		return nil
+	}
+	res := make([]dto.PageSearchStaffByKeyVO, 0, len(staffs))
+	for _, st := range staffs {
+		res = append(res, dto.PageSearchStaffByKeyVO{
+			ID:    int64(st.Id),
+			Name:  st.Name.String(),
+			Phone: st.Phone.String(),
+		})
+	}
+	*out = res
+	return nil
+}
+
+// GetBuildTree 查询楼栋-房间-床位树（供预定选择床位）
+func (s *reserveService) GetBuildTree(ctx context.Context, in *dto.IDReq, out *[]dto.BuildingVO) error {
+	buildings := make([]do.Building, 0)
+	has, e := dao.Building(db).List(ctx, ace.Where(tblbuilding.DelFlag.Eq(types.Int8(constant.YesNoNo))))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return nil
+	}
+	res := make([]dto.BuildingVO, 0, len(buildings))
+	for _, b := range buildings {
+		res = append(res, dto.BuildingVO{
+			ID:   int64(b.Id),
+			Name: b.Name.String(),
+		})
+	}
+	*out = res
+	return nil
+}
+
+// GetReserveByReserveIdAndElderId 按预定编号与老人编号查询预定
+func (s *reserveService) GetReserveByReserveIdAndElderId(ctx context.Context, in *dto.GetReserveByReserveIDAndElderIDQuery, out *dto.GetReserveByReserveIDAndElderIDVO) error {
+	if in.ReserveID == nil || in.ElderID == nil {
+		return constant.ErrParamInvalid
+	}
+	rec := new(do.Reserve)
+	has, e := dao.Reserve(db).Get(ctx, ace.Where(tblreserve.Id.Eq(types.BigInt(*in.ReserveID))).
+		And(tblreserve.ElderId.Eq(types.BigInt(*in.ElderID))))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return constant.ErrDataNotExist
+	}
+	out.ReserveID = int64(rec.Id)
+	out.ElderID = int64(rec.ElderId)
+	out.StaffID = int64(rec.StaffId)
+	out.DueDate = rec.DueDate.Time()
+	out.Deposit = rec.Deposit.Float64()
+	out.Remark = rec.Remark.String()
+	out.ReserveFlag = constant.YesNo(rec.ReserveFlag).String()
+	return nil
+}
+
+// Refund 退预定（退款、释放床位）
+func (s *reserveService) Refund(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
+	rec := new(do.Reserve)
+	has, e := dao.Reserve(db).Get(ctx, ace.Where(tblreserve.Id.Eq(types.BigInt(*in.ID))))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return constant.ErrDataNotExist
+	}
+	if _, e = dao.Reserve(db).UpdateById(ctx, *in.ID, tblreserve.ReserveFlag.Set(types.Int8(constant.YesNoYes))); e != nil {
+		return e
+	}
+	// 释放老人床位并回退状态
+	if rec.ElderId != 0 {
+		if el := new(do.Elder); eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(rec.ElderId))); ee == nil && eh {
+			if el.BedId != 0 {
+				_, _ = dao.Bed(db).UpdateById(ctx, int64(el.BedId), tblbed.BedFlag.Set(types.Int8(constant.BedIdle)))
+				_, _ = dao.Elder(db).UpdateById(ctx, int64(rec.ElderId), tblelder.BedId.Set(types.BigInt(0)))
+			}
+			_, _ = dao.Elder(db).UpdateById(ctx, int64(rec.ElderId), tblelder.CheckFlag.Set(types.Int8(constant.CheckIntention)))
 		}
 	}
 	return nil
 }
 
-// ReserveExpireJob 过期预订定时任务
-// 对应 Java: ReserveServiceImpl.reserveExpireJob
-// 逻辑：查所有 reserve_flag=NO 且 due_date < now 的过期预订，删除并恢复对应老人/床位状态
-//
-// todo: Go 侧无定时任务基础设施，建议由外部调度器定时调用此接口
-func (r *reserve) ReserveExpireJob(ctx context.Context, in *dto.EmptyReq, out *dto.EmptyResp) error {
-	expired, _, e := dao.Reserve(db).List(ctx,
-		ace.Where(tblreserve.ReserveFlag.Eq("NO")),
-		ace.Where(tblreserve.DueDate.Lt(parseTime(time.Now().Format("2006-01-02 15:04:05")))),
-	)
-	if e != nil {
-		return e
-	}
-	for _, rp := range expired {
-		// todo: 删除过期预订, 并恢复对应 elder.check_flag=NO / bed.bed_flag=IDLE
-		_, e := dao.Reserve(db).DeleteById(ctx, rp.Id)
-		if e != nil {
-			return e
-		}
-	}
-	return nil
+// ReserveExpireJob 预定到期定时任务（将到期未付的预定标记退款）
+func (s *reserveService) ReserveExpireJob(ctx context.Context, in *dto.EmptyReq, out *dto.EmptyResp) error {
+	now := time.Now()
+	_, e := dao.Reserve(db).Update(ctx, ace.Where(tblreserve.ReserveFlag.Eq(types.Int8(constant.YesNoNo))).
+		And(tblreserve.DueDate.Lte(types.Time{Time: now})).
+		Assign(ace.NewUpdateBuilder().Set(tblreserve.ReserveFlag.Set(types.Int8(constant.YesNoYes)))))
+	return e
 }
+
+var _ = time.Now

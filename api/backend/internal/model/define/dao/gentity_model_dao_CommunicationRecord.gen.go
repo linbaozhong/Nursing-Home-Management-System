@@ -61,7 +61,7 @@ func (p *communicationrecord) Insert(ctx context.Context, sets ...dialect.Setter
 	if len(sets) == 0 {
 		return 0, dialect.ErrSetterEmpty
 	}
-	_result, e := p.x.Table(do.CommunicationRecordTableName).
+	_result, e := p.x.Table(tblcommunicationrecord.TableName).
 		Set(sets...).
 		Debug(p.toSql).
 		Create().
@@ -76,7 +76,7 @@ func (p *communicationrecord) Insert(ctx context.Context, sets ...dialect.Setter
 // cols: 要插入的列名
 func (p *communicationrecord) InsertOne(ctx context.Context, bean *do.CommunicationRecord, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.CommunicationRecordTableName).
+	_result, e := p.x.Table(tblcommunicationrecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -103,7 +103,7 @@ func (p *communicationrecord) InsertBatch(ctx context.Context, beans []*do.Commu
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.CommunicationRecordTableName).
+	_result, e := p.x.Table(tblcommunicationrecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Create().
@@ -121,7 +121,7 @@ func (p *communicationrecord) Update(ctx context.Context, sets []dialect.Setter,
 	if len(sets) == 0 {
 		return true, nil
 	}
-	_result, e := p.x.Table(do.CommunicationRecordTableName).
+	_result, e := p.x.Table(tblcommunicationrecord.TableName).
 		Where(cond...).
 		Set(sets...).
 		Debug(p.toSql).
@@ -146,7 +146,7 @@ func (p *communicationrecord) UpdateById(ctx context.Context, id types.BigInt, s
 // cols: 要插入的列名
 func (p *communicationrecord) UpdateOne(ctx context.Context, bean *do.CommunicationRecord, cols ...dialect.Field) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.CommunicationRecordTableName).
+	_result, e := p.x.Table(tblcommunicationrecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -171,7 +171,7 @@ func (p *communicationrecord) UpdateBatch(ctx context.Context, beans []*do.Commu
 	for _, _bean := range beans {
 		_args = append(_args, _bean)
 	}
-	_result, e := p.x.Table(do.CommunicationRecordTableName).
+	_result, e := p.x.Table(tblcommunicationrecord.TableName).
 		Cols(cols...).
 		Debug(p.toSql).
 		Update().
@@ -186,7 +186,7 @@ func (p *communicationrecord) UpdateBatch(ctx context.Context, beans []*do.Commu
 // Delete
 func (p *communicationrecord) Delete(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_result, e := p.x.Table(do.CommunicationRecordTableName).
+	_result, e := p.x.Table(tblcommunicationrecord.TableName).
 		Where(cond...).
 		Debug(p.toSql).
 		Delete().
@@ -214,7 +214,7 @@ func (p *communicationrecord) DeleteByIds(ctx context.Context, ids []any) (int64
 		return 0, nil
 	}
 
-	_result, e := p.x.Table(do.CommunicationRecordTableName).
+	_result, e := p.x.Table(tblcommunicationrecord.TableName).
 		Where(tblcommunicationrecord.PrimaryKey.In(ids...)).
 		Debug(p.toSql).
 		Delete().
@@ -235,7 +235,7 @@ func (p *communicationrecord) DeleteByIds(ctx context.Context, ids []any) (int64
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.CommunicationRecordTableName
+//  1. 如果没有指定表名，则默认使用tblcommunicationrecord.TableName
 //  2. 如果没有指定查询列，则默认使用tblcommunicationrecord.ReadableFields
 //  3. 如果没有指定排序方式，则默认使用dialect.OrderAsc
 //  4. 如果没有指定条件，则默认查询所有记录
@@ -246,7 +246,7 @@ func (p *communicationrecord) DeleteByIds(ctx context.Context, ids []any) (int64
 func (p *communicationrecord) Get(ctx context.Context, s ace.SelectBuilder) (*do.CommunicationRecord, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.CommunicationRecordTableName)
+		s.Table(tblcommunicationrecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -280,7 +280,7 @@ func (p *communicationrecord) Get(ctx context.Context, s ace.SelectBuilder) (*do
 // GetByID 按主键读取一个communication_record对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
 func (p *communicationrecord) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.CommunicationRecord, bool, error) {
 	defer p.Free()
-	return p.Get(ctx, p.x.Table(do.CommunicationRecordTableName).Where(tblcommunicationrecord.PrimaryKey.Eq(id)).Cols(cols...))
+	return p.Get(ctx, p.x.Table(tblcommunicationrecord.TableName).Where(tblcommunicationrecord.PrimaryKey.Eq(id)).Cols(cols...))
 }
 
 // GetByIds 按主键列表批量查询
@@ -301,12 +301,12 @@ func (p *communicationrecord) GetByIds(ctx context.Context, ids []any, cols ...d
 //  3. error: 错误信息
 //
 // 注意:
-//  1. 如果没有指定表名，则默认使用do.CommunicationRecordTableName
+//  1. 如果没有指定表名，则默认使用tblcommunicationrecord.TableName
 //  2. 如果没有指定查询列，则默认使用tblcommunicationrecord.PrimaryKey
 func (p *communicationrecord) Cell(ctx context.Context, s ace.SelectBuilder) (any, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.CommunicationRecordTableName)
+		s.Table(tblcommunicationrecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -341,7 +341,7 @@ func (p *communicationrecord) Cell(ctx context.Context, s ace.SelectBuilder) (an
 func (p *communicationrecord) List(ctx context.Context, s ace.SelectBuilder) ([]*do.CommunicationRecord, bool, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.CommunicationRecordTableName)
+		s.Table(tblcommunicationrecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -379,7 +379,7 @@ func (p *communicationrecord) List(ctx context.Context, s ace.SelectBuilder) ([]
 func (p *communicationrecord) Column(ctx context.Context, s ace.SelectBuilder) ([]any, error) {
 	defer p.Free()
 	if len(s.GetTableName()) == 0 {
-		s.Table(do.CommunicationRecordTableName)
+		s.Table(tblcommunicationrecord.TableName)
 	}
 
 	_cols := s.GetCols()
@@ -415,7 +415,7 @@ func (p *communicationrecord) Column(ctx context.Context, s ace.SelectBuilder) (
 // Count
 func (p *communicationrecord) Count(ctx context.Context, cond ...dialect.Condition) (int64, error) {
 	defer p.Free()
-	return p.x.Table(do.CommunicationRecordTableName).
+	return p.x.Table(tblcommunicationrecord.TableName).
 		Debug(p.toSql).
 		Select().
 		Count(ctx, cond...)
@@ -424,7 +424,7 @@ func (p *communicationrecord) Count(ctx context.Context, cond ...dialect.Conditi
 // Sum
 func (p *communicationrecord) Sum(ctx context.Context, cols []dialect.Field, cond ...dialect.Condition) (map[string]any, error) {
 	defer p.Free()
-	return p.x.Table(do.CommunicationRecordTableName).
+	return p.x.Table(tblcommunicationrecord.TableName).
 		Debug(p.toSql).
 		Select().
 		Sum(ctx, cols, cond...)
@@ -433,7 +433,7 @@ func (p *communicationrecord) Sum(ctx context.Context, cols []dialect.Field, con
 // Exists
 func (p *communicationrecord) Exists(ctx context.Context, cond ...dialect.Condition) (bool, error) {
 	defer p.Free()
-	_c := p.x.Table(do.CommunicationRecordTableName).Cols(tblcommunicationrecord.PrimaryKey).Where(cond...)
+	_c := p.x.Table(tblcommunicationrecord.TableName).Cols(tblcommunicationrecord.PrimaryKey).Where(cond...)
 	_row, e := _c.Debug(p.toSql).
 		Select().
 		QueryRow(ctx)

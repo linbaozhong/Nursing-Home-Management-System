@@ -6,11 +6,13 @@ import (
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 )
 
+const TableName = "consume"
+
 var (
 	ConsumeType   = dialect.Field{Name: "consume_type", Json: "consume_type", Table: "consume", Type: "types.String", IsRelation: false}
 	Id            = dialect.Field{Name: "id", Json: "id", Table: "consume", Type: "types.BigInt", IsRelation: false}
 	ElderId       = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "consume", Type: "types.BigInt", IsRelation: false}
-	ConsumeAmount = dialect.Field{Name: "consume_amount", Json: "consume_amount", Table: "consume", Type: "types.Float64", IsRelation: false}
+	ConsumeAmount = dialect.Field{Name: "consume_amount", Json: "consume_amount", Table: "consume", Type: "types.Money", IsRelation: false}
 	ConsumeDate   = dialect.Field{Name: "consume_date", Json: "consume_date", Table: "consume", Type: "types.Time", IsRelation: false}
 	CreateId      = dialect.Field{Name: "create_id", Json: "create_id", Table: "consume", Type: "types.BigInt", IsRelation: false}
 	CreateTime    = dialect.Field{Name: "create_time", Json: "create_time", Table: "consume", Type: "types.Time", IsRelation: false}

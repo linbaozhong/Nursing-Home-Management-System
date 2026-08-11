@@ -22,7 +22,7 @@ var Dishes = &dishes{}
 // PageDishesByKey 分页查询菜品（联表菜品类别）
 // 对应 Java: DishesServiceImpl.pageDishesByKey -> DishesFunc.listDishes
 func (d *dishes) PageDishesByKey(ctx context.Context, in *dto.PageDishesByKeyQuery, out *[]dto.PageDishesByKeyVO) error {
-	q := db.Table(do.DishesTableName).
+	q := db.Table(tbldishes.TableName).
 		LeftJoin(tbldishes.TypeId, tbldishestype.Id).
 		Where(tbldishes.DelFlag.Eq(constant.YesNoNo))
 	if in.TypeID != nil {
@@ -57,10 +57,10 @@ func (d *dishes) GetDishesById(ctx context.Context, in *dto.IDReq, out *dto.Oper
 	if !has {
 		return errors.New("菜品不存在")
 	}
-	out.ID = int64(obj.Id)
-	out.TypeID = int64(obj.TypeId)
-	out.Name = obj.Name.String()
-	out.Price = obj.Price.Float64()
+	*out.ID = int64(obj.Id)
+	*out.TypeID = int64(obj.TypeId)
+	*out.Name = obj.Name.String()
+	*out.Price = obj.Price.Float64()
 	return nil
 }
 
@@ -91,7 +91,7 @@ func (d *dishes) EditDishes(ctx context.Context, in *dto.OperateDishesQuery, out
 		tbldishes.Name.Eq(*in.Name),
 		tbldishes.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tbldishes.DelFlag.Eq(constant.YesNoNo),
-		tbldishes.Id.Neq(types.BigInt(*in.ID)),
+		tbldishes.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
 		return e
@@ -118,7 +118,7 @@ func (d *dishes) DeleteDishes(ctx context.Context, in *dto.IDReq, out *dto.Empty
 // PageDishesTypeByKey 分页查询菜品类别
 // 对应 Java: DishesServiceImpl.pageDishesTypeByKey -> DishesTypeFunc.listDishesType
 func (d *dishes) PageDishesTypeByKey(ctx context.Context, in *dto.PageDishesTypeByKeyQuery, out *[]dto.DropDown) error {
-	q := db.Table(do.DishesTypeTableName).
+	q := db.Table(tbldishestype.TableName).
 		Where(tbldishestype.DelFlag.Eq(constant.YesNoNo))
 	if in.Name != nil && *in.Name != "" {
 		q.And(tbldishestype.Name.Like(*in.Name))
@@ -177,7 +177,7 @@ func (d *dishes) EditDishesType(ctx context.Context, in *dto.OperateDishesTypeQu
 	repeat, e := dao.DishesType(db).Exists(ctx,
 		tbldishestype.Name.Eq(*in.Name),
 		tbldishestype.DelFlag.Eq(constant.YesNoNo),
-		tbldishestype.Id.Neq(types.BigInt(*in.ID)),
+		tbldishestype.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
 		return e

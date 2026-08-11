@@ -18,7 +18,6 @@ type PageNurseGradeByKeyQuery struct {
 // @response
 // PageNurseGradeByKeyVO 分页查询护理等级响应
 type PageNurseGradeByKeyVO struct {
-	Rank
 	ID         int64   `json:"id"`          // id
 	Name       string  `json:"name"`        // 护理等级名称
 	Type       string  `json:"type"`        // 护理类型
@@ -52,6 +51,22 @@ type PageNurseByKeyQuery struct {
 	PageSize  *int    `json:"page_size" valid:"required"` // 条数
 	NurseName *string `json:"nurse_name"`                 // 护理员姓名
 	Key       *string `json:"key"`                        // 关键字
+}
+
+// @response
+// PageNurseByKeyVO 分页查询护理员响应
+type PageNurseByKeyVO struct {
+	ID    int64  `json:"id"`    // id
+	Name  string `json:"name"`  // 护理员姓名
+	Phone string `json:"phone"` // 电话
+}
+
+// @response
+// GetNurseByIdVO 护理员详情响应
+type GetNurseByIdVO struct {
+	ID    int64  `json:"id"`    // id
+	Name  string `json:"name"`  // 护理员姓名
+	Phone string `json:"phone"` // 电话
 }
 
 // @request

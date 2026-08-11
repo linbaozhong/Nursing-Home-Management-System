@@ -22,7 +22,6 @@ type OperateSourceQuery struct {
 // @response
 // PageSourceByKeyVO 分页查询来源渠道响应
 type PageSourceByKeyVO struct {
-	// Rank
 	ID   int64  `json:"id"`   // id
 	Name string `json:"name"` // 来源渠道名称
 }

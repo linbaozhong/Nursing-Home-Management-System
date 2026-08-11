@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"strconv"
 	"time"
 
@@ -16,7 +16,6 @@ import (
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
-	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -27,11 +26,10 @@ var Consult = &consult{}
 // PageConsultByKey 分页查询咨询（联表老人、接待人、来源渠道）
 // 对应 Java: ConsultServiceImpl.pageConsultByKey -> ConsultMapper.listConsultByKey
 func (c *consult) PageConsultByKey(ctx context.Context, in *dto.PageConsultByKeyQuery, out *[]dto.PageConsultByKeyVO) error {
-	q := db.Table(do.ConsultTableName).
+	q := db.Table(tblconsult.TableName).
 		LeftJoin(tblconsult.ElderId, tblelder.Id).
 		LeftJoin(tblconsult.StaffId, tblstaff.Id).
-		LeftJoin(tblconsult.SourceId, tblsource.Id).
-		Where(tblconsult.DelFlag.Eq(constant.YesNoNo))
+		LeftJoin(tblconsult.SourceId, tblsource.Id)
 	if in.ConsultName != nil && *in.ConsultName != "" {
 		q.And(tblconsult.Name.Like(*in.ConsultName))
 	}
@@ -44,11 +42,11 @@ func (c *consult) PageConsultByKey(ctx context.Context, in *dto.PageConsultByKey
 	if in.ElderPhone != nil && *in.ElderPhone != "" {
 		q.And(tblelder.Phone.Like(*in.ElderPhone))
 	}
-	if in.StartTime != nil && *in.StartTime != "" {
-		q.And(tblconsult.ConsultDate.Gte(types.Time(parseDateStart(*in.StartTime))))
+	if in.StartTime != nil && !in.StartTime.IsZero() {
+		q.And(tblconsult.ConsultDate.Gte(*in.StartTime))
 	}
-	if in.EndTime != nil && *in.EndTime != "" {
-		q.And(tblconsult.ConsultDate.Lte(types.Time(parseDateEnd(*in.EndTime))))
+	if in.EndTime != nil && !in.EndTime.IsZero() {
+		q.And(tblconsult.ConsultDate.Lte(*in.EndTime))
 	}
 	if in.SourceID != nil {
 		q.And(tblconsult.SourceId.Eq(types.BigInt(*in.SourceID)))
@@ -82,10 +80,10 @@ func (c *consult) PageConsultByKey(ctx context.Context, in *dto.PageConsultByKey
 // GetConsultByConsultIdAndElderId 根据咨询编号与老人编号获取唯一咨询（用于编辑回显）
 // 对应 Java: ConsultServiceImpl.getConsultByConsultIdAndElderId
 func (c *consult) GetConsultByConsultIdAndElderId(ctx context.Context, in *dto.GetConsultByConsultIdAndElderIdQuery, out *dto.GetConsultByConsultIDAndElderIDVO) error {
-	obj, has, e := dao.Consult(db).Get(ctx,
+	obj, has, e := dao.Consult(db).Get(ctx, ace.Where(
 		tblconsult.Id.Eq(types.BigInt(*in.ConsultID)),
 		tblconsult.ElderId.Eq(types.BigInt(*in.ElderID)),
-	)
+	))
 	if e != nil {
 		return e
 	}
@@ -99,7 +97,7 @@ func (c *consult) GetConsultByConsultIdAndElderId(ctx context.Context, in *dto.G
 	out.ConsultName = strPtr(obj.Name.String())
 	out.ConsultPhone = strPtr(obj.Phone.String())
 	out.Relation = strPtr(obj.Relation.String())
-	out.ConsultDate = strPtr(timeFormat(obj.ConsultDate))
+	out.ConsultDate = &obj.ConsultDate.Time
 	out.ConsultContent = strPtr(obj.ConsultContent.String())
 	return nil
 }
@@ -110,7 +108,7 @@ func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultQuery, out *
 	// 校验身份证号是否已存在（排除已删除老人）
 	repeat, e := dao.Elder(db).Exists(ctx,
 		tblelder.IdNum.Eq(*in.IDNum),
-		tblelder.CheckFlag.Neq(types.Int8(constant.CheckFailure)),
+		tblelder.CheckFlag.NotEq(types.Int8(constant.CheckFailure)),
 	)
 	if e != nil {
 		return e
@@ -141,7 +139,7 @@ func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultQuery, out *
 	bean.ConsultContent = types.String(*in.ConsultContent)
 	bean.SourceId = types.BigInt(*in.SourceID)
 	bean.StaffId = types.BigInt(*in.StaffID)
-	bean.ConsultDate = types.Time(parseDate(*in.ConsultDate))
+	bean.ConsultDate = types.Time{*in.ConsultDate}
 	_, e = dao.Consult(db).InsertOne(ctx, bean)
 	return e
 }
@@ -149,11 +147,12 @@ func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultQuery, out *
 // PageSearchElderByKey 分页搜索老人（供咨询选择老人）
 // 对应 Java: ConsultServiceImpl.pageSearchElderByKey -> ElderFunc.listElderByKey
 func (c *consult) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
-	q := db.Table(do.ElderTableName).
-		Where(tblelder.DelFlag.Eq(constant.YesNoNo))
-	if in.Key != nil && *in.Key != "" {
-		q.And(tblelder.Name.Like(*in.Key))
-		q.Or(tblelder.Phone.Like(*in.Key))
+	q := db.Table(tblelder.TableName)
+	if in.Name != nil {
+		q.And(tblelder.Name.Like(*in.Name))
+	}
+	if *in.Phone != "" {
+		q.Or(tblelder.Phone.Like(*in.Phone))
 	}
 	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
@@ -173,17 +172,14 @@ func (c *consult) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchEl
 // PageIntentByKey 分页查询意向客户（CheckFlag=INTENTION）
 // 对应 Java: ConsultServiceImpl.pageIntentByKey -> intentionMapper.listIntentByKey
 func (c *consult) PageIntentByKey(ctx context.Context, in *dto.PageIntentByKeyQuery, out *[]dto.PageIntentionByKeyVO) error {
-	q := db.Table(do.ElderTableName).
+	q := db.Table(tblelder.TableName).
 		Where(
-			tblelder.DelFlag.Eq(constant.YesNoNo),
 			tblelder.CheckFlag.Eq(types.Int8(constant.CheckIntention)),
 		)
-	if in.ElderName != nil && *in.ElderName != "" {
-		q.And(tblelder.Name.Like(*in.ElderName))
+	if in.Key != nil {
+		q.AndOr(tblelder.Name.Like(*in.Key), tblelder.Phone.Like(*in.Key))
 	}
-	if in.ElderPhone != nil && *in.ElderPhone != "" {
-		q.And(tblelder.Phone.Like(*in.ElderPhone))
-	}
+
 	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblelder.Id,
@@ -217,7 +213,7 @@ func parseDate(s *string) types.Time {
 	}
 	for _, layout := range []string{"2006-01-02 15:04:05", "2006-01-02"} {
 		if t, err := timeParse(layout, *s); err == nil {
-			return types.Time(t)
+			return types.Time{t}
 		}
 	}
 	return types.Time{}

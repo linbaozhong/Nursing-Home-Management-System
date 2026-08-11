@@ -22,21 +22,16 @@ var Consume = &consume{}
 // PageConsumeByKey 分页查询消费记录（联表 elder 获取老人姓名/身份证）
 // 对应 Java: ConsumeServiceImpl.pageConsumeByKey
 func (c *consume) PageConsumeByKey(ctx context.Context, in *dto.PageConsumeByKeyQuery, out *[]dto.PageConsumeByKeyVO) error {
-	q := db.Table(do.ConsumeTableName).
-		LeftJoin(tblconsume.ElderId, tblelder.Id).
-		Where(tblconsume.DelFlag.Eq(0))
+	q := db.Table(tblconsume.TableName).
+		LeftJoin(tblconsume.ElderId, tblelder.Id)
 	if in.ElderName != nil && *in.ElderName != "" {
 		q.And(tblelder.Name.Like(*in.ElderName))
 	}
-	if in.StartTime != nil && *in.StartTime != "" {
-		if t, err := time.ParseInLocation("2006-01-02", *in.StartTime, time.Local); err == nil {
-			q.And(tblconsume.ConsumeDate.Gte(types.Time(t)))
-		}
+	if in.StartTime != nil && !in.StartTime.IsZero() {
+		q.And(tblconsume.ConsumeDate.Gte(*in.StartTime))
 	}
-	if in.EndTime != nil && *in.EndTime != "" {
-		if t, err := time.ParseInLocation("2006-01-02", *in.EndTime, time.Local); err == nil {
-			q.And(tblconsume.ConsumeDate.Lte(types.Time(t.Add(24*time.Hour - time.Second))))
-		}
+	if in.EndTime != nil && !in.EndTime.IsZero() {
+		q.And(tblconsume.ConsumeDate.Lte(in.EndTime.Add(24*time.Hour - time.Second)))
 	}
 	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
@@ -60,7 +55,6 @@ func (c *consume) GetConsumeById(ctx context.Context, in *dto.IDReq, out *dto.Ge
 		tblconsume.ConsumeType,
 		tblconsume.ConsumeAmount,
 		tblconsume.ConsumeDate,
-		tblconsume.Remark,
 	)
 	if e != nil {
 		return e
@@ -71,9 +65,8 @@ func (c *consume) GetConsumeById(ctx context.Context, in *dto.IDReq, out *dto.Ge
 	out.ID = int64(obj.Id)
 	out.ElderID = int64(obj.ElderId)
 	out.ConsumeType = obj.ConsumeType.String()
-	out.ConsumeAmount = obj.ConsumeAmount.Float64()
-	out.ConsumeDate = time.Time(obj.ConsumeDate)
-	out.Remark = obj.Remark.String()
+	out.ConsumeAmount = obj.ConsumeAmount
+	out.ConsumeDate = obj.ConsumeDate.Time
 	return nil
 }
 
@@ -82,8 +75,8 @@ func (c *consume) AddConsume(ctx context.Context, in *dto.AddConsumeQuery, out *
 	bean := do.NewConsume()
 	bean.ElderId = types.BigInt(*in.ElderID)
 	bean.ConsumeType = types.String(*in.ConsumeType)
-	bean.ConsumeAmount = types.Float64(*in.ConsumeAmount)
-	bean.ConsumeDate = types.Time(parseTimeStr(*in.ConsumeDate))
+	bean.ConsumeAmount = *in.ConsumeAmount
+	bean.ConsumeDate = types.Time{*in.ConsumeDate}
 	_, e := dao.Consume(db).InsertOne(ctx, bean)
 	return e
 }
@@ -94,10 +87,7 @@ func (c *consume) EditConsume(ctx context.Context, in *dto.EditConsumeQuery, out
 	sets = append(sets, tblconsume.ElderId.Set(*in.ElderID))
 	sets = append(sets, tblconsume.ConsumeType.Set(*in.ConsumeType))
 	sets = append(sets, tblconsume.ConsumeAmount.Set(*in.ConsumeAmount))
-	sets = append(sets, tblconsume.ConsumeDate.Set(parseTimeStr(*in.ConsumeDate)))
-	if in.Remark != nil {
-		sets = append(sets, tblconsume.Remark.Set(*in.Remark))
-	}
+	sets = append(sets, tblconsume.ConsumeDate.Set(*in.ConsumeDate))
 	_, e := dao.Consume(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
 	return e
 }
@@ -115,7 +105,7 @@ func parseTimeStr(s *string) types.Time {
 	}
 	for _, layout := range []string{"2006-01-02 15:04:05", "2006-01-02"} {
 		if t, err := time.ParseInLocation(layout, *s, time.Local); err == nil {
-			return types.Time(t)
+			return types.Time{t}
 		}
 	}
 	return types.Time{}

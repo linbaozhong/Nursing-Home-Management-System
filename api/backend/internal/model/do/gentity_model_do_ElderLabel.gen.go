@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const ElderLabelTableName = "elder_label"
+// const ElderLabelTableName = "elder_label"
 
 var (
 	elderlabelPool = pool.New[*ElderLabel](func() any {
@@ -110,7 +110,7 @@ func (p *ElderLabel) Reset() {
 }
 
 func (p *ElderLabel) TableName() string {
-	return ElderLabelTableName
+	return "elder_label"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联

@@ -13,7 +13,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-const RoomTypeTableName = "room_type"
+// const RoomTypeTableName = "room_type"
 
 var (
 	roomtypePool = pool.New[*RoomType](func() any {
@@ -116,7 +116,7 @@ func (p *RoomType) Reset() {
 }
 
 func (p *RoomType) TableName() string {
-	return RoomTypeTableName
+	return "room_type"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
