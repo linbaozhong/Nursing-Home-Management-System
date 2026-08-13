@@ -27,6 +27,7 @@ var (
 	ErrPassword           = types.NewError(500, "密码错误")
 	ErrMethodError        = types.NewError(500, "请求方式错误")
 	ErrParamError         = types.NewError(500, "请求参数异常")
+	ErrParamInvalid       = types.NewError(500, "请求参数异常")
 	ErrAccessError        = types.NewError(500, "非法访问")
 	ErrTokenError         = types.NewError(500, "令牌无效")
 	ErrCertificationError = types.NewError(500, "认证失败")

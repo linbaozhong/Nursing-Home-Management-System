@@ -39,7 +39,7 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
-	q := ace.NewSelectBuilder(db).From(tblnursereserve.TableName).
+	q := db.Table(tblnursereserve.TableName).
 		LeftJoin(tblnursereserve.ElderId, tblelder.Id).
 		LeftJoin(tblelder.BedId, tblbed.Id)
 	if in.ElderName != nil && *in.ElderName != "" {
@@ -52,7 +52,7 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 		q = q.And(tblbed.Name.Like(*in.BedName))
 	}
 	var joins []nurseReserveJoin
-	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblnursereserve.Id,
 			tblnursereserve.ServiceName,
@@ -71,9 +71,6 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 	if e != nil {
 		return e
 	}
-	if !has {
-		return nil
-	}
 	res := make([]dto.PageNurseReserveByKeyVO, 0, len(joins))
 	for _, j := range joins {
 		res = append(res, dto.PageNurseReserveByKeyVO{
@@ -86,7 +83,7 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 			ChargeMethod: j.ChargeMethod.String(),
 			Frequency:    int(j.Frequency),
 			PayAmount:    j.PayAmount.Float64(),
-			NurseDate:    j.NurseDate.Time(),
+			NurseDate:    j.NurseDate.Time,
 			OrderFlag:    constant.YesNo(j.OrderFlag).String(),
 		})
 	}
@@ -99,8 +96,8 @@ func (s *nurseReserveService) GetNurseReserveByReserveIdAndElderId(ctx context.C
 	if in.ReserveID == nil || in.ElderID == nil {
 		return constant.ErrParamInvalid
 	}
-	nr := new(do.NurseReserve)
-	has, e := dao.NurseReserve(db).Get(ctx, ace.Where(tblnursereserve.Id.Eq(types.BigInt(*in.ReserveID))).
+
+	nr, has, e := dao.NurseReserve(db).Get(ctx, ace.Where(tblnursereserve.Id.Eq(types.BigInt(*in.ReserveID))).
 		And(tblnursereserve.ElderId.Eq(types.BigInt(*in.ElderID))))
 	if e != nil {
 		return e
@@ -115,13 +112,13 @@ func (s *nurseReserveService) GetNurseReserveByReserveIdAndElderId(ctx context.C
 	out.ChargeMethod = nr.ChargeMethod.String()
 	out.Frequency = int(nr.Frequency)
 	out.PayAmount = nr.PayAmount.Float64()
-	out.NurseDate = nr.NurseDate.Time()
+	out.NurseDate = nr.NurseDate.Time
 	out.OrderFlag = constant.YesNo(nr.OrderFlag).String()
 	// 老人姓名、床位名
-	if el := new(do.Elder); eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(nr.ElderId))); ee == nil && eh {
+	if el, eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(nr.ElderId))); ee == nil && eh {
 		out.ElderName = el.Name.String()
 		if el.BedId != 0 {
-			if b := new(do.Bed); bh, be := dao.Bed(db).Get(ctx, ace.Where(tblbed.Id.Eq(el.BedId))); be == nil && bh {
+			if b, bh, be := dao.Bed(db).Get(ctx, ace.Where(tblbed.Id.Eq(el.BedId))); be == nil && bh {
 				out.BedName = b.Name.String()
 			}
 		}
@@ -135,9 +132,9 @@ func (s *nurseReserveService) AddNurseReserve(ctx context.Context, in *dto.AddNu
 		return constant.ErrParamInvalid
 	}
 	rec := &do.NurseReserve{
-		ElderId:     types.BigInt(*in.ElderID),
-		ServiceName: types.String(orEmpty(in.ServiceName)),
-		NeedDate:    types.Int32(int32(orInt(in.NeedDate))),
+		ElderId:      types.BigInt(*in.ElderID),
+		ServiceName:  types.String(orEmpty(in.ServiceName)),
+		NeedDate:     types.Int32(int32(orInt(in.NeedDate))),
 		ServicePrice: types.Float64(orFloat64(in.ServicePrice)),
 		ChargeMethod: types.String(orEmpty(in.ChargeMethod)),
 		Frequency:    types.Int32(int32(orInt(in.Frequency))),
@@ -182,7 +179,7 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
-	q := ace.NewSelectBuilder(db).From(tblelder.TableName)
+	q := db.Table(tblelder.TableName)
 	if in.Name != nil && *in.Name != "" {
 		q = q.Where(tblelder.Name.Like(*in.Name))
 	}
@@ -193,32 +190,26 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 		q = q.And(tblelder.CheckFlag.Eq(types.Int8(*in.CheckFlag)))
 	}
 	var elders []do.Elder
-	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.CheckFlag, tblelder.BedId).
 		Desc(tblelder.Id).
 		Select().Gets(ctx, &elders)
 	if e != nil {
 		return e
 	}
-	if !has {
-		return nil
-	}
 	res := make([]dto.PageSearchElderByKeyVO, 0, len(elders))
 	for _, el := range elders {
 		bedName := ""
 		if el.BedId != 0 {
-			if b := new(do.Bed); bh, be := dao.Bed(db).Get(ctx, ace.Where(tblbed.Id.Eq(el.BedId))); be == nil && bh {
+			if b, bh, be := dao.Bed(db).Get(ctx, ace.Where(tblbed.Id.Eq(el.BedId))); be == nil && bh {
 				bedName = b.Name.String()
 			}
 		}
 		res = append(res, dto.PageSearchElderByKeyVO{
-			ID:        int64(el.Id),
-			Name:      el.Name.String(),
+			ElderID:   int64(el.Id),
+			ElderName: el.Name.String(),
 			IDNum:     el.IdNum.String(),
-			Sex:       el.Sex.String(),
-			Phone:     el.Phone.String(),
-			Address:   el.Address.String(),
-			CheckFlag: constant.CheckStatus(el.CheckFlag).String(),
+			ElderSex:  el.Sex.String(),
 			BedName:   bedName,
 		})
 	}
@@ -228,9 +219,12 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 
 // ListNurseStaff 查询护理员工（护理员列表）
 func (s *nurseReserveService) ListNurseStaff(ctx context.Context, in *dto.EmptyReq, out *[]dto.PageSearchStaffByKeyVO) error {
-	var staffs []do.Staff
-	has, e := dao.Staff(db).List(ctx, ace.NewSelectBuilder(db).From(tblstaff.TableName).
-		Desc(tblstaff.Id))
+	staffs, has, e := dao.Staff(db).List(ctx,
+		ace.Cols(
+			tblstaff.Id,
+			tblstaff.Name,
+			tblstaff.Phone,
+		).Desc(tblstaff.Id))
 	if e != nil {
 		return e
 	}
