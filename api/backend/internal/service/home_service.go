@@ -328,11 +328,11 @@ func (h *home) ClientSource(ctx context.Context, in *dto.ClientSourceQuery, out 
 	// 获取开始/结束时间
 	// 未传时默认取今天
 	start, end := dayRange(time.Now())
-	if t := parseDateStart(in.StartTime); !t.IsZero() {
-		start, _ = dayRange(t)
+	if !in.StartTime.IsZero() {
+		start, _ = dayRange(*in.StartTime)
 	}
-	if t := parseDateStart(in.EndTime); !t.IsZero() {
-		_, end = dayRange(t)
+	if !in.EndTime.IsZero() {
+		_, end = dayRange(*in.EndTime)
 	}
 
 	// 获取来源渠道列表

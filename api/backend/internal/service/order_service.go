@@ -49,7 +49,7 @@ func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKe
 		q = q.And(tblelder.Phone.Like(*in.ElderPhone))
 	}
 	var joins []orderJoin
-	has, e := q.Page(*in.PageNum, *in.PageSize).
+	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblorder.Id,
 			tblorder.DineDate,
@@ -61,7 +61,7 @@ func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKe
 			tblelder.Phone.As("elder_phone"),
 			tblstaff.Name.As("staff_name"),
 		).
-		OrderBy(tblorder.Id, false).
+		Desc(tblorder.Id).
 		Select().Gets(ctx, &joins)
 	if e != nil {
 		return e

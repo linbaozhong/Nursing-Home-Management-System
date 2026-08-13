@@ -1,16 +1,14 @@
 package service
 
 import (
-	"context"
-	"errors"
-
 	"api/internal/constant"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblstaff"
 	"api/internal/model/do"
 	"api/internal/model/dto"
+	"context"
+	"errors"
 
-	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -21,8 +19,8 @@ var User = &user{}
 // Register 用户注册（Go 端用户即员工 staff）
 func (u *user) Register(ctx context.Context, in *dto.OperateStaffQuery, out *dto.OperateStaffVO) error {
 	has, e := dao.Staff(db).Exists(ctx,
-		ace.Where(tblstaff.Phone.Eq(types.String(*in.Phone))).
-			Or(tblstaff.Email.Eq(types.String(*in.Email))),
+		tblstaff.Phone.Eq(*in.Phone).
+			Or(tblstaff.Email.Eq(*in.Email)),
 	)
 	if e != nil {
 		return e
@@ -54,9 +52,9 @@ func (u *user) Register(ctx context.Context, in *dto.OperateStaffQuery, out *dto
 	if !ok {
 		return errors.New("register failed")
 	}
-	out.ID = int64(bean.Id)
-	out.RoleID = int64(bean.RoleId)
-	out.Name = bean.Name.String()
+	out.ID = int64Ptr(bean.Id.Int64())
+	out.RoleID = int64Ptr(bean.RoleId.Int64())
+	out.Name = strPtr(bean.Name.String())
 	return nil
 }
 
@@ -71,9 +69,9 @@ func (u *user) Get(ctx context.Context, in *dto.IDReq, out *dto.OperateStaffVO) 
 	if !has {
 		return errors.New("user not found")
 	}
-	out.ID = int64(bean.Id)
-	out.RoleID = int64(bean.RoleId)
-	out.Name = bean.Name.String()
-	out.Email = bean.Email.String()
+	out.ID = int64Ptr(bean.Id.Int64())
+	out.RoleID = int64Ptr(bean.RoleId.Int64())
+	out.Name = strPtr(bean.Name.String())
+	out.Email = strPtr(bean.Email.String())
 	return nil
 }

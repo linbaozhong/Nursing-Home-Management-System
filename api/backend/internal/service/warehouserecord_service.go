@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"strings"
 
 	"api/internal/constant"
@@ -37,7 +38,7 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 	q := db.Table(tblwarehouserecord.TableName).
 		InnerJoin(tblwarehouserecord.WarehouseId, tblwarehouse.Id).
 		InnerJoin(tblwarehouserecord.StaffId, tblstaff.Id).
-		Where(ace.Where(tblwarehouserecord.DelFlag.Eq(types.Int8(constant.YesNoNo))))
+		Where(tblwarehouserecord.DelFlag.Eq(types.Int8(constant.YesNoNo)))
 	if in.WarehouseName != nil {
 		q = q.And(tblwarehouse.Name.Like(*in.WarehouseName))
 	}
@@ -45,28 +46,25 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 		q = q.And(tblstaff.Name.Like(*in.StaffName))
 	}
 	if in.StartTime != nil {
-		q = q.And(tblwarehouserecord.WarehouseDate.Gte(types.Time(*in.StartTime)))
+		q = q.And(tblwarehouserecord.WarehouseDate.Gte(*in.StartTime))
 	}
 	if in.EndTime != nil {
-		q = q.And(tblwarehouserecord.WarehouseDate.Lte(types.Time(*in.EndTime)))
+		q = q.And(tblwarehouserecord.WarehouseDate.Lte(*in.EndTime))
 	}
 	var records []warehouseRecordJoin
-	has, e := q.Page(in.PageNum, in.PageSize).
+	e := q.Page(*in.PageNum, *in.PageSize).
 		Cols(
 			tblwarehouserecord.Id,
 			tblwarehouserecord.WarehouseDate,
 			tblwarehouserecord.Source,
 			tblwarehouserecord.WarehouseFlag,
-			tblwarehouse.Name.As("warehouse_name"),
-			tblstaff.Name.As("staff_name"),
+			tblwarehouse.Name.AsName("warehouse_name"),
+			tblstaff.Name.AsName("staff_name"),
 		).
-		OrderBy(tblwarehouserecord.WarehouseDate, false).
+		Desc(tblwarehouserecord.WarehouseDate).
 		Select().Gets(ctx, &records)
 	if e != nil {
 		return e
-	}
-	if !has {
-		return nil
 	}
 	// 聚合每笔记录的物资名称
 	ids := make([]any, 0, len(records))
@@ -84,7 +82,10 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 	}
 	nameMap := make(map[int64]string)
 	if len(materialIds) > 0 {
-		ms, _, e := dao.Material(db).List(ctx, ace.Where(tblmaterial.Id.In(materialIds...).And(tblmaterial.DelFlag.Eq(types.Int8(constant.YesNoNo)))).Cols(tblmaterial.Id, tblmaterial.Name))
+		ms, _, e := dao.Material(db).List(ctx,
+			ace.Where(tblmaterial.Id.In(materialIds...)).
+				And(tblmaterial.DelFlag.Eq(types.Int8(constant.YesNoNo))).
+				Cols(tblmaterial.Id, tblmaterial.Name))
 		if e != nil {
 			return e
 		}
@@ -108,7 +109,7 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 			ID:            int64(r.ID),
 			WarehouseName: r.WarehouseName.String(), // 来自 As
 			MaterialName:  strings.Join(names, ","),
-			WarehouseDate: r.WarehouseDate.Time(),
+			WarehouseDate: r.WarehouseDate.Time,
 			Source:        r.Source.String(),
 			StaffName:     r.StaffName.String(), // 来自 As
 			WarehouseFlag: constant.AuditStatus(r.WarehouseFlag).String(),
@@ -136,7 +137,7 @@ func (s *warehouseRecordService) ListWarehouse(ctx context.Context, in *dto.Empt
 func (s *warehouseRecordService) PageMaterialByKey(ctx context.Context, in *dto.PageWarehouseMaterialByKeyQuery, out *[]dto.PageWarehouseMaterialByKeyVO) error {
 	q := db.Table(tblwarehousematerial.TableName).
 		InnerJoin(tblwarehousematerial.MaterialId, tblmaterial.Id).
-		Where(ace.Where(tblwarehousematerial.WarehouseRecordId.Gt(types.BigInt(0))))
+		Where(tblwarehousematerial.WarehouseRecordId.Gt(0))
 	if in.WarehouseID != nil {
 		// 通过 warehouse_material 的库存记录不分仓库，此处仅按物资名过滤
 		_ = in.WarehouseID
@@ -144,7 +145,7 @@ func (s *warehouseRecordService) PageMaterialByKey(ctx context.Context, in *dto.
 	if in.MaterialName != nil {
 		q = q.And(tblmaterial.Name.Like(*in.MaterialName))
 	}
-	return q.Page(in.PageNum, in.PageSize).
+	return q.Page(*in.PageNum, *in.PageSize).
 		Cols(
 			tblwarehousematerial.Id.As("id"),
 			tblmaterial.Name.As("material_name"),
@@ -153,24 +154,24 @@ func (s *warehouseRecordService) PageMaterialByKey(ctx context.Context, in *dto.
 			tblwarehousematerial.Inventory.As("inventory"),
 			tblwarehousematerial.ExpireDate.As("expire_date"),
 		).
-		OrderBy(tblwarehousematerial.Id, false).
+		Desc(tblwarehousematerial.Id).
 		Select().Gets(ctx, out)
 }
 
 // AddWarehouseRecord 新增入库记录
-func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto.AddWarehouseRecordQuery) (*dto.EmptyResp, error) {
+func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto.AddWarehouseRecordQuery, out *dto.EmptyResp) error {
 	record := new(do.WarehouseRecord)
 	record.WarehouseId = types.BigInt(*in.WarehouseID)
 	record.StaffId = types.BigInt(*in.StaffID)
 	record.Source = types.String(*in.Source)
-	record.WarehouseDate = types.Time(*in.WarehouseDate)
+	record.WarehouseDate = types.Time{*in.WarehouseDate}
 	record.WarehouseFlag = types.Int8(constant.AuditStay)
 	record.DelFlag = types.Int8(constant.YesNoNo)
 	if _, e := dao.WarehouseRecord(db).InsertOne(ctx, record,
 		tblwarehouserecord.WarehouseId, tblwarehouserecord.StaffId, tblwarehouserecord.Source,
 		tblwarehouserecord.WarehouseDate, tblwarehouserecord.WarehouseFlag, tblwarehouserecord.DelFlag,
 		tblwarehouserecord.CreateId, tblwarehouserecord.CreateTime); e != nil {
-		return nil, e
+		return e
 	}
 	// 按物资编号分组汇总数量
 	group := make(map[int64]*dto.AddWarehouseMaterialQuery)
@@ -188,8 +189,8 @@ func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto
 		wm := new(do.WarehouseMaterial)
 		wm.WarehouseRecordId = record.Id
 		wm.MaterialId = types.BigInt(mid)
-		wm.ProductDate = types.Time(*m.ProductDate)
-		wm.ExpireDate = types.Time(*m.ExpireDate)
+		wm.ProductDate = types.Time{*m.ProductDate}
+		wm.ExpireDate = types.Time{*m.ExpireDate}
 		wm.WarehouseNum = types.Int32(*m.WarehouseNum)
 		wm.Inventory = types.Int32(*m.WarehouseNum)
 		beans = append(beans, wm)
@@ -197,71 +198,75 @@ func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto
 	if _, e := dao.WarehouseMaterial(db).InsertBatch(ctx, beans,
 		tblwarehousematerial.WarehouseRecordId, tblwarehousematerial.MaterialId, tblwarehousematerial.ProductDate,
 		tblwarehousematerial.ExpireDate, tblwarehousematerial.WarehouseNum, tblwarehousematerial.Inventory); e != nil {
-		return nil, e
+		return e
 	}
-	return new(dto.EmptyResp), nil
+	return nil
 }
 
 // GetWarehouseRecordById 查询入库记录详情
 func (s *warehouseRecordService) GetWarehouseRecordById(ctx context.Context, in *dto.IDReq, out *dto.GetWarehouseRecordByIDVO) error {
-	record := new(warehouseRecordJoin)
-	has, e := dao.WarehouseRecord(db).Get(ctx, ace.Where(tblwarehouserecord.Id.Eq(types.BigInt(*in.ID))).
+	e := db.Table(tblwarehouserecord.TableName).
 		InnerJoin(tblwarehouserecord.WarehouseId, tblwarehouse.Id).
 		InnerJoin(tblwarehouserecord.StaffId, tblstaff.Id).
+		Where(tblwarehouserecord.Id.Eq(types.BigInt(*in.ID))).
 		Cols(
 			tblwarehouserecord.Id,
 			tblwarehouserecord.Source,
 			tblwarehouserecord.WarehouseDate,
 			tblwarehouse.Name.As("warehouse_name"),
 			tblstaff.Name.As("staff_name"),
-		))
+		).
+		Select().
+		Get(ctx, out)
+
+	switch e {
+	case nil:
+	case sql.ErrNoRows:
+		return nil
+	default:
+		return e
+	}
+
+	// 入库物资列表
+	e = db.Table(tblwarehousematerial.TableName).
+		InnerJoin(tblwarehousematerial.MaterialId, tblmaterial.Id).
+		Where(tblwarehousematerial.WarehouseRecordId.Eq(types.BigInt(*in.ID))).
+		Cols(
+			tblmaterial.Name.As("material_name"),
+			tblwarehousematerial.WarehouseNum,
+			tblwarehousematerial.ProductDate,
+			tblwarehousematerial.ExpireDate,
+		).
+		Select().
+		Gets(ctx, &out.WarehouseMaterialByIDVOList)
+
+	switch e {
+	case nil, sql.ErrNoRows:
+		return nil
+	default:
+		return e
+	}
+}
+
+// AuditWarehouseRecord 审核入库记录
+func (s *warehouseRecordService) AuditWarehouseRecord(ctx context.Context, in *dto.AuditWarehouseRecordQuery, out *dto.EmptyResp) error {
+	record, has, e := dao.WarehouseRecord(db).
+		Get(ctx,
+			ace.Where(
+				tblwarehouserecord.Id.Eq(types.BigInt(*in.WarehouseRecordID)),
+			).
+				Cols(
+					tblwarehouserecord.Id,
+					tblwarehouserecord.WarehouseFlag,
+				))
 	if e != nil {
 		return e
 	}
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	out.WarehouseName = record.WarehouseName.String()
-	out.StaffName = record.StaffName.String()
-	out.Source = record.Source.String()
-	out.WarehouseDate = record.WarehouseDate.Time()
-	// 入库物资列表
-	wms, _, e := dao.WarehouseMaterial(db).List(ctx, ace.Where(tblwarehousematerial.WarehouseRecordId.Eq(types.BigInt(*in.ID))).
-		InnerJoin(tblwarehousematerial.MaterialId, tblmaterial.Id).
-		Cols(
-			tblmaterial.Name.As("material_name"),
-			tblwarehousematerial.WarehouseNum,
-			tblwarehousematerial.ProductDate,
-			tblwarehousematerial.ExpireDate,
-		))
-	if e != nil {
-		return e
-	}
-	list := make([]dto.GetWarehouseMaterialByIDVO, 0, len(wms))
-	for _, wm := range wms {
-		list = append(list, dto.GetWarehouseMaterialByIDVO{
-			MaterialName: wm.MaterialName,
-			WarehouseNum: int(wm.WarehouseNum),
-			ProductDate:  wm.ProductDate.Time(),
-			ExpireDate:   wm.ExpireDate.Time(),
-		})
-	}
-	out.WarehouseMaterialByIDVOList = list
-	return nil
-}
-
-// AuditWarehouseRecord 审核入库记录
-func (s *warehouseRecordService) AuditWarehouseRecord(ctx context.Context, in *dto.AuditWarehouseRecordQuery) (*dto.EmptyResp, error) {
-	record := new(do.WarehouseRecord)
-	has, e := dao.WarehouseRecord(db).Get(ctx, ace.Where(tblwarehouserecord.Id.Eq(types.BigInt(*in.WarehouseRecordID))).Cols(tblwarehouserecord.Id, tblwarehouserecord.WarehouseFlag))
-	if e != nil {
-		return nil, e
-	}
-	if !has {
-		return nil, constant.ErrDataNotExist
-	}
 	if record.WarehouseFlag != types.Int8(constant.AuditStay) {
-		return nil, constant.ErrAuditRepeat
+		return constant.ErrAuditRepeat
 	}
 	flag := constant.AuditNotPass
 	if *in.AuditResult == "通过" {
@@ -271,18 +276,18 @@ func (s *warehouseRecordService) AuditWarehouseRecord(ctx context.Context, in *d
 		tblwarehouserecord.WarehouseFlag.Set(types.Int8(flag)),
 	)
 	if e != nil {
-		return nil, e
+		return e
 	}
-	return new(dto.EmptyResp), nil
+	return nil
 }
 
 // DeleteWarehouseRecord 删除入库记录（逻辑删除）
-func (s *warehouseRecordService) DeleteWarehouseRecord(ctx context.Context, in *dto.IDReq) (*dto.EmptyResp, error) {
+func (s *warehouseRecordService) DeleteWarehouseRecord(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	_, e := dao.WarehouseRecord(db).UpdateById(ctx, types.BigInt(*in.ID),
 		tblwarehouserecord.DelFlag.Set(types.Int8(constant.YesNoYes)),
 	)
 	if e != nil {
-		return nil, e
+		return e
 	}
-	return new(dto.EmptyResp), nil
+	return nil
 }

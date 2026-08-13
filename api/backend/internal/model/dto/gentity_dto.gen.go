@@ -25234,8 +25234,8 @@ func (p *PageWarehouseRecordByKeyQuery) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		switch key.Str {
 		case "page_num":
-			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *int {
-				var obj *int
+			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *uint {
+				var obj *uint
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -25243,8 +25243,8 @@ func (p *PageWarehouseRecordByKeyQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "page_size":
-			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *int {
-				var obj *int
+			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *uint {
+				var obj *uint
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -25320,8 +25320,8 @@ func (p *PageWarehouseRecordByKeyQuery) UnmarshalValues(m map[string][]string) e
 		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
 		switch k {
 		case "page_num":
-			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *int {
-				var obj *int
+			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *uint {
+				var obj *uint
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -25329,8 +25329,8 @@ func (p *PageWarehouseRecordByKeyQuery) UnmarshalValues(m map[string][]string) e
 				return obj
 			}(value))
 		case "page_size":
-			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *int {
-				var obj *int
+			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *uint {
+				var obj *uint
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -25437,8 +25437,8 @@ func (p *PageWarehouseMaterialByKeyQuery) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		switch key.Str {
 		case "page_num":
-			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *int {
-				var obj *int
+			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *uint {
+				var obj *uint
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -25446,8 +25446,8 @@ func (p *PageWarehouseMaterialByKeyQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "page_size":
-			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *int {
-				var obj *int
+			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *uint {
+				var obj *uint
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -25496,8 +25496,8 @@ func (p *PageWarehouseMaterialByKeyQuery) UnmarshalValues(m map[string][]string)
 		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
 		switch k {
 		case "page_num":
-			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *int {
-				var obj *int
+			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *uint {
+				var obj *uint
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -25505,8 +25505,8 @@ func (p *PageWarehouseMaterialByKeyQuery) UnmarshalValues(m map[string][]string)
 				return obj
 			}(value))
 		case "page_size":
-			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *int {
-				var obj *int
+			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *uint {
+				var obj *uint
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)

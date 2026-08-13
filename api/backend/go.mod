@@ -2,7 +2,7 @@ module api
 
 go 1.26.4
 
-require github.com/linbaozhong/gentity v0.10.77
+require github.com/linbaozhong/gentity v0.10.81
 
 require (
 	filippo.io/edwards25519 v1.1.1 // indirect
@@ -49,6 +49,8 @@ require (
 	github.com/redis/go-redis/v9 v9.11.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/schollz/closestmatch v2.1.0+incompatible // indirect
+	github.com/sekrat/aescrypter v1.0.0 // indirect
+	github.com/sekrat/sekrat v1.0.1 // indirect
 	github.com/sirupsen/logrus v1.9.4 // indirect
 	github.com/tdewolff/minify/v2 v2.20.19 // indirect
 	github.com/tdewolff/parse/v2 v2.7.12 // indirect

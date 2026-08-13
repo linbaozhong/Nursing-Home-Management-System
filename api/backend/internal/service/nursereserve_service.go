@@ -52,7 +52,7 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 		q = q.And(tblbed.Name.Like(*in.BedName))
 	}
 	var joins []nurseReserveJoin
-	has, e := q.Page(*in.PageNum, *in.PageSize).
+	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblnursereserve.Id,
 			tblnursereserve.ServiceName,
@@ -66,7 +66,7 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 			tblelder.Name.As("elder_name"),
 			tblbed.Name.As("bed_name"),
 		).
-		OrderBy(tblnursereserve.Id, false).
+		Desc(tblnursereserve.Id).
 		Select().Gets(ctx, &joins)
 	if e != nil {
 		return e
@@ -193,9 +193,9 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 		q = q.And(tblelder.CheckFlag.Eq(types.Int8(*in.CheckFlag)))
 	}
 	var elders []do.Elder
-	has, e := q.Page(*in.PageNum, *in.PageSize).
+	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.CheckFlag, tblelder.BedId).
-		OrderBy(tblelder.Id, false).
+		Desc(tblelder.Id).
 		Select().Gets(ctx, &elders)
 	if e != nil {
 		return e
@@ -230,7 +230,7 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 func (s *nurseReserveService) ListNurseStaff(ctx context.Context, in *dto.EmptyReq, out *[]dto.PageSearchStaffByKeyVO) error {
 	var staffs []do.Staff
 	has, e := dao.Staff(db).List(ctx, ace.NewSelectBuilder(db).From(tblstaff.TableName).
-		OrderBy(tblstaff.Id, false))
+		Desc(tblstaff.Id))
 	if e != nil {
 		return e
 	}

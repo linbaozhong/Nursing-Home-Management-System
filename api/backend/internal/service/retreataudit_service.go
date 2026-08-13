@@ -38,14 +38,14 @@ func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto
 		q = q.Where(tblelder.Name.Like(*in.Key))
 	}
 	var joins []retreatAuditJoin
-	has, e := q.Page(*in.PageNum, *in.PageSize).
+	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblretreatapply.Id,
 			tblretreatapply.ApplyFlag,
 			tblelder.Name.As("elder_name"),
 			tblstaff.Name.As("apply_name"),
 		).
-		OrderBy(tblretreatapply.Id, false).
+		Desc(tblretreatapply.Id).
 		Select().Gets(ctx, &joins)
 	if e != nil {
 		return e

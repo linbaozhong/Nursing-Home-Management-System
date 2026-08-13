@@ -7,8 +7,8 @@ import "time"
 // @request
 // PageWarehouseRecordByKeyQuery 分页查询入库记录请求
 type PageWarehouseRecordByKeyQuery struct {
-	PageNum       *int       `json:"page_num" valid:"required"`  // 页码
-	PageSize      *int       `json:"page_size" valid:"required"` // 条数
+	PageNum       *uint      `json:"page_num" valid:"required"`  // 页码
+	PageSize      *uint      `json:"page_size" valid:"required"` // 条数
 	WarehouseName *string    `json:"warehouse_name"`             // 仓库名称
 	MaterialName  *string    `json:"material_name"`              // 物资名称
 	StartTime     *time.Time `json:"start_time"`                 // 开始时间
@@ -19,8 +19,8 @@ type PageWarehouseRecordByKeyQuery struct {
 // @request
 // PageWarehouseMaterialByKeyQuery 分页查询仓库物资请求
 type PageWarehouseMaterialByKeyQuery struct {
-	PageNum      *int    `json:"page_num" valid:"required"`     // 页码
-	PageSize     *int    `json:"page_size" valid:"required"`    // 条数
+	PageNum      *uint   `json:"page_num" valid:"required"`     // 页码
+	PageSize     *uint   `json:"page_size" valid:"required"`    // 条数
 	WarehouseID  *int64  `json:"warehouse_id" valid:"required"` // 仓库编号
 	MaterialName *string `json:"material_name"`                 // 物资名称
 }

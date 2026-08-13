@@ -43,7 +43,7 @@ func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReser
 		q = q.Where(tblelder.Name.Like(*in.Key))
 	}
 	var joins []reserveJoin
-	has, e := q.Page(*in.PageNum, *in.PageSize).
+	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblreserve.Id,
 			tblreserve.ElderId,
@@ -53,7 +53,7 @@ func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReser
 			tblelder.Name.As("elder_name"),
 			tblstaff.Name.As("staff_name"),
 		).
-		OrderBy(tblreserve.Id, false).
+		Desc(tblreserve.Id).
 		Select().Gets(ctx, &joins)
 	if e != nil {
 		return e
@@ -187,9 +187,9 @@ func (s *reserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageS
 		q = q.And(tblelder.Phone.Like(*in.Phone))
 	}
 	var elders []do.Elder
-	has, e := q.Page(*in.PageNum, *in.PageSize).
+	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.CheckFlag).
-		OrderBy(tblelder.Id, false).
+		Desc(tblelder.Id).
 		Select().Gets(ctx, &elders)
 	if e != nil {
 		return e
@@ -226,9 +226,9 @@ func (s *reserveService) PageSearchStaffByKey(ctx context.Context, in *dto.PageS
 		q = q.And(tblstaff.Phone.Like(*in.Phone))
 	}
 	var staffs []do.Staff
-	has, e := q.Page(*in.PageNum, *in.PageSize).
+	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(tblstaff.Id, tblstaff.Name, tblstaff.Phone).
-		OrderBy(tblstaff.Id, false).
+		Desc(tblstaff.Id).
 		Select().Gets(ctx, &staffs)
 	if e != nil {
 		return e

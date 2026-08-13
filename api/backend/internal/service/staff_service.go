@@ -37,7 +37,7 @@ func (s *staffService) PageStaffByKey(ctx context.Context, in *dto.PageStaffByKe
 	q := db.Table(tblstaff.TableName).
 		LeftJoin(tblstaff.RoleId, tblrole.Id)
 	if in.Name != nil {
-		q = q.Where(ace.Where(tblstaff.Name.Like(*in.Name)))
+		q = q.Where(tblstaff.Name.Like(*in.Name))
 	}
 	if in.Phone != nil {
 		q = q.And(tblstaff.Phone.Like(*in.Phone))
@@ -45,7 +45,7 @@ func (s *staffService) PageStaffByKey(ctx context.Context, in *dto.PageStaffByKe
 	if in.RoleID != nil {
 		q = q.And(tblstaff.RoleId.Eq(types.BigInt(*in.RoleID)))
 	}
-	return q.Page(in.PageNum, in.PageSize).
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblstaff.Id.As("id"),
 			tblstaff.Name.As("name"),
@@ -56,7 +56,7 @@ func (s *staffService) PageStaffByKey(ctx context.Context, in *dto.PageStaffByKe
 			tblstaff.Email.As("email"),
 			tblstaff.LeaveFlag.As("leave_flag"),
 		).
-		OrderBy(tblstaff.CreateTime, false).
+		Desc(tblstaff.CreateTime).
 		Select().Gets(ctx, out)
 }
 
@@ -64,32 +64,32 @@ func (s *staffService) PageStaffByKey(ctx context.Context, in *dto.PageStaffByKe
 func (s *staffService) PageSearchStaffByKey(ctx context.Context, in *dto.PageSearchStaffByKeyQuery, out *[]dto.PageSearchStaffByKeyVO) error {
 	q := db.Table(tblstaff.TableName)
 	if in.Name != nil {
-		q = q.Where(ace.Where(tblstaff.Name.Like(*in.Name)))
+		q = q.Where(tblstaff.Name.Like(*in.Name))
 	}
 	if in.Phone != nil {
 		q = q.And(tblstaff.Phone.Like(*in.Phone))
 	}
-	return q.Page(in.PageNum, in.PageSize).
+	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblstaff.Id.As("id"),
 			tblstaff.Name.As("name"),
 			tblstaff.Phone.As("phone"),
 		).
-		OrderBy(tblstaff.CreateTime, false).
+		Desc(tblstaff.CreateTime).
 		Select().Gets(ctx, out)
 }
 
 // AddStaff 新增员工
-func (s *staffService) AddStaff(ctx context.Context, in *dto.OperateStaffQuery) (*dto.EmptyResp, error) {
+func (s *staffService) AddStaff(ctx context.Context, in *dto.OperateStaffQuery, out *dto.EmptyResp) error {
 	has, e := dao.Staff(db).Exists(ctx,
-		ace.Where(tblstaff.Phone.Eq(types.String(*in.Phone))).
-			Or(tblstaff.Email.Eq(types.String(*in.Email))),
+		tblstaff.Phone.Eq(*in.Phone).
+			Or(tblstaff.Email.Eq(*in.Email)),
 	)
 	if e != nil {
-		return nil, e
+		return e
 	}
 	if has {
-		return nil, constant.ErrPhoneOrEmailRepeat
+		return constant.ErrPhoneOrEmailRepeat
 	}
 	bean := new(do.Staff)
 	bean.RoleId = types.BigInt(*in.RoleID)
@@ -111,9 +111,9 @@ func (s *staffService) AddStaff(ctx context.Context, in *dto.OperateStaffQuery) 
 		tblstaff.Phone, tblstaff.Email, tblstaff.Address, tblstaff.Avator,
 		tblstaff.LeaveFlag, tblstaff.Pass, tblstaff.CreateId, tblstaff.CreateTime)
 	if e != nil {
-		return nil, e
+		return e
 	}
-	return new(dto.EmptyResp), nil
+	return nil
 }
 
 // GetStaffById 查询员工详情
@@ -127,31 +127,31 @@ func (s *staffService) GetStaffById(ctx context.Context, in *dto.IDReq, out *dto
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	out.ID = int64(bean.Id)
-	out.RoleID = int64(bean.RoleId)
-	out.Name = bean.Name.String()
-	out.IDNum = bean.IdNum.String()
-	out.Age = int(bean.Age)
-	out.Sex = bean.Sex.String()
-	out.Phone = bean.Phone.String()
-	out.Email = bean.Email.String()
-	out.Address = bean.Address.String()
-	out.Avator = bean.Avator.String()
+	*out.ID = int64(bean.Id)
+	*out.RoleID = int64(bean.RoleId)
+	*out.Name = bean.Name.String()
+	*out.IDNum = bean.IdNum.String()
+	*out.Age = int(bean.Age)
+	*out.Sex = bean.Sex.String()
+	*out.Phone = bean.Phone.String()
+	*out.Email = bean.Email.String()
+	*out.Address = bean.Address.String()
+	*out.Avator = bean.Avator.String()
 	return nil
 }
 
 // EditStaff 编辑员工
-func (s *staffService) EditStaff(ctx context.Context, in *dto.OperateStaffQuery) (*dto.EmptyResp, error) {
+func (s *staffService) EditStaff(ctx context.Context, in *dto.OperateStaffQuery, out *dto.EmptyResp) error {
 	has, e := dao.Staff(db).Exists(ctx,
-		ace.Where(tblstaff.Phone.Eq(types.String(*in.Phone))).
-			Or(tblstaff.Email.Eq(types.String(*in.Email))).
-			And(tblstaff.Id.NotEq(types.BigInt(*in.ID))),
+		tblstaff.Phone.Eq(types.String(*in.Phone)).
+			Or(tblstaff.Email.Eq(types.String(*in.Email))),
+		tblstaff.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
-		return nil, e
+		return e
 	}
 	if has {
-		return nil, constant.ErrPhoneOrEmailRepeat
+		return constant.ErrPhoneOrEmailRepeat
 	}
 	_, e = dao.Staff(db).UpdateById(ctx, types.BigInt(*in.ID),
 		tblstaff.RoleId.Set(types.BigInt(*in.RoleID)),
@@ -165,18 +165,18 @@ func (s *staffService) EditStaff(ctx context.Context, in *dto.OperateStaffQuery)
 		tblstaff.Avator.Set(types.String(*in.Avator)),
 	)
 	if e != nil {
-		return nil, e
+		return e
 	}
-	return new(dto.EmptyResp), nil
+	return nil
 }
 
 // LeaveStaff 员工离职
-func (s *staffService) LeaveStaff(ctx context.Context, in *dto.IDReq) (*dto.EmptyResp, error) {
+func (s *staffService) LeaveStaff(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	_, e := dao.Staff(db).UpdateById(ctx, types.BigInt(*in.ID),
 		tblstaff.LeaveFlag.Set(types.Int8(constant.YesNoYes)),
 	)
 	if e != nil {
-		return nil, e
+		return e
 	}
-	return new(dto.EmptyResp), nil
+	return nil
 }

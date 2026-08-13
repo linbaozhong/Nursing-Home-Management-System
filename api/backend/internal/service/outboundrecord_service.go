@@ -55,7 +55,7 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 		q = q.And(tbloutboundrecord.OutboundDate.Lte(types.Time{Time: *in.EndTime}))
 	}
 	var joins []outboundRecordJoin
-	has, e := q.Page(*in.PageNum, *in.PageSize).
+	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tbloutboundrecord.Id,
 			tbloutboundrecord.RecipientType,
@@ -65,7 +65,7 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 			tblstaff.Name.As("staff_name"),
 			tblelder.Name.As("elder_name"),
 		).
-		OrderBy(tbloutboundrecord.OutboundDate, false).
+		Desc(tbloutboundrecord.OutboundDate).
 		Select().Gets(ctx, &joins)
 	if e != nil {
 		return e
@@ -142,9 +142,9 @@ func (s *outboundRecordService) PageSearchElderByKey(ctx context.Context, in *dt
 		q = q.And(tblelder.Phone.Like(*in.Phone))
 	}
 	var elders []do.Elder
-	has, e := q.Page(*in.PageNum, *in.PageSize).
+	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.CheckFlag).
-		OrderBy(tblelder.Id, false).
+		Desc(tblelder.Id).
 		Select().Gets(ctx, &elders)
 	if e != nil {
 		return e
@@ -186,7 +186,7 @@ func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, 
 		Inventory    types.BigInt  `json:"inventory"`
 		ExpireDate   types.Time    `json:"expire_date"`
 	}
-	has, e := q.Page(*in.PageNum, *in.PageSize).
+	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblwarehousematerial.Id,
 			tblwarehousematerial.Price,
@@ -195,7 +195,7 @@ func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, 
 			tblwarehousematerial.ExpireDate,
 			tblmaterial.Name.As("material_name"),
 		).
-		OrderBy(tblwarehousematerial.Id, false).
+		Desc(tblwarehousematerial.Id).
 		Select().Gets(ctx, &list)
 	if e != nil {
 		return e

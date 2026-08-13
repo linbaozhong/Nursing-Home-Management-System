@@ -1,12 +1,12 @@
 package service
 
 import (
+	"api/internal/model/define/table/tblelder"
+	"api/internal/model/define/table/tblelderlabel"
 	"context"
 
 	"api/internal/constant"
 	"api/internal/model/define/dao"
-	"api/internal/model/define/table/tbelder"
-	"api/internal/model/define/table/tbelderlabel"
 	"api/internal/model/define/table/tbllabel"
 	"api/internal/model/do"
 	"api/internal/model/dto"
@@ -22,7 +22,7 @@ type intentionService struct{}
 // PageIntentionByKey 分页查询意向客户（elder 表中 check_flag=意向）
 func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageIntentionByKeyQuery, out *[]dto.PageIntentionByKeyVO) error {
 	q := db.Table(tblelder.TableName).
-		Where(ace.Where(tblelder.CheckFlag.Eq(types.Int8(constant.CheckIntention))))
+		Where(tblelder.CheckFlag.Eq(types.Int8(constant.CheckIntention)))
 	if in.ElderName != nil {
 		q = q.And(tblelder.Name.Like(*in.ElderName))
 	}
@@ -30,22 +30,19 @@ func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageI
 		q = q.And(tblelder.Phone.Like(*in.ElderPhone))
 	}
 	var list []do.Elder
-	has, e := q.Page(in.PageNum, in.PageSize).
+	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(tblelder.Id, tblelder.Name, tblelder.Phone, tblelder.Sex, tblelder.Age).
-		OrderBy(tblelder.CreateTime, false).
+		Desc(tblelder.CreateTime).
 		Select().Gets(ctx, &list)
 	if e != nil {
 		return e
-	}
-	if !has {
-		return nil
 	}
 	// 批量查询老人标签
 	ids := make([]any, 0, len(list))
 	for _, el := range list {
 		ids = append(ids, el.Id)
 	}
-	labels, _, e := dao.ElderLabel(db).List(ctx, ace.Where(tbelderlabel.ElderId.In(ids...)).Cols(tbelderlabel.ElderId, tbelderlabel.LabelId))
+	labels, _, e := dao.ElderLabel(db).List(ctx, ace.Where(tblelderlabel.ElderId.In(ids...)).Cols(tblelderlabel.ElderId, tblelderlabel.LabelId))
 	if e != nil {
 		return e
 	}
@@ -90,10 +87,10 @@ func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageI
 }
 
 // AddIntention 新增意向客户（写入 elder 表，check_flag=意向）
-func (s *intentionService) AddIntention(ctx context.Context, in *dto.AddIntentQuery) (*dto.EmptyResp, error) {
+func (s *intentionService) AddIntention(ctx context.Context, in *dto.AddIntentQuery, out *dto.EmptyResp) error {
 	exist, has, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.IdNum.Eq(types.String(*in.IDNum))).Cols(tblelder.Id, tblelder.CheckFlag))
 	if e != nil {
-		return nil, e
+		return e
 	}
 	if !has {
 		bean := new(do.Elder)
@@ -109,9 +106,9 @@ func (s *intentionService) AddIntention(ctx context.Context, in *dto.AddIntentQu
 			tblelder.Name, tblelder.IdNum, tblelder.Age, tblelder.Sex, tblelder.Phone,
 			tblelder.Address, tblelder.Balance, tblelder.CheckFlag, tblelder.CreateId, tblelder.CreateTime)
 		if e != nil {
-			return nil, e
+			return e
 		}
-		return new(dto.EmptyResp), nil
+		return nil
 	}
 	// 已存在则更新
 	_, e = dao.Elder(db).UpdateById(ctx, exist.Id,
@@ -122,9 +119,9 @@ func (s *intentionService) AddIntention(ctx context.Context, in *dto.AddIntentQu
 		tblelder.Address.Set(types.String(*in.Address)),
 	)
 	if e != nil {
-		return nil, e
+		return e
 	}
-	return new(dto.EmptyResp), nil
+	return nil
 }
 
 // GetIntentById 查询意向客户详情（含标签）
@@ -137,15 +134,15 @@ func (s *intentionService) GetIntentById(ctx context.Context, in *dto.IDReq, out
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	out.ID = int64(bean.Id)
-	out.Name = bean.Name.String()
-	out.IDNum = bean.IdNum.String()
-	out.Age = int(bean.Age)
-	out.Sex = bean.Sex.String()
-	out.Phone = bean.Phone.String()
-	out.Address = bean.Address.String()
+	*out.ID = int64(bean.Id)
+	*out.Name = bean.Name.String()
+	*out.IDNum = bean.IdNum.String()
+	*out.Age = int(bean.Age)
+	*out.Sex = bean.Sex.String()
+	*out.Phone = bean.Phone.String()
+	*out.Address = bean.Address.String()
 	// 标签
-	labels, _, e := dao.ElderLabel(db).List(ctx, ace.Where(tbelderlabel.ElderId.Eq(types.BigInt(*in.ID))).Cols(tbelderlabel.LabelId))
+	labels, _, e := dao.ElderLabel(db).List(ctx, ace.Where(tblelderlabel.ElderId.Eq(types.BigInt(*in.ID))).Cols(tblelderlabel.LabelId))
 	if e != nil {
 		return e
 	}
@@ -169,7 +166,7 @@ func (s *intentionService) GetIntentById(ctx context.Context, in *dto.IDReq, out
 }
 
 // EditIntention 编辑意向客户
-func (s *intentionService) EditIntention(ctx context.Context, in *dto.EditIntentQuery) (*dto.EmptyResp, error) {
+func (s *intentionService) EditIntention(ctx context.Context, in *dto.EditIntentQuery, out *dto.EmptyResp) error {
 	_, e := dao.Elder(db).UpdateById(ctx, types.BigInt(*in.ID),
 		tblelder.Name.Set(types.String(*in.Name)),
 		tblelder.IdNum.Set(types.String(*in.IDNum)),
@@ -179,16 +176,16 @@ func (s *intentionService) EditIntention(ctx context.Context, in *dto.EditIntent
 		tblelder.Address.Set(types.String(*in.Address)),
 	)
 	if e != nil {
-		return nil, e
+		return e
 	}
-	return new(dto.EmptyResp), nil
+	return nil
 }
 
 // DeleteIntention 删除意向客户（逻辑删除）
-func (s *intentionService) DeleteIntention(ctx context.Context, in *dto.IDReq) (*dto.EmptyResp, error) {
+func (s *intentionService) DeleteIntention(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	_, e := dao.Elder(db).DeleteById(ctx, types.BigInt(*in.ID))
 	if e != nil {
-		return nil, e
+		return e
 	}
-	return new(dto.EmptyResp), nil
+	return nil
 }
