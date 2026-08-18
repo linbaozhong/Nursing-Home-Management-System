@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ RoomTypeController 请求 ============
 
 // @request
@@ -13,9 +15,9 @@ type PageRoomTypeByKeyQuery struct {
 // @request
 // OperateRoomTypeQuery 操作房间类型请求（新增/编辑）
 type OperateRoomTypeQuery struct {
-	ID         *int64   `json:"id"`
-	Name       *string  `json:"name"`
-	MonthPrice *float64 `json:"month_price"`
+	ID         *int64       `json:"id"`
+	Name       *string      `json:"name"`
+	MonthPrice *types.Money `json:"month_price"`
 }
 
 // ============ RoomTypeController 响应 ============
@@ -23,9 +25,9 @@ type OperateRoomTypeQuery struct {
 // @response
 // PageRoomTypeByKeyVO 分页查询房间类型响应
 type PageRoomTypeByKeyVO struct {
-	ID         int64   `json:"id"`
-	Name       string  `json:"name"`
-	MonthPrice float64 `json:"month_price"`
+	ID         int64       `json:"id"`
+	Name       string      `json:"name"`
+	MonthPrice types.Money `json:"month_price"`
 }
 
 // @response

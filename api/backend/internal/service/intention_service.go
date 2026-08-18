@@ -100,7 +100,7 @@ func (s *intentionService) AddIntention(ctx context.Context, in *dto.AddIntentQu
 		bean.Sex = types.String(*in.Sex)
 		bean.Phone = types.String(*in.Phone)
 		bean.Address = types.String(*in.Address)
-		bean.Balance = types.Float64(0)
+		bean.Balance = types.Money(0)
 		bean.CheckFlag = types.Int8(constant.CheckIntention)
 		_, e = dao.Elder(db).InsertOne(ctx, bean,
 			tblelder.Name, tblelder.IdNum, tblelder.Age, tblelder.Sex, tblelder.Phone,

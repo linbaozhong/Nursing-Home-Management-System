@@ -77,12 +77,12 @@ func (s *serviceproject) GetServiceById(ctx context.Context, in *dto.IDReq, out 
 	if !has {
 		return errors.New("服务项目不存在")
 	}
-	out.ID = int64Ptr(int64(obj.Id))
-	out.TypeID = int64Ptr(int64(obj.TypeId))
-	out.Name = strPtr(obj.Name.String())
-	out.ChargeMethod = strPtr(obj.ChargeMethod.String())
-	out.Price = float64Ptr(obj.Price.Float64())
-	out.NeedDate = intPtr(int(obj.NeedDate))
+	*out.ID = int64(obj.Id)
+	*out.TypeID = int64(obj.TypeId)
+	*out.Name = obj.Name.String()
+	*out.ChargeMethod = obj.ChargeMethod.String()
+	*out.Price = obj.Price
+	*out.NeedDate = int(obj.NeedDate)
 	return nil
 }
 
@@ -114,7 +114,7 @@ func (s *serviceproject) AddService(ctx context.Context, in *dto.OperateServiceQ
 	bean.TypeId = types.BigInt(*in.TypeID)
 	bean.Name = types.String(*in.Name)
 	bean.ChargeMethod = types.String(*in.ChargeMethod)
-	bean.Price = types.Float64(*in.Price)
+	bean.Price = types.Money(*in.Price)
 	bean.NeedDate = types.Int32(*in.NeedDate)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	_, e = dao.ServiceItem(db).InsertOne(ctx, bean)
@@ -151,7 +151,7 @@ func (s *serviceproject) EditService(ctx context.Context, in *dto.OperateService
 	bean.TypeId = types.BigInt(*in.TypeID)
 	bean.Name = types.String(*in.Name)
 	bean.ChargeMethod = types.String(*in.ChargeMethod)
-	bean.Price = types.Float64(*in.Price)
+	bean.Price = types.Money(*in.Price)
 	bean.NeedDate = types.Int32(*in.NeedDate)
 	_, e = dao.ServiceItem(db).UpdateOne(ctx, bean)
 	return e
@@ -204,8 +204,8 @@ func (s *serviceproject) GetServiceTypeById(ctx context.Context, in *dto.IDReq, 
 	if !has {
 		return errors.New("服务类型不存在")
 	}
-	out.ID = int64Ptr(int64(obj.Id))
-	out.Name = strPtr(obj.Name.String())
+	*out.ID = int64(obj.Id)
+	*out.Name = obj.Name.String()
 	return nil
 }
 

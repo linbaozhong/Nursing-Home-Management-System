@@ -12,7 +12,7 @@ var (
 	Name       = dialect.Field{Name: "name", Json: "name", Table: "dishes", Type: "types.String", IsRelation: false}
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "dishes", Type: "types.BigInt", IsRelation: false}
 	TypeId     = dialect.Field{Name: "type_id", Json: "type_id", Table: "dishes", Type: "types.BigInt", IsRelation: false}
-	Price      = dialect.Field{Name: "price", Json: "price", Table: "dishes", Type: "types.Float64", IsRelation: false}
+	Price      = dialect.Field{Name: "price", Json: "price", Table: "dishes", Type: "types.Money", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "dishes", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "dishes", Type: "types.Time", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "dishes", Type: "types.BigInt", IsRelation: false}

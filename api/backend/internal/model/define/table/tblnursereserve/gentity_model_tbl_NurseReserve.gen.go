@@ -14,8 +14,8 @@ var (
 	Id           = dialect.Field{Name: "id", Json: "id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
 	ElderId      = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
 	StaffId      = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
-	ServicePrice = dialect.Field{Name: "service_price", Json: "service_price", Table: "nurse_reserve", Type: "types.Float64", IsRelation: false}
-	PayAmount    = dialect.Field{Name: "pay_amount", Json: "pay_amount", Table: "nurse_reserve", Type: "types.Float64", IsRelation: false}
+	ServicePrice = dialect.Field{Name: "service_price", Json: "service_price", Table: "nurse_reserve", Type: "types.Money", IsRelation: false}
+	PayAmount    = dialect.Field{Name: "pay_amount", Json: "pay_amount", Table: "nurse_reserve", Type: "types.Money", IsRelation: false}
 	NurseDate    = dialect.Field{Name: "nurse_date", Json: "nurse_date", Table: "nurse_reserve", Type: "types.Time", IsRelation: false}
 	CreateId     = dialect.Field{Name: "create_id", Json: "create_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
 	CreateTime   = dialect.Field{Name: "create_time", Json: "create_time", Table: "nurse_reserve", Type: "types.Time", IsRelation: false}

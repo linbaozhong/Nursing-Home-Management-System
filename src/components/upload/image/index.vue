@@ -50,11 +50,11 @@ uploadParams.value.imageList.push({
 
 -->
 <script lang="ts" setup>
-import store from "@/store";
+import { useAppStore } from "@/stores/app";
 import { baseUrl } from "@/utils/http";
 import { ElMessage } from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
-import { defineEmits, onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import type { UploadUserFile, ElUpload } from "element-plus";
 // page data
 const dialogImageUrl = ref("");
@@ -74,7 +74,7 @@ onMounted(() => {
 
 // http request data
 const requestUrl = baseUrl + "file/uploadImg";
-const token = store.state.app.token;
+const token = useAppStore().token;
 
 // return data
 const imageUrlList = ref<any[]>([]);

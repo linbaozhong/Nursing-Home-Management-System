@@ -4751,8 +4751,8 @@ func (p *OperateCateringSetQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -4810,8 +4810,8 @@ func (p *OperateCateringSetQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5965,8 +5965,8 @@ func (p *OperateNurseGradeQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -6033,8 +6033,8 @@ func (p *OperateNurseGradeQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -6149,8 +6149,8 @@ func (p *OperateServiceQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -6226,8 +6226,8 @@ func (p *OperateServiceQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -9137,8 +9137,8 @@ func (p *RechargeQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "amount":
-			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -9178,8 +9178,8 @@ func (p *RechargeQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "amount":
-			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -9260,8 +9260,8 @@ func (p *AddDepositRechargeQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "amount":
-			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -9328,8 +9328,8 @@ func (p *AddDepositRechargeQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "amount":
-			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -9428,8 +9428,8 @@ func (p *EditDepositRechargeQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "amount":
-			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -9496,8 +9496,8 @@ func (p *EditDepositRechargeQuery) UnmarshalValues(m map[string][]string) error 
 				return obj
 			}(value))
 		case "amount":
-			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -9765,8 +9765,8 @@ func (p *OperateDishesQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -9824,8 +9824,8 @@ func (p *OperateDishesQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -10041,8 +10041,8 @@ func (p *AddDishesQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -10100,8 +10100,8 @@ func (p *AddDishesQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -10190,8 +10190,8 @@ func (p *EditDishesQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -10249,8 +10249,8 @@ func (p *EditDishesQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -13789,8 +13789,8 @@ func (p *AddInventoryQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -13866,8 +13866,8 @@ func (p *AddInventoryQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -13979,8 +13979,8 @@ func (p *EditInventoryQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -14056,8 +14056,8 @@ func (p *EditInventoryQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -15334,8 +15334,8 @@ func (p *OperateMaterialQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -15393,8 +15393,8 @@ func (p *OperateMaterialQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -15592,8 +15592,8 @@ func (p *AddMaterialQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -15660,8 +15660,8 @@ func (p *AddMaterialQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -15763,8 +15763,8 @@ func (p *EditMaterialQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -15831,8 +15831,8 @@ func (p *EditMaterialQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "price":
-			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Price, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -16459,8 +16459,8 @@ func (p *AddNurseGradeQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -16518,8 +16518,8 @@ func (p *AddNurseGradeQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -16608,8 +16608,8 @@ func (p *EditNurseGradeQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -16667,8 +16667,8 @@ func (p *EditNurseGradeQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -17405,8 +17405,8 @@ func (p *AddNurseReserveQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "service_price":
-			e = types.Unmarshal(value, &p.ServicePrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.ServicePrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -17432,8 +17432,8 @@ func (p *AddNurseReserveQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "pay_amount":
-			e = types.Unmarshal(value, &p.PayAmount, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.PayAmount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -17491,8 +17491,8 @@ func (p *AddNurseReserveQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "service_price":
-			e = types.Unmarshal(value, &p.ServicePrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.ServicePrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -17518,8 +17518,8 @@ func (p *AddNurseReserveQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "pay_amount":
-			e = types.Unmarshal(value, &p.PayAmount, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.PayAmount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -17919,8 +17919,8 @@ func (p *EditNurseReserveQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "service_price":
-			e = types.Unmarshal(value, &p.ServicePrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.ServicePrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -17928,8 +17928,8 @@ func (p *EditNurseReserveQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "pay_amount":
-			e = types.Unmarshal(value, &p.PayAmount, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.PayAmount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -18023,8 +18023,8 @@ func (p *EditNurseReserveQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "service_price":
-			e = types.Unmarshal(value, &p.ServicePrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.ServicePrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -18032,8 +18032,8 @@ func (p *EditNurseReserveQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "pay_amount":
-			e = types.Unmarshal(value, &p.PayAmount, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.PayAmount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -22340,8 +22340,8 @@ func (p *OperateRoomTypeQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -22390,8 +22390,8 @@ func (p *OperateRoomTypeQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.MonthPrice, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)

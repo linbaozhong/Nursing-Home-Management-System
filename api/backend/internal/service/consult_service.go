@@ -124,7 +124,7 @@ func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultQuery, out *
 	elder.Sex = types.String(*in.Sex)
 	elder.Phone = types.String(*in.ElderPhone)
 	elder.Address = types.String(*in.Address)
-	elder.Balance = types.Float64(0)
+	elder.Balance = types.Money(0)
 	elder.CheckFlag = types.Int8(constant.CheckConsult)
 	_, e = dao.Elder(db).InsertOne(ctx, elder)
 	if e != nil {

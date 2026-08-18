@@ -21,17 +21,17 @@ type nurseReserveService struct{}
 
 // nurseReserveJoin 接收护理预定联表（老人姓名、床位名、护理员姓名）查询结果的中间结构体
 type nurseReserveJoin struct {
-	ID           types.BigInt  `json:"id"`
-	ElderName    types.String  `json:"elder_name"`
-	BedName      types.String  `json:"bed_name"`
-	ServiceName  types.String  `json:"service_name"`
-	NeedDate     types.Int32   `json:"need_date"`
-	ServicePrice types.Float64 `json:"service_price"`
-	ChargeMethod types.String  `json:"charge_method"`
-	Frequency    types.Int32   `json:"frequency"`
-	PayAmount    types.Float64 `json:"pay_amount"`
-	NurseDate    types.Time    `json:"nurse_date"`
-	OrderFlag    types.Int8    `json:"order_flag"`
+	ID           types.BigInt `json:"id"`
+	ElderName    types.String `json:"elder_name"`
+	BedName      types.String `json:"bed_name"`
+	ServiceName  types.String `json:"service_name"`
+	NeedDate     types.Int32  `json:"need_date"`
+	ServicePrice types.Money  `json:"service_price"`
+	ChargeMethod types.String `json:"charge_method"`
+	Frequency    types.Int32  `json:"frequency"`
+	PayAmount    types.Money  `json:"pay_amount"`
+	NurseDate    types.Time   `json:"nurse_date"`
+	OrderFlag    types.Int8   `json:"order_flag"`
 }
 
 // PageNurseReserveByKey 分页查询护理预定
@@ -79,10 +79,10 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 			BedName:      j.BedName.String(),
 			ServiceName:  j.ServiceName.String(),
 			NeedDate:     int(j.NeedDate),
-			ServicePrice: j.ServicePrice.Float64(),
+			ServicePrice: j.ServicePrice,
 			ChargeMethod: j.ChargeMethod.String(),
 			Frequency:    int(j.Frequency),
-			PayAmount:    j.PayAmount.Float64(),
+			PayAmount:    j.PayAmount,
 			NurseDate:    j.NurseDate.Time,
 			OrderFlag:    constant.YesNo(j.OrderFlag).String(),
 		})
@@ -108,10 +108,10 @@ func (s *nurseReserveService) GetNurseReserveByReserveIdAndElderId(ctx context.C
 	out.ID = int64(nr.Id)
 	out.ServiceName = nr.ServiceName.String()
 	out.NeedDate = int(nr.NeedDate)
-	out.ServicePrice = nr.ServicePrice.Float64()
+	out.ServicePrice = nr.ServicePrice
 	out.ChargeMethod = nr.ChargeMethod.String()
 	out.Frequency = int(nr.Frequency)
-	out.PayAmount = nr.PayAmount.Float64()
+	out.PayAmount = nr.PayAmount
 	out.NurseDate = nr.NurseDate.Time
 	out.OrderFlag = constant.YesNo(nr.OrderFlag).String()
 	// 老人姓名、床位名
@@ -133,12 +133,12 @@ func (s *nurseReserveService) AddNurseReserve(ctx context.Context, in *dto.AddNu
 	}
 	rec := &do.NurseReserve{
 		ElderId:      types.BigInt(*in.ElderID),
-		ServiceName:  types.String(orEmpty(in.ServiceName)),
-		NeedDate:     types.Int32(int32(orInt(in.NeedDate))),
-		ServicePrice: types.Float64(orFloat64(in.ServicePrice)),
-		ChargeMethod: types.String(orEmpty(in.ChargeMethod)),
-		Frequency:    types.Int32(int32(orInt(in.Frequency))),
-		PayAmount:    types.Float64(orFloat64(in.PayAmount)),
+		ServiceName:  types.String(*in.ServiceName),
+		NeedDate:     types.Int32(int32(*in.NeedDate)),
+		ServicePrice: types.Money(*in.ServicePrice),
+		ChargeMethod: types.String(*in.ChargeMethod),
+		Frequency:    types.Int32(int32(*in.Frequency)),
+		PayAmount:    types.Money(*in.PayAmount),
 		OrderFlag:    types.Int8(constant.YesNoNo),
 		CreateId:     types.BigInt(*in.ElderID),
 	}
@@ -154,12 +154,12 @@ func (s *nurseReserveService) EditNurseReserve(ctx context.Context, in *dto.Edit
 		return constant.ErrParamInvalid
 	}
 	if _, e := dao.NurseReserve(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tblnursereserve.ElderId.Set(types.BigInt(orInt64(in.ElderID))),
-		tblnursereserve.NeedDate.Set(types.Int32(int32(orInt(in.NeedDate)))),
-		tblnursereserve.ChargeMethod.Set(types.String(orEmpty(in.ChargeMethod))),
-		tblnursereserve.Frequency.Set(types.Int32(int32(orInt(in.Frequency)))),
-		tblnursereserve.ServicePrice.Set(types.Float64(orFloat64(in.ServicePrice))),
-		tblnursereserve.PayAmount.Set(types.Float64(orFloat64(in.PayAmount))),
+		tblnursereserve.ElderId.Set(types.BigInt(*in.ElderID)),
+		tblnursereserve.NeedDate.Set(types.Int32(int32(*in.NeedDate))),
+		tblnursereserve.ChargeMethod.Set(types.String(*in.ChargeMethod)),
+		tblnursereserve.Frequency.Set(types.Int32(int32(*in.Frequency))),
+		tblnursereserve.ServicePrice.Set(types.Money(*in.ServicePrice)),
+		tblnursereserve.PayAmount.Set(types.Money(*in.PayAmount)),
 	); e != nil {
 		return e
 	}
@@ -185,9 +185,6 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 	}
 	if in.Phone != nil && *in.Phone != "" {
 		q = q.And(tblelder.Phone.Like(*in.Phone))
-	}
-	if in.CheckFlag != nil {
-		q = q.And(tblelder.CheckFlag.Eq(types.Int8(*in.CheckFlag)))
 	}
 	var elders []do.Elder
 	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).

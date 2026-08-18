@@ -1,6 +1,6 @@
-import store from "@/store";
-import baseAxios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import baseAxios, { AxiosResponse } from "axios";
 import { ElMessage } from "element-plus";
+import { useAppStore } from "@/stores/app";
 
 export const baseUrl = "http://127.0.0.1:9001/";
 
@@ -21,7 +21,7 @@ axios.interceptors.request.use((config: any) => {
 axios.interceptors.response.use(
   (res: AxiosResponse) => {
     if (res.data.code === 500 && res.data.msg === "令牌无效") {
-      store.dispatch("app/logout");
+      useAppStore().logout();
       ElMessage.error({ message: "登录过期，请重新登录" });
     }
     if (res.data.err === 1) {

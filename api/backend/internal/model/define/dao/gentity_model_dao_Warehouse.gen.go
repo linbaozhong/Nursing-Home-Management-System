@@ -364,7 +364,9 @@ func (p *warehouse) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Wareho
 	defer _rows.Close()
 
 	_obj := do.NewWarehouse()
-	_objs, has, e := _obj.Scan(_rows, _cols...)
+	defer _obj.Free()
+
+	_objs, has, e := _obj.Slice(_rows, _cols...)
 	if has {
 		return _objs, true, nil
 	}

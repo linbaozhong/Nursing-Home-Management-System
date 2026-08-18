@@ -13,8 +13,6 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-// const ServiceItemTableName = "service_item"
-
 var (
 	serviceitemPool = pool.New[*ServiceItem](func() any {
 		_obj := &ServiceItem{}
@@ -42,7 +40,7 @@ func (p *ServiceItem) MarshalJSON() ([]byte, error) {
 	if p.TypeId != 0 {
 		write.WriteRaw("type_id", types.Marshal(p.TypeId))
 	}
-	if p.Price != 0.0 {
+	if p.Price != 0 {
 		write.WriteRaw("price", types.Marshal(p.Price))
 	}
 	if p.CreateId != 0 {
@@ -85,7 +83,7 @@ func (p *ServiceItem) UnmarshalJSON(data []byte) error {
 		case "type_id":
 			p.TypeId = types.BigInt(value.Uint())
 		case "price":
-			p.Price = types.Float64(value.Float())
+			e = types.Unmarshal(value, &p.Price)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -152,22 +150,30 @@ var serviceitemFieldToPtrFunc = map[string]func(*ServiceItem) any{
 	tblserviceitem.DelFlag.Name:      func(p *ServiceItem) any { return &p.DelFlag },
 }
 
+// fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
+func (p *ServiceItem) fieldPtr(args ...dialect.Field) []func(*ServiceItem) any {
+	if len(args) == 0 {
+		args = tblserviceitem.ReadableFields
+	}
+	fs := make([]func(*ServiceItem) any, 0, len(args))
+	for _, col := range args {
+		if f, ok := serviceitemFieldToPtrFunc[col.Name]; ok {
+			fs = append(fs, f)
+		}
+	}
+	return fs
+}
+
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
 // 如果未传入任何字段参数，则默认使用 ReadableFields 中的字段。
 // 参数 args 为可变参数，代表需要获取指针的字段。
 // 返回值为一个包含对应字段指针的切片。
 func (p *ServiceItem) AssignPtr(args ...dialect.Field) []any {
-	if len(args) == 0 {
-		args = tblserviceitem.ReadableFields
+	fs := p.fieldPtr(args...)
+	_vals := make([]any, len(fs))
+	for i, f := range fs {
+		_vals[i] = f(p)
 	}
-
-	_vals := make([]any, 0, len(args))
-	for _, col := range args {
-		if ptrFunc, ok := serviceitemFieldToPtrFunc[col.Name]; ok {
-			_vals = append(_vals, ptrFunc(p))
-		}
-	}
-
 	return _vals
 }
 
@@ -177,8 +183,8 @@ func (p *ServiceItem) AssignPtr(args ...dialect.Field) []any {
 func (p *ServiceItem) AssignPtrByColumns(cols ...string) []any {
 	_vals := make([]any, 0, len(cols))
 	for _, col := range cols {
-		if ptrFunc, ok := serviceitemFieldToPtrFunc[col]; ok {
-			_vals = append(_vals, ptrFunc(p))
+		if f, ok := serviceitemFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, f(p))
 			continue
 		}
 		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
@@ -188,17 +194,23 @@ func (p *ServiceItem) AssignPtrByColumns(cols ...string) []any {
 	return _vals
 }
 
-func (p *ServiceItem) Scan(rows *sql.Rows, args ...dialect.Field) ([]*ServiceItem, bool, error) {
+func (p *ServiceItem) Slice(rows *sql.Rows, args ...dialect.Field) ([]*ServiceItem, bool, error) {
 	defer rows.Close()
 	service_items := make([]*ServiceItem, 0)
 
-	if len(args) == 0 {
-		args = tblserviceitem.ReadableFields
-	}
+	// 只获取一次：字段 -> ptrFunc 的有序列表（与实例无关）
+	fs := p.fieldPtr(args...)
+
+	// 复用的扫描目标切片，循环外分配一次
+	_vals := make([]any, len(fs))
 
 	for rows.Next() {
 		_p := NewServiceItem()
-		_vals := _p.AssignPtr(args...)
+		// 每行只做"指针绑定到新实例"，
+		for i, f := range fs {
+			_vals[i] = f(_p)
+		}
+
 		e := rows.Scan(_vals...)
 		if e != nil {
 			log.Error(e)
@@ -238,7 +250,7 @@ var serviceitemFieldToValueFunc = map[dialect.Field]func(*ServiceItem) (any, boo
 		return p.TypeId, p.TypeId == 0
 	},
 	tblserviceitem.Price: func(p *ServiceItem) (any, bool) {
-		return p.Price, p.Price == 0.0
+		return p.Price, p.Price == 0
 	},
 	tblserviceitem.CreateId: func(p *ServiceItem) (any, bool) {
 		return p.CreateId, p.CreateId == 0
@@ -274,8 +286,8 @@ func (p *ServiceItem) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]
 	vals := make([]any, 0, len(args))
 
 	for _, arg := range args {
-		if valueFunc, exists := serviceitemFieldToValueFunc[arg]; exists {
-			value, isZero := valueFunc(p)
+		if f, has := serviceitemFieldToValueFunc[arg]; has {
+			value, isZero := f(p)
 			// 显式指定字段时全量包含；默认模式跳过零值字段
 			if skipZero && isZero {
 				continue

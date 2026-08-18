@@ -364,7 +364,9 @@ func (p *serviceitem) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Serv
 	defer _rows.Close()
 
 	_obj := do.NewServiceItem()
-	_objs, has, e := _obj.Scan(_rows, _cols...)
+	defer _obj.Free()
+
+	_objs, has, e := _obj.Slice(_rows, _cols...)
 	if has {
 		return _objs, true, nil
 	}

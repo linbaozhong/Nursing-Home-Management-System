@@ -1,6 +1,7 @@
 package service
 
 import (
+	"api/internal/model/define/table/tblbed"
 	"context"
 
 	"api/internal/constant"
@@ -38,7 +39,7 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
-	q := ace.NewSelectBuilder(db).From(tbloutboundrecord.TableName).
+	q := db.Table(tbloutboundrecord.TableName).
 		LeftJoin(tbloutboundrecord.WarehouseId, tblwarehouse.Id).
 		LeftJoin(tbloutboundrecord.StaffId, tblstaff.Id).
 		LeftJoin(tbloutboundrecord.RecipientId, tblelder.Id)
@@ -55,7 +56,7 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 		q = q.And(tbloutboundrecord.OutboundDate.Lte(types.Time{Time: *in.EndTime}))
 	}
 	var joins []outboundRecordJoin
-	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tbloutboundrecord.Id,
 			tbloutboundrecord.RecipientType,
@@ -69,9 +70,6 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 		Select().Gets(ctx, &joins)
 	if e != nil {
 		return e
-	}
-	if !has {
-		return nil
 	}
 	res := make([]dto.PageOutboundRecordByKeyVO, 0, len(joins))
 	for _, j := range joins {
@@ -90,8 +88,7 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 
 // GetOutboundRecordById 查询出库记录详情
 func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *dto.IDReq, out *dto.GetOutboundRecordByIDVO) error {
-	rec := new(do.OutboundRecord)
-	has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.Id.Eq(types.BigInt(*in.ID))))
+	rec, has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -101,15 +98,13 @@ func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *d
 	out.ID = int64(rec.Id)
 	out.RecipientType = rec.RecipientType.String()
 	out.MaterialUse = rec.MaterialUse.String()
-	out.OutboundDate = rec.OutboundDate.Time()
+	out.OutboundDate = rec.OutboundDate.Time
 	// 仓库名
-	w := new(do.Warehouse)
-	if wh, we := dao.Warehouse(db).Get(ctx, ace.Where(tblwarehouse.Id.Eq(rec.WarehouseId))); we == nil && wh {
+	if w, wh, we := dao.Warehouse(db).Get(ctx, ace.Where(tblwarehouse.Id.Eq(rec.WarehouseId))); we == nil && wh {
 		out.WarehouseName = w.Name.String()
 	}
 	// 登记人
-	st := new(do.Staff)
-	if sh, se := dao.Staff(db).Get(ctx, ace.Where(tblstaff.Id.Eq(rec.StaffId))); se == nil && sh {
+	if st, sh, se := dao.Staff(db).Get(ctx, ace.Where(tblstaff.Id.Eq(rec.StaffId))); se == nil && sh {
 		out.StaffName = st.Name.String()
 	}
 	// 出库物资明细
@@ -117,8 +112,8 @@ func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *d
 	if me == nil {
 		for _, m := range materials {
 			mn := ""
-			if mh, merr := dao.Material(db).Get(ctx, ace.Where(tblmaterial.Id.Eq(m.MaterialId))); merr == nil && mh {
-				mn = mh.Name.String()
+			if mm, mh, merr := dao.Material(db).Get(ctx, ace.Where(tblmaterial.Id.Eq(m.MaterialId))); merr == nil && mh {
+				mn = mm.Name.String()
 			}
 			out.OutboundMaterialByIDVOList = append(out.OutboundMaterialByIDVOList, dto.GetOutboundMaterialByIDVO{
 				MaterialName: mn,
@@ -134,7 +129,15 @@ func (s *outboundRecordService) PageSearchElderByKey(ctx context.Context, in *dt
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
-	q := ace.NewSelectBuilder(db).From(tblelder.TableName)
+	q := db.Table(tblelder.TableName).
+		InnerJoin(tblelder.BedId, tblbed.Id).
+		Cols(
+			tblelder.Id,
+			tblelder.Name,
+			tblelder.IdNum,
+			tblelder.Sex,
+			tblbed.Name.As("phone"), // 床位名称,借用elder表的phone字段
+		)
 	if in.Name != nil && *in.Name != "" {
 		q = q.Where(tblelder.Name.Like(*in.Name))
 	}
@@ -142,26 +145,21 @@ func (s *outboundRecordService) PageSearchElderByKey(ctx context.Context, in *dt
 		q = q.And(tblelder.Phone.Like(*in.Phone))
 	}
 	var elders []do.Elder
-	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.CheckFlag).
 		Desc(tblelder.Id).
 		Select().Gets(ctx, &elders)
 	if e != nil {
 		return e
 	}
-	if !has {
-		return nil
-	}
 	res := make([]dto.PageSearchElderByKeyVO, 0, len(elders))
 	for _, el := range elders {
 		res = append(res, dto.PageSearchElderByKeyVO{
-			ID:        int64(el.Id),
-			Name:      el.Name.String(),
+			ElderID:   int64(el.Id),
+			ElderName: el.Name.String(),
 			IDNum:     el.IdNum.String(),
-			Sex:       el.Sex.String(),
-			Phone:     el.Phone.String(),
-			Address:   el.Address.String(),
-			CheckFlag: constant.CheckStatus(el.CheckFlag).String(),
+			ElderSex:  el.Sex.String(),
+			BedName:   el.Phone.String(),
 		})
 	}
 	*out = res
@@ -173,20 +171,20 @@ func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, 
 	if in.PageNum == nil || in.PageSize == nil || in.WarehouseID == nil {
 		return constant.ErrParamInvalid
 	}
-	q := ace.NewSelectBuilder(db).From(tblwarehousematerial.TableName).
+	q := db.Table(tblwarehousematerial.TableName).
 		LeftJoin(tblwarehousematerial.MaterialId, tblmaterial.Id)
 	if in.MaterialName != nil && *in.MaterialName != "" {
 		q = q.Where(tblmaterial.Name.Like(*in.MaterialName))
 	}
 	var list []struct {
-		ID           types.BigInt  `json:"id"`
-		MaterialName types.String  `json:"material_name"`
-		Price        types.Float64 `json:"price"`
-		WarehouseNum types.Int     `json:"warehouse_num"`
-		Inventory    types.BigInt  `json:"inventory"`
-		ExpireDate   types.Time    `json:"expire_date"`
+		ID           types.BigInt `json:"id"`
+		MaterialName types.String `json:"material_name"`
+		Price        types.Money  `json:"price"`
+		WarehouseNum types.Int    `json:"warehouse_num"`
+		Inventory    types.BigInt `json:"inventory"`
+		ExpireDate   types.Time   `json:"expire_date"`
 	}
-	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblwarehousematerial.Id,
 			tblwarehousematerial.Price,
@@ -200,18 +198,15 @@ func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, 
 	if e != nil {
 		return e
 	}
-	if !has {
-		return nil
-	}
 	res := make([]dto.PageWarehouseMaterialByKeyVO, 0, len(list))
 	for _, m := range list {
 		res = append(res, dto.PageWarehouseMaterialByKeyVO{
 			ID:           int64(m.ID),
 			MaterialName: m.MaterialName.String(),
-			Price:        m.Price.Float64(),
+			Price:        m.Price,
 			WarehouseNum: int(m.WarehouseNum),
 			Inventory:    int(m.Inventory),
-			ExpireDate:   m.ExpireDate.Time(),
+			ExpireDate:   m.ExpireDate.Time,
 		})
 	}
 	*out = res
@@ -228,8 +223,8 @@ func (s *outboundRecordService) AddOutboundRecord(ctx context.Context, in *dto.A
 		MaterialUse:   types.String(orEmpty(in.MaterialUse)),
 		WarehouseId:   types.BigInt(*in.WarehouseID),
 		StaffId:       types.BigInt(*in.StaffID),
-		RecipientId:   types.BigInt(orInt64(in.RecipientID)),
-		OutboundDate:  types.Time{Time: timePtr(in.OutboundDate)},
+		RecipientId:   types.BigInt(*in.RecipientID),
+		OutboundDate:  types.Time{Time: *in.OutboundDate},
 		OutboundFlag:  types.Int8(constant.AuditStay),
 		CreateId:      types.BigInt(*in.StaffID),
 	}
@@ -239,17 +234,17 @@ func (s *outboundRecordService) AddOutboundRecord(ctx context.Context, in *dto.A
 	for _, m := range in.OutboundMaterialQueryList {
 		if m.WarehouseMaterialID != nil && m.OutboundNum != nil {
 			// 扣减对应仓库物资库存
-			wm := new(do.WarehouseMaterial)
-			if has, e := dao.WarehouseMaterial(db).Get(ctx, ace.Where(tblwarehousematerial.Id.Eq(types.BigInt(*m.WarehouseMaterialID)))); e == nil && has {
+			wm, has, e := dao.WarehouseMaterial(db).Get(ctx, ace.Where(tblwarehousematerial.Id.Eq(types.BigInt(*m.WarehouseMaterialID))))
+			if e == nil && has {
 				newInv := int32(wm.Inventory) - int32(*m.OutboundNum)
 				if newInv < 0 {
 					newInv = 0
 				}
-				_, _ = dao.WarehouseMaterial(db).UpdateById(ctx, int64(wm.Id), tblwarehousematerial.Inventory.Set(types.Int32(newInv)))
+				_, _ = dao.WarehouseMaterial(db).UpdateById(ctx, wm.Id, tblwarehousematerial.Inventory.Set(types.Int32(newInv)))
 			}
 			om := &do.OutboundMaterial{
 				OutboundRecordId:    rec.Id,
-				WarehouseMaterialId: types.BigInt(orInt64(m.WarehouseMaterialID)),
+				WarehouseMaterialId: types.BigInt(*m.WarehouseMaterialID),
 				MaterialId:          wm.MaterialId,
 				OutboundNum:         types.Int32(int32(*m.OutboundNum)),
 				CreateId:            rec.CreateId,
@@ -265,8 +260,7 @@ func (s *outboundRecordService) AuditOutboundRecord(ctx context.Context, in *dto
 	if in.OutboundRecordID == nil || in.AuditResult == nil {
 		return constant.ErrParamInvalid
 	}
-	rec := new(do.OutboundRecord)
-	has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.Id.Eq(types.BigInt(*in.OutboundRecordID))))
+	rec, has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.Id.Eq(types.BigInt(*in.OutboundRecordID))))
 	if e != nil {
 		return e
 	}
@@ -274,12 +268,12 @@ func (s *outboundRecordService) AuditOutboundRecord(ctx context.Context, in *dto
 		return constant.ErrDataNotExist
 	}
 	if *in.AuditResult == "不通过" {
-		if _, e = dao.OutboundRecord(db).UpdateById(ctx, *in.OutboundRecordID, tbloutboundrecord.OutboundFlag.Set(types.Int8(constant.AuditNotPass))); e != nil {
+		if _, e = dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.OutboundRecordID), tbloutboundrecord.OutboundFlag.Set(types.Int8(constant.AuditNotPass))); e != nil {
 			return e
 		}
 		return nil
 	}
-	if _, e = dao.OutboundRecord(db).UpdateById(ctx, *in.OutboundRecordID, tbloutboundrecord.OutboundFlag.Set(types.Int8(constant.AuditPass))); e != nil {
+	if _, e = dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.OutboundRecordID), tbloutboundrecord.OutboundFlag.Set(types.Int8(constant.AuditPass))); e != nil {
 		return e
 	}
 	return nil
@@ -287,7 +281,7 @@ func (s *outboundRecordService) AuditOutboundRecord(ctx context.Context, in *dto
 
 // DeleteOutboundRecord 删除出库记录（逻辑删除）
 func (s *outboundRecordService) DeleteOutboundRecord(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	if _, e := dao.OutboundRecord(db).UpdateById(ctx, *in.ID, tbloutboundrecord.DelFlag.Set(types.Int8(constant.YesNoYes))); e != nil {
+	if _, e := dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.ID), tbloutboundrecord.DelFlag.Set(types.Int8(constant.YesNoYes))); e != nil {
 		return e
 	}
 	return nil

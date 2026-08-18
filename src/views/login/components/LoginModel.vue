@@ -74,10 +74,11 @@ import { useRenderIcon } from '@/hooks/useIcons'
 import { ReImageVerify } from '@/components/ReImageVerify'
 import { FormInstance, FormRules, ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
-import store from '@/store'
+import { useAppStore } from '@/stores/app'
 import { isNotAccount } from '@/utils/is'
 import { initRoutes } from '@/router/utils'
 const router = useRouter()
+const appStore = useAppStore()
 
 const imgCode = ref('')
 const ruleFormRef = ref<FormInstance | null>(null)
@@ -97,8 +98,8 @@ const handleLogin = async (formRef: FormInstance | null) => {
     if (valid) {
       //单独校验图形验证码
       if (imgCode.value == formData.value.verifyCode) {
-        store
-          .dispatch('app/actionLogin', {
+        appStore
+          .actionLogin({
             pass: formData.value.password,
             phone: formData.value.phone,
             rememberPWD: rememberPWD.value

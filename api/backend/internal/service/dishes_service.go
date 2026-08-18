@@ -60,7 +60,7 @@ func (d *dishes) GetDishesById(ctx context.Context, in *dto.IDReq, out *dto.Oper
 	*out.ID = int64(obj.Id)
 	*out.TypeID = int64(obj.TypeId)
 	*out.Name = obj.Name.String()
-	*out.Price = obj.Price.Float64()
+	*out.Price = obj.Price
 	return nil
 }
 
@@ -80,7 +80,7 @@ func (d *dishes) AddDishes(ctx context.Context, in *dto.OperateDishesQuery, out 
 	bean := do.NewDishes()
 	bean.TypeId = types.BigInt(*in.TypeID)
 	bean.Name = types.String(*in.Name)
-	bean.Price = types.Float64(*in.Price)
+	bean.Price = types.Money(*in.Price)
 	_, e = dao.Dishes(db).InsertOne(ctx, bean)
 	return e
 }

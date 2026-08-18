@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // @response
 // Result 统一响应包装（对应 Java Result<T>）
@@ -87,22 +90,22 @@ type OperateEmergencyContactQuery struct {
 // @request
 // OperateNurseGradeQuery 操作护理等级请求（被 NurseGrade、ElderRecord 引用）
 type OperateNurseGradeQuery struct {
-	ID            *int64   `json:"id"`                               // id
-	Name          *string  `json:"name" valid:"required"`            // 护理等级名称
-	Type          *string  `json:"type" valid:"required"`            // 护理类型
-	MonthPrice    *float64 `json:"month_price" valid:"required"`     // 月护理费用
-	ServiceIDList []int64  `json:"service_id_list" valid:"required"` // 护理服务编号列表
+	ID            *int64       `json:"id"`                               // id
+	Name          *string      `json:"name" valid:"required"`            // 护理等级名称
+	Type          *string      `json:"type" valid:"required"`            // 护理类型
+	MonthPrice    *types.Money `json:"month_price" valid:"required"`     // 月护理费用
+	ServiceIDList []int64      `json:"service_id_list" valid:"required"` // 护理服务编号列表
 }
 
 // @request
 // OperateServiceQuery 操作服务请求（被 ServiceProject、NurseGrade 引用）
 type OperateServiceQuery struct {
-	ID           *int64   `json:"id"`                             // id
-	TypeID       *int64   `json:"type_id" valid:"required"`       // 服务类型编号
-	Name         *string  `json:"name" valid:"required"`          // 服务名称
-	ChargeMethod *string  `json:"charge_method" valid:"required"` // 收费方式
-	Price        *float64 `json:"price" valid:"required"`         // 服务价格
-	NeedDate     *int     `json:"need_date" valid:"required"`     // 所需时间
+	ID           *int64       `json:"id"`                             // id
+	TypeID       *int64       `json:"type_id" valid:"required"`       // 服务类型编号
+	Name         *string      `json:"name" valid:"required"`          // 服务名称
+	ChargeMethod *string      `json:"charge_method" valid:"required"` // 收费方式
+	Price        *types.Money `json:"price" valid:"required"`         // 服务价格
+	NeedDate     *int         `json:"need_date" valid:"required"`     // 所需时间
 }
 
 // // @response
@@ -110,7 +113,7 @@ type OperateServiceQuery struct {
 // type SetDishesVO struct {
 // 	ID    int64   `json:"id"`    // id
 // 	Name  string  `json:"name"`  // 菜品名称
-// 	Price float64 `json:"price"` // 菜品价格
+// 	Price types.Money `json:"price"` // 菜品价格
 // }
 
 // ============ 跨 Controller 共享响应对象 ============
@@ -133,17 +136,17 @@ type NurseGradeServiceVO struct {
 // type GetCateringSetByIDVO struct {
 // 	ID              int64         `json:"id"`                 // id
 // 	Name            string        `json:"name"`               // 套餐名称
-// 	MonthPrice      float64       `json:"month_price"`        // 月套餐费用
+// 	MonthPrice      types.Money       `json:"month_price"`        // 月套餐费用
 // 	SetDishesVOList []SetDishesVO `json:"set_dishes_vo_list"` // 护理等级服务列表
 // }
 
 // @response
 // GetBedByIDVO 床位详情响应（被 ElderRecord 引用）
 type GetBedByIDVO struct {
-	BedID      int64   `json:"bed_id"`      // 床位编号
-	BedName    string  `json:"bed_name"`    // 床位名称
-	RoomType   string  `json:"room_type"`   // 房间类型
-	MonthPrice float64 `json:"month_price"` // 月床位费用
+	BedID      int64       `json:"bed_id"`      // 床位编号
+	BedName    string      `json:"bed_name"`    // 床位名称
+	RoomType   string      `json:"room_type"`   // 房间类型
+	MonthPrice types.Money `json:"month_price"` // 月床位费用
 }
 
 // @response

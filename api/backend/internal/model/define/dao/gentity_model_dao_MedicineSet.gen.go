@@ -364,7 +364,9 @@ func (p *medicineset) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Medi
 	defer _rows.Close()
 
 	_obj := do.NewMedicineSet()
-	_objs, has, e := _obj.Scan(_rows, _cols...)
+	defer _obj.Free()
+
+	_objs, has, e := _obj.Slice(_rows, _cols...)
 	if has {
 		return _objs, true, nil
 	}

@@ -2,6 +2,7 @@ module.exports = {
   root: true,
   env: {
     node: true,
+    es2022: true,
     /** 解决defineProps没有导入的警告 */
     "vue/setup-compiler-macros": true
   },

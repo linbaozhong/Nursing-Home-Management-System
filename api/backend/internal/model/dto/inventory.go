@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ InventoryController 请求 ============
 
 // @request
@@ -16,14 +18,14 @@ type PageInventoryByKeyQuery struct {
 // @response
 // PageInventoryByKeyVO 分页查询库存响应
 type PageInventoryByKeyVO struct {
-	WarehouseName string  `json:"warehouse_name"` // 仓库名称
-	MaterialID    int64   `json:"material_id"`    // 物资编号
-	MaterialName  string  `json:"material_name"`  // 物资名称
-	Total         int     `json:"total"`          // 总库存
-	WarehouseNum  int     `json:"warehouse_num"`  // 入库数量
-	Inventory     int     `json:"inventory"`      // 库存数量
-	OutboundNum   int     `json:"outbound_num"`   // 出库数量
-	Price         float64 `json:"price"`          // 物资单价
+	WarehouseName string      `json:"warehouse_name"` // 仓库名称
+	MaterialID    int64       `json:"material_id"`    // 物资编号
+	MaterialName  string      `json:"material_name"`  // 物资名称
+	Total         int         `json:"total"`          // 总库存
+	WarehouseNum  int         `json:"warehouse_num"`  // 入库数量
+	Inventory     int         `json:"inventory"`      // 库存数量
+	OutboundNum   int         `json:"outbound_num"`   // 出库数量
+	Price         types.Money `json:"price"`          // 物资单价
 }
 
 // @request
@@ -39,23 +41,23 @@ type PageInventoryRecordByKeyQuery struct {
 // @request
 // AddInventoryQuery 新增库存请求
 type AddInventoryQuery struct {
-	ID          *int64   `json:"id"`                            // id
-	WarehouseID *int64   `json:"warehouse_id" valid:"required"` // 仓库编号
-	MaterialID  *int64   `json:"material_id" valid:"required"`  // 物资编号
-	Num         *int     `json:"num" valid:"required"`          // 数量
-	Price       *float64 `json:"price" valid:"required"`        // 单价
-	Remark      *string  `json:"remark"`                        // 备注
+	ID          *int64       `json:"id"`                            // id
+	WarehouseID *int64       `json:"warehouse_id" valid:"required"` // 仓库编号
+	MaterialID  *int64       `json:"material_id" valid:"required"`  // 物资编号
+	Num         *int         `json:"num" valid:"required"`          // 数量
+	Price       *types.Money `json:"price" valid:"required"`        // 单价
+	Remark      *string      `json:"remark"`                        // 备注
 }
 
 // @request
 // EditInventoryQuery 编辑库存请求
 type EditInventoryQuery struct {
-	ID          *int64   `json:"id"`                            // id
-	WarehouseID *int64   `json:"warehouse_id" valid:"required"` // 仓库编号
-	MaterialID  *int64   `json:"material_id" valid:"required"`  // 物资编号
-	Num         *int     `json:"num" valid:"required"`          // 数量
-	Price       *float64 `json:"price" valid:"required"`        // 单价
-	Remark      *string  `json:"remark"`                        // 备注
+	ID          *int64       `json:"id"`                            // id
+	WarehouseID *int64       `json:"warehouse_id" valid:"required"` // 仓库编号
+	MaterialID  *int64       `json:"material_id" valid:"required"`  // 物资编号
+	Num         *int         `json:"num" valid:"required"`          // 数量
+	Price       *types.Money `json:"price" valid:"required"`        // 单价
+	Remark      *string      `json:"remark"`                        // 备注
 }
 
 // @request

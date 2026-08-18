@@ -15,7 +15,7 @@ var (
 	StaffId           = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "order", Type: "types.BigInt", IsRelation: false}
 	DeliverDishesDate = dialect.Field{Name: "deliver_dishes_date", Json: "deliver_dishes_date", Table: "order", Type: "types.Time", IsRelation: false}
 	DineDate          = dialect.Field{Name: "dine_date", Json: "dine_date", Table: "order", Type: "types.Time", IsRelation: false}
-	PayAmount         = dialect.Field{Name: "pay_amount", Json: "pay_amount", Table: "order", Type: "types.Float64", IsRelation: false}
+	PayAmount         = dialect.Field{Name: "pay_amount", Json: "pay_amount", Table: "order", Type: "types.Money", IsRelation: false}
 	CreateId          = dialect.Field{Name: "create_id", Json: "create_id", Table: "order", Type: "types.BigInt", IsRelation: false}
 	CreateTime        = dialect.Field{Name: "create_time", Json: "create_time", Table: "order", Type: "types.Time", IsRelation: false}
 	UpdateId          = dialect.Field{Name: "update_id", Json: "update_id", Table: "order", Type: "types.BigInt", IsRelation: false}

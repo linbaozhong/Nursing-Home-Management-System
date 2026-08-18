@@ -1,9 +1,9 @@
-import { routes, users, IRoute, IUser } from './index'
-import store from '@/store'
+import { routes, users, IUser } from './index'
+import { useAppStore } from '@/stores/app'
 
 // 获取路由列表
 export const getRouterList = (uid: number) => {
-  const authIdList: number[] = store.state.app.userPeofile.authIdList
+  const authIdList: number[] = useAppStore().userPeofile.authIdList
   const routeList: any[] = routes.filter(route => authIdList.includes(route.id))
   if (uid) {
     // userInfo 有可能是 undefined

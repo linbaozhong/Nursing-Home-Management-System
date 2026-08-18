@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // ============ OrderController 请求 ============
 
@@ -42,15 +45,15 @@ type SendOrderQuery struct {
 // @response
 // PageOrderByKeyVO 分页查询点餐响应
 type PageOrderByKeyVO struct {
-	ID                int64     `json:"id"`                  // id
-	ElderName         string    `json:"elder_name"`          // 老人姓名
-	ElderPhone        string    `json:"elder_phone"`         // 老人电话
-	DineDate          time.Time `json:"dine_date"`           // 就餐时间
-	DineType          string    `json:"dine_type"`           // 就餐方式
-	StaffName         string    `json:"staff_name"`          // 送餐人员姓名
-	DeliverDishesDate time.Time `json:"deliver_dishes_date"` // 送餐时间
-	PayAmount         float64   `json:"pay_amount"`          // 支付总额
-	OrderFlag         string    `json:"order_flag"`          // 订单状态
+	ID                int64       `json:"id"`                  // id
+	ElderName         string      `json:"elder_name"`          // 老人姓名
+	ElderPhone        string      `json:"elder_phone"`         // 老人电话
+	DineDate          time.Time   `json:"dine_date"`           // 就餐时间
+	DineType          string      `json:"dine_type"`           // 就餐方式
+	StaffName         string      `json:"staff_name"`          // 送餐人员姓名
+	DeliverDishesDate time.Time   `json:"deliver_dishes_date"` // 送餐时间
+	PayAmount         types.Money `json:"pay_amount"`          // 支付总额
+	OrderFlag         string      `json:"order_flag"`          // 订单状态
 }
 
 // @response
@@ -68,10 +71,10 @@ type GetOrderByIDVO struct {
 // @response
 // OrderDishesVO 菜单菜品响应（嵌套，继承 Rank）
 type OrderDishesVO struct {
-	DishesName   string  `json:"dishes_name"`   // 菜品名称
-	DishesPrice  float64 `json:"dishes_price"`  // 菜品价格
-	OrderNum     int     `json:"order_num"`     // 菜品份数
-	SetFlag      string  `json:"set_flag"`      // 套餐标记
-	TotalAmount  float64 `json:"total_amount"`  // 菜品总额
-	ReallyAmount float64 `json:"really_amount"` // 实际总额
+	DishesName   string      `json:"dishes_name"`   // 菜品名称
+	DishesPrice  types.Money `json:"dishes_price"`  // 菜品价格
+	OrderNum     int         `json:"order_num"`     // 菜品份数
+	SetFlag      string      `json:"set_flag"`      // 套餐标记
+	TotalAmount  types.Money `json:"total_amount"`  // 菜品总额
+	ReallyAmount types.Money `json:"really_amount"` // 实际总额
 }

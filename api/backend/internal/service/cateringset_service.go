@@ -61,7 +61,7 @@ func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out
 	}
 	out.ID = int64(set.Id)
 	out.Name = set.Name.String()
-	out.MonthPrice = set.MonthPrice.Float64()
+	out.MonthPrice = set.MonthPrice
 
 	// 2. 联表查询菜品明细（set_dishes LEFT JOIN dishes）
 	var dishes []do.Dishes
@@ -86,7 +86,7 @@ func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out
 		out.SetDishes = append(out.SetDishes, dto.SetDishesVO{
 			ID:    int64(d.Id),
 			Name:  d.Name.String(),
-			Price: d.Price.Float64(),
+			Price: d.Price,
 		})
 	}
 	return nil
@@ -146,7 +146,7 @@ func (c *cateringset) AddCateringSet(ctx context.Context, in *dto.OperateCaterin
 	// 新增主表
 	bean := do.NewCateringSet()
 	bean.Name = types.String(*in.Name)
-	bean.MonthPrice = types.Float64(*in.MonthPrice)
+	bean.MonthPrice = types.Money(*in.MonthPrice)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	_, e = dao.CateringSet(db).InsertOne(ctx, bean)
 	if e != nil {

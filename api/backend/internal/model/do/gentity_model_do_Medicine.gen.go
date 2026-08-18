@@ -13,8 +13,6 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-// const MedicineTableName = "medicine"
-
 var (
 	medicinePool = pool.New[*Medicine](func() any {
 		_obj := &Medicine{}
@@ -152,22 +150,30 @@ var medicineFieldToPtrFunc = map[string]func(*Medicine) any{
 	tblmedicine.DelFlag.Name:       func(p *Medicine) any { return &p.DelFlag },
 }
 
+// fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
+func (p *Medicine) fieldPtr(args ...dialect.Field) []func(*Medicine) any {
+	if len(args) == 0 {
+		args = tblmedicine.ReadableFields
+	}
+	fs := make([]func(*Medicine) any, 0, len(args))
+	for _, col := range args {
+		if f, ok := medicineFieldToPtrFunc[col.Name]; ok {
+			fs = append(fs, f)
+		}
+	}
+	return fs
+}
+
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
 // 如果未传入任何字段参数，则默认使用 ReadableFields 中的字段。
 // 参数 args 为可变参数，代表需要获取指针的字段。
 // 返回值为一个包含对应字段指针的切片。
 func (p *Medicine) AssignPtr(args ...dialect.Field) []any {
-	if len(args) == 0 {
-		args = tblmedicine.ReadableFields
+	fs := p.fieldPtr(args...)
+	_vals := make([]any, len(fs))
+	for i, f := range fs {
+		_vals[i] = f(p)
 	}
-
-	_vals := make([]any, 0, len(args))
-	for _, col := range args {
-		if ptrFunc, ok := medicineFieldToPtrFunc[col.Name]; ok {
-			_vals = append(_vals, ptrFunc(p))
-		}
-	}
-
 	return _vals
 }
 
@@ -177,8 +183,8 @@ func (p *Medicine) AssignPtr(args ...dialect.Field) []any {
 func (p *Medicine) AssignPtrByColumns(cols ...string) []any {
 	_vals := make([]any, 0, len(cols))
 	for _, col := range cols {
-		if ptrFunc, ok := medicineFieldToPtrFunc[col]; ok {
-			_vals = append(_vals, ptrFunc(p))
+		if f, ok := medicineFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, f(p))
 			continue
 		}
 		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
@@ -188,17 +194,23 @@ func (p *Medicine) AssignPtrByColumns(cols ...string) []any {
 	return _vals
 }
 
-func (p *Medicine) Scan(rows *sql.Rows, args ...dialect.Field) ([]*Medicine, bool, error) {
+func (p *Medicine) Slice(rows *sql.Rows, args ...dialect.Field) ([]*Medicine, bool, error) {
 	defer rows.Close()
 	medicines := make([]*Medicine, 0)
 
-	if len(args) == 0 {
-		args = tblmedicine.ReadableFields
-	}
+	// 只获取一次：字段 -> ptrFunc 的有序列表（与实例无关）
+	fs := p.fieldPtr(args...)
+
+	// 复用的扫描目标切片，循环外分配一次
+	_vals := make([]any, len(fs))
 
 	for rows.Next() {
 		_p := NewMedicine()
-		_vals := _p.AssignPtr(args...)
+		// 每行只做"指针绑定到新实例"，
+		for i, f := range fs {
+			_vals[i] = f(_p)
+		}
+
 		e := rows.Scan(_vals...)
 		if e != nil {
 			log.Error(e)
@@ -274,8 +286,8 @@ func (p *Medicine) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 	vals := make([]any, 0, len(args))
 
 	for _, arg := range args {
-		if valueFunc, exists := medicineFieldToValueFunc[arg]; exists {
-			value, isZero := valueFunc(p)
+		if f, has := medicineFieldToValueFunc[arg]; has {
+			value, isZero := f(p)
 			// 显式指定字段时全量包含；默认模式跳过零值字段
 			if skipZero && isZero {
 				continue

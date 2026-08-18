@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ CateringSetController 请求 ============
 
 // @request
@@ -14,10 +16,10 @@ type PageCateringSetByKeyQuery struct {
 // @request
 // OperateCateringSetQuery 操作餐饮套餐请求
 type OperateCateringSetQuery struct {
-	ID           *int64   `json:"id"`                              // id
-	Name         *string  `json:"name" valid:"required"`           // 套餐名称
-	MonthPrice   *float64 `json:"month_price" valid:"required"`    // 月套餐费用
-	DishesIDList []int64  `json:"dishes_id_list" valid:"required"` // 菜品编号列表
+	ID           *int64       `json:"id"`                              // id
+	Name         *string      `json:"name" valid:"required"`           // 套餐名称
+	MonthPrice   *types.Money `json:"month_price" valid:"required"`    // 月套餐费用
+	DishesIDList []int64      `json:"dishes_id_list" valid:"required"` // 菜品编号列表
 }
 
 // ============ CateringSetController 响应 ============
@@ -25,17 +27,17 @@ type OperateCateringSetQuery struct {
 // @response
 // PageCateringSetByKeyVO 分页查询餐饮套餐响应
 type PageCateringSetByKeyVO struct {
-	ID         int64   `json:"id"`          // id
-	Name       string  `json:"name"`        // 套餐名称
-	MonthPrice float64 `json:"month_price"` // 月套餐费用
+	ID         int64       `json:"id"`          // id
+	Name       string      `json:"name"`        // 套餐名称
+	MonthPrice types.Money `json:"month_price"` // 月套餐费用
 }
 
 // @response
 // SetDishesVO 套餐菜品明细响应
 type SetDishesVO struct {
-	ID    int64   `json:"id"`    // 菜品编号
-	Name  string  `json:"name"`  // 菜品名称
-	Price float64 `json:"price"` // 菜品价格
+	ID    int64       `json:"id"`    // 菜品编号
+	Name  string      `json:"name"`  // 菜品名称
+	Price types.Money `json:"price"` // 菜品价格
 }
 
 // @response
@@ -43,6 +45,6 @@ type SetDishesVO struct {
 type GetCateringSetByIDVO struct {
 	ID         int64         `json:"id"`          // id
 	Name       string        `json:"name"`        // 套餐名称
-	MonthPrice float64       `json:"month_price"` // 月套餐费用
+	MonthPrice types.Money   `json:"month_price"` // 月套餐费用
 	SetDishes  []SetDishesVO `json:"set_dishes"`  // 套餐菜品明细
 }

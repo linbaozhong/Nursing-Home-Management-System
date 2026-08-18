@@ -2,7 +2,7 @@ module api
 
 go 1.26.4
 
-require github.com/linbaozhong/gentity v0.10.81
+require github.com/linbaozhong/gentity v0.10.83
 
 require (
 	filippo.io/edwards25519 v1.1.1 // indirect

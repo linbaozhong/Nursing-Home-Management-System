@@ -55,10 +55,10 @@ func (m *material) GetMaterialById(ctx context.Context, in *dto.IDReq, out *dto.
 	if !has {
 		return errors.New("物资不存在")
 	}
-	out.ID = int64Ptr(int64(obj.Id))
-	out.TypeID = int64Ptr(int64(obj.TypeId))
-	out.Name = strPtr(obj.Name.String())
-	out.Price = float64Ptr(obj.Price.Float64())
+	*out.ID = int64(obj.Id)
+	*out.TypeID = int64(obj.TypeId)
+	*out.Name = obj.Name.String()
+	*out.Price = obj.Price
 	return nil
 }
 
@@ -89,7 +89,7 @@ func (m *material) AddMaterial(ctx context.Context, in *dto.AddMaterialQuery, ou
 	bean := do.NewMaterial()
 	bean.TypeId = types.BigInt(*in.TypeID)
 	bean.Name = types.String(*in.Name)
-	bean.Price = types.Float64(*in.Price)
+	bean.Price = types.Money(*in.Price)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	_, e = dao.Material(db).InsertOne(ctx, bean)
 	return e
@@ -114,7 +114,7 @@ func (m *material) EditMaterial(ctx context.Context, in *dto.EditMaterialQuery, 
 	bean.Id = types.BigInt(*in.ID)
 	bean.TypeId = types.BigInt(*in.TypeID)
 	bean.Name = types.String(*in.Name)
-	bean.Price = types.Float64(*in.Price)
+	bean.Price = types.Money(*in.Price)
 	_, e = dao.Material(db).UpdateOne(ctx, bean)
 	return e
 }

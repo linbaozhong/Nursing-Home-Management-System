@@ -1,15 +1,34 @@
 import SvgIcon from '@/components/SvgIcon/index.vue'
 import { App } from 'vue'
 
-// 获取上下文 require.context（检索的目录，是否检索子文件夹，正则表达式）
-// 返回值是一个函数（传入路径可以导入文件）
-// 通过静态方法keys可以检索所有文件路径
-// 通过.prototype可以查看所有静态方法
+// 将目录下所有 svg 作为 symbol 注入到页面 <svg> sprite，供 <use href="#icon-xxx"> 引用。
+// 原项目使用 Webpack 的 require.context + svg-sprite-loader，迁移到 Vite 后改用 import.meta.glob。
+const svgModules = import.meta.glob('./svg/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true
+}) as Record<string, string>
 
-const svgRequired = require.context('./svg', false, /\.svg$/)
-
-svgRequired.keys().forEach(item => svgRequired(item))
+function installSvgSprite() {
+  if (document.getElementById('svg-sprite-container')) return
+  const symbols: string[] = []
+  Object.keys(svgModules).forEach((path) => {
+    const name = path.split('/').pop()!.replace(/\.svg$/, '')
+    const raw = svgModules[path]
+    const symbol = raw
+      .replace(/<svg([^>]*)>/i, `<symbol id="icon-${name}"$1>`)
+      .replace(/<\/svg>/i, '</symbol>')
+    symbols.push(symbol)
+  })
+  const container = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  container.id = 'svg-sprite-container'
+  container.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+  container.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden;')
+  container.innerHTML = symbols.join('')
+  document.body.appendChild(container)
+}
 
 export default (app: App) => {
+  installSvgSprite()
   app.component('svg-icon', SvgIcon)
 }

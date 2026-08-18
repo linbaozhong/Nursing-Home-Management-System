@@ -44,20 +44,19 @@ func (s *nurseGradeService) PageNurseGradeByKey(ctx context.Context, in *dto.Pag
 
 // GetNurseGradeById 查询护理等级详情（含护理服务列表）
 func (s *nurseGradeService) GetNurseGradeById(ctx context.Context, in *dto.IDReq, out *dto.GetNurseGradeByIDVO) error {
-	bean := new(do.NurseGrade)
-	has, e := dao.NurseGrade(db).GetByID(ctx, types.BigInt(*in.ID), tblnursegrade.Id, tblnursegrade.Name, tblnursegrade.Type, tblnursegrade.MonthPrice, tblnursegrade.DelFlag)
+	bean, has, e := dao.NurseGrade(db).GetByID(ctx, types.BigInt(*in.ID), tblnursegrade.Id, tblnursegrade.Name, tblnursegrade.Type, tblnursegrade.MonthPrice, tblnursegrade.DelFlag)
 	if e != nil {
 		return e
 	}
 	if !has {
 		return nil
 	}
-	out.ID = int64(bean.Id)
-	out.Name = bean.Name.String()
-	out.Type = bean.Type.String()
-	out.MonthPrice = bean.MonthPrice.Float64()
+	*out.ID = int64(bean.Id)
+	*out.Name = bean.Name.String()
+	*out.Type = bean.Type.String()
+	*out.MonthPrice = bean.MonthPrice
 	// 关联护理服务
-	items, _, e := dao.NurseItem(db).List(ctx, ace.Where(tblnurseitem.NurseGradeId.Eq(types.BigInt(*in.ID))).Cols(tblnurseitem.ServiceItemId))
+	items, _, e := dao.NurseItem(db).List(ctx, ace.Where(tblnurseitem.GradeId.Eq(types.BigInt(*in.ID))).Cols(tblnurseitem.ServiceId))
 	if e != nil {
 		return e
 	}
@@ -66,7 +65,7 @@ func (s *nurseGradeService) GetNurseGradeById(ctx context.Context, in *dto.IDReq
 	}
 	ids := make([]any, 0, len(items))
 	for _, it := range items {
-		ids = append(ids, it.ServiceItemId)
+		ids = append(ids, it.ServiceId)
 	}
 	services, _, e := dao.ServiceItem(db).List(ctx, ace.Where(tblserviceitem.Id.In(ids...)).
 		And(tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo))).
@@ -77,12 +76,12 @@ func (s *nurseGradeService) GetNurseGradeById(ctx context.Context, in *dto.IDReq
 	list := make([]dto.NurseGradeServiceVO, 0, len(services))
 	for _, sv := range services {
 		vo := dto.NurseGradeServiceVO{}
-		vo.ID = int64(sv.Id)
-		vo.TypeID = int64(sv.TypeId)
-		vo.Name = sv.Name.String()
-		vo.ChargeMethod = sv.ChargeMethod.String()
-		vo.Price = sv.Price.Float64()
-		vo.NeedDate = int(sv.NeedDate)
+		*vo.ID = int64(sv.Id)
+		*vo.TypeID = int64(sv.TypeId)
+		*vo.Name = sv.Name.String()
+		*vo.ChargeMethod = sv.ChargeMethod.String()
+		*vo.Price = sv.Price
+		*vo.NeedDate = int(sv.NeedDate)
 		list = append(list, vo)
 	}
 	out.NurseGradeServiceVOList = list
@@ -100,19 +99,19 @@ func (s *nurseGradeService) AddNurseGrade(ctx context.Context, in *dto.AddNurseG
 		return e
 	}
 	if has {
-		return nil, constant.ErrNurseGradeRepeat
+		return constant.ErrNurseGradeRepeat
 	}
 	bean := new(do.NurseGrade)
 	bean.Name = types.String(*in.Name)
 	bean.Type = types.String(*in.Type)
-	bean.MonthPrice = types.Float64(*in.MonthPrice)
+	bean.MonthPrice = types.Money(*in.MonthPrice)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	ok, e := dao.NurseGrade(db).InsertOne(ctx, bean, tblnursegrade.Name, tblnursegrade.Type, tblnursegrade.MonthPrice, tblnursegrade.DelFlag, tblnursegrade.CreateId, tblnursegrade.CreateTime)
 	if e != nil {
 		return e
 	}
 	if !ok {
-		return nil, constant.ErrNurseGradeRepeat
+		return constant.ErrNurseGradeRepeat
 	}
 	// 关联护理服务
 	if len(in.ServiceIDList) > 0 {
@@ -142,21 +141,21 @@ func (s *nurseGradeService) EditNurseGrade(ctx context.Context, in *dto.EditNurs
 		return e
 	}
 	if has {
-		return nil, constant.ErrNurseGradeRepeat
+		return constant.ErrNurseGradeRepeat
 	}
 	ok, e := dao.NurseGrade(db).UpdateById(ctx, types.BigInt(*in.ID),
 		tblnursegrade.Name.Set(types.String(*in.Name)),
 		tblnursegrade.Type.Set(types.String(*in.Type)),
-		tblnursegrade.MonthPrice.Set(types.Float64(*in.MonthPrice)),
+		tblnursegrade.MonthPrice.Set(types.Money(*in.MonthPrice)),
 	)
 	if e != nil {
 		return e
 	}
 	if !ok {
-		return nil, constant.ErrNurseGradeRepeat
+		return constant.ErrNurseGradeRepeat
 	}
 	// 重建关联护理服务
-	if _, e = dao.NurseItem(db).Delete(ctx, tblnurseitem.NurseGradeId.Eq(types.BigInt(*in.ID))); e != nil {
+	if _, e = dao.NurseItem(db).Delete(ctx, tblnurseitem.GradeId.Eq(types.BigInt(*in.ID))); e != nil {
 		return e
 	}
 	if len(in.ServiceIDList) > 0 {

@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ NurseGradeController 请求 ============
 
 // @request
@@ -18,10 +20,10 @@ type PageNurseGradeByKeyQuery struct {
 // @response
 // PageNurseGradeByKeyVO 分页查询护理等级响应
 type PageNurseGradeByKeyVO struct {
-	ID         int64   `json:"id"`          // id
-	Name       string  `json:"name"`        // 护理等级名称
-	Type       string  `json:"type"`        // 护理类型
-	MonthPrice float64 `json:"month_price"` // 月护理费用
+	ID         int64       `json:"id"`          // id
+	Name       string      `json:"name"`        // 护理等级名称
+	Type       string      `json:"type"`        // 护理类型
+	MonthPrice types.Money `json:"month_price"` // 月护理费用
 }
 
 // GetNurseGradeByIDVO 护理等级详情响应（定义见 common.go）
@@ -29,19 +31,19 @@ type PageNurseGradeByKeyVO struct {
 // @request
 // AddNurseGradeQuery 新增护理等级请求
 type AddNurseGradeQuery struct {
-	ID         *int64   `json:"id"`                           // id
-	Name       *string  `json:"name" valid:"required"`        // 护理等级名称
-	Type       *string  `json:"type" valid:"required"`        // 护理类型
-	MonthPrice *float64 `json:"month_price" valid:"required"` // 月护理费用
+	ID         *int64       `json:"id"`                           // id
+	Name       *string      `json:"name" valid:"required"`        // 护理等级名称
+	Type       *string      `json:"type" valid:"required"`        // 护理类型
+	MonthPrice *types.Money `json:"month_price" valid:"required"` // 月护理费用
 }
 
 // @request
 // EditNurseGradeQuery 编辑护理等级请求
 type EditNurseGradeQuery struct {
-	ID         *int64   `json:"id"`                           // id
-	Name       *string  `json:"name" valid:"required"`        // 护理等级名称
-	Type       *string  `json:"type" valid:"required"`        // 护理类型
-	MonthPrice *float64 `json:"month_price" valid:"required"` // 月护理费用
+	ID         *int64       `json:"id"`                           // id
+	Name       *string      `json:"name" valid:"required"`        // 护理等级名称
+	Type       *string      `json:"type" valid:"required"`        // 护理类型
+	MonthPrice *types.Money `json:"month_price" valid:"required"` // 月护理费用
 }
 
 // @request

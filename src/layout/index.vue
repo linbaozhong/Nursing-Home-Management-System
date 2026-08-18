@@ -1,9 +1,9 @@
 <template>
   <el-container
     class="layout-container"
-    :class="{ hideSidebar: !$store.state.app.siderType }"
+    :class="{ hideSidebar: !appStore.siderType }"
   >
-    <el-aside :width="$store.state.app.siderType ? '230px' : '64px'">
+    <el-aside :width="appStore.siderType ? '230px' : '64px'">
       <SideBar />
     </el-aside>
     <el-container class="main-container">
@@ -26,26 +26,9 @@
 <script setup lang="ts">
 import SideBar from './components/SideBar/index.vue'
 import NavBar from './components/NavBar/index.vue'
-import store from '@/store'
+import { useAppStore } from '@/stores/app'
 
-// window.onresize = () =>
-//   (() => {
-//     /** width app-wrapper类容器宽度
-//      * 0 < width <= 760 隐藏侧边栏
-//      * 760 < width <= 990 折叠侧边栏
-//      * width > 990 展开侧边栏
-//      */
-
-//     let width = document.body.clientWidth
-
-//     if (width > 0 && width <= 760) { // 隐藏侧边栏
-//       store.commit('app/setDeviceType', 'phone')
-//     } else if (width > 760 && width <= 990) { // 折叠侧边栏
-//       store.commit('app/setDeviceType', 'ipaid')
-//     } else if (width > 990) { // 展开侧边栏
-//       store.commit('app/setDeviceType', 'desktop')
-//     }
-//   })()
+const appStore = useAppStore()
 </script>
 
 <style lang="scss" scoped>

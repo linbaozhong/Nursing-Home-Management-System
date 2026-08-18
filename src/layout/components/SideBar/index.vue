@@ -13,9 +13,9 @@
         :default-active="active"
         text-color="#fefefea6"
         unique-opened
-        :collapse="!$store.state.app.siderType"
+        :collapse="!appStore.siderType"
       >
-        <MenuItem :menuList="store.state.app.routeTree" />
+        <MenuItem :menuList="appStore.routeTree" />
       </el-menu>
     </el-scrollbar>
     <div class="menufold-container">
@@ -30,8 +30,9 @@ import MenuFold from './components/MenuFold.vue'
 import variables from '@/styles/variables.module.scss'
 import { ref, watch } from 'vue'
 import { RouteRecordName, useRoute } from 'vue-router'
-import store from '@/store'
+import { useAppStore } from '@/stores/app'
 
+const appStore = useAppStore()
 const route = useRoute()
 
 let active = ref<RouteRecordName>('Home')

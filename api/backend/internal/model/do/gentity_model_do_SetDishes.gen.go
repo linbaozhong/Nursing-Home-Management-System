@@ -13,8 +13,6 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-// const SetDishesTableName = "set_dishes"
-
 var (
 	setdishesPool = pool.New[*SetDishes](func() any {
 		_obj := &SetDishes{}
@@ -124,22 +122,30 @@ var setdishesFieldToPtrFunc = map[string]func(*SetDishes) any{
 	tblsetdishes.UpdateTime.Name: func(p *SetDishes) any { return &p.UpdateTime },
 }
 
+// fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
+func (p *SetDishes) fieldPtr(args ...dialect.Field) []func(*SetDishes) any {
+	if len(args) == 0 {
+		args = tblsetdishes.ReadableFields
+	}
+	fs := make([]func(*SetDishes) any, 0, len(args))
+	for _, col := range args {
+		if f, ok := setdishesFieldToPtrFunc[col.Name]; ok {
+			fs = append(fs, f)
+		}
+	}
+	return fs
+}
+
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
 // 如果未传入任何字段参数，则默认使用 ReadableFields 中的字段。
 // 参数 args 为可变参数，代表需要获取指针的字段。
 // 返回值为一个包含对应字段指针的切片。
 func (p *SetDishes) AssignPtr(args ...dialect.Field) []any {
-	if len(args) == 0 {
-		args = tblsetdishes.ReadableFields
+	fs := p.fieldPtr(args...)
+	_vals := make([]any, len(fs))
+	for i, f := range fs {
+		_vals[i] = f(p)
 	}
-
-	_vals := make([]any, 0, len(args))
-	for _, col := range args {
-		if ptrFunc, ok := setdishesFieldToPtrFunc[col.Name]; ok {
-			_vals = append(_vals, ptrFunc(p))
-		}
-	}
-
 	return _vals
 }
 
@@ -149,8 +155,8 @@ func (p *SetDishes) AssignPtr(args ...dialect.Field) []any {
 func (p *SetDishes) AssignPtrByColumns(cols ...string) []any {
 	_vals := make([]any, 0, len(cols))
 	for _, col := range cols {
-		if ptrFunc, ok := setdishesFieldToPtrFunc[col]; ok {
-			_vals = append(_vals, ptrFunc(p))
+		if f, ok := setdishesFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, f(p))
 			continue
 		}
 		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
@@ -160,17 +166,23 @@ func (p *SetDishes) AssignPtrByColumns(cols ...string) []any {
 	return _vals
 }
 
-func (p *SetDishes) Scan(rows *sql.Rows, args ...dialect.Field) ([]*SetDishes, bool, error) {
+func (p *SetDishes) Slice(rows *sql.Rows, args ...dialect.Field) ([]*SetDishes, bool, error) {
 	defer rows.Close()
 	set_dishess := make([]*SetDishes, 0)
 
-	if len(args) == 0 {
-		args = tblsetdishes.ReadableFields
-	}
+	// 只获取一次：字段 -> ptrFunc 的有序列表（与实例无关）
+	fs := p.fieldPtr(args...)
+
+	// 复用的扫描目标切片，循环外分配一次
+	_vals := make([]any, len(fs))
 
 	for rows.Next() {
 		_p := NewSetDishes()
-		_vals := _p.AssignPtr(args...)
+		// 每行只做"指针绑定到新实例"，
+		for i, f := range fs {
+			_vals[i] = f(_p)
+		}
+
 		e := rows.Scan(_vals...)
 		if e != nil {
 			log.Error(e)
@@ -234,8 +246,8 @@ func (p *SetDishes) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]st
 	vals := make([]any, 0, len(args))
 
 	for _, arg := range args {
-		if valueFunc, exists := setdishesFieldToValueFunc[arg]; exists {
-			value, isZero := valueFunc(p)
+		if f, has := setdishesFieldToValueFunc[arg]; has {
+			value, isZero := f(p)
 			// 显式指定字段时全量包含；默认模式跳过零值字段
 			if skipZero && isZero {
 				continue

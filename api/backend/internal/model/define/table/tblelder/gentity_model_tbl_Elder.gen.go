@@ -18,7 +18,7 @@ var (
 	NursingGradeId = dialect.Field{Name: "nursing_grade_id", Json: "nursing_grade_id", Table: "elder", Type: "types.BigInt", IsRelation: false}
 	CateringSetId  = dialect.Field{Name: "catering_set_id", Json: "catering_set_id", Table: "elder", Type: "types.BigInt", IsRelation: false}
 	BedId          = dialect.Field{Name: "bed_id", Json: "bed_id", Table: "elder", Type: "types.BigInt", IsRelation: false}
-	Balance        = dialect.Field{Name: "balance", Json: "balance", Table: "elder", Type: "types.Float64", IsRelation: false}
+	Balance        = dialect.Field{Name: "balance", Json: "balance", Table: "elder", Type: "types.Money", IsRelation: false}
 	CreateId       = dialect.Field{Name: "create_id", Json: "create_id", Table: "elder", Type: "types.BigInt", IsRelation: false}
 	CreateTime     = dialect.Field{Name: "create_time", Json: "create_time", Table: "elder", Type: "types.Time", IsRelation: false}
 	UpdateId       = dialect.Field{Name: "update_id", Json: "update_id", Table: "elder", Type: "types.BigInt", IsRelation: false}

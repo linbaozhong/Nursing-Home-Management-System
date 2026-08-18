@@ -87,14 +87,15 @@
 </template>
 
 <script setup lang="ts">
-import store from '@/store'
+import { useAppStore } from '@/stores/app'
 import { useRenderIcon } from '@/hooks/useIcons'
 import { reactive, ref } from 'vue'
 import { editPass, forgetPass, getLogout, IEditPassImpl } from '@/apis/user'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 
-const avator = store.state.app.userPeofile.avator
-const username = store.state.app.userPeofile.username
+const appStore = useAppStore()
+const avator = appStore.userPeofile.avator
+const username = appStore.userPeofile.username
 const editPassVisible = ref(false)
 const ruleFormRef = ref<FormInstance | null>(null)
 const loading = ref(false)
@@ -140,7 +141,7 @@ const handleEditPass = (formRef: FormInstance | null) => {
 // 退出登录
 const logout = async () => {
   await getLogout()
-  store.dispatch('app/logout')
+  appStore.logout()
   ElMessage({
     message: '操作成功',
     type: 'success'

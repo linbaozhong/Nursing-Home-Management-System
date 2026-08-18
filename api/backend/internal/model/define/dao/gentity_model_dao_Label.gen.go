@@ -364,7 +364,9 @@ func (p *label) List(ctx context.Context, s ace.SelectBuilder) ([]*do.Label, boo
 	defer _rows.Close()
 
 	_obj := do.NewLabel()
-	_objs, has, e := _obj.Scan(_rows, _cols...)
+	defer _obj.Free()
+
+	_objs, has, e := _obj.Slice(_rows, _cols...)
 	if has {
 		return _objs, true, nil
 	}

@@ -11,21 +11,21 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from '@/store'
+import { useAppStore } from '@/stores/app'
 import { computed } from 'vue'
 
-const store = useStore()
+const appStore = useAppStore()
 
 const content = computed(() => {
-  return store.state.app.siderType ? '点击折叠' : '点击展开'
+  return appStore.siderType ? '点击折叠' : '点击展开'
 })
 
 const style = computed(() => {
-  return store.state.app.siderType ? 'none' : 'transform: rotateY(180deg);'
+  return appStore.siderType ? 'none' : 'transform: rotateY(180deg);'
 })
 
 const changeSiderType = () => {
-  store.commit('app/setSiderType')
+  appStore.siderType = !appStore.siderType
 }
 </script>
 

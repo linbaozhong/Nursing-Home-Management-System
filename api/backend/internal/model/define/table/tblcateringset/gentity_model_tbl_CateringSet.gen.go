@@ -11,7 +11,7 @@ const TableName = "catering_set"
 var (
 	Name       = dialect.Field{Name: "name", Json: "name", Table: "catering_set", Type: "types.String", IsRelation: false}
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "catering_set", Type: "types.BigInt", IsRelation: false}
-	MonthPrice = dialect.Field{Name: "month_price", Json: "month_price", Table: "catering_set", Type: "types.Float64", IsRelation: false}
+	MonthPrice = dialect.Field{Name: "month_price", Json: "month_price", Table: "catering_set", Type: "types.Money", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "catering_set", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "catering_set", Type: "types.Time", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "catering_set", Type: "types.BigInt", IsRelation: false}

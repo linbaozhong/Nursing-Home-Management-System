@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // ============ WarehouseRecordController 请求 ============
 
@@ -70,12 +73,12 @@ type PageWarehouseRecordByKeyVO struct {
 // @response
 // PageWarehouseMaterialByKeyVO 分页查询仓库物资响应
 type PageWarehouseMaterialByKeyVO struct {
-	ID           int64     `json:"id"`            // id
-	MaterialName string    `json:"material_name"` // 物资名称
-	Price        float64   `json:"price"`         // 物资单价
-	WarehouseNum int       `json:"warehouse_num"` // 入库数量
-	Inventory    int       `json:"inventory"`     // 库存数量
-	ExpireDate   time.Time `json:"expire_date"`   // 有效期
+	ID           int64       `json:"id"`            // id
+	MaterialName string      `json:"material_name"` // 物资名称
+	Price        types.Money `json:"price"`         // 物资单价
+	WarehouseNum int         `json:"warehouse_num"` // 入库数量
+	Inventory    int         `json:"inventory"`     // 库存数量
+	ExpireDate   time.Time   `json:"expire_date"`   // 有效期
 }
 
 // @response

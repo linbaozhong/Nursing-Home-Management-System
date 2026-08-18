@@ -1,7 +1,7 @@
 import { IRoute } from "@/router/types";
-import { Router, RouteRecordRaw } from "vue-router";
+import { RouteRecordRaw } from "vue-router";
 import router from "./index";
-import store from "@/store";
+import { useAppStore } from "@/stores/app";
 import { arrayDeduplicationByFiled } from "@/utils/commonUtil";
 
 /** 将后端返回的路由转换成生成树形结构 */
@@ -42,7 +42,7 @@ function generateRouter(routeTree: IRoute[]) {
       name: route.name,
       meta: route.meta,
       redirect: route.redirect,
-      component: () => import("@/views/" + route.component), // 注意：views目录下才能引入，否则ts不识别
+      component: () => import(/* @vite-ignore */ "@/views/" + route.component), // 注意：views目录下才能引入，否则ts不识别
       children: []
     };
 
@@ -58,8 +58,9 @@ function generateRouter(routeTree: IRoute[]) {
 
 //初始化动态路由
 export async function initRoutes() {
-  await store.dispatch("app/getRouterTree");
-  const newRoutes = generateRouter(store.state.app.routeTree);
+  const appStore = useAppStore();
+  appStore.getRouterTree();
+  const newRoutes = generateRouter(appStore.routeTree);
   newRoutes.forEach(route => router.addRoute("Layout", route));
 }
 

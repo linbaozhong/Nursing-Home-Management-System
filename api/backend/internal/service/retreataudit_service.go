@@ -31,7 +31,7 @@ func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
-	q := ace.NewSelectBuilder(db).From(tblretreatapply.TableName).
+	q := db.Table(tblretreatapply.TableName).
 		LeftJoin(tblretreatapply.ElderId, tblelder.Id).
 		LeftJoin(tblretreatapply.CreateId, tblstaff.Id)
 	if in.Key != nil && *in.Key != "" {

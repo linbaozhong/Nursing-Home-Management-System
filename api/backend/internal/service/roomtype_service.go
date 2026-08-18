@@ -46,9 +46,9 @@ func (r *roomtype) GetRoomTypeById(ctx context.Context, in *dto.IDReq, out *dto.
 	if !has {
 		return errors.New("房间类型不存在")
 	}
-	out.ID = int64Ptr(int64(obj.Id))
-	out.Name = strPtr(obj.Name.String())
-	out.MonthPrice = float64Ptr(obj.MonthPrice.Float64())
+	*out.ID = int64(obj.Id)
+	*out.Name = obj.Name.String()
+	*out.MonthPrice = obj.MonthPrice
 	return nil
 }
 
@@ -67,7 +67,7 @@ func (r *roomtype) AddRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery
 	}
 	bean := do.NewRoomType()
 	bean.Name = types.String(*in.Name)
-	bean.MonthPrice = types.Float64(*in.MonthPrice)
+	bean.MonthPrice = types.Money(*in.MonthPrice)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	_, e = dao.RoomType(db).InsertOne(ctx, bean)
 	return e
@@ -90,7 +90,7 @@ func (r *roomtype) EditRoomType(ctx context.Context, in *dto.OperateRoomTypeQuer
 	bean := do.NewRoomType()
 	bean.Id = types.BigInt(*in.ID)
 	bean.Name = types.String(*in.Name)
-	bean.MonthPrice = types.Float64(*in.MonthPrice)
+	bean.MonthPrice = types.Money(*in.MonthPrice)
 	_, e = dao.RoomType(db).UpdateOne(ctx, bean)
 	return e
 }

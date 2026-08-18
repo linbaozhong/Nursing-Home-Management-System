@@ -13,8 +13,6 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-// const OutboundMaterialTableName = "outbound_material"
-
 var (
 	outboundmaterialPool = pool.New[*OutboundMaterial](func() any {
 		_obj := &OutboundMaterial{}
@@ -138,22 +136,30 @@ var outboundmaterialFieldToPtrFunc = map[string]func(*OutboundMaterial) any{
 	tbloutboundmaterial.OutboundNum.Name:         func(p *OutboundMaterial) any { return &p.OutboundNum },
 }
 
+// fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
+func (p *OutboundMaterial) fieldPtr(args ...dialect.Field) []func(*OutboundMaterial) any {
+	if len(args) == 0 {
+		args = tbloutboundmaterial.ReadableFields
+	}
+	fs := make([]func(*OutboundMaterial) any, 0, len(args))
+	for _, col := range args {
+		if f, ok := outboundmaterialFieldToPtrFunc[col.Name]; ok {
+			fs = append(fs, f)
+		}
+	}
+	return fs
+}
+
 // AssignPtr 根据传入的字段参数，返回对应字段的指针切片。
 // 如果未传入任何字段参数，则默认使用 ReadableFields 中的字段。
 // 参数 args 为可变参数，代表需要获取指针的字段。
 // 返回值为一个包含对应字段指针的切片。
 func (p *OutboundMaterial) AssignPtr(args ...dialect.Field) []any {
-	if len(args) == 0 {
-		args = tbloutboundmaterial.ReadableFields
+	fs := p.fieldPtr(args...)
+	_vals := make([]any, len(fs))
+	for i, f := range fs {
+		_vals[i] = f(p)
 	}
-
-	_vals := make([]any, 0, len(args))
-	for _, col := range args {
-		if ptrFunc, ok := outboundmaterialFieldToPtrFunc[col.Name]; ok {
-			_vals = append(_vals, ptrFunc(p))
-		}
-	}
-
 	return _vals
 }
 
@@ -163,8 +169,8 @@ func (p *OutboundMaterial) AssignPtr(args ...dialect.Field) []any {
 func (p *OutboundMaterial) AssignPtrByColumns(cols ...string) []any {
 	_vals := make([]any, 0, len(cols))
 	for _, col := range cols {
-		if ptrFunc, ok := outboundmaterialFieldToPtrFunc[col]; ok {
-			_vals = append(_vals, ptrFunc(p))
+		if f, ok := outboundmaterialFieldToPtrFunc[col]; ok {
+			_vals = append(_vals, f(p))
 			continue
 		}
 		// 列名在结构体中找不到对应字段：用忽略指针占位，保证列数对齐
@@ -174,17 +180,23 @@ func (p *OutboundMaterial) AssignPtrByColumns(cols ...string) []any {
 	return _vals
 }
 
-func (p *OutboundMaterial) Scan(rows *sql.Rows, args ...dialect.Field) ([]*OutboundMaterial, bool, error) {
+func (p *OutboundMaterial) Slice(rows *sql.Rows, args ...dialect.Field) ([]*OutboundMaterial, bool, error) {
 	defer rows.Close()
 	outbound_materials := make([]*OutboundMaterial, 0)
 
-	if len(args) == 0 {
-		args = tbloutboundmaterial.ReadableFields
-	}
+	// 只获取一次：字段 -> ptrFunc 的有序列表（与实例无关）
+	fs := p.fieldPtr(args...)
+
+	// 复用的扫描目标切片，循环外分配一次
+	_vals := make([]any, len(fs))
 
 	for rows.Next() {
 		_p := NewOutboundMaterial()
-		_vals := _p.AssignPtr(args...)
+		// 每行只做"指针绑定到新实例"，
+		for i, f := range fs {
+			_vals[i] = f(_p)
+		}
+
 		e := rows.Scan(_vals...)
 		if e != nil {
 			log.Error(e)
@@ -254,8 +266,8 @@ func (p *OutboundMaterial) AssignValues(d dialect.Dialect, args ...dialect.Field
 	vals := make([]any, 0, len(args))
 
 	for _, arg := range args {
-		if valueFunc, exists := outboundmaterialFieldToValueFunc[arg]; exists {
-			value, isZero := valueFunc(p)
+		if f, has := outboundmaterialFieldToValueFunc[arg]; has {
+			value, isZero := f(p)
 			// 显式指定字段时全量包含；默认模式跳过零值字段
 			if skipZero && isZero {
 				continue

@@ -26,7 +26,7 @@ type reserveJoin struct {
 	ID          types.BigInt  `json:"id"`
 	ElderName   types.String  `json:"elder_name"`
 	StaffName   types.String  `json:"staff_name"`
-	Deposit     types.Float64 `json:"deposit"`
+	Deposit     types.Money `json:"deposit"`
 	DueDate     types.Time    `json:"due_date"`
 	ReserveFlag types.Int8    `json:"reserve_flag"`
 }
@@ -36,7 +36,7 @@ func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReser
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
-	q := ace.NewSelectBuilder(db).From(tblreserve.TableName).
+	q := db.Table(tblreserve.TableName).
 		LeftJoin(tblreserve.ElderId, tblelder.Id).
 		LeftJoin(tblreserve.StaffId, tblstaff.Id)
 	if in.Key != nil && *in.Key != "" {
@@ -130,7 +130,7 @@ func (s *reserveService) AddReserve(ctx context.Context, in *dto.AddReserveQuery
 		ElderId:    types.BigInt(elderId),
 		StaffId:    types.BigInt(*in.StaffID),
 		DueDate:    types.Time{Time: timePtr(in.DueDate)},
-		Deposit:    types.Float64(orFloat64(in.Deposit)),
+		Deposit:    types.Money(orFloat64(in.Deposit)),
 		Remark:     types.String(orEmpty(in.Remark)),
 		CreateId:   types.BigInt(*in.StaffID),
 		ReserveFlag: types.Int8(constant.YesNoNo),
@@ -155,7 +155,7 @@ func (s *reserveService) EditReserve(ctx context.Context, in *dto.EditReserveQue
 		upd.Set(tblreserve.DueDate.Set(types.Time{Time: timePtr(in.DueDate)}))
 	}
 	if in.Deposit != nil {
-		upd.Set(tblreserve.Deposit.Set(types.Float64(*in.Deposit)))
+		upd.Set(tblreserve.Deposit.Set(types.Money(*in.Deposit)))
 	}
 	if in.Remark != nil {
 		upd.Set(tblreserve.Remark.Set(types.String(*in.Remark)))
@@ -179,7 +179,7 @@ func (s *reserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageS
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
-	q := ace.NewSelectBuilder(db).From(tblelder.TableName)
+	q := db.Table(tblelder.TableName)
 	if in.Name != nil && *in.Name != "" {
 		q = q.Where(tblelder.Name.Like(*in.Name))
 	}
@@ -218,7 +218,7 @@ func (s *reserveService) PageSearchStaffByKey(ctx context.Context, in *dto.PageS
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
-	q := ace.NewSelectBuilder(db).From(tblstaff.TableName)
+	q := db.Table(tblstaff.TableName)
 	if in.Name != nil && *in.Name != "" {
 		q = q.Where(tblstaff.Name.Like(*in.Name))
 	}
