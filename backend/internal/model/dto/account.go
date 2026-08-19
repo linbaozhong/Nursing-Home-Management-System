@@ -7,6 +7,7 @@ package dto
 type LoginQuery struct {
 	Phone *string `json:"phone" valid:"required"` // 电话
 	Pass  *string `json:"pass" valid:"required"`  // 密码
+	Code  *string `json:"code"`                   // 验证码（短信登录时可选）
 }
 
 // @request

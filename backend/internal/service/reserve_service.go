@@ -23,12 +23,12 @@ type reserveService struct{}
 
 // reserveJoin 接收预定联表（老人姓名、申请人姓名、床位名）查询结果的中间结构体
 type reserveJoin struct {
-	ID          types.BigInt  `json:"id"`
-	ElderName   types.String  `json:"elder_name"`
-	StaffName   types.String  `json:"staff_name"`
-	Deposit     types.Money `json:"deposit"`
-	DueDate     types.Time    `json:"due_date"`
-	ReserveFlag types.Int8    `json:"reserve_flag"`
+	ID          types.BigInt `json:"id"`
+	ElderName   types.String `json:"elder_name"`
+	StaffName   types.String `json:"staff_name"`
+	Deposit     types.Money  `json:"deposit"`
+	DueDate     types.Time   `json:"due_date"`
+	ReserveFlag types.Int8   `json:"reserve_flag"`
 }
 
 // PageReserveByKey 分页查询预定
@@ -105,12 +105,12 @@ func (s *reserveService) AddReserve(ctx context.Context, in *dto.AddReserveQuery
 	elderId := orInt64(in.ElderID)
 	if elderId == 0 {
 		elder := &do.Elder{
-			Name:    types.String(orEmpty(in.ElderName)),
-			Age:     types.Int8(orInt8(in.ElderAge)),
-			Sex:     types.String(orEmpty(in.ElderSex)),
-			Phone:   types.String(orEmpty(in.ElderPhone)),
-			Address: types.String(orEmpty(in.ElderAddress)),
-			IdNum:   types.String(orEmpty(in.IDNum)),
+			Name:      types.String(orEmpty(in.ElderName)),
+			Age:       types.Int8(orInt8(in.ElderAge)),
+			Sex:       types.String(orEmpty(in.ElderSex)),
+			Phone:     types.String(orEmpty(in.ElderPhone)),
+			Address:   types.String(orEmpty(in.ElderAddress)),
+			IdNum:     types.String(orEmpty(in.IDNum)),
 			CheckFlag: types.Int8(constant.CheckIntention),
 		}
 		if _, e := dao.Elder(db).InsertOne(ctx, elder); e != nil {
@@ -124,15 +124,15 @@ func (s *reserveService) AddReserve(ctx context.Context, in *dto.AddReserveQuery
 		_, _ = dao.Elder(db).UpdateById(ctx, elderId, tblelder.BedId.Set(types.BigInt(*in.BedID)))
 	}
 	rec := &do.Reserve{
-		Name:       types.String(orEmpty(in.ElderName)),
-		Phone:      types.String(orEmpty(in.ElderPhone)),
-		Id:         types.String(orEmpty(in.IDNum)),
-		ElderId:    types.BigInt(elderId),
-		StaffId:    types.BigInt(*in.StaffID),
-		DueDate:    types.Time{Time: timePtr(in.DueDate)},
-		Deposit:    types.Money(orFloat64(in.Deposit)),
-		Remark:     types.String(orEmpty(in.Remark)),
-		CreateId:   types.BigInt(*in.StaffID),
+		Name:        types.String(orEmpty(in.ElderName)),
+		Phone:       types.String(orEmpty(in.ElderPhone)),
+		Id:          types.String(orEmpty(in.IDNum)),
+		ElderId:     types.BigInt(elderId),
+		StaffId:     types.BigInt(*in.StaffID),
+		DueDate:     types.Time{Time: timePtr(in.DueDate)},
+		Deposit:     types.Money(orFloat64(in.Deposit)),
+		Remark:      types.String(orEmpty(in.Remark)),
+		CreateId:    types.BigInt(*in.StaffID),
 		ReserveFlag: types.Int8(constant.YesNoNo),
 	}
 	if _, e := dao.Reserve(db).InsertOne(ctx, rec); e != nil {
@@ -308,7 +308,8 @@ func (s *reserveService) Refund(ctx context.Context, in *dto.IDReq, out *dto.Emp
 	}
 	// 释放老人床位并回退状态
 	if rec.ElderId != 0 {
-		if el := new(do.Elder); eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(rec.ElderId))); ee == nil && eh {
+		el, found, eerr := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(rec.ElderId)))
+		if eerr == nil && found {
 			if el.BedId != 0 {
 				_, _ = dao.Bed(db).UpdateById(ctx, int64(el.BedId), tblbed.BedFlag.Set(types.Int8(constant.BedIdle)))
 				_, _ = dao.Elder(db).UpdateById(ctx, int64(rec.ElderId), tblelder.BedId.Set(types.BigInt(0)))

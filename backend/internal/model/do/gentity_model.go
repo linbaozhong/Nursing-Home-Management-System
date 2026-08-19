@@ -974,3 +974,32 @@ type ServiceItem struct {
 	NeedDate     types.Int32  `json:"need_date,omitempty" db:"'need_date' size:11"`        // 所需时间(分)
 	DelFlag      types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`           // 删除状态（Y/N）
 }
+
+// FamilyAccount 家属账号
+// @tablename family_account
+type FamilyAccount struct {
+	pool.Model
+	Id         types.BigInt `db:"'id' pk auto size:20" json:"id"`
+	Phone      types.String `db:"phone" json:"phone"`
+	Pass       types.String `db:"pass" json:"pass"`
+	Openid     types.String `db:"openid" json:"openid"`
+	CreateTime types.Time   `db:"create_time" json:"create_time"`
+	UpdateTime types.Time   `db:"update_time" json:"update_time"`
+	DelFlag    types.Int8   `db:"del_flag" json:"del_flag"`
+}
+
+// FamilyRecharge 家属充值订单
+// @tablename family_recharge
+type FamilyRecharge struct {
+	pool.Model
+	Id         types.BigInt `db:"'id' pk auto size:20" json:"id"`
+	OrderNo    types.String `db:"order_no" json:"order_no"`
+	Phone      types.String `db:"phone" json:"phone"`
+	ElderId    types.BigInt `db:"elder_id" json:"elder_id"`
+	Amount     types.Int64  `db:"amount" json:"amount"` // 单位：分
+	Status     types.Int8   `db:"status" json:"status"` // 0待支付 1已支付 2关闭
+	PrepayId   types.String `db:"prepay_id" json:"prepay_id"`
+	CreateTime types.Time   `db:"create_time" json:"create_time"`
+	UpdateTime types.Time   `db:"update_time" json:"update_time"`
+	DelFlag    types.Int8   `db:"del_flag" json:"del_flag"`
+}

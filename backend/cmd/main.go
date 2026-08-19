@@ -3,6 +3,7 @@ package main
 import (
 	"api/internal/router"
 	"api/internal/service"
+	"api/internal/wechatpay"
 	"context"
 	"fmt"
 	"github.com/linbaozhong/gentity/pkg/app"
@@ -55,6 +56,9 @@ func main() {
 func Prepare() {
 	// 连接数据库
 	service.Connected()
+	// 初始化微信支付配置（从环境变量读取）
+	wechatpay.Init()
+	wechatpay.InitCert()
 	// 启动所有代理服务
 	app.Launch()
 }
