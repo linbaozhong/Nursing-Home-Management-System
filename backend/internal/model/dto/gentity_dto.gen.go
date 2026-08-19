@@ -5147,8 +5147,8 @@ func (p *OperateCheckContractQuery) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		switch key.Str {
 		case "id":
-			e = types.Unmarshal(value, &p.ID, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.ID, func(value gjson.Result) *types.BigInt {
+				var obj *types.BigInt
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5156,8 +5156,8 @@ func (p *OperateCheckContractQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "nursing_grade_id":
-			e = types.Unmarshal(value, &p.NursingGradeID, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.NursingGradeID, func(value gjson.Result) *types.BigInt {
+				var obj *types.BigInt
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5165,8 +5165,8 @@ func (p *OperateCheckContractQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "catering_set_id":
-			e = types.Unmarshal(value, &p.CateringSetID, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.CateringSetID, func(value gjson.Result) *types.BigInt {
+				var obj *types.BigInt
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5174,8 +5174,8 @@ func (p *OperateCheckContractQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "bed_id":
-			e = types.Unmarshal(value, &p.BedID, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.BedID, func(value gjson.Result) *types.BigInt {
+				var obj *types.BigInt
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5237,8 +5237,8 @@ func (p *OperateCheckContractQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "staff_id":
-			e = types.Unmarshal(value, &p.StaffID, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.StaffID, func(value gjson.Result) *types.BigInt {
+				var obj *types.BigInt
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5305,8 +5305,8 @@ func (p *OperateCheckContractQuery) UnmarshalValues(m map[string][]string) error
 		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
 		switch k {
 		case "id":
-			e = types.Unmarshal(value, &p.ID, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.ID, func(value gjson.Result) *types.BigInt {
+				var obj *types.BigInt
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5314,8 +5314,8 @@ func (p *OperateCheckContractQuery) UnmarshalValues(m map[string][]string) error
 				return obj
 			}(value))
 		case "nursing_grade_id":
-			e = types.Unmarshal(value, &p.NursingGradeID, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.NursingGradeID, func(value gjson.Result) *types.BigInt {
+				var obj *types.BigInt
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5323,8 +5323,8 @@ func (p *OperateCheckContractQuery) UnmarshalValues(m map[string][]string) error
 				return obj
 			}(value))
 		case "catering_set_id":
-			e = types.Unmarshal(value, &p.CateringSetID, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.CateringSetID, func(value gjson.Result) *types.BigInt {
+				var obj *types.BigInt
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5332,8 +5332,8 @@ func (p *OperateCheckContractQuery) UnmarshalValues(m map[string][]string) error
 				return obj
 			}(value))
 		case "bed_id":
-			e = types.Unmarshal(value, &p.BedID, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.BedID, func(value gjson.Result) *types.BigInt {
+				var obj *types.BigInt
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5395,8 +5395,8 @@ func (p *OperateCheckContractQuery) UnmarshalValues(m map[string][]string) error
 				return obj
 			}(value))
 		case "staff_id":
-			e = types.Unmarshal(value, &p.StaffID, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.StaffID, func(value gjson.Result) *types.BigInt {
+				var obj *types.BigInt
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -11975,6 +11975,422 @@ func (p *PageLabelByKeyQuery) UnmarshalValues(m map[string][]string) error {
 		case "key":
 			e = types.Unmarshal(value, &p.Key, func(value gjson.Result) *string {
 				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return e
+		}
+	}
+
+	return nil
+}
+
+/*
+	--- AddEmergencyContactQuery ---
+*/
+// Init
+func (p *AddEmergencyContactQuery) Init() error {
+	p.ElderID = nil
+	p.Name = nil
+	p.Phone = nil
+	p.Relation = nil
+
+	return nil
+}
+
+// Check
+func (p *AddEmergencyContactQuery) Check() error {
+	if p.ElderID == nil {
+		return types.NewError(http.StatusBadRequest, "elder_id is required")
+	}
+	if p.Name == nil {
+		return types.NewError(http.StatusBadRequest, "name is required")
+	}
+	if p.Phone == nil {
+		return types.NewError(http.StatusBadRequest, "phone is required")
+	}
+	return nil
+}
+
+// UnmarshalJSON
+func (p *AddEmergencyContactQuery) UnmarshalJSON(data []byte) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	ok := gjson.ValidBytes(data)
+	if !ok {
+		return errors.New("invalid json")
+	}
+	_result := gjson.ParseBytes(data)
+	var e error
+	_result.ForEach(func(key, value gjson.Result) bool {
+		switch key.Str {
+		case "elder_id":
+			e = types.Unmarshal(value, &p.ElderID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "name":
+			e = types.Unmarshal(value, &p.Name, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "phone":
+			e = types.Unmarshal(value, &p.Phone, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "relation":
+			e = types.Unmarshal(value, &p.Relation, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return false
+		}
+		return true
+	})
+	return nil
+}
+
+// UnmarshalValues
+func (p *AddEmergencyContactQuery) UnmarshalValues(m map[string][]string) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	var e error
+	for k, v := range m {
+		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
+		switch k {
+		case "elder_id":
+			e = types.Unmarshal(value, &p.ElderID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "name":
+			e = types.Unmarshal(value, &p.Name, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "phone":
+			e = types.Unmarshal(value, &p.Phone, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "relation":
+			e = types.Unmarshal(value, &p.Relation, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return e
+		}
+	}
+
+	return nil
+}
+
+/*
+	--- EditEmergencyContactQuery ---
+*/
+// Init
+func (p *EditEmergencyContactQuery) Init() error {
+	p.ID = nil
+	p.ElderID = nil
+	p.Name = nil
+	p.Phone = nil
+	p.Relation = nil
+
+	return nil
+}
+
+// Check
+func (p *EditEmergencyContactQuery) Check() error {
+	if p.ID == nil {
+		return types.NewError(http.StatusBadRequest, "id is required")
+	}
+	return nil
+}
+
+// UnmarshalJSON
+func (p *EditEmergencyContactQuery) UnmarshalJSON(data []byte) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	ok := gjson.ValidBytes(data)
+	if !ok {
+		return errors.New("invalid json")
+	}
+	_result := gjson.ParseBytes(data)
+	var e error
+	_result.ForEach(func(key, value gjson.Result) bool {
+		switch key.Str {
+		case "id":
+			e = types.Unmarshal(value, &p.ID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "elder_id":
+			e = types.Unmarshal(value, &p.ElderID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "name":
+			e = types.Unmarshal(value, &p.Name, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "phone":
+			e = types.Unmarshal(value, &p.Phone, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "relation":
+			e = types.Unmarshal(value, &p.Relation, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return false
+		}
+		return true
+	})
+	return nil
+}
+
+// UnmarshalValues
+func (p *EditEmergencyContactQuery) UnmarshalValues(m map[string][]string) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	var e error
+	for k, v := range m {
+		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
+		switch k {
+		case "id":
+			e = types.Unmarshal(value, &p.ID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "elder_id":
+			e = types.Unmarshal(value, &p.ElderID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "name":
+			e = types.Unmarshal(value, &p.Name, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "phone":
+			e = types.Unmarshal(value, &p.Phone, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "relation":
+			e = types.Unmarshal(value, &p.Relation, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return e
+		}
+	}
+
+	return nil
+}
+
+/*
+	--- DeleteEmergencyContactQuery ---
+*/
+// Init
+func (p *DeleteEmergencyContactQuery) Init() error {
+	p.ID = nil
+	p.ElderID = nil
+
+	return nil
+}
+
+// Check
+func (p *DeleteEmergencyContactQuery) Check() error {
+	if p.ID == nil {
+		return types.NewError(http.StatusBadRequest, "id is required")
+	}
+	return nil
+}
+
+// UnmarshalJSON
+func (p *DeleteEmergencyContactQuery) UnmarshalJSON(data []byte) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	ok := gjson.ValidBytes(data)
+	if !ok {
+		return errors.New("invalid json")
+	}
+	_result := gjson.ParseBytes(data)
+	var e error
+	_result.ForEach(func(key, value gjson.Result) bool {
+		switch key.Str {
+		case "id":
+			e = types.Unmarshal(value, &p.ID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "elder_id":
+			e = types.Unmarshal(value, &p.ElderID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return false
+		}
+		return true
+	})
+	return nil
+}
+
+// UnmarshalValues
+func (p *DeleteEmergencyContactQuery) UnmarshalValues(m map[string][]string) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	var e error
+	for k, v := range m {
+		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
+		switch k {
+		case "id":
+			e = types.Unmarshal(value, &p.ID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "elder_id":
+			e = types.Unmarshal(value, &p.ElderID, func(value gjson.Result) *int64 {
+				var obj *int64
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)

@@ -1,24 +1,178 @@
 <template>
-	<view>
-		<image class="logo" src="/static/logo.png"></image>
-		<text class="title">{{title}}</text>
+	<view class="page">
+		<uni-nav-bar :title="'工作台'" />
+
+		<view class="profile" @click="goMine">
+			<view v-if="user && user.avator != ''" class="avatar"><image class="avatar__img" :src="user.avator" /></view>
+			<view v-else class="avatar avatar--ph">
+				<text>{{ user ? user.name.charAt(0) : '员' }}</text>
+			</view>
+			<view class="profile__info">
+				<text class="profile__name">{{ user ? user.name : '' }}</text>
+				<text class="profile__role">养老机构员工端</text>
+			</view>
+		</view>
+
+		<view class="grid">
+			<view v-for="m in modules" :key="m.key" class="cell" @click="goModule(m)">
+				<view class="cell__icon" :style="{ backgroundColor: m.bg }">
+					<text class="cell__icon-text">{{ m.icon }}</text>
+				</view>
+				<text class="cell__name">{{ m.name }}</text>
+			</view>
+		</view>
+
+		<view v-if="modules.length == 0" class="empty">
+			<text>暂无可用功能权限</text>
+		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
-	const title = ref('Hello')
-</script>
+	import { onShow } from '@dcloudio/uni-app'
+	import { getLoginUser, accessibleModules, LoginUser, ModuleKey } from '../../utils/auth'
 
-<style>
-	.logo {
-		height: 100px;
-		width: 100px;
-		margin: 100px auto 25px auto;
+	interface ModuleEntry {
+		key: ModuleKey
+		name: string
+		icon: string
+		bg: string
+		url: string
+		isTab: boolean
 	}
 
-	.title {
+	const ALL_MODULES: ModuleEntry[] = [
+		{ key: 'elder', name: '长者档案', icon: '档', bg: '#007AFF', url: '/pages/elder/list', isTab: true },
+		{ key: 'leave', name: '外出登记', icon: '出', bg: '#4CD964', url: '/pages/leave/list', isTab: true },
+		{ key: 'visit', name: '来访登记', icon: '访', bg: '#F0AD4E', url: '/pages/visitor/list', isTab: false },
+		{ key: 'accident', name: '事故登记', icon: '故', bg: '#DD524D', url: '/pages/accident/list', isTab: false },
+		{ key: 'order', name: '点餐', icon: '餐', bg: '#8E7CF6', url: '/pages/order/list', isTab: true }
+	]
+
+	const user = ref<LoginUser | null>(null)
+	const modules = ref<ModuleEntry[]>([])
+
+	onShow(() => {
+		if (getLoginUser() == null) {
+			uni.reLaunch({ url: '/pages/login/login' })
+			return
+		}
+		user.value = getLoginUser()
+		// 按权限过滤模块
+		const access = accessibleModules()
+		modules.value = ALL_MODULES.filter((m) => access.indexOf(m.key) >= 0)
+	})
+
+	function goModule(m: ModuleEntry) {
+		if (m.isTab) {
+			uni.switchTab({ url: m.url })
+		} else {
+			uni.navigateTo({ url: m.url })
+		}
+	}
+
+	function goMine() {
+		uni.switchTab({ url: '/pages/mine/index' })
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.profile {
+		flex-direction: row;
+		align-items: center;
+		background-color: #FFFFFF;
+		margin: 10px 16px;
+		padding: 20px 16px;
+		border-radius: 10px;
+	}
+
+	.avatar {
+		width: 52px;
+		height: 52px;
+		border-radius: 26px;
+		overflow: hidden;
+	}
+
+	.avatar__img {
+		width: 52px;
+		height: 52px;
+	}
+
+	.avatar--ph {
+		background-color: #007AFF;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.avatar--ph text {
+		color: #FFFFFF;
+		font-size: 22px;
+	}
+
+	.profile__info {
+		margin-left: 12px;
+		flex-direction: column;
+	}
+
+	.profile__name {
+		font-size: 17px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.profile__role {
+		margin-top: 4px;
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.grid {
+		flex-direction: row;
+		flex-wrap: wrap;
+		background-color: #FFFFFF;
+		margin: 0 16px;
+		padding: 10px 0;
+		border-radius: 10px;
+	}
+
+	.cell {
+		width: 25%;
+		align-items: center;
+		padding-top: 14px;
+		padding-bottom: 14px;
+	}
+
+	.cell__icon {
+		width: 46px;
+		height: 46px;
+		border-radius: 12px;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.cell__icon-text {
+		color: #FFFFFF;
 		font-size: 18px;
-		color: #8f8f94;
-		text-align: center;
+	}
+
+	.cell__name {
+		margin-top: 8px;
+		font-size: 13px;
+		color: #333333;
+	}
+
+	.empty {
+		align-items: center;
+		padding-top: 60px;
+	}
+
+	.empty text {
+		font-size: 14px;
+		color: #999999;
 	}
 </style>

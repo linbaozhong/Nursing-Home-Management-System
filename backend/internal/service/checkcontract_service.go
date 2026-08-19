@@ -4,6 +4,7 @@ import (
 	"api/internal/model/define/table/tblcommunicationrecord"
 	"context"
 	"errors"
+	"github.com/linbaozhong/gentity/pkg/conv"
 
 	"api/internal/constant"
 	"api/internal/model/define/dao"
@@ -308,13 +309,13 @@ func (c *checkcontract) GetCheckContractById(ctx context.Context, in *dto.IDReq,
 	if !has {
 		return errors.New("客户不存在")
 	}
-	out.ID = int64Ptr(int64(elder.Id))
-	out.Name = strPtr(elder.Name.String())
-	out.IDNum = strPtr(elder.IdNum.String())
-	out.Sex = strPtr(elder.Sex.String())
-	out.Age = intPtr(int(elder.Age))
-	out.Phone = strPtr(elder.Phone.String())
-	out.Address = strPtr(elder.Address.String())
+	out.ID = conv.Ptr(elder.Id)
+	out.Name = conv.Ptr(elder.Name.String())
+	out.IDNum = conv.Ptr(elder.IdNum.String())
+	out.Sex = conv.Ptr(elder.Sex.String())
+	out.Age = conv.Ptr(int(elder.Age))
+	out.Phone = conv.Ptr(elder.Phone.String())
+	out.Address = conv.Ptr(elder.Address.String())
 
 	contract, has, e := dao.Contract(db).GetByID(ctx, types.BigInt(*in.ID),
 		tblcontract.ElderId, tblcontract.StaffId, tblcontract.SignDate,
@@ -324,7 +325,7 @@ func (c *checkcontract) GetCheckContractById(ctx context.Context, in *dto.IDReq,
 		return e
 	}
 	if has {
-		out.StaffID = int64Ptr(int64(contract.StaffId))
+		out.StaffID = conv.Ptr(int64(contract.StaffId))
 		out.SignDate = &contract.SignDate.Time
 		out.StartDate = &contract.StartDate.Time
 		out.EndDate = &contract.EndDate.Time
@@ -345,10 +346,10 @@ func (c *checkcontract) GetCheckContractById(ctx context.Context, in *dto.IDReq,
 	out.OperateEmergencyContactQueryList = make([]dto.OperateEmergencyContactQuery, 0, len(contacts))
 	for _, ct := range contacts {
 		out.OperateEmergencyContactQueryList = append(out.OperateEmergencyContactQueryList, dto.OperateEmergencyContactQuery{
-			Name:        strPtr(ct.Name.String()),
-			Phone:       strPtr(ct.Phone.String()),
-			Relation:    strPtr(ct.Relation.String()),
-			ReceiveFlag: int8Ptr(ct.ReceiveFlag.Int8()),
+			Name:        conv.Ptr(ct.Name.String()),
+			Phone:       conv.Ptr(ct.Phone.String()),
+			Relation:    conv.Ptr(ct.Relation.String()),
+			ReceiveFlag: conv.Ptr(ct.ReceiveFlag.Int8()),
 		})
 	}
 	return nil
@@ -357,7 +358,7 @@ func (c *checkcontract) GetCheckContractById(ctx context.Context, in *dto.IDReq,
 // EditCheckContract 编辑入住签约
 // 对应 Java: CheckContractServiceImpl.editCheckContract
 func (c *checkcontract) EditCheckContract(ctx context.Context, in *dto.OperateCheckContractQuery, out *dto.EmptyResp) error {
-	exist, e := c.checkNamePhoneExist(ctx, *in.Name, *in.Phone, in.ID)
+	exist, e := c.checkNamePhoneExist(ctx, *in.Name, *in.Phone, conv.Ptr(int64(*in.ID)))
 	if e != nil {
 		return e
 	}

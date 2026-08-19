@@ -1,0 +1,224 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'外出详情'" />
+
+		<scroll-view class="body" scroll-y :show-scrollbar="false">
+			<view class="card">
+				<view class="card__head">
+					<text class="card__name">{{ data.elder_name }}</text>
+					<StatusTag :text="stateOf().text" :type="stateOf().type" />
+				</view>
+				<view class="card__row">
+					<text class="card__label">陪同人</text>
+					<text class="card__value">{{ data.chaperone_name }}({{ data.chaperone_type }}) · {{ data.chaperone_phone }}</text>
+				</view>
+				<view class="card__row">
+					<text class="card__label">外出时间</text>
+					<text class="card__value">{{ fmt(data.outward_date) }}</text>
+				</view>
+				<view class="card__row">
+					<text class="card__label">计划返回</text>
+					<text class="card__value">{{ fmt(data.plan_return_date) }}</text>
+				</view>
+				<view v-if="isReturned()" class="card__row">
+					<text class="card__label">实际返回</text>
+					<text class="card__value">{{ fmt(data.real_return_date) }}</text>
+				</view>
+			</view>
+
+			<view v-if="!isReturned()" class="actions">
+				<view class="action action--primary" @click="doDelay">
+					<text>延期返回</text>
+				</view>
+				<view class="action action--success" @click="doReturn">
+					<text>登记返回</text>
+				</view>
+			</view>
+
+			<view class="actions">
+				<view class="action action--danger" @click="doDelete">
+					<text>删除</text>
+				</view>
+			</view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onLoad } from '@dcloudio/uni-app'
+	import { getOutwardById, delayReturn, recordReturn, deleteOutward } from '../../api/outward'
+	import { parseTime, formatDateTime, formatShortTime } from '../../utils/util'
+
+	const data = ref<any>({})
+	let currentId = 0
+
+	onLoad((options) => {
+		const id = Number(options?.id)
+		if (id > 0) {
+			currentId = id
+			loadData(id)
+		}
+	})
+
+	async function loadData(id: number) {
+		try {
+			const res = await getOutwardById(id)
+			data.value = res
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function fmt(s: string): string {
+		const d = parseTime(s)
+		return d ? formatShortTime(d) : ''
+	}
+
+	function isReturned(): boolean {
+		const r = data.value.real_return_date
+		return r != null && r != ''
+	}
+
+	function stateOf(): { text: string; type: 'primary' | 'danger' | 'success' } {
+		if (isReturned()) {
+			return { text: '已返回', type: 'success' }
+		}
+		const now = new Date().getTime()
+		const plan = parseTime(data.value.plan_return_date)
+		if (plan != null && now > plan.getTime()) {
+			return { text: '已超时', type: 'danger' }
+		}
+		return { text: '外出中', type: 'primary' }
+	}
+
+	function doDelay() {
+		uni.showModal({
+			title: '延期返回',
+			editable: true,
+			placeholderText: 'yyyy-MM-dd HH:mm',
+			success: async (res) => {
+				if (res.confirm && res.content != null && res.content != '') {
+					try {
+						await delayReturn(currentId, res.content)
+						uni.showToast({ title: '已延期', icon: 'success' })
+						loadData(currentId)
+					} catch (e) { }
+				}
+			}
+		})
+	}
+
+	function doReturn() {
+		uni.showModal({
+			title: '登记返回',
+			content: '确认该老人已返回？',
+			success: async (res) => {
+				if (res.confirm) {
+					try {
+						const now = new Date()
+						await recordReturn(currentId, formatDateTime(now))
+						uni.showToast({ title: '已登记', icon: 'success' })
+						loadData(currentId)
+					} catch (e) { }
+				}
+			}
+		})
+	}
+
+	function doDelete() {
+		uni.showModal({
+			title: '删除',
+			content: '确认删除该外出记录？',
+			success: async (res) => {
+				if (res.confirm) {
+					try {
+						await deleteOutward(currentId)
+						uni.showToast({ title: '已删除', icon: 'success' })
+						setTimeout(() => uni.navigateBack(), 500)
+					} catch (e) { }
+				}
+			}
+		})
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.body {
+		flex: 1;
+		padding: 10px 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__head {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 10px;
+	}
+
+	.card__name {
+		font-size: 18px;
+		font-weight: 700;
+		color: #333333;
+	}
+
+	.card__row {
+		flex-direction: row;
+		align-items: center;
+		margin-top: 8px;
+	}
+
+	.card__label {
+		width: 80px;
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.card__value {
+		flex: 1;
+		font-size: 14px;
+		color: #333333;
+	}
+
+	.actions {
+		flex-direction: row;
+		margin-bottom: 12px;
+	}
+
+	.action {
+		flex: 1;
+		height: 44px;
+		border-radius: 22px;
+		align-items: center;
+		justify-content: center;
+		margin: 0 6px;
+	}
+
+	.action text {
+		font-size: 15px;
+		color: #FFFFFF;
+	}
+
+	.action--primary {
+		background-color: #007AFF;
+	}
+
+	.action--success {
+		background-color: #4CD964;
+	}
+
+	.action--danger {
+		background-color: #DD524D;
+	}
+</style>

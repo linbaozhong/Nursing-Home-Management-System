@@ -1,0 +1,111 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'修改密码'" />
+
+		<view class="form">
+			<view class="field">
+				<text class="field__label">旧密码</text>
+				<input class="field__input" v-model="oldPass" type="password" placeholder="请输入旧密码" />
+			</view>
+			<view class="field">
+				<text class="field__label">新密码</text>
+				<input class="field__input" v-model="newPass" type="password" placeholder="请输入新密码" />
+			</view>
+			<view class="field">
+				<text class="field__label">确认新密码</text>
+				<input class="field__input" v-model="confirmPass" type="password" placeholder="再次输入新密码" />
+			</view>
+		</view>
+
+		<button class="submit" :disabled="submitting" @click="doSubmit">确认修改</button>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { editPass } from '../../api/account'
+	import { getLoginUser } from '../../utils/auth'
+
+	const oldPass = ref('')
+	const newPass = ref('')
+	const confirmPass = ref('')
+	const submitting = ref(false)
+
+	function validate(): boolean {
+		if (oldPass.value == '') {
+			uni.showToast({ title: '请输入旧密码', icon: 'none' })
+			return false
+		}
+		if (newPass.value.length < 6) {
+			uni.showToast({ title: '新密码至少 6 位', icon: 'none' })
+			return false
+		}
+		if (newPass.value != confirmPass.value) {
+			uni.showToast({ title: '两次密码不一致', icon: 'none' })
+			return false
+		}
+		return true
+	}
+
+	async function doSubmit() {
+		if (!validate()) {
+			return
+		}
+		const user = getLoginUser()
+		if (user == null) {
+			uni.showToast({ title: '请先登录', icon: 'none' })
+			return
+		}
+		submitting.value = true
+		try {
+			await editPass(user.id, oldPass.value, newPass.value)
+			uni.showToast({ title: '修改成功', icon: 'success' })
+			setTimeout(() => uni.navigateBack(), 500)
+		} catch (e) {
+			// 已统一 toast
+		} finally {
+			submitting.value = false
+		}
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+		padding: 10px 16px;
+	}
+
+	.form {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 16px;
+	}
+
+	.field {
+		flex-direction: column;
+		margin-bottom: 16px;
+	}
+
+	.field__label {
+		font-size: 14px;
+		color: #333333;
+		margin-bottom: 8px;
+	}
+
+	.field__input {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		font-size: 15px;
+	}
+
+	.submit {
+		margin-top: 20px;
+		height: 46px;
+		border-radius: 23px;
+		background-color: #007AFF;
+		color: #FFFFFF;
+		font-size: 15px;
+	}
+</style>

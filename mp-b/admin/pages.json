@@ -1,17 +1,178 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://doc.dcloud.net.cn/uni-app-x/collocation/pagesjson.html
+	"pages": [
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app x"
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "首页"
+			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/elder/list",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "长者档案"
+			}
+		},
+		{
+			"path": "pages/elder/edit",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "长者档案"
+			}
+		},
+		{
+			"path": "pages/elder/detail",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "长者详情"
+			}
+		},
+		{
+			"path": "pages/leave/list",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "外出登记"
+			}
+		},
+		{
+			"path": "pages/leave/edit",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "外出登记"
+			}
+		},
+		{
+			"path": "pages/leave/detail",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "外出详情"
+			}
+		},
+		{
+			"path": "pages/visitor/list",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "来访登记"
+			}
+		},
+		{
+			"path": "pages/visitor/edit",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "来访登记"
+			}
+		},
+		{
+			"path": "pages/visitor/detail",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "来访详情"
+			}
+		},
+		{
+			"path": "pages/accident/list",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "事故登记"
+			}
+		},
+		{
+			"path": "pages/accident/edit",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "事故登记"
+			}
+		},
+		{
+			"path": "pages/accident/detail",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "事故详情"
+			}
+		},
+		{
+			"path": "pages/order/list",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "点餐"
+			}
+		},
+		{
+			"path": "pages/order/edit",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "点餐"
+			}
+		},
+		{
+			"path": "pages/mine/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/mine/edit-pass",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "修改密码"
 			}
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app x",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarTitleText": "敬老院员工端",
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#F5F6FA"
+	},
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#007AFF",
+		"backgroundColor": "#FFFFFF",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "pages/elder/list",
+				"text": "档案"
+			},
+			{
+				"pagePath": "pages/leave/list",
+				"text": "外出"
+			},
+			{
+				"pagePath": "pages/order/list",
+				"text": "点餐"
+			},
+			{
+				"pagePath": "pages/mine/index",
+				"text": "我的"
+			}
+		]
+	},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^WizardForm": "components/high-level/wizard-form/WizardForm.uvue",
+			"^StatusTag": "components/status-tag/StatusTag.uvue",
+			"^DateTimePicker": "components/date-time-picker/DateTimePicker.uvue",
+			"^ElderSearch": "components/elder-search/ElderSearch.uvue",
+			"^StaffSearch": "components/staff-search/StaffSearch.uvue",
+			"^ImageUploader": "components/image-uploader/ImageUploader.uvue",
+			"^ContactQuickFill": "components/contact-quick-fill/ContactQuickFill.uvue",
+			"^DishesPicker": "components/dishes-picker/DishesPicker.uvue",
+			"^uni-nav-bar": "uni_modules/uni-nav-bar-x/components/uni-nav-bar/uni-nav-bar.uvue",
+			"^uni-fab-button": "uni_modules/uni-fab-button/components/uni-fab-button/uni-fab-button.uvue",
+			"^uni-number-box": "uni_modules/uni-number-box-x/components/uni-number-box/uni-number-box.uvue",
+			"^uni-time-format": "uni_modules/uni-time-format/components/uni-time-format/uni-time-format.uvue"
+		}
 	},
 	"uniIdRouter": {}
 }

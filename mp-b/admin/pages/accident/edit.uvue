@@ -1,0 +1,239 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'事故登记'" />
+
+		<WizardForm
+			:steps="['老人与护工', '发生时间', '描述']"
+			:current="current"
+			:disabled="submitting"
+			@next="onNext"
+			@prev="onPrev"
+			@submit="doSubmit"
+		>
+			<template #step-0>
+				<view class="step">
+					<view class="field" @click="showElderSearch = true">
+						<text class="field__label">老人 <text class="field__required">*</text></text>
+						<view class="field__picker">
+							<text v-if="elder.name != ''" class="field__value">{{ elder.name }}</text>
+							<text v-else class="field__placeholder">点击选择老人</text>
+						</view>
+					</view>
+					<view class="field" @click="showStaffSearch = true">
+						<text class="field__label">护工 <text class="field__required">*</text></text>
+						<view class="field__picker">
+							<text v-if="staff.name != ''" class="field__value">{{ staff.name }}</text>
+							<text v-else class="field__placeholder">点击选择护工</text>
+						</view>
+					</view>
+				</view>
+			</template>
+
+			<template #step-1>
+				<view class="step">
+					<view class="field">
+						<text class="field__label">发生时间 <text class="field__required">*</text></text>
+						<DateTimePicker v-model="form.occur_date" />
+					</view>
+				</view>
+			</template>
+
+			<template #step-2>
+				<view class="step">
+					<view class="field">
+						<text class="field__label">事故描述 <text class="field__required">*</text></text>
+						<textarea
+							class="field__textarea"
+							v-model="form.description"
+							placeholder="请描述事故经过（≤500字）"
+							maxlength="500"
+						/>
+					</view>
+					<view class="field">
+						<text class="field__label">事故图片</text>
+						<ImageUploader v-model="form.picture" :max="9" module="accident" />
+					</view>
+				</view>
+			</template>
+		</WizardForm>
+
+		<ElderSearch :visible="showElderSearch" @update:visible="showElderSearch = $event" @select="onElderSelect" />
+		<StaffSearch :visible="showStaffSearch" @update:visible="showStaffSearch = $event" @select="onStaffSelect" />
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onLoad } from '@dcloudio/uni-app'
+	import { addAccident, editAccident, getAccidentById, AccidentForm } from '../../api/accident'
+
+	const current = ref(0)
+	const submitting = ref(false)
+	const showElderSearch = ref(false)
+	const showStaffSearch = ref(false)
+	const isEdit = ref(false)
+	let currentId = 0
+
+	const elder = ref<{ id: number; name: string }>({ id: 0, name: '' })
+	const staff = ref<{ id: number; name: string }>({ id: 0, name: '' })
+
+	const form = ref<{
+		occur_date: string
+		description: string
+		picture: string
+	}>({
+		occur_date: '',
+		description: '',
+		picture: ''
+	})
+
+	onLoad((options) => {
+		const id = Number(options?.id)
+		if (id > 0) {
+			isEdit.value = true
+			currentId = id
+			loadData(id)
+		}
+	})
+
+	async function loadData(id: number) {
+		try {
+			const res = await getAccidentById(id)
+			elder.value = { id: 0, name: res.elder_name }
+			staff.value = { id: Number(res.staff_id), name: '' }
+			form.value.occur_date = res.occur_date
+			form.value.description = res.description
+			form.value.picture = res.picture
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function onElderSelect(item: any) {
+		elder.value = { id: item.id, name: item.name }
+	}
+
+	function onStaffSelect(item: any) {
+		staff.value = { id: item.id, name: item.name }
+	}
+
+	function onNext() {
+		if (current.value == 0) {
+			if (elder.value.id == 0) {
+				uni.showToast({ title: '请选择老人', icon: 'none' })
+				return
+			}
+			if (staff.value.id == 0) {
+				uni.showToast({ title: '请选择护工', icon: 'none' })
+				return
+			}
+		}
+		if (current.value == 1) {
+			if (form.value.occur_date == '') {
+				uni.showToast({ title: '请选择发生时间', icon: 'none' })
+				return
+			}
+		}
+		current.value = current.value + 1
+	}
+
+	function onPrev() {
+		current.value = current.value - 1
+	}
+
+	function validate(): boolean {
+		if (form.value.description == '') {
+			uni.showToast({ title: '请填写事故描述', icon: 'none' })
+			return false
+		}
+		return true
+	}
+
+	async function doSubmit() {
+		if (!validate()) {
+			return
+		}
+		submitting.value = true
+		try {
+			const payload: AccidentForm = {
+				elder_id: elder.value.id,
+				staff_id: staff.value.id,
+				occur_date: form.value.occur_date,
+				description: form.value.description,
+				picture: form.value.picture
+			}
+			if (isEdit.value) {
+				await editAccident({ ...payload, id: currentId })
+			} else {
+				await addAccident(payload)
+			}
+			uni.showToast({ title: '保存成功', icon: 'success' })
+			setTimeout(() => uni.navigateBack(), 500)
+		} catch (e) {
+			// 已统一 toast
+		} finally {
+			submitting.value = false
+		}
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.step {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 16px;
+	}
+
+	.field {
+		flex-direction: column;
+		margin-bottom: 16px;
+	}
+
+	.field__label {
+		font-size: 14px;
+		color: #333333;
+		margin-bottom: 8px;
+	}
+
+	.field__required {
+		color: #DD524D;
+	}
+
+	.field__input {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		font-size: 15px;
+	}
+
+	.field__textarea {
+		height: 120px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding: 12px;
+		font-size: 15px;
+	}
+
+	.field__picker {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		justify-content: center;
+	}
+
+	.field__value {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.field__placeholder {
+		font-size: 15px;
+		color: #999999;
+	}
+</style>

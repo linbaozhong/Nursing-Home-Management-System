@@ -113,6 +113,32 @@ type PageLabelByKeyQuery struct {
 	Key      *string `json:"key"`                        // 关键字(标签名称), 可选
 }
 
+// @request
+// AddEmergencyContactQuery 新增紧急联系人请求
+type AddEmergencyContactQuery struct {
+	ElderID  *int64  `json:"elder_id" valid:"required"` // 老人编号
+	Name     *string `json:"name" valid:"required"`     // 联系人姓名
+	Phone    *string `json:"phone" valid:"required"`    // 联系人电话
+	Relation *string `json:"relation"`                  // 与老人关系
+}
+
+// @request
+// EditEmergencyContactQuery 编辑紧急联系人请求
+type EditEmergencyContactQuery struct {
+	ID       *int64  `json:"id" valid:"required"` // 紧急联系人编号
+	ElderID  *int64  `json:"elder_id"`            // 老人编号
+	Name     *string `json:"name"`                // 联系人姓名
+	Phone    *string `json:"phone"`               // 联系人电话
+	Relation *string `json:"relation"`            // 与老人关系
+}
+
+// @request
+// DeleteEmergencyContactQuery 删除紧急联系人请求
+type DeleteEmergencyContactQuery struct {
+	ID      *int64 `json:"id" valid:"required"` // 紧急联系人编号
+	ElderID *int64 `json:"elder_id"`            // 老人编号(可选, 仅作校验)
+}
+
 // @response
 // PageSearchEmergencyContactByKeyVO 分页查询紧急联系人响应
 type PageSearchEmergencyContactByKeyVO struct {
@@ -121,7 +147,7 @@ type PageSearchEmergencyContactByKeyVO struct {
 	Name     string `json:"name"`     // 联系人姓名
 	Phone    string `json:"phone"`    // 联系人电话
 	Relation string `json:"relation"` // 与老人关系
-	Remark   string `json:"remark"`   // 备注
+	Remark   string `json:"remark"`   // 备注（DB 当前无该列，保留字段以兼容 gen 序列化）
 }
 
 // ListLabelVO 客户标签分类列表响应（定义见 common.go）

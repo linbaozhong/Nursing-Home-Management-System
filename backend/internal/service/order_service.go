@@ -35,9 +35,7 @@ type orderJoin struct {
 
 // PageOrderByKey 分页查询点餐
 func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKeyQuery, out *[]dto.PageOrderByKeyVO) error {
-	if in.PageNum == nil || in.PageSize == nil {
-		return constant.ErrParamInvalid
-	}
+	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblorder.TableName).
 		LeftJoin(tblorder.ElderId, tblelder.Id).
 		LeftJoin(tblorder.StaffId, tblstaff.Id)

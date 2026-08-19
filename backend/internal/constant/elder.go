@@ -37,6 +37,47 @@ func (c CheckStatus) String() string {
 	}
 }
 
+// Sex 性别
+type Sex int8
+
+const (
+	SexMale   Sex = 0 // 男
+	SexFemale Sex = 1 // 女
+)
+
+func (s Sex) String() string {
+	switch s {
+	case SexMale:
+		return "男"
+	case SexFemale:
+		return "女"
+	default:
+		return "未知"
+	}
+}
+
+// ElderCheckFlag 老人入住状态（tblelder.check_flag 字典）
+type ElderCheckFlag int8
+
+const (
+	ElderCheckNotEnter ElderCheckFlag = 0 // 未入住
+	ElderCheckEntered  ElderCheckFlag = 1 // 入住中
+	ElderCheckExited   ElderCheckFlag = 2 // 已离院
+)
+
+func (e ElderCheckFlag) String() string {
+	switch e {
+	case ElderCheckNotEnter:
+		return "未入住"
+	case ElderCheckEntered:
+		return "入住中"
+	case ElderCheckExited:
+		return "已离院"
+	default:
+		return "未知"
+	}
+}
+
 // 老人
 var (
 	ErrElderAlreadyDelete = types.NewError(500, "该老人已被删除")

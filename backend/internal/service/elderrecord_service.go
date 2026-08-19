@@ -14,6 +14,7 @@ import (
 	"api/internal/model/dto"
 
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
+	"github.com/linbaozhong/gentity/pkg/conv"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -24,6 +25,7 @@ var ElderRecord = &elderrecord{}
 // PageElderRecordByKey 分页查询长者档案（联表 bed 取床位名称）
 // 对应 Java: ElderRecordServiceImpl.pageElderByKey -> ElderMapper.listElderByKey
 func (e *elderrecord) PageElderRecordByKey(ctx context.Context, in *dto.PageElderRecordByKeyQuery, out *[]dto.PageElderByKeyVO) error {
+	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblelder.TableName).
 		LeftJoin(tblelder.BedId, tblbed.Id).
 		Where(tblelder.Id.Gt(types.BigInt(0)))
@@ -80,8 +82,9 @@ func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out
 			tblemergencycontact.Id,
 			tblemergencycontact.Name,
 			tblemergencycontact.Phone,
+			tblemergencycontact.Email,
 			tblemergencycontact.Relation,
-			tblemergencycontact.Remark,
+			tblemergencycontact.ReceiveFlag,
 		).
 		Where(tblemergencycontact.ElderId.Eq(types.BigInt(*in.ID))).
 		Select().
@@ -92,11 +95,11 @@ func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out
 	out.ElderEmergencyContactByIDVOList = make([]dto.OperateEmergencyContactQuery, 0, len(contacts))
 	for _, ct := range contacts {
 		out.ElderEmergencyContactByIDVOList = append(out.ElderEmergencyContactByIDVOList, dto.OperateEmergencyContactQuery{
-			ID:       int64Ptr(int64(ct.Id)),
-			Name:     strPtr(ct.Name.String()),
-			Phone:    strPtr(ct.Phone.String()),
-			Relation: strPtr(ct.Relation.String()),
-			Remark:   strPtr(ct.Remark.String()),
+			Name:        conv.Ptr(ct.Name.String()),
+			Phone:       conv.Ptr(ct.Phone.String()),
+			Email:       conv.Ptr(ct.Email.String()),
+			Relation:    conv.Ptr(ct.Relation.String()),
+			ReceiveFlag: conv.Ptr(ct.ReceiveFlag),
 		})
 	}
 	return nil
@@ -112,25 +115,13 @@ func (e *elderrecord) AddElderRecord(ctx context.Context, in *dto.AddElderRecord
 	bean.Age = types.Int32(int32(*in.Age))
 	bean.Phone = types.String(*in.Phone)
 	bean.Address = types.String(*in.Address)
-	bean.CheckFlag = types.Int8(constant.CheckConsult)
+	bean.CheckFlag = types.Int8(constant.ElderCheckEntered)
 	_, e2 := dao.Elder(db).InsertOne(ctx, bean)
 	if e2 != nil {
 		return e2
 	}
-	if len(in.EmergencyContactQueryList) > 0 {
-		list := make([]*do.EmergencyContact, 0, len(in.EmergencyContactQueryList))
-		for _, ec := range in.EmergencyContactQueryList {
-			c := do.NewEmergencyContact()
-			c.ElderId = types.BigInt(bean.Id)
-			c.Name = types.String(*ec.Name)
-			c.Phone = types.String(*ec.Phone)
-			c.Relation = types.String(*ec.Relation)
-			c.Remark = types.String(*ec.Remark)
-			list = append(list, c)
-		}
-		_, e2 = dao.EmergencyContact(db).InsertBatch(ctx, list...)
-	}
-	return e2
+	// 紧急联系人通过独立接口 addEmergencyContact 维护，新增老人时不在此批量写入
+	return nil
 }
 
 // EditElderRecord 编辑长者档案
@@ -152,6 +143,66 @@ func (e *elderrecord) EditElderRecord(ctx context.Context, in *dto.EditElderReco
 	return e2
 }
 
+// AddEmergencyContact 新增紧急联系人
+func (e *elderrecord) AddEmergencyContact(ctx context.Context, in *dto.AddEmergencyContactQuery, out *dto.EmptyResp) error {
+	bean := do.NewEmergencyContact()
+	bean.ElderId = types.BigInt(*in.ElderID)
+	bean.Name = types.String(*in.Name)
+	bean.Phone = types.String(*in.Phone)
+	if in.Relation != nil {
+		bean.Relation = types.String(*in.Relation)
+	}
+	bean.CreateId = types.BigInt(ctxUserID(ctx))
+	bean.UpdateId = types.BigInt(ctxUserID(ctx))
+	_, e2 := dao.EmergencyContact(db).InsertOne(ctx, bean)
+	return e2
+}
+
+// EditEmergencyContact 编辑紧急联系人
+func (e *elderrecord) EditEmergencyContact(ctx context.Context, in *dto.EditEmergencyContactQuery, out *dto.EmptyResp) error {
+	id := types.BigInt(*in.ID)
+	sets := make([]dialect.Field, 0, 3)
+	if in.Name != nil {
+		sets = append(sets, tblemergencycontact.Name)
+	}
+	if in.Phone != nil {
+		sets = append(sets, tblemergencycontact.Phone)
+	}
+	if in.Relation != nil {
+		sets = append(sets, tblemergencycontact.Relation)
+	}
+	if len(sets) == 0 {
+		return nil
+	}
+	bean := do.NewEmergencyContact()
+	if in.Name != nil {
+		bean.Name = types.String(*in.Name)
+	}
+	if in.Phone != nil {
+		bean.Phone = types.String(*in.Phone)
+	}
+	if in.Relation != nil {
+		bean.Relation = types.String(*in.Relation)
+	}
+	bean.UpdateId = types.BigInt(ctxUserID(ctx))
+	_, e2 := dao.EmergencyContact(db).UpdateById(ctx, id, sets, bean)
+	return e2
+}
+
+// DeleteEmergencyContact 删除紧急联系人
+func (e *elderrecord) DeleteEmergencyContact(ctx context.Context, in *dto.DeleteEmergencyContactQuery, out *dto.EmptyResp) error {
+	_, e2 := dao.EmergencyContact(db).DeleteById(ctx, types.BigInt(*in.ID))
+	return e2
+}
+
+// ctxUserID 取当前登录用户编号（兜底 0）
+func ctxUserID(ctx context.Context) int64 {
+	if c, ok := ctx.(interface{ UserID() int64 }); ok {
+		return c.UserID()
+	}
+	return 0
+}
+
 // DeleteElderRecord 删除长者档案（级联删紧急联系人 + 逻辑删除）
 func (e *elderrecord) DeleteElderRecord(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	_, e2 := dao.EmergencyContact(db).Delete(ctx, tblemergencycontact.ElderId.Eq(types.BigInt(*in.ID)))
@@ -165,6 +216,7 @@ func (e *elderrecord) DeleteElderRecord(ctx context.Context, in *dto.IDReq, out 
 // PageSearchElderByKey 分页搜索老人
 // 对应 Java: ElderRecordServiceImpl.pageSearchElderByKey -> ElderMapper.listElderByKey
 func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblelder.TableName).
 		Where(tblelder.Id.Gt(types.BigInt(0)))
 	if in.Name != nil && *in.Name != "" {
@@ -190,6 +242,7 @@ func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSear
 
 // PageSearchEmergencyContactByKey 分页搜索紧急联系人
 func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *dto.PageSearchEmergencyContactByKeyQuery, out *[]dto.PageSearchEmergencyContactByKeyVO) error {
+	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblemergencycontact.TableName).
 		Where(tblemergencycontact.ElderId.Eq(types.BigInt(*in.ElderID)))
 	if in.Key != nil && *in.Key != "" {
@@ -203,7 +256,6 @@ func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *d
 			tblemergencycontact.Name,
 			tblemergencycontact.Phone,
 			tblemergencycontact.Relation,
-			tblemergencycontact.Remark,
 		).
 		Desc(tblemergencycontact.CreateTime).
 		Select().
@@ -212,6 +264,7 @@ func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *d
 
 // PageLabelByKey 分页查询客户标签
 func (e *elderrecord) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyQuery, out *[]dto.ListLabelVO) error {
+	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tbllabel.TableName).
 		Where(tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)))
 	if in.Key != nil && *in.Key != "" {

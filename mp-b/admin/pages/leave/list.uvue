@@ -1,0 +1,231 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'外出登记'" />
+
+		<view class="search-bar">
+			<input
+				class="search-input"
+				v-model="keyword"
+				placeholder="搜索老人姓名"
+				confirm-type="search"
+			/>
+		</view>
+
+		<view class="filter-bar">
+			<view
+				v-for="s in typeOptions"
+				:key="s.value"
+				class="filter-item"
+				:class="{ 'filter-item--active': type == s.value }"
+				@click="type = s.value"
+			>
+				<text>{{ s.label }}</text>
+			</view>
+		</view>
+
+		<scroll-view class="list" scroll-y :show-scrollbar="false">
+			<view v-for="item in filteredList" :key="item.id" class="card" @click="goDetail(item)">
+				<view class="card__head">
+					<text class="card__name">{{ item.elder_name }}</text>
+					<StatusTag :text="stateOf(item).text" :type="stateOf(item).type" />
+				</view>
+				<view class="card__time">
+					<text>{{ fmt(item.outward_date) }}</text>
+					<text class="card__arrow">→</text>
+					<text>{{ fmt(item.plan_return_date) }}</text>
+				</view>
+				<view class="card__foot">
+					<text class="card__chaperone">{{ item.chaperone_name }}({{ item.chaperone_type }})</text>
+				</view>
+			</view>
+
+			<view v-if="filteredList.length == 0" class="empty">
+				<text>暂无外出记录</text>
+			</view>
+		</scroll-view>
+
+		<uni-fab-button class="fab" plus-class="fab__plus" @click="goAdd" />
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onShow } from '@dcloudio/uni-app'
+	import { pageOutwardByKey, OutwardItem } from '../../api/outward'
+	import { parseTime, formatShortTime } from '../../utils/util'
+
+	const keyword = ref('')
+	const type = ref('')
+	const list = ref<OutwardItem[]>([])
+
+	const typeOptions = [
+		{ label: '全部', value: '' },
+		{ label: '护工', value: '护工' },
+		{ label: '家属', value: '家属' }
+	]
+
+	onShow(() => {
+		loadData()
+	})
+
+	async function loadData() {
+		try {
+			const res = await pageOutwardByKey()
+			list.value = res.list
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	const filteredList = computed((): OutwardItem[] => {
+		let items = list.value
+		const kw = keyword.value.trim()
+		if (kw != '') {
+			items = items.filter((it) => it.elder_name.indexOf(kw) >= 0)
+		}
+		if (type.value != '') {
+			items = items.filter((it) => it.chaperone_type == type.value)
+		}
+		return items
+	})
+
+	function fmt(s: string): string {
+		const d = parseTime(s)
+		return d ? formatShortTime(d) : ''
+	}
+
+	function stateOf(item: OutwardItem): { text: string; type: 'primary' | 'danger' | 'success' } {
+		if (item.real_return_date != '' && item.real_return_date != null) {
+			return { text: '已返回', type: 'success' }
+		}
+		const now = new Date().getTime()
+		const plan = parseTime(item.plan_return_date)
+		if (plan != null && now > plan.getTime()) {
+			return { text: '已超时', type: 'danger' }
+		}
+		return { text: '外出中', type: 'primary' }
+	}
+
+	function goDetail(item: OutwardItem) {
+		uni.navigateTo({ url: '/pages/leave/detail?id=' + item.id })
+	}
+
+	function goAdd() {
+		uni.navigateTo({ url: '/pages/leave/edit' })
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.search-bar {
+		padding: 10px 16px 0 16px;
+	}
+
+	.search-input {
+		height: 38px;
+		background-color: #FFFFFF;
+		border-radius: 19px;
+		padding-left: 14px;
+		font-size: 14px;
+	}
+
+	.filter-bar {
+		flex-direction: row;
+		padding: 10px 16px 6px 16px;
+	}
+
+	.filter-item {
+		margin-right: 18px;
+		height: 30px;
+		align-items: center;
+		justify-content: center;
+		padding: 0 12px;
+		border-radius: 15px;
+		background-color: #FFFFFF;
+	}
+
+	.filter-item text {
+		font-size: 13px;
+		color: #666666;
+	}
+
+	.filter-item--active {
+		background-color: #007AFF;
+	}
+
+	.filter-item--active text {
+		color: #FFFFFF;
+	}
+
+	.list {
+		flex: 1;
+		padding: 6px 16px 0 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__head {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.card__name {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.card__time {
+		margin-top: 10px;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.card__time text {
+		font-size: 14px;
+		color: #333333;
+	}
+
+	.card__arrow {
+		margin: 0 8px;
+		color: #CCCCCC;
+	}
+
+	.card__foot {
+		margin-top: 8px;
+	}
+
+	.card__chaperone {
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.empty {
+		align-items: center;
+		padding-top: 60px;
+	}
+
+	.empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.fab {
+		position: fixed;
+		right: 20px;
+		bottom: 40px;
+	}
+
+	.fab__plus {
+		background-color: #007AFF;
+	}
+</style>

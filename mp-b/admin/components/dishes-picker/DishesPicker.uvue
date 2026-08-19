@@ -1,0 +1,218 @@
+<template>
+	<view v-if="visible" class="dp-mask" @click="close">
+		<view class="dp-panel" @click.stop>
+			<view class="dp-header">
+				<text class="dp-title">选择菜品</text>
+				<text class="dp-close" @click="close">完成</text>
+			</view>
+			<scroll-view class="dp-list" scroll-y>
+				<view v-for="d in dishes" :key="d.id" class="dp-cell">
+					<view class="dp-cell__info" @click="addDish(d)">
+						<text class="dp-cell__name">{{ d.dishes_name }}</text>
+						<text class="dp-cell__price">{{ formatMoney(d.price) }}</text>
+					</view>
+					<view class="dp-cell__num">
+						<view class="num-btn" @click="changeNum(d.id, -1)">
+							<text>−</text>
+						</view>
+						<text class="num-value">{{ numOf(d.id) }}</text>
+						<view class="num-btn" @click="changeNum(d.id, 1)">
+							<text>＋</text>
+						</view>
+					</view>
+				</view>
+				<view v-if="dishes.length == 0" class="dp-empty"><text>暂无菜品</text></view>
+			</scroll-view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { pageDishesByKey, DishesItem } from '../../api/order'
+	import { formatMoney } from '../../utils/util'
+
+	/**
+	 * DishesPicker 菜品选择器（半屏弹层）
+	 * 契约见规格文档 §9.7：
+	 * - 全量加载 /dishes/pageDishesByKey
+	 * - 已选菜品 v-model:modelValue = { dishes_id, order_num }[]
+	 */
+	export interface OrderDish {
+		dishes_id: number
+		dishes_name: string
+		order_num: number
+	}
+
+	const props = withDefaults(defineProps<{
+		visible: boolean
+		modelValue?: OrderDish[]
+	}>(), {
+		visible: false,
+		modelValue: () => []
+	})
+
+	const emit = defineEmits<{
+		(e: 'update:visible', value: boolean): void
+		(e: 'update:modelValue', value: OrderDish[]): void
+		(e: 'change', value: OrderDish[]): void
+	}>()
+
+	const dishes = ref<DishesItem[]>([])
+	let loaded = false
+
+	watch(() => props.visible, (v: boolean) => {
+		if (v && !loaded) {
+			load()
+		}
+	})
+
+	async function load() {
+		try {
+			const res = await pageDishesByKey()
+			dishes.value = res.list
+			loaded = true
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function numOf(dishesId: number): number {
+		const d = props.modelValue.find((x) => x.dishes_id == dishesId)
+		return d ? d.order_num : 0
+	}
+
+	function addDish(d: DishesItem) {
+		changeNum(d.id, 1)
+	}
+
+	function changeNum(dishesId: number, delta: number) {
+		const list = props.modelValue.slice()
+		const idx = list.findIndex((x) => x.dishes_id == dishesId)
+		if (idx >= 0) {
+			let v = list[idx].order_num + delta
+			if (v < 0) {
+				v = 0
+			}
+			if (v > 99) {
+				v = 99
+			}
+			list[idx].order_num = v
+			if (v == 0) {
+				list.splice(idx, 1)
+			}
+		} else if (delta > 0) {
+			const dish = dishes.value.find((x) => x.id == dishesId)
+			list.push({ dishes_id: dishesId, dishes_name: dish ? dish.dishes_name : '', order_num: 1 })
+		}
+		emit('update:modelValue', list)
+		emit('change', list)
+	}
+
+	function close() {
+		emit('update:visible', false)
+	}
+</script>
+
+<style scoped>
+	.dp-mask {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		justify-content: flex-end;
+		z-index: 999;
+	}
+
+	.dp-panel {
+		height: 65%;
+		background-color: #FFFFFF;
+		border-top-left-radius: 16px;
+		border-top-right-radius: 16px;
+		flex-direction: column;
+	}
+
+	.dp-header {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 14px 16px;
+	}
+
+	.dp-title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.dp-close {
+		font-size: 14px;
+		color: #007AFF;
+	}
+
+	.dp-list {
+		flex: 1;
+	}
+
+	.dp-cell {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 12px 16px;
+		border-bottom-width: 1px;
+		border-bottom-color: #F0F0F0;
+	}
+
+	.dp-cell__info {
+		flex: 1;
+		flex-direction: column;
+	}
+
+	.dp-cell__name {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.dp-cell__price {
+		margin-top: 2px;
+		font-size: 13px;
+		color: #DD524D;
+	}
+
+	.dp-cell__num {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.num-btn {
+		width: 32px;
+		height: 32px;
+		border-radius: 6px;
+		background-color: #F5F6FA;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.num-btn text {
+		font-size: 16px;
+		color: #007AFF;
+	}
+
+	.num-value {
+		width: 44px;
+		text-align: center;
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.dp-empty {
+		align-items: center;
+		padding-top: 40px;
+	}
+
+	.dp-empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+</style>

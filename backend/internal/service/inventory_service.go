@@ -37,9 +37,7 @@ func (i *inventory) PageInventoryByKey(ctx context.Context, in *dto.PageInventor
 	if in.MaterialName != nil && *in.MaterialName != "" {
 		q.And(tblmaterial.Name.Like(*in.MaterialName))
 	}
-	if in.Key != nil && *in.Key != "" {
-		q.And(tblmaterial.Name.Like(*in.Key))
-	}
+
 	if err := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblwarehouse.Name.AsName("warehouse_name"),

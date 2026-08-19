@@ -13,6 +13,7 @@ import (
 	"api/internal/model/dto"
 
 	"github.com/linbaozhong/gentity/pkg/ace"
+	"github.com/linbaozhong/gentity/pkg/conv"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -151,7 +152,7 @@ func (r *retreatApply) GetRetreatApplyById(ctx context.Context, in *dto.IDReq, o
 	}
 	out.ApplyID = int64(obj.Id)
 	out.ElderID = int64(obj.ElderId)
-	out.ApplyFlag = int8Ptr(int8(obj.ApplyFlag))
+	out.ApplyFlag = conv.Ptr(int8(obj.ApplyFlag))
 	elder, hasE, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(obj.ElderId)))
 	if e != nil {
 		return e

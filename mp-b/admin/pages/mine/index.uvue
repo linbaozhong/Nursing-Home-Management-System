@@ -1,0 +1,136 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'我的'" />
+
+		<view class="profile">
+			<image v-if="user && user.avator != ''" class="avatar" :src="user.avator" />
+			<view v-else class="avatar avatar--placeholder">
+				<text>{{ user ? user.name.charAt(0) : '员' }}</text>
+			</view>
+			<view class="profile__info">
+				<text class="profile__name">{{ user ? user.name : '未登录' }}</text>
+				<text class="profile__phone">{{ user ? user.phone : '' }}</text>
+			</view>
+		</view>
+
+		<view class="menu">
+			<view class="menu__item" @click="goEditPass">
+				<text class="menu__label">修改密码</text>
+				<text class="menu__arrow">›</text>
+			</view>
+			<view class="menu__item" @click="doLogout">
+				<text class="menu__label menu__label--danger">退出登录</text>
+				<text class="menu__arrow">›</text>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onShow } from '@dcloudio/uni-app'
+	import { getLoginUser, clearAuth, LoginUser } from '../../utils/auth'
+
+	const user = ref<LoginUser | null>(null)
+
+	onShow(() => {
+		user.value = getLoginUser()
+	})
+
+	function goEditPass() {
+		uni.navigateTo({ url: '/pages/mine/edit-pass' })
+	}
+
+	function doLogout() {
+		uni.showModal({
+			title: '提示',
+			content: '确认退出登录？',
+			success: (res) => {
+				if (res.confirm) {
+					clearAuth()
+					uni.reLaunch({ url: '/pages/login/login' })
+				}
+			}
+		})
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.profile {
+		flex-direction: row;
+		align-items: center;
+		background-color: #FFFFFF;
+		padding: 24px 16px;
+		margin: 10px 16px;
+		border-radius: 10px;
+	}
+
+	.avatar {
+		width: 56px;
+		height: 56px;
+		border-radius: 28px;
+	}
+
+	.avatar--placeholder {
+		background-color: #007AFF;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.avatar--placeholder text {
+		color: #FFFFFF;
+		font-size: 24px;
+	}
+
+	.profile__info {
+		margin-left: 14px;
+		flex-direction: column;
+	}
+
+	.profile__name {
+		font-size: 17px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.profile__phone {
+		margin-top: 4px;
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.menu {
+		background-color: #FFFFFF;
+		margin: 0 16px;
+		border-radius: 10px;
+	}
+
+	.menu__item {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		height: 52px;
+		padding-left: 16px;
+		padding-right: 16px;
+		border-bottom-width: 1px;
+		border-bottom-color: #F0F0F0;
+	}
+
+	.menu__label {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.menu__label--danger {
+		color: #DD524D;
+	}
+
+	.menu__arrow {
+		font-size: 16px;
+		color: #CCCCCC;
+	}
+</style>

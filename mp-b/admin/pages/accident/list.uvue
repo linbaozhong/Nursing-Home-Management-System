@@ -1,0 +1,160 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'事故登记'" />
+
+		<view class="search-bar">
+			<input
+				class="search-input"
+				v-model="keyword"
+				placeholder="搜索老人姓名"
+				confirm-type="search"
+			/>
+		</view>
+
+		<scroll-view class="list" scroll-y :show-scrollbar="false">
+			<view v-for="item in filteredList" :key="item.id" class="card" @click="goDetail(item)">
+				<view class="card__head">
+					<text class="card__name">{{ item.elder_name }}</text>
+					<StatusTag text="事故" type="danger" />
+				</view>
+				<view class="card__body">
+					<text>护工：{{ item.staff_name }}</text>
+				</view>
+				<view class="card__foot">
+					<text>{{ fmt(item.occur_date) }}</text>
+				</view>
+			</view>
+
+			<view v-if="filteredList.length == 0" class="empty">
+				<text>暂无事故记录</text>
+			</view>
+		</scroll-view>
+
+		<uni-fab-button class="fab" plus-class="fab__plus" @click="goAdd" />
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onShow } from '@dcloudio/uni-app'
+	import { pageAccidentByKey, AccidentItem } from '../../api/accident'
+	import { parseTime, formatShortTime } from '../../utils/util'
+
+	const keyword = ref('')
+	const list = ref<AccidentItem[]>([])
+
+	onShow(() => {
+		loadData()
+	})
+
+	async function loadData() {
+		try {
+			const res = await pageAccidentByKey()
+			list.value = res.list
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	const filteredList = computed((): AccidentItem[] => {
+		let items = list.value
+		const kw = keyword.value.trim()
+		if (kw != '') {
+			items = items.filter((it) => it.elder_name.indexOf(kw) >= 0)
+		}
+		return items
+	})
+
+	function fmt(s: string): string {
+		const d = parseTime(s)
+		return d ? formatShortTime(d) : ''
+	}
+
+	function goDetail(item: AccidentItem) {
+		uni.navigateTo({ url: '/pages/accident/detail?id=' + item.id })
+	}
+
+	function goAdd() {
+		uni.navigateTo({ url: '/pages/accident/edit' })
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.search-bar {
+		padding: 10px 16px 0 16px;
+	}
+
+	.search-input {
+		height: 38px;
+		background-color: #FFFFFF;
+		border-radius: 19px;
+		padding-left: 14px;
+		font-size: 14px;
+	}
+
+	.list {
+		flex: 1;
+		padding: 6px 16px 0 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__head {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.card__name {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.card__body {
+		margin-top: 8px;
+	}
+
+	.card__body text {
+		font-size: 14px;
+		color: #333333;
+	}
+
+	.card__foot {
+		margin-top: 8px;
+	}
+
+	.card__foot text {
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.empty {
+		align-items: center;
+		padding-top: 60px;
+	}
+
+	.empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.fab {
+		position: fixed;
+		right: 20px;
+		bottom: 40px;
+	}
+
+	.fab__plus {
+		background-color: #007AFF;
+	}
+</style>

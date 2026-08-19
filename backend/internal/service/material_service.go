@@ -11,6 +11,7 @@ import (
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
+	"github.com/linbaozhong/gentity/pkg/conv"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -157,8 +158,8 @@ func (m *material) GetMaterialTypeById(ctx context.Context, in *dto.IDReq, out *
 	if !has {
 		return errors.New("物资分类不存在")
 	}
-	out.ID = int64Ptr(int64(obj.Id))
-	out.Name = strPtr(obj.Name.String())
+	out.ID = conv.Ptr(int64(obj.Id))
+	out.Name = conv.Ptr(obj.Name.String())
 	return nil
 }
 

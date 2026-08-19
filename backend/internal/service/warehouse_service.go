@@ -11,6 +11,7 @@ import (
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
+	"github.com/linbaozhong/gentity/pkg/conv"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -76,9 +77,9 @@ func (w *warehouse) GetWarehouseById(ctx context.Context, in *dto.IDReq, out *dt
 	if !has {
 		return errors.New("仓库不存在")
 	}
-	out.ID = int64Ptr(int64(obj.Id))
-	out.StaffID = int64Ptr(int64(obj.StaffId))
-	out.Name = strPtr(obj.Name.String())
+	out.ID = conv.Ptr(int64(obj.Id))
+	out.StaffID = conv.Ptr(int64(obj.StaffId))
+	out.Name = conv.Ptr(obj.Name.String())
 	return nil
 }
 

@@ -12,6 +12,7 @@ import (
 	"api/internal/model/dto"
 
 	"github.com/linbaozhong/gentity/pkg/ace"
+	"github.com/linbaozhong/gentity/pkg/conv"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -55,10 +56,10 @@ func (l *label) GetLabelById(ctx context.Context, in *dto.IDReq, out *dto.Operat
 	if !has {
 		return errors.New("标签不存在")
 	}
-	out.ID = int64Ptr(int64(obj.Id))
-	out.TypeID = int64Ptr(int64(obj.TypeId))
-	out.Name = strPtr(obj.Name.String())
-	out.Color = strPtr(obj.Color.String())
+	out.ID = conv.Ptr(int64(obj.Id))
+	out.TypeID = conv.Ptr(int64(obj.TypeId))
+	out.Name = conv.Ptr(obj.Name.String())
+	out.Color = conv.Ptr(obj.Color.String())
 	return nil
 }
 
@@ -176,8 +177,8 @@ func (l *label) GetLabelTypeById(ctx context.Context, in *dto.IDReq, out *dto.Op
 	if !has {
 		return errors.New("标签类型不存在")
 	}
-	out.ID = int64Ptr(int64(obj.Id))
-	out.Name = strPtr(obj.Name.String())
+	out.ID = conv.Ptr(int64(obj.Id))
+	out.Name = conv.Ptr(obj.Name.String())
 	return nil
 }
 

@@ -1,0 +1,372 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'点餐'" />
+
+		<view class="search-bar">
+			<input
+				class="search-input"
+				v-model="keyword"
+				placeholder="搜索老人姓名 / 电话"
+				confirm-type="search"
+			/>
+		</view>
+
+		<view class="filter-bar">
+			<view
+				v-for="s in flagOptions"
+				:key="s.value"
+				class="filter-item"
+				:class="{ 'filter-item--active': flag == s.value }"
+				@click="flag = s.value"
+			>
+				<text>{{ s.label }}</text>
+			</view>
+		</view>
+
+		<scroll-view class="list" scroll-y :show-scrollbar="false">
+			<view v-for="item in filteredList" :key="item.id" class="card" @click="goDetail(item)">
+				<view class="card__head">
+					<text class="card__name">{{ item.elder_name }}</text>
+					<StatusTag :text="flagText(item)" :type="flagType(item)" />
+				</view>
+				<view class="card__body">
+					<text>{{ item.dine_type }} · {{ fmt(item.dine_date) }}</text>
+				</view>
+				<view class="card__foot">
+					<text class="card__amount">{{ formatMoney(item.pay_amount) }}</text>
+					<text v-if="isDelivered(item)" class="card__staff">送餐人：{{ item.staff_name }}</text>
+					<view v-else-if="item.dine_type == '送餐'" class="card__send" @click.stop="onSend(item)">
+						<text>去送餐</text>
+					</view>
+				</view>
+			</view>
+
+			<view v-if="filteredList.length == 0" class="empty">
+				<text>暂无点餐记录</text>
+			</view>
+		</scroll-view>
+
+		<uni-fab-button class="fab" plus-class="fab__plus" @click="goAdd" />
+
+		<!-- 送餐人员选择弹层 -->
+		<view v-if="showSendPanel" class="mask" @click="showSendPanel = false">
+			<view class="panel" @click.stop>
+				<view class="panel__head">
+					<text class="panel__title">选择送餐人员</text>
+					<text class="panel__close" @click="showSendPanel = false">取消</text>
+				</view>
+				<scroll-view class="panel__list" scroll-y>
+					<view v-for="s in nurseStaffs" :key="s.id" class="panel__item" @click="onSendStaffSelect(s)">
+						<text class="panel__name">{{ s.name }}</text>
+						<text class="panel__phone">{{ s.phone }}</text>
+					</view>
+					<view v-if="nurseStaffs.length == 0" class="panel__empty"><text>暂无可用送餐人员</text></view>
+				</scroll-view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onShow } from '@dcloudio/uni-app'
+	import { pageOrderByKey, listNurseStaff, sendOrder, OrderItem, NurseStaff } from '../../api/order'
+	import { parseTime, formatShortTime, formatMoney, formatDateTime } from '../../utils/util'
+
+	const keyword = ref('')
+	const flag = ref('')
+	const list = ref<OrderItem[]>([])
+	const showSendPanel = ref(false)
+	const nurseStaffs = ref<NurseStaff[]>([])
+	let sendingOrderId = 0
+
+	const flagOptions = [
+		{ label: '全部', value: '' },
+		{ label: '待送餐', value: '待' },
+		{ label: '已送餐', value: '已' }
+	]
+
+	onShow(() => {
+		loadData()
+	})
+
+	async function loadData() {
+		try {
+			const res = await pageOrderByKey()
+			list.value = res.list
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	async function onSend(item: OrderItem) {
+		sendingOrderId = item.id
+		showSendPanel.value = true
+		if (nurseStaffs.value.length == 0) {
+			try {
+				nurseStaffs.value = await listNurseStaff()
+			} catch (e) {
+				// 已统一 toast
+			}
+		}
+	}
+
+	async function onSendStaffSelect(s: NurseStaff) {
+		showSendPanel.value = false
+		uni.showModal({
+			title: '确认送餐',
+			content: '由 ' + s.name + ' 负责送餐？',
+			success: async (res) => {
+				if (res.confirm) {
+					try {
+						await sendOrder(sendingOrderId, s.id, formatDateTime(new Date()))
+						uni.showToast({ title: '已送餐', icon: 'success' })
+						loadData()
+					} catch (e) {
+						// 已统一 toast
+					}
+				}
+			}
+		})
+	}
+
+	const filteredList = computed((): OrderItem[] => {
+		let items = list.value
+		const kw = keyword.value.trim()
+		if (kw != '') {
+			items = items.filter((it) => {
+				return it.elder_name.indexOf(kw) >= 0 || it.elder_phone.indexOf(kw) >= 0
+			})
+		}
+		if (flag.value != '') {
+			items = items.filter((it) => isDelivered(it) == (flag.value == '已'))
+		}
+		return items
+	})
+
+	function fmt(s: string): string {
+		const d = parseTime(s)
+		return d ? formatShortTime(d) : ''
+	}
+
+	function isDelivered(item: OrderItem): boolean {
+		return item.order_flag == '是'
+	}
+
+	function flagText(item: OrderItem): string {
+		return isDelivered(item) ? '已送餐' : '待送餐'
+	}
+
+	function flagType(item: OrderItem): 'success' | 'warning' {
+		return isDelivered(item) ? 'success' : 'warning'
+	}
+
+	function goDetail(item: OrderItem) {
+		uni.navigateTo({ url: '/pages/order/edit?id=' + item.id })
+	}
+
+	function goAdd() {
+		uni.navigateTo({ url: '/pages/order/edit' })
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.search-bar {
+		padding: 10px 16px 0 16px;
+	}
+
+	.search-input {
+		height: 38px;
+		background-color: #FFFFFF;
+		border-radius: 19px;
+		padding-left: 14px;
+		font-size: 14px;
+	}
+
+	.filter-bar {
+		flex-direction: row;
+		padding: 10px 16px 6px 16px;
+	}
+
+	.filter-item {
+		margin-right: 18px;
+		height: 30px;
+		align-items: center;
+		justify-content: center;
+		padding: 0 12px;
+		border-radius: 15px;
+		background-color: #FFFFFF;
+	}
+
+	.filter-item text {
+		font-size: 13px;
+		color: #666666;
+	}
+
+	.filter-item--active {
+		background-color: #007AFF;
+	}
+
+	.filter-item--active text {
+		color: #FFFFFF;
+	}
+
+	.list {
+		flex: 1;
+		padding: 6px 16px 0 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__head {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.card__name {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.card__body {
+		margin-top: 10px;
+	}
+
+	.card__body text {
+		font-size: 14px;
+		color: #333333;
+	}
+
+	.card__foot {
+		margin-top: 8px;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.card__amount {
+		font-size: 14px;
+		font-weight: 600;
+		color: #DD524D;
+	}
+
+	.card__staff {
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.empty {
+		align-items: center;
+		padding-top: 60px;
+	}
+
+	.empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.card__send {
+		height: 28px;
+		padding: 0 12px;
+		border-radius: 14px;
+		background-color: #007AFF;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.card__send text {
+		font-size: 13px;
+		color: #FFFFFF;
+	}
+
+	.fab {
+		position: fixed;
+		right: 20px;
+		bottom: 40px;
+	}
+
+	.fab__plus {
+		background-color: #007AFF;
+	}
+
+	.mask {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		justify-content: flex-end;
+		z-index: 999;
+	}
+
+	.panel {
+		height: 55%;
+		background-color: #FFFFFF;
+		border-top-left-radius: 16px;
+		border-top-right-radius: 16px;
+		flex-direction: column;
+	}
+
+	.panel__head {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 14px 16px;
+	}
+
+	.panel__title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.panel__close {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.panel__list {
+		flex: 1;
+	}
+
+	.panel__item {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 12px 16px;
+		border-bottom-width: 1px;
+		border-bottom-color: #F0F0F0;
+	}
+
+	.panel__name {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.panel__phone {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.panel__empty {
+		align-items: center;
+		padding-top: 40px;
+	}
+
+	.panel__empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+</style>

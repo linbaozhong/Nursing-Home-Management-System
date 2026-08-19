@@ -16,6 +16,7 @@ import (
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
+	"github.com/linbaozhong/gentity/pkg/conv"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -90,15 +91,15 @@ func (c *consult) GetConsultByConsultIdAndElderId(ctx context.Context, in *dto.G
 	if !has {
 		return errors.New("咨询记录不存在")
 	}
-	out.ConsultID = int64Ptr(int64(obj.Id))
-	out.ElderID = int64Ptr(int64(obj.ElderId))
-	out.SourceID = int64Ptr(int64(obj.SourceId))
-	out.StaffID = int64Ptr(int64(obj.StaffId))
-	out.ConsultName = strPtr(obj.Name.String())
-	out.ConsultPhone = strPtr(obj.Phone.String())
-	out.Relation = strPtr(obj.Relation.String())
+	out.ConsultID = conv.Ptr(int64(obj.Id))
+	out.ElderID = conv.Ptr(int64(obj.ElderId))
+	out.SourceID = conv.Ptr(int64(obj.SourceId))
+	out.StaffID = conv.Ptr(int64(obj.StaffId))
+	out.ConsultName = conv.Ptr(obj.Name.String())
+	out.ConsultPhone = conv.Ptr(obj.Phone.String())
+	out.Relation = conv.Ptr(obj.Relation.String())
 	out.ConsultDate = &obj.ConsultDate.Time
-	out.ConsultContent = strPtr(obj.ConsultContent.String())
+	out.ConsultContent = conv.Ptr(obj.ConsultContent.String())
 	return nil
 }
 

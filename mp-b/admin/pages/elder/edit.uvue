@@ -1,0 +1,239 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="isEdit ? '编辑档案' : '新增长者'" />
+
+		<scroll-view class="body" scroll-y :show-scrollbar="false">
+			<view class="form">
+				<view class="field">
+					<text class="field__label">姓名 <text class="field__required">*</text></text>
+					<input class="field__input" v-model="form.name" placeholder="请输入姓名" />
+				</view>
+				<view class="field">
+					<text class="field__label">身份证号 <text class="field__required">*</text></text>
+					<input class="field__input" v-model="form.id_num" placeholder="18 位身份证号" maxlength="18" />
+				</view>
+				<view class="field">
+					<text class="field__label">性别 <text class="field__required">*</text></text>
+					<view class="radio-row">
+						<view v-for="g in sexOptions" :key="g.value"
+							class="radio" :class="{ 'radio--active': form.sex == g.value }"
+							@click="form.sex = g.value">
+							<text>{{ g.label }}</text>
+						</view>
+					</view>
+				</view>
+				<view class="field">
+					<text class="field__label">年龄 <text class="field__required">*</text></text>
+					<input class="field__input" v-model="ageStr" type="number" placeholder="0-120" />
+				</view>
+				<view class="field">
+					<text class="field__label">电话 <text class="field__required">*</text></text>
+					<input class="field__input" v-model="form.phone" type="number" maxlength="11" placeholder="11 位手机号" />
+				</view>
+				<view class="field">
+					<text class="field__label">地址 <text class="field__required">*</text></text>
+					<input class="field__input" v-model="form.address" placeholder="请输入地址" />
+				</view>
+				<view class="field">
+					<text class="field__label">护理等级</text>
+					<input class="field__input" v-model="form.nurse_level" placeholder="选填" />
+				</view>
+				<view class="field">
+					<text class="field__label">入住状态</text>
+					<input class="field__input" v-model="form.check_flag" placeholder="选填" />
+				</view>
+			</view>
+
+			<button class="submit" :disabled="submitting" @click="doSubmit">保存</button>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onLoad } from '@dcloudio/uni-app'
+	import { getElderRecordById, addElderRecord, editElderRecord } from '../../api/elder'
+
+	const sexOptions = [
+		{ label: '男', value: '男' },
+		{ label: '女', value: '女' }
+	]
+
+	const form = ref<{
+		name: string
+		id_num: string
+		sex: string
+		age: number
+		phone: string
+		address: string
+		nurse_level: string
+		check_flag: string
+	}>({
+		name: '',
+		id_num: '',
+		sex: '男',
+		age: 0,
+		phone: '',
+		address: '',
+		nurse_level: '',
+		check_flag: ''
+	})
+
+	const ageStr = ref('')
+	const isEdit = ref(false)
+	let currentId = 0
+	const submitting = ref(false)
+
+	onLoad((options) => {
+		const id = Number(options?.id)
+		if (id > 0) {
+			isEdit.value = true
+			currentId = id
+			loadData(id)
+		}
+	})
+
+	async function loadData(id: number) {
+		try {
+			const res = await getElderRecordById(id)
+			form.value.name = res.name
+			form.value.id_num = res.id_num
+			form.value.sex = res.sex
+			form.value.age = res.age
+			ageStr.value = '' + res.age
+			form.value.phone = res.phone
+			form.value.address = res.address
+			form.value.nurse_level = res.elder_nurse_grade_by_id_vo ? '' : ''
+			form.value.check_flag = ''
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function validate(): boolean {
+		if (form.value.name == '') {
+			uni.showToast({ title: '请输入姓名', icon: 'none' })
+			return false
+		}
+		if (form.value.id_num.length != 18) {
+			uni.showToast({ title: '请输入 18 位身份证号', icon: 'none' })
+			return false
+		}
+		if (form.value.phone.length != 11) {
+			uni.showToast({ title: '请输入 11 位手机号', icon: 'none' })
+			return false
+		}
+		if (form.value.address == '') {
+			uni.showToast({ title: '请输入地址', icon: 'none' })
+			return false
+		}
+		return true
+	}
+
+	async function doSubmit() {
+		if (!validate()) {
+			return
+		}
+		form.value.age = parseInt(ageStr.value) || 0
+		submitting.value = true
+		try {
+			const payload = {
+				name: form.value.name,
+				id_num: form.value.id_num,
+				sex: form.value.sex,
+				age: form.value.age,
+				phone: form.value.phone,
+				address: form.value.address
+			}
+			if (isEdit.value) {
+				await editElderRecord({ id: currentId, ...payload } as any)
+			} else {
+				await addElderRecord(payload as any)
+			}
+			uni.showToast({ title: '保存成功', icon: 'success' })
+			setTimeout(() => {
+				uni.navigateBack()
+			}, 500)
+		} catch (e) {
+			// 已统一 toast
+		} finally {
+			submitting.value = false
+		}
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.body {
+		flex: 1;
+		padding: 10px 16px;
+	}
+
+	.form {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 16px;
+	}
+
+	.field {
+		flex-direction: column;
+		margin-bottom: 16px;
+	}
+
+	.field__label {
+		font-size: 14px;
+		color: #333333;
+		margin-bottom: 8px;
+	}
+
+	.field__required {
+		color: #DD524D;
+	}
+
+	.field__input {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		font-size: 15px;
+	}
+
+	.radio-row {
+		flex-direction: row;
+	}
+
+	.radio {
+		height: 36px;
+		padding: 0 20px;
+		margin-right: 12px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 18px;
+		background-color: #F5F6FA;
+	}
+
+	.radio text {
+		font-size: 14px;
+		color: #666666;
+	}
+
+	.radio--active {
+		background-color: #007AFF;
+	}
+
+	.radio--active text {
+		color: #FFFFFF;
+	}
+
+	.submit {
+		margin-top: 20px;
+		height: 46px;
+		border-radius: 23px;
+		background-color: #007AFF;
+		color: #FFFFFF;
+		font-size: 15px;
+	}
+</style>

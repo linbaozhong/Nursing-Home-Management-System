@@ -1,0 +1,185 @@
+<template>
+	<view v-if="visible" class="ss-mask" @click="close">
+		<view class="ss-panel" @click.stop>
+			<view class="ss-header">
+				<text class="ss-title">选择员工</text>
+				<text class="ss-cancel" @click="close">取消</text>
+			</view>
+			<view class="ss-search">
+				<input
+					class="ss-input"
+					v-model="keyword"
+					placeholder="输入姓名搜索"
+					confirm-type="search"
+					@confirm="doSearch"
+				/>
+				<text class="ss-search-btn" @click="doSearch">搜索</text>
+			</view>
+			<scroll-view class="ss-list" scroll-y>
+				<view v-for="item in list" :key="item.id" class="ss-item" @click="onSelect(item)">
+					<text class="ss-item__name">{{ item.name }}</text>
+					<text class="ss-item__phone">{{ item.phone }}</text>
+				</view>
+				<view v-if="list.length == 0" class="ss-empty">
+					<text>无匹配员工</text>
+				</view>
+			</scroll-view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { pageSearchStaffByKey, StaffItem } from '../../api/staff'
+
+	/**
+	 * StaffSearch 员工搜索器（半屏弹层）
+	 * 数据源：/reserve/pageSearchStaffByKey（page_size=200 全量本地过滤）
+	 */
+	const props = withDefaults(defineProps<{
+		visible: boolean
+		placeholder?: string
+	}>(), {
+		visible: false,
+		placeholder: '输入员工姓名'
+	})
+
+	const emit = defineEmits<{
+		(e: 'update:visible', value: boolean): void
+		(e: 'select', value: StaffItem): void
+		(e: 'close'): void
+	}>()
+
+	const keyword = ref('')
+	const list = ref<StaffItem[]>([])
+	const allList = ref<StaffItem[]>([])
+
+	watch(() => props.visible, (v: boolean) => {
+		if (v && allList.value.length == 0) {
+			loadAll()
+		}
+	})
+
+	async function loadAll() {
+		const res = await pageSearchStaffByKey()
+		allList.value = res.list
+		list.value = res.list
+	}
+
+	function doSearch() {
+		const kw = keyword.value.trim()
+		if (kw == '') {
+			list.value = allList.value
+			return
+		}
+		list.value = allList.value.filter((it) => it.name.indexOf(kw) >= 0)
+	}
+
+	function onSelect(item: StaffItem) {
+		emit('select', item)
+		close()
+	}
+
+	function close() {
+		emit('update:visible', false)
+		emit('close')
+	}
+</script>
+
+<style scoped>
+	.ss-mask {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		justify-content: flex-end;
+		z-index: 999;
+	}
+
+	.ss-panel {
+		height: 65%;
+		background-color: #FFFFFF;
+		border-top-left-radius: 16px;
+		border-top-right-radius: 16px;
+		flex-direction: column;
+		padding-top: 12px;
+	}
+
+	.ss-header {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding-left: 16px;
+		padding-right: 16px;
+		height: 40px;
+	}
+
+	.ss-title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.ss-cancel {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.ss-search {
+		flex-direction: row;
+		align-items: center;
+		margin-left: 16px;
+		margin-right: 16px;
+		margin-top: 8px;
+		margin-bottom: 8px;
+	}
+
+	.ss-input {
+		flex: 1;
+		height: 36px;
+		background-color: #F5F6FA;
+		border-radius: 18px;
+		padding-left: 14px;
+		font-size: 14px;
+	}
+
+	.ss-search-btn {
+		margin-left: 10px;
+		font-size: 14px;
+		color: #007AFF;
+	}
+
+	.ss-list {
+		flex: 1;
+	}
+
+	.ss-item {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 12px 16px;
+		border-bottom-width: 1px;
+		border-bottom-color: #F0F0F0;
+	}
+
+	.ss-item__name {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.ss-item__phone {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.ss-empty {
+		align-items: center;
+		padding-top: 40px;
+	}
+
+	.ss-empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+</style>

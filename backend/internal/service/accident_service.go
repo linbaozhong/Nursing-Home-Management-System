@@ -20,6 +20,7 @@ var Accident = &accident{}
 
 // PageAccidentByKey 分页查询事故记录（联表 elder 获取老人姓名）
 func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentByKeyQuery, out *[]dto.PageAccidentByKeyVO) error {
+	clampPage(in.PageNum, in.PageSize)
 	// 构造查询
 	q := db.Table(tblaccident.TableName).
 		LeftJoin(tblaccident.ElderId, tblelder.Id).

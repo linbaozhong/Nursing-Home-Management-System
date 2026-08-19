@@ -1,0 +1,344 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'外出登记'" />
+
+		<WizardForm
+			:steps="['选择老人', '陪同人信息']"
+			:current="current"
+			:disabled="submitting"
+			@update:current="onStepChange"
+			@next="onNext"
+			@prev="onPrev"
+			@submit="doSubmit"
+		>
+			<template #step-0>
+				<view class="step">
+					<view class="field" @click="showElderSearch = true">
+						<text class="field__label">老人 <text class="field__required">*</text></text>
+						<view class="field__picker">
+							<text v-if="elder.name != ''" class="field__value">{{ elder.name }}</text>
+							<text v-else class="field__placeholder">点击选择老人</text>
+						</view>
+					</view>
+				</view>
+			</template>
+
+			<template #step-1>
+				<view class="step">
+					<view class="quick" @click="onContactQuickOpen">
+						<text class="quick__text">从该老人紧急联系人快速填充</text>
+					</view>
+
+					<view class="field">
+						<text class="field__label">陪同人姓名 <text class="field__required">*</text></text>
+						<input class="field__input" v-model="form.chaperone_name" placeholder="请输入姓名" />
+					</view>
+					<view class="field">
+						<text class="field__label">陪同人电话 <text class="field__required">*</text></text>
+						<input class="field__input" v-model="form.chaperone_phone" type="number" maxlength="11" placeholder="11 位手机号" />
+					</view>
+					<view class="field">
+						<text class="field__label">陪同人类型 <text class="field__required">*</text></text>
+						<view class="radio-row">
+							<view v-for="t in typeOptions" :key="t"
+								class="radio" :class="{ 'radio--active': form.chaperone_type == t }"
+								@click="form.chaperone_type = t">
+								<text>{{ t }}</text>
+							</view>
+						</view>
+					</view>
+					<view class="field">
+						<text class="field__label">外出时间 <text class="field__required">*</text></text>
+						<DateTimePicker v-model="form.outward_date" />
+					</view>
+					<view class="field">
+						<text class="field__label">计划返回时间 <text class="field__required">*</text></text>
+						<DateTimePicker v-model="form.plan_return_date" />
+					</view>
+				</view>
+			</template>
+		</WizardForm>
+
+		<ElderSearch :visible="showElderSearch" @update:visible="showElderSearch = $event" @select="onElderSelect" />
+
+		<ContactQuickFill
+			:visible="showContactQuick"
+			:elder-id="elder.id"
+			@update:visible="showContactQuick = $event"
+			@select="onContactSelect"
+		/>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { addOutward, OutwardForm } from '../../api/outward'
+
+	const current = ref(0)
+	const submitting = ref(false)
+	const showElderSearch = ref(false)
+	const showContactQuick = ref(false)
+
+	const elder = ref<{ id: number; name: string }>({ id: 0, name: '' })
+
+	const typeOptions = ['家属', '护工']
+
+	const form = ref<{
+		chaperone_name: string
+		chaperone_phone: string
+		chaperone_type: string
+		outward_date: string
+		plan_return_date: string
+	}>({
+		chaperone_name: '',
+		chaperone_phone: '',
+		chaperone_type: '家属',
+		outward_date: '',
+		plan_return_date: ''
+	})
+
+	function onStepChange(v: number) {
+		current.value = v
+	}
+
+	// 下一步：校验当前步通过后推进
+	function onNext() {
+		if (current.value == 0) {
+			if (elder.value.id == 0) {
+				uni.showToast({ title: '请选择老人', icon: 'none' })
+				return
+			}
+		}
+		current.value = current.value + 1
+	}
+
+	function onPrev() {
+		current.value = current.value - 1
+	}
+
+	function onElderSelect(item: any) {
+		elder.value = { id: item.id, name: item.name }
+	}
+
+	function onContactQuickOpen() {
+		if (elder.value.id == 0) {
+			uni.showToast({ title: '请先选择老人', icon: 'none' })
+			return
+		}
+		showContactQuick.value = true
+	}
+
+	function onContactSelect(c: { name: string; phone: string }) {
+		form.value.chaperone_name = c.name
+		form.value.chaperone_phone = c.phone
+		form.value.chaperone_type = '家属'
+		showContactQuick.value = false
+	}
+
+	function validateStep1(): boolean {
+		if (form.value.chaperone_name == '') {
+			uni.showToast({ title: '请输入陪同人姓名', icon: 'none' })
+			return false
+		}
+		if (form.value.chaperone_phone.length != 11) {
+			uni.showToast({ title: '请输入 11 位手机号', icon: 'none' })
+			return false
+		}
+		if (form.value.outward_date == '') {
+			uni.showToast({ title: '请选择外出时间', icon: 'none' })
+			return false
+		}
+		if (form.value.plan_return_date == '') {
+			uni.showToast({ title: '请选择计划返回时间', icon: 'none' })
+			return false
+		}
+		return true
+	}
+
+	async function doSubmit() {
+		if (!validateStep1()) {
+			return
+		}
+		submitting.value = true
+		try {
+			const payload: OutwardForm = {
+				elder_id: elder.value.id,
+				chaperone_name: form.value.chaperone_name,
+				chaperone_phone: form.value.chaperone_phone,
+				chaperone_type: form.value.chaperone_type,
+				outward_date: form.value.outward_date,
+				plan_return_date: form.value.plan_return_date
+			}
+			await addOutward(payload)
+			uni.showToast({ title: '登记成功', icon: 'success' })
+			setTimeout(() => uni.navigateBack(), 500)
+		} catch (e) {
+			// 已统一 toast
+		} finally {
+			submitting.value = false
+		}
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.step {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 16px;
+	}
+
+	.field {
+		flex-direction: column;
+		margin-bottom: 16px;
+	}
+
+	.field__label {
+		font-size: 14px;
+		color: #333333;
+		margin-bottom: 8px;
+	}
+
+	.field__required {
+		color: #DD524D;
+	}
+
+	.field__input {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		font-size: 15px;
+	}
+
+	.field__picker {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		justify-content: center;
+	}
+
+	.field__value {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.field__placeholder {
+		font-size: 15px;
+		color: #999999;
+	}
+
+	.quick {
+		height: 40px;
+		align-items: center;
+		justify-content: center;
+		background-color: #EAF3FF;
+		border-radius: 8px;
+		margin-bottom: 16px;
+	}
+
+	.quick__text {
+		font-size: 13px;
+		color: #007AFF;
+	}
+
+	.radio-row {
+		flex-direction: row;
+	}
+
+	.radio {
+		height: 36px;
+		padding: 0 20px;
+		margin-right: 12px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 18px;
+		background-color: #F5F6FA;
+	}
+
+	.radio text {
+		font-size: 14px;
+		color: #666666;
+	}
+
+	.radio--active {
+		background-color: #007AFF;
+	}
+
+	.radio--active text {
+		color: #FFFFFF;
+	}
+
+	.mask {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		justify-content: flex-end;
+		z-index: 999;
+	}
+
+	.panel {
+		height: 55%;
+		background-color: #FFFFFF;
+		border-top-left-radius: 16px;
+		border-top-right-radius: 16px;
+		flex-direction: column;
+	}
+
+	.panel__head {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 14px 16px;
+	}
+
+	.panel__title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.panel__close {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.panel__list {
+		flex: 1;
+	}
+
+	.panel__item {
+		flex-direction: row;
+		justify-content: space-between;
+		padding: 12px 16px;
+		border-bottom-width: 1px;
+		border-bottom-color: #F0F0F0;
+	}
+
+	.panel__name {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.panel__phone {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.panel__empty {
+		align-items: center;
+		padding-top: 40px;
+	}
+
+	.panel__empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+</style>

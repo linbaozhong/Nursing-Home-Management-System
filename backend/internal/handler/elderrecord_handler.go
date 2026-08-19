@@ -25,6 +25,9 @@ func (e *elderrecord) RegisterRoute(group ack.Party) {
 	_g.Get("/pageSearchEmergencyContactByKey", e.pageSearchEmergencyContactByKey)
 	_g.Get("/pageLabelByKey", e.pageLabelByKey)
 	_g.Post("/editElderLabel", e.editElderLabel)
+	_g.Post("/addEmergencyContact", e.addEmergencyContact)
+	_g.Post("/editEmergencyContact", e.editEmergencyContact)
+	_g.Post("/deleteEmergencyContact", e.deleteEmergencyContact)
 }
 
 // 分页查询老人记录
@@ -133,4 +136,19 @@ func (e *elderrecord) pageLabelByKey(ctx ack.Context) {
 // @Router /elderRecord/editElderLabel [post]
 func (e *elderrecord) editElderLabel(ctx ack.Context) {
 	ack.Post(ctx, service.ElderRecord.EditElderLabel)
+}
+
+// 新增紧急联系人
+func (e *elderrecord) addEmergencyContact(ctx ack.Context) {
+	ack.Post(ctx, service.ElderRecord.AddEmergencyContact)
+}
+
+// 编辑紧急联系人
+func (e *elderrecord) editEmergencyContact(ctx ack.Context) {
+	ack.Post(ctx, service.ElderRecord.EditEmergencyContact)
+}
+
+// 删除紧急联系人
+func (e *elderrecord) deleteEmergencyContact(ctx ack.Context) {
+	ack.Post(ctx, service.ElderRecord.DeleteEmergencyContact)
 }

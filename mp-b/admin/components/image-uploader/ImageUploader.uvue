@@ -1,0 +1,181 @@
+<template>
+	<view class="iu">
+		<view class="iu__list">
+			<view v-for="(url, i) in urls" :key="i" class="iu__item">
+				<image class="iu__img" :src="url" mode="aspectFill" @click="preview(i)" />
+				<view class="iu__del" @click="remove(i)">
+					<text>×</text>
+				</view>
+			</view>
+			<view v-if="urls.length < max" class="iu__add" @click="choose">
+				<text class="iu__add-icon">＋</text>
+				<text class="iu__add-text">上传</text>
+			</view>
+		</view>
+		<view v-if="uploading" class="iu__uploading">
+			<text>上传中...</text>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { post } from '../../utils/request'
+
+	/**
+	 * ImageUploader 图片上传
+	 * 契约见规格文档 §9.5：
+	 * - uni.chooseMedia 选图（最多 max 张）
+	 * - 转 base64 → POST /file/uploadImage { module, file }
+	 * - 返回 url 存 modelValue（多张用逗号拼接）
+	 */
+	const props = withDefaults(defineProps<{
+		modelValue?: string
+		max?: number
+		module?: string
+	}>(), {
+		modelValue: '',
+		max: 9,
+		module: 'accident'
+	})
+
+	const emit = defineEmits<{
+		(e: 'update:modelValue', value: string): void
+		(e: 'change', value: string): void
+	}>()
+
+	const uploading = ref(false)
+
+	// 当前图片 URL 数组
+	const urls = computed({
+		get: (): string[] => {
+			if (props.modelValue == '') {
+				return []
+			}
+			return props.modelValue.split(',')
+		},
+		set: (v: string[]) => {
+			const str = v.join(',')
+			emit('update:modelValue', str)
+			emit('change', str)
+		}
+	})
+
+	function choose() {
+		uni.chooseMedia({
+			count: props.max - urls.value.length,
+			mediaType: ['image'],
+			sourceType: ['album', 'camera'],
+			success: async (res) => {
+				const tempFiles = res.tempFiles
+				for (let i = 0; i < tempFiles.length; i++) {
+					await uploadOne(tempFiles[i].tempFilePath)
+				}
+			}
+		})
+	}
+
+	function uploadOne(filePath: string) {
+		uploading.value = true
+		return new Promise<void>((resolve) => {
+			// 读取为 base64
+			const fs = uni.getFileSystemManager()
+			const base64 = fs.readFileSync(filePath, 'base64')
+			post<{ id: number; url: string }>('/file/uploadImage', {
+				module: props.module,
+				file: 'data:image/jpeg;base64,' + base64
+			}).then((res) => {
+				const newUrls = urls.value.concat([res.url])
+				urls.value = newUrls
+				resolve()
+			}).catch(() => {
+				resolve()
+			}).finally(() => {
+				uploading.value = false
+			})
+		})
+	}
+
+	function remove(i: number) {
+		const arr = urls.value.slice()
+		arr.splice(i, 1)
+		urls.value = arr
+	}
+
+	function preview(i: number) {
+		uni.previewImage({
+			urls: urls.value,
+			current: i
+		})
+	}
+</script>
+
+<style scoped>
+	.iu__list {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
+	.iu__item {
+		width: 80px;
+		height: 80px;
+		margin-right: 10px;
+		margin-bottom: 10px;
+		position: relative;
+	}
+
+	.iu__img {
+		width: 80px;
+		height: 80px;
+		border-radius: 8px;
+	}
+
+	.iu__del {
+		position: absolute;
+		top: -6px;
+		right: -6px;
+		width: 20px;
+		height: 20px;
+		border-radius: 10px;
+		background-color: rgba(0, 0, 0, 0.6);
+		align-items: center;
+		justify-content: center;
+	}
+
+	.iu__del text {
+		color: #FFFFFF;
+		font-size: 14px;
+	}
+
+	.iu__add {
+		width: 80px;
+		height: 80px;
+		border-radius: 8px;
+		border-width: 1px;
+		border-color: #E5E6EB;
+		border-style: dashed;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		background-color: #FAFAFA;
+	}
+
+	.iu__add-icon {
+		font-size: 26px;
+		color: #CCCCCC;
+	}
+
+	.iu__add-text {
+		font-size: 12px;
+		color: #999999;
+		margin-top: 2px;
+	}
+
+	.iu__uploading {
+		margin-top: 4px;
+	}
+
+	.iu__uploading text {
+		font-size: 12px;
+		color: #999999;
+	}
+</style>

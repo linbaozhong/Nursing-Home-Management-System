@@ -1,0 +1,124 @@
+<template>
+	<view class="dtp">
+		<picker
+			class="dtp__picker"
+			mode="date"
+			:value="dateValue"
+			:disabled="disabled"
+			:start="start"
+			:end="end"
+			@change="onDateChange"
+		>
+			<view class="dtp__field">
+				<text class="dtp__value">{{ dateValue }}</text>
+			</view>
+		</picker>
+		<text class="dtp__colon"> </text>
+		<picker
+			class="dtp__picker"
+			mode="time"
+			:value="timeValue"
+			:disabled="disabled"
+			@change="onTimeChange"
+		>
+			<view class="dtp__field">
+				<text class="dtp__value">{{ timeValue }}</text>
+			</view>
+		</picker>
+	</div>
+</template>
+
+<script setup lang="uts">
+	/**
+	 * DateTimePicker 日期时间选择器
+	 * 基于原生 picker（date + time 两个字段），输出 "yyyy-MM-dd HH:mm"
+	 */
+	const props = withDefaults(defineProps<{
+		modelValue?: string
+		placeholder?: string
+		disabled?: boolean
+	}>(), {
+		modelValue: '',
+		placeholder: '请选择时间',
+		disabled: false
+	})
+
+	const emit = defineEmits<{
+		(e: 'update:modelValue', value: string): void
+		(e: 'change', value: string): void
+	}>()
+
+	function pad(n: number): string {
+		return n < 10 ? '0' + n : '' + n
+	}
+
+	function nowDate(): string {
+		const d = new Date()
+		return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())
+	}
+
+	function nowTime(): string {
+		const d = new Date()
+		return pad(d.getHours()) + ':' + pad(d.getMinutes())
+	}
+
+	const dateValue = computed((): string => {
+		if (props.modelValue != '' && props.modelValue.length >= 10) {
+			return props.modelValue.substring(0, 10)
+		}
+		return nowDate()
+	})
+
+	const timeValue = computed((): string => {
+		if (props.modelValue != '' && props.modelValue.length >= 16) {
+			return props.modelValue.substring(11, 16)
+		}
+		return nowTime()
+	})
+
+	function emitValue(date: string, time: string) {
+		const v = date + ' ' + time
+		emit('update:modelValue', v)
+		emit('change', v)
+	}
+
+	function onDateChange(e: UniPickerDateChangeEvent) {
+		const d = e.detail.value as string
+		emitValue(d, timeValue.value)
+	}
+
+	function onTimeChange(e: UniPickerTimeChangeEvent) {
+		const t = e.detail.value as string
+		emitValue(dateValue.value, t)
+	}
+</script>
+
+<style scoped>
+	.dtp {
+		flex-direction: row;
+		align-items: center;
+		height: 44px;
+		background-color: #F7F8FA;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.dtp__picker {
+		flex: 1;
+	}
+
+	.dtp__field {
+		height: 44px;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.dtp__value {
+		font-size: 14px;
+		color: #333333;
+	}
+
+	.dtp__colon {
+		color: #CCCCCC;
+	}
+</style>

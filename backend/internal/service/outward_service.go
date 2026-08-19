@@ -22,6 +22,7 @@ var Outward = &outward{}
 // PageOutwardByKey 分页查询外出登记（关联老人姓名）
 // 对应 Java: OutwardServiceImpl.pageOutwardByKey -> OutwardMapper.listOutwardByKey
 func (o *outward) PageOutwardByKey(ctx context.Context, in *dto.PageOutwardByKeyQuery, out *[]dto.PageOutwardByKeyVO) error {
+	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tbloutward.TableName).
 		RightJoin(tbloutward.ElderId, tblelder.Id).
 		Where(tbloutward.DelFlag.Eq(constant.YesNoNo))

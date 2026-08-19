@@ -23,6 +23,7 @@ var Visit = &visit{}
 // PageVisitByKey 分页查询来访登记（关联老人姓名）
 // 对应 Java: VisitServiceImpl.pageVisitByKey -> VisitFunc.listVisitByKey
 func (v *visit) PageVisitByKey(ctx context.Context, in *dto.PageVisitByKeyQuery, out *[]dto.PageVisitByKeyVO) error {
+	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblvisit.TableName).
 		LeftJoin(tblvisit.ElderId, tblelder.Id).
 		Where(tblvisit.DelFlag.Eq(constant.YesNoNo))

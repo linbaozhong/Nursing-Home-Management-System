@@ -1,0 +1,353 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'点餐'" />
+
+		<WizardForm
+			:steps="['老人与就餐', '选择菜品']"
+			:current="current"
+			:disabled="submitting"
+			@next="onNext"
+			@prev="onPrev"
+			@submit="doSubmit"
+		>
+			<template #step-0>
+				<view class="step">
+					<view class="field" @click="showElderSearch = true">
+						<text class="field__label">老人 <text class="field__required">*</text></text>
+						<view class="field__picker">
+							<text v-if="elder.name != ''" class="field__value">{{ elder.name }}</text>
+							<text v-else class="field__placeholder">点击选择老人</text>
+						</view>
+					</view>
+					<view class="field">
+						<text class="field__label">就餐时间 <text class="field__required">*</text></text>
+						<DateTimePicker v-model="form.dine_date" />
+					</view>
+					<view class="field">
+						<text class="field__label">就餐方式 <text class="field__required">*</text></text>
+						<view class="radio-row">
+							<view v-for="t in dineTypeOptions" :key="t"
+								class="radio" :class="{ 'radio--active': form.dine_type == t }"
+								@click="form.dine_type = t">
+								<text>{{ t }}</text>
+							</view>
+						</view>
+					</view>
+				</view>
+			</template>
+
+			<template #step-1>
+				<view class="step">
+					<view class="dish-head">
+						<text class="dish-head__label">已选菜品 <text class="field__required">*</text></text>
+						<text class="dish-head__action" @click="showDishPicker = true">添加菜品</text>
+					</view>
+					<view v-if="orderDishes.length > 0" v-for="(d, idx) in orderDishes" :key="d.dishes_id" class="dish-item">
+						<text class="dish-item__name">{{ d.dishes_name }}</text>
+						<text class="dish-item__num-text">x{{ d.order_num }}</text>
+					</view>
+					<view v-if="orderDishes.length == 0" class="dish-empty"><text>点击"添加菜品"选择</text></view>
+				</view>
+			</template>
+		</WizardForm>
+
+		<ElderSearch :visible="showElderSearch" @update:visible="showElderSearch = $event" @select="onElderSelect" />
+
+		<DishesPicker
+			:visible="showDishPicker"
+			v-model:model-value="orderDishes"
+			@update:visible="showDishPicker = $event"
+		/>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { addOrder } from '../../api/order'
+
+	const current = ref(0)
+	const submitting = ref(false)
+	const showElderSearch = ref(false)
+	const showDishPicker = ref(false)
+
+	const elder = ref<{ id: number; name: string }>({ id: 0, name: '' })
+	const dineTypeOptions = ['送餐', '堂食']
+
+	const form = ref<{
+		dine_date: string
+		dine_type: string
+	}>({
+		dine_date: '',
+		dine_type: '堂食'
+	})
+
+	interface OrderDish {
+		dishes_id: number
+		dishes_name: string
+		order_num: number
+	}
+	const orderDishes = ref<OrderDish[]>([])
+
+	function onElderSelect(item: any) {
+		elder.value = { id: item.id, name: item.name }
+	}
+
+	function onNext() {
+		if (current.value == 0) {
+			if (elder.value.id == 0) {
+				uni.showToast({ title: '请选择老人', icon: 'none' })
+				return
+			}
+			if (form.value.dine_date == '') {
+				uni.showToast({ title: '请选择就餐时间', icon: 'none' })
+				return
+			}
+		}
+		current.value = current.value + 1
+	}
+
+	function onPrev() {
+		current.value = current.value - 1
+	}
+
+	function validate(): boolean {
+		if (orderDishes.value.length == 0) {
+			uni.showToast({ title: '请至少选择一道菜品', icon: 'none' })
+			return false
+		}
+		return true
+	}
+
+	async function doSubmit() {
+		if (!validate()) {
+			return
+		}
+		submitting.value = true
+		try {
+			await addOrder({
+				elder_id: elder.value.id,
+				dine_date: form.value.dine_date,
+				dine_type: form.value.dine_type,
+				order_dishes_list: orderDishes.value.map((x) => ({
+					dishes_id: x.dishes_id,
+					order_num: x.order_num
+				}))
+			})
+			uni.showToast({ title: '下单成功', icon: 'success' })
+			setTimeout(() => uni.navigateBack(), 500)
+		} catch (e) {
+			// 已统一 toast
+		} finally {
+			submitting.value = false
+		}
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.step {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 16px;
+	}
+
+	.field {
+		flex-direction: column;
+		margin-bottom: 16px;
+	}
+
+	.field__label {
+		font-size: 14px;
+		color: #333333;
+		margin-bottom: 8px;
+	}
+
+	.field__required {
+		color: #DD524D;
+	}
+
+	.field__picker {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		justify-content: center;
+	}
+
+	.field__value {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.field__placeholder {
+		font-size: 15px;
+		color: #999999;
+	}
+
+	.radio-row {
+		flex-direction: row;
+	}
+
+	.radio {
+		height: 36px;
+		padding: 0 20px;
+		margin-right: 12px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 18px;
+		background-color: #F5F6FA;
+	}
+
+	.radio text {
+		font-size: 14px;
+		color: #666666;
+	}
+
+	.radio--active {
+		background-color: #007AFF;
+	}
+
+	.radio--active text {
+		color: #FFFFFF;
+	}
+
+	.dish-head {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 12px;
+	}
+
+	.dish-head__label {
+		font-size: 14px;
+		color: #333333;
+	}
+
+	.dish-head__action {
+		font-size: 14px;
+		color: #007AFF;
+	}
+
+	.dish-item {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px 0;
+		border-bottom-width: 1px;
+		border-bottom-color: #F0F0F0;
+	}
+
+	.dish-item__name {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.dish-item__num {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.num-btn {
+		width: 32px;
+		height: 32px;
+		border-radius: 6px;
+		background-color: #F5F6FA;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.num-btn text {
+		font-size: 16px;
+		color: #007AFF;
+	}
+
+	.num-value {
+		width: 44px;
+		text-align: center;
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.dish-empty {
+		align-items: center;
+		padding-top: 30px;
+	}
+
+	.dish-empty text {
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.mask {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		justify-content: flex-end;
+		z-index: 999;
+	}
+
+	.panel {
+		height: 60%;
+		background-color: #FFFFFF;
+		border-top-left-radius: 16px;
+		border-top-right-radius: 16px;
+		flex-direction: column;
+	}
+
+	.panel__head {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 14px 16px;
+	}
+
+	.panel__title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.panel__close {
+		font-size: 14px;
+		color: #007AFF;
+	}
+
+	.panel__list {
+		flex: 1;
+	}
+
+	.dish-cell {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 12px 16px;
+		border-bottom-width: 1px;
+		border-bottom-color: #F0F0F0;
+	}
+
+	.dish-cell__name {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.dish-cell__price {
+		font-size: 14px;
+		color: #DD524D;
+	}
+
+	.panel__empty {
+		align-items: center;
+		padding-top: 40px;
+	}
+
+	.panel__empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+</style>

@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // ============ CheckContractController 请求 ============
 
@@ -17,17 +20,17 @@ type PageCheckContractByKeyQuery struct {
 // @request
 // OperateCheckContractQuery 操作入住签约请求
 type OperateCheckContractQuery struct {
-	ID                        *int64                         `json:"id"`                                                    // id
-	NursingGradeID            *int64                         `json:"nursing_grade_id" valid:"required"`                     // 护理等级编号
-	CateringSetID             *int64                         `json:"catering_set_id" valid:"required"`                      // 餐饮套餐编号
-	BedID                     *int64                         `json:"bed_id" valid:"required"`                               // 床位编号
+	ID                        *types.BigInt                  `json:"id"`                                                    // id
+	NursingGradeID            *types.BigInt                  `json:"nursing_grade_id" valid:"required"`                     // 护理等级编号
+	CateringSetID             *types.BigInt                  `json:"catering_set_id" valid:"required"`                      // 餐饮套餐编号
+	BedID                     *types.BigInt                  `json:"bed_id" valid:"required"`                               // 床位编号
 	Name                      *string                        `json:"name" valid:"required"`                                 // 姓名
 	IDNum                     *string                        `json:"id_num" valid:"required"`                               // 身份证号
 	Age                       *int                           `json:"age" valid:"required"`                                  // 年龄
 	Sex                       *string                        `json:"sex" valid:"required"`                                  // 性别
 	Phone                     *string                        `json:"phone" valid:"required"`                                // 电话
 	Address                   *string                        `json:"address" valid:"required"`                              // 地址
-	StaffID                   *int64                         `json:"staff_id" valid:"required"`                             // 营销人员编号
+	StaffID                   *types.BigInt                  `json:"staff_id" valid:"required"`                             // 营销人员编号
 	SignDate                  *time.Time                     `json:"sign_date" valid:"required"`                            // 合同签订日期
 	StartDate                 *time.Time                     `json:"start_date" valid:"required"`                           // 合同开始日期
 	EndDate                   *time.Time                     `json:"end_date" valid:"required"`                             // 合同结束日期

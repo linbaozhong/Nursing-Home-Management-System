@@ -1,0 +1,268 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'来访登记'" />
+
+		<WizardForm
+			:steps="['选择老人', '来访者信息']"
+			:current="current"
+			:disabled="submitting"
+			@next="onNext"
+			@prev="onPrev"
+			@submit="doSubmit"
+		>
+			<template #step-0>
+				<view class="step">
+					<view class="field" @click="showElderSearch = true">
+						<text class="field__label">老人 <text class="field__required">*</text></text>
+						<view class="field__picker">
+							<text v-if="elder.name != ''" class="field__value">{{ elder.name }}</text>
+							<text v-else class="field__placeholder">点击选择老人</text>
+						</view>
+					</view>
+				</view>
+			</template>
+
+			<template #step-1>
+				<view class="step">
+					<view class="field">
+						<text class="field__label">来访者姓名 <text class="field__required">*</text></text>
+						<input class="field__input" v-model="form.name" placeholder="请输入姓名" />
+					</view>
+					<view class="field">
+						<text class="field__label">来访者电话 <text class="field__required">*</text></text>
+						<input class="field__input" v-model="form.phone" type="number" maxlength="11" placeholder="11 位手机号" />
+					</view>
+					<view class="field">
+						<text class="field__label">与老人关系 <text class="field__required">*</text></text>
+						<input class="field__input" v-model="form.relation" placeholder="儿子/女儿/护工等" />
+					</view>
+					<view class="field">
+						<text class="field__label">来访时间 <text class="field__required">*</text></text>
+						<DateTimePicker v-model="form.visit_date" />
+					</view>
+					<view class="field">
+						<text class="field__label">来访人数 <text class="field__required">*</text></text>
+						<view class="num-row">
+							<view class="num-btn" @click="changeNum(-1)">
+								<text>−</text>
+							</view>
+							<text class="num-value">{{ form.visit_num }}</text>
+							<view class="num-btn" @click="changeNum(1)">
+								<text>＋</text>
+							</view>
+						</view>
+					</view>
+				</view>
+			</template>
+		</WizardForm>
+
+		<ElderSearch :visible="showElderSearch" @update:visible="showElderSearch = $event" @select="onElderSelect" />
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onLoad } from '@dcloudio/uni-app'
+	import { addVisit, editVisit, getVisitById, VisitForm } from '../../api/visit'
+
+	const current = ref(0)
+	const submitting = ref(false)
+	const showElderSearch = ref(false)
+	const isEdit = ref(false)
+	let currentId = 0
+
+	const elder = ref<{ id: number; name: string }>({ id: 0, name: '' })
+
+	const form = ref<{
+		name: string
+		phone: string
+		relation: string
+		visit_date: string
+		visit_num: number
+	}>({
+		name: '',
+		phone: '',
+		relation: '',
+		visit_date: '',
+		visit_num: 1
+	})
+
+	onLoad((options) => {
+		const id = Number(options?.id)
+		if (id > 0) {
+			isEdit.value = true
+			currentId = id
+			loadData(id)
+		}
+	})
+
+	async function loadData(id: number) {
+		try {
+			const res = await getVisitById(id)
+			elder.value = { id: 0, name: res.elder_name }
+			form.value.name = res.visit_name
+			form.value.phone = res.visit_phone
+			form.value.relation = res.relation
+			form.value.visit_date = res.visit_date
+			form.value.visit_num = Number(res.visit_num)
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function onElderSelect(item: any) {
+		elder.value = { id: item.id, name: item.name }
+	}
+
+	function onNext() {
+		if (current.value == 0) {
+			if (elder.value.id == 0) {
+				uni.showToast({ title: '请选择老人', icon: 'none' })
+				return
+			}
+		}
+		current.value = current.value + 1
+	}
+
+	function onPrev() {
+		current.value = current.value - 1
+	}
+
+	function changeNum(delta: number) {
+		let v = form.value.visit_num + delta
+		if (v < 1) {
+			v = 1
+		}
+		if (v > 20) {
+			v = 20
+		}
+		form.value.visit_num = v
+	}
+
+	function validate(): boolean {
+		if (form.value.name == '') {
+			uni.showToast({ title: '请输入来访者姓名', icon: 'none' })
+			return false
+		}
+		if (form.value.phone.length != 11) {
+			uni.showToast({ title: '请输入 11 位手机号', icon: 'none' })
+			return false
+		}
+		if (form.value.relation == '') {
+			uni.showToast({ title: '请输入与老人关系', icon: 'none' })
+			return false
+		}
+		if (form.value.visit_date == '') {
+			uni.showToast({ title: '请选择来访时间', icon: 'none' })
+			return false
+		}
+		return true
+	}
+
+	async function doSubmit() {
+		if (!validate()) {
+			return
+		}
+		submitting.value = true
+		try {
+			const payload: VisitForm = {
+				elder_id: elder.value.id,
+				name: form.value.name,
+				phone: form.value.phone,
+				relation: form.value.relation,
+				visit_date: form.value.visit_date,
+				visit_num: form.value.visit_num
+			}
+			if (isEdit.value) {
+				await editVisit({ ...payload, id: currentId })
+			} else {
+				await addVisit(payload)
+			}
+			uni.showToast({ title: '保存成功', icon: 'success' })
+			setTimeout(() => uni.navigateBack(), 500)
+		} catch (e) {
+			// 已统一 toast
+		} finally {
+			submitting.value = false
+		}
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.step {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 16px;
+	}
+
+	.field {
+		flex-direction: column;
+		margin-bottom: 16px;
+	}
+
+	.field__label {
+		font-size: 14px;
+		color: #333333;
+		margin-bottom: 8px;
+	}
+
+	.field__required {
+		color: #DD524D;
+	}
+
+	.field__input {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		font-size: 15px;
+	}
+
+	.field__picker {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		justify-content: center;
+	}
+
+	.field__value {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.field__placeholder {
+		font-size: 15px;
+		color: #999999;
+	}
+
+	.num-row {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.num-btn {
+		width: 40px;
+		height: 40px;
+		border-radius: 8px;
+		background-color: #F5F6FA;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.num-btn text {
+		font-size: 18px;
+		color: #007AFF;
+	}
+
+	.num-value {
+		width: 60px;
+		text-align: center;
+		font-size: 16px;
+		color: #333333;
+	}
+</style>

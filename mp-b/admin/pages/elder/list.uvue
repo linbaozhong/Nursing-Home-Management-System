@@ -1,0 +1,246 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'长者档案'" />
+
+		<view class="search-bar">
+			<input
+				class="search-input"
+				v-model="keyword"
+				placeholder="搜索姓名 / 身份证号"
+				confirm-type="search"
+				@confirm="onSearch"
+			/>
+		</view>
+
+		<view class="filter-bar">
+			<view
+				v-for="s in sexOptions"
+				:key="s.value"
+				class="filter-item"
+				:class="{ 'filter-item--active': sex == s.value }"
+				@click="onSexChange(s.value)"
+			>
+				<text>{{ s.label }}</text>
+			</view>
+		</view>
+
+		<scroll-view class="list" scroll-y :show-scrollbar="false">
+			<view v-for="item in filteredList" :key="item.id" class="card" @click="goDetail(item)">
+				<view class="card__head">
+					<text class="card__name">{{ item.name }}</text>
+					<text class="card__meta">{{ item.sex }} · {{ item.age }}岁</text>
+					<StatusTag :text="checkFlagText(item.check_flag)" :type="checkFlagType(item.check_flag)" />
+				</view>
+				<view class="card__sub">
+					<text class="card__bed">{{ item.bed_name }}</text>
+					<text class="card__phone">{{ maskPhone(item.phone) }}</text>
+				</view>
+			</view>
+
+			<view v-if="filteredList.length == 0 && !loading" class="empty">
+				<text>暂无长者记录</text>
+			</view>
+		</scroll-view>
+
+		<uni-fab-button class="fab" plus-class="fab__plus" @click="goAdd" />
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onShow } from '@dcloudio/uni-app'
+	import { pageElderByKey, ElderItem } from '../../api/elder'
+	import { maskPhone } from '../../utils/util'
+	import { isLogin } from '../../utils/auth'
+
+	const keyword = ref('')
+	const sex = ref('')
+	const loading = ref(false)
+	const list = ref<ElderItem[]>([])
+
+	const sexOptions = [
+		{ label: '全部', value: '' },
+		{ label: '男', value: '男' },
+		{ label: '女', value: '女' }
+	]
+
+	onShow(() => {
+		if (!isLogin()) {
+			uni.reLaunch({ url: '/pages/login/login' })
+			return
+		}
+		loadData()
+	})
+
+	async function loadData() {
+		loading.value = true
+		try {
+			const res = await pageElderByKey()
+			list.value = res.list
+		} finally {
+			loading.value = false
+		}
+	}
+
+	const filteredList = computed((): ElderItem[] => {
+		let items = list.value
+		const kw = keyword.value.trim()
+		if (kw != '') {
+			items = items.filter((it) => {
+				return it.name.indexOf(kw) >= 0 || it.id_num.indexOf(kw) >= 0
+			})
+		}
+		if (sex.value != '') {
+			items = items.filter((it) => it.sex == sex.value)
+		}
+		return items
+	})
+
+	function onSearch() {
+		// 本地过滤由 computed 完成
+	}
+
+	function onSexChange(v: string) {
+		sex.value = v
+	}
+
+	function checkFlagText(flag: string): string {
+		if (flag == '1') {
+			return '入住中'
+		}
+		return '未入住'
+	}
+
+	function checkFlagType(flag: string): 'success' | 'default' {
+		return flag == '1' ? 'success' : 'default'
+	}
+
+	function goDetail(item: ElderItem) {
+		uni.navigateTo({ url: '/pages/elder/detail?id=' + item.id })
+	}
+
+	function goAdd() {
+		uni.navigateTo({ url: '/pages/elder/edit' })
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.search-bar {
+		padding-left: 16px;
+		padding-right: 16px;
+		padding-top: 10px;
+	}
+
+	.search-input {
+		height: 38px;
+		background-color: #FFFFFF;
+		border-radius: 19px;
+		padding-left: 14px;
+		font-size: 14px;
+	}
+
+	.filter-bar {
+		flex-direction: row;
+		padding-left: 16px;
+		padding-right: 16px;
+		padding-top: 10px;
+		padding-bottom: 6px;
+	}
+
+	.filter-item {
+		margin-right: 18px;
+		height: 30px;
+		align-items: center;
+		justify-content: center;
+		padding-left: 12px;
+		padding-right: 12px;
+		border-radius: 15px;
+		background-color: #FFFFFF;
+	}
+
+	.filter-item text {
+		font-size: 13px;
+		color: #666666;
+	}
+
+	.filter-item--active {
+		background-color: #007AFF;
+	}
+
+	.filter-item--active text {
+		color: #FFFFFF;
+	}
+
+	.list {
+		flex: 1;
+		padding-left: 16px;
+		padding-right: 16px;
+		margin-top: 6px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__head {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.card__name {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.card__meta {
+		margin-left: 8px;
+		margin-right: auto;
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.card__sub {
+		margin-top: 8px;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.card__bed {
+		font-size: 13px;
+		color: #666666;
+	}
+
+	.card__phone {
+		margin-left: auto;
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.empty {
+		align-items: center;
+		padding-top: 60px;
+	}
+
+	.empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.fab {
+		position: fixed;
+		right: 20px;
+		bottom: 40px;
+	}
+
+	.fab__plus {
+		background-color: #007AFF;
+	}
+</style>

@@ -1,0 +1,471 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'长者详情'" />
+
+		<scroll-view class="body" scroll-y :show-scrollbar="false">
+			<view class="card">
+				<view class="card__head">
+					<text class="card__name">{{ data.name }}</text>
+					<text class="card__meta">{{ data.sex }} · {{ data.age }}岁</text>
+				</view>
+				<view class="card__row">
+					<text class="card__label">身份证</text>
+					<text class="card__value">{{ data.id_num }}</text>
+				</view>
+				<view class="card__row">
+					<text class="card__label">电话</text>
+					<text class="card__value">{{ data.phone }}</text>
+				</view>
+				<view class="card__row">
+					<text class="card__label">地址</text>
+					<text class="card__value">{{ data.address }}</text>
+				</view>
+			</view>
+
+			<view class="card">
+				<text class="card__title">床位</text>
+				<view v-if="data.elder_bed_by_id_vo != null" class="card__row">
+					<text class="card__label">房间</text>
+					<text class="card__value">{{ data.elder_bed_by_id_vo.bed_name }}({{ data.elder_bed_by_id_vo.room_type }})</text>
+				</view>
+				<view v-else class="card__empty"><text>暂无床位</text></view>
+			</view>
+
+			<view class="card">
+				<view class="card__head">
+					<text class="card__title">紧急联系人</text>
+					<text class="card__action" @click="openContactManager">管理</text>
+				</view>
+				<view v-if="contacts.length > 0" v-for="c in contacts" :key="c.id" class="contact">
+					<view class="card__row">
+						<text class="card__label">{{ c.name }}</text>
+						<text class="card__value">{{ c.phone }}</text>
+					</view>
+					<text class="contact__relation">{{ c.relation }}</text>
+				</view>
+				<view v-else class="card__empty"><text>暂无紧急联系人</text></view>
+			</view>
+
+			<button class="edit-btn" @click="goEditForm">编辑档案</button>
+		</scroll-view>
+
+		<!-- 联系人管理弹层 -->
+		<view v-if="showManager" class="mask" @click="showManager = false">
+			<view class="panel" @click.stop>
+				<view class="panel__head">
+					<text class="panel__title">紧急联系人</text>
+					<text class="panel__close" @click="showManager = false">关闭</text>
+				</view>
+				<scroll-view class="panel__list" scroll-y>
+					<view v-for="c in contacts" :key="c.id" class="m-item">
+						<view class="m-item__info">
+							<text class="m-item__name">{{ c.name }}</text>
+							<text class="m-item__phone">{{ c.phone }}</text>
+							<text class="m-item__relation">{{ c.relation }}</text>
+						</view>
+						<view class="m-item__ops">
+							<text class="m-item__edit" @click="openEditForm(c)">编辑</text>
+							<text class="m-item__del" @click="doDeleteContact(c)">删除</text>
+						</view>
+					</view>
+					<view v-if="contacts.length == 0" class="panel__empty"><text>暂无紧急联系人</text></view>
+				</scroll-view>
+				<view class="panel__add" @click="openAddForm">
+					<text>＋ 新增联系人</text>
+				</view>
+			</view>
+		</view>
+
+		<!-- 联系人编辑表单弹层 -->
+		<view v-if="showForm" class="mask" @click="showForm = false">
+			<view class="panel" @click.stop>
+				<view class="panel__head">
+					<text class="panel__title">{{ form.id > 0 ? '编辑联系人' : '新增联系人' }}</text>
+					<text class="panel__close" @click="showForm = false">关闭</text>
+				</view>
+				<view class="form">
+					<view class="field">
+						<text class="field__label">姓名 <text class="field__required">*</text></text>
+						<input class="field__input" v-model="form.name" placeholder="联系人姓名" />
+					</view>
+					<view class="field">
+						<text class="field__label">电话 <text class="field__required">*</text></text>
+						<input class="field__input" v-model="form.phone" type="number" maxlength="11" placeholder="11 位手机号" />
+					</view>
+					<view class="field">
+						<text class="field__label">关系</text>
+						<input class="field__input" v-model="form.relation" placeholder="如：儿子/女儿" />
+					</view>
+					<view class="form__submit" @click="doSaveContact">
+						<text>保存</text>
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onLoad } from '@dcloudio/uni-app'
+	import { getElderRecordById, pageSearchEmergencyContactByKey, addEmergencyContact, editEmergencyContact, deleteEmergencyContact, EmergencyContact } from '../../api/elder'
+
+	const data = ref<any>({})
+	const contacts = ref<EmergencyContact[]>([])
+	let currentId = 0
+
+	// 联系人管理
+	const showManager = ref(false)
+	const showForm = ref(false)
+	const form = ref<{ id: number; name: string; phone: string; relation: string }>({
+		id: 0,
+		name: '',
+		phone: '',
+		relation: ''
+	})
+
+	onLoad((options) => {
+		const id = Number(options?.id)
+		if (id > 0) {
+			currentId = id
+			loadData(id)
+		}
+	})
+
+	async function loadData(id: number) {
+		try {
+			const res = await getElderRecordById(id)
+			data.value = res
+			contacts.value = res.elder_emergency_contact_by_id_vo_list || []
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	// 打开管理弹层，加载该老人紧急联系人
+	async function openContactManager() {
+		showManager.value = true
+		try {
+			const res = await pageSearchEmergencyContactByKey(currentId)
+			contacts.value = res.list
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function openAddForm() {
+		form.value = { id: 0, name: '', phone: '', relation: '' }
+		showForm.value = true
+	}
+
+	function openEditForm(c: EmergencyContact) {
+		form.value = { id: c.id, name: c.name, phone: c.phone, relation: c.relation }
+		showForm.value = true
+	}
+
+	function doSaveContact() {
+		if (form.value.name == '') {
+			uni.showToast({ title: '请输入姓名', icon: 'none' })
+			return
+		}
+		if (form.value.phone.length != 11) {
+			uni.showToast({ title: '请输入 11 位手机号', icon: 'none' })
+			return
+		}
+		if (form.value.id > 0) {
+			editEmergencyContact({
+				id: form.value.id,
+				name: form.value.name,
+				phone: form.value.phone,
+				relation: form.value.relation
+			}).then(() => {
+				uni.showToast({ title: '已更新', icon: 'success' })
+				showForm.value = false
+				refreshContacts()
+			})
+		} else {
+			addEmergencyContact({
+				elder_id: currentId,
+				name: form.value.name,
+				phone: form.value.phone,
+				relation: form.value.relation
+			}).then(() => {
+				uni.showToast({ title: '已添加', icon: 'success' })
+				showForm.value = false
+				refreshContacts()
+			})
+		}
+	}
+
+	function doDeleteContact(c: EmergencyContact) {
+		uni.showModal({
+			title: '删除联系人',
+			content: '确认删除 ' + c.name + ' ？',
+			success: (res) => {
+				if (res.confirm) {
+					deleteEmergencyContact(c.id).then(() => {
+						uni.showToast({ title: '已删除', icon: 'success' })
+						refreshContacts()
+					})
+				}
+			}
+		})
+	}
+
+	function refreshContacts() {
+		pageSearchEmergencyContactByKey(currentId).then((res) => {
+			contacts.value = res.list
+		})
+	}
+
+	function goEditForm() {
+		uni.navigateTo({ url: '/pages/elder/edit?id=' + currentId })
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.body {
+		flex: 1;
+		padding: 10px 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__head {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 10px;
+	}
+
+	.card__name {
+		font-size: 18px;
+		font-weight: 700;
+		color: #333333;
+	}
+
+	.card__meta {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.card__title {
+		font-size: 15px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.card__action {
+		font-size: 14px;
+		color: #007AFF;
+	}
+
+	.card__row {
+		flex-direction: row;
+		align-items: center;
+		margin-top: 8px;
+	}
+
+	.card__label {
+		width: 70px;
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.card__value {
+		flex: 1;
+		font-size: 14px;
+		color: #333333;
+	}
+
+	.card__empty {
+		margin-top: 8px;
+	}
+
+	.card__empty text {
+		font-size: 13px;
+		color: #CCCCCC;
+	}
+
+	.contact {
+		border-top-width: 1px;
+		border-top-color: #F0F0F0;
+	}
+
+	.contact__relation {
+		margin-top: 4px;
+		margin-left: 70px;
+		font-size: 12px;
+		color: #999999;
+	}
+
+	.edit-btn {
+		margin-top: 20px;
+		height: 46px;
+		border-radius: 23px;
+		background-color: #007AFF;
+		color: #FFFFFF;
+		font-size: 15px;
+	}
+
+	.mask {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		justify-content: flex-end;
+		z-index: 999;
+	}
+
+	.panel {
+		height: 60%;
+		background-color: #FFFFFF;
+		border-top-left-radius: 16px;
+		border-top-right-radius: 16px;
+		flex-direction: column;
+		padding-top: 14px;
+	}
+
+	.panel__head {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0 16px 12px 16px;
+	}
+
+	.panel__title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.panel__close {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.panel__list {
+		flex: 1;
+	}
+
+	.panel__add {
+		height: 50px;
+		align-items: center;
+		justify-content: center;
+		border-top-width: 1px;
+		border-top-color: #F0F0F0;
+	}
+
+	.panel__add text {
+		font-size: 15px;
+		color: #007AFF;
+	}
+
+	.panel__empty {
+		align-items: center;
+		padding-top: 40px;
+	}
+
+	.panel__empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.m-item {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		padding: 12px 16px;
+		border-bottom-width: 1px;
+		border-bottom-color: #F0F0F0;
+	}
+
+	.m-item__info {
+		flex-direction: column;
+	}
+
+	.m-item__name {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.m-item__phone {
+		margin-top: 2px;
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.m-item__relation {
+		margin-top: 2px;
+		font-size: 12px;
+		color: #CCCCCC;
+	}
+
+	.m-item__ops {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.m-item__edit {
+		margin-right: 16px;
+		font-size: 14px;
+		color: #007AFF;
+	}
+
+	.m-item__del {
+		font-size: 14px;
+		color: #DD524D;
+	}
+
+	.form {
+		padding: 8px 16px 16px 16px;
+	}
+
+	.field {
+		flex-direction: column;
+		margin-bottom: 14px;
+	}
+
+	.field__label {
+		font-size: 14px;
+		color: #333333;
+		margin-bottom: 6px;
+	}
+
+	.field__required {
+		color: #DD524D;
+	}
+
+	.field__input {
+		height: 42px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		font-size: 15px;
+	}
+
+	.form__submit {
+		height: 44px;
+		border-radius: 22px;
+		background-color: #007AFF;
+		align-items: center;
+		justify-content: center;
+		margin-top: 8px;
+	}
+
+	.form__submit text {
+		font-size: 15px;
+		color: #FFFFFF;
+	}
+</style>

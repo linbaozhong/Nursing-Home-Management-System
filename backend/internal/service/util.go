@@ -1,20 +1,17 @@
 package service
 
-// 公共辅助函数：service 包内多个文件共享，避免重复定义
+// clampPage 统一校正分页参数：页数最小 1；每页上限 PageSizeMax，避免移动端全量加载时超界
+// 移动端取消分页，默认取 PageSizeMax 条全量后在本地过滤。
+const PageSizeMax = 200
 
-// func int64Ptr(v int64) *int64       { return &v }
-// func int8Ptr(v int8) *int8          { return &v }
-// func intPtr(v int) *int             { return &v }
-// func float64Ptr(v float64) *float64 { return &v }
-// func strPtr(v string) *string       { return &v }
-//
-// func parseTime(layout, value string) (time.Time, error) {
-// 	return time.ParseInLocation(layout, value, time.Local)
-// }
-//
-// func timeFormat(t types.Time) string {
-// 	if t.IsZero() {
-// 		return ""
-// 	}
-// 	return t.String()
-// }
+func clampPage(pageNum, pageSize *int) {
+	if pageNum == nil || *pageNum < 1 {
+		*pageNum = 1
+	}
+	if pageSize == nil || *pageSize < 1 {
+		*pageSize = PageSizeMax
+	}
+	if *pageSize > PageSizeMax {
+		*pageSize = PageSizeMax
+	}
+}

@@ -1,0 +1,202 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'来访详情'" />
+
+		<scroll-view class="body" scroll-y :show-scrollbar="false">
+			<view class="card">
+				<view class="card__head">
+					<text class="card__name">{{ data.elder_name }}</text>
+					<StatusTag :text="flagText()" :type="flagType()" />
+				</view>
+				<view class="card__row">
+					<text class="card__label">来访者</text>
+					<text class="card__value">{{ data.visit_name }}({{ data.relation }})</text>
+				</view>
+				<view class="card__row">
+					<text class="card__label">电话</text>
+					<text class="card__value">{{ data.visit_phone }}</text>
+				</view>
+				<view class="card__row">
+					<text class="card__label">人数</text>
+					<text class="card__value">x{{ data.visit_num }}</text>
+				</view>
+				<view class="card__row">
+					<text class="card__label">来访时间</text>
+					<text class="card__value">{{ fmt(data.visit_date) }}</text>
+				</view>
+			</view>
+
+			<view class="actions">
+				<view v-if="!isLeft()" class="action action--success" @click="doLeave">
+					<text>登记离开</text>
+				</view>
+				<view v-if="!isLeft()" class="action action--primary" @click="goEdit">
+					<text>编辑</text>
+				</view>
+				<view class="action action--danger" @click="doDelete">
+					<text>删除</text>
+				</view>
+			</view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onLoad } from '@dcloudio/uni-app'
+	import { getVisitById, recordLeave, deleteVisit } from '../../api/visit'
+	import { parseTime, formatShortTime, formatDateTime } from '../../utils/util'
+
+	const data = ref<any>({})
+	let currentId = 0
+
+	onLoad((options) => {
+		const id = Number(options?.id)
+		if (id > 0) {
+			currentId = id
+			loadData(id)
+		}
+	})
+
+	async function loadData(id: number) {
+		try {
+			const res = await getVisitById(id)
+			data.value = res
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function fmt(s: string): string {
+		const d = parseTime(s)
+		return d ? formatShortTime(d) : ''
+	}
+
+	function isLeft(): boolean {
+		return Number(data.value.visit_flag) == 1
+	}
+
+	function flagText(): string {
+		return isLeft() ? '已离开' : '在院'
+	}
+
+	function flagType(): 'default' | 'success' {
+		return isLeft() ? 'default' : 'success'
+	}
+
+	function doLeave() {
+		uni.showModal({
+			title: '登记离开',
+			content: '确认该来访者已离开？',
+			success: async (res) => {
+				if (res.confirm) {
+					try {
+						await recordLeave(currentId, formatDateTime(new Date()))
+						uni.showToast({ title: '已登记', icon: 'success' })
+						loadData(currentId)
+					} catch (e) { }
+				}
+			}
+		})
+	}
+
+	function goEdit() {
+		uni.navigateTo({ url: '/pages/visitor/edit?id=' + currentId })
+	}
+
+	function doDelete() {
+		uni.showModal({
+			title: '删除',
+			content: '确认删除该来访记录？',
+			success: async (res) => {
+				if (res.confirm) {
+					try {
+						await deleteVisit(currentId)
+						uni.showToast({ title: '已删除', icon: 'success' })
+						setTimeout(() => uni.navigateBack(), 500)
+					} catch (e) { }
+				}
+			}
+		})
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.body {
+		flex: 1;
+		padding: 10px 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__head {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 10px;
+	}
+
+	.card__name {
+		font-size: 18px;
+		font-weight: 700;
+		color: #333333;
+	}
+
+	.card__row {
+		flex-direction: row;
+		align-items: center;
+		margin-top: 8px;
+	}
+
+	.card__label {
+		width: 80px;
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.card__value {
+		flex: 1;
+		font-size: 14px;
+		color: #333333;
+	}
+
+	.actions {
+		flex-direction: row;
+		margin-bottom: 12px;
+	}
+
+	.action {
+		flex: 1;
+		height: 44px;
+		border-radius: 22px;
+		align-items: center;
+		justify-content: center;
+		margin: 0 6px;
+	}
+
+	.action text {
+		font-size: 15px;
+		color: #FFFFFF;
+	}
+
+	.action--primary {
+		background-color: #007AFF;
+	}
+
+	.action--success {
+		background-color: #4CD964;
+	}
+
+	.action--danger {
+		background-color: #DD524D;
+	}
+</style>

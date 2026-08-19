@@ -1,0 +1,140 @@
+<template>
+	<view v-if="visible" class="cqf-mask" @click="close">
+		<view class="cqf-panel" @click.stop>
+			<view class="cqf-header">
+				<text class="cqf-title">紧急联系人</text>
+				<text class="cqf-cancel" @click="close">关闭</text>
+			</view>
+			<scroll-view class="cqf-list" scroll-y>
+				<view v-for="c in list" :key="c.id" class="cqf-item" @click="onSelect(c)">
+					<text class="cqf-item__name">{{ c.name }}</text>
+					<text class="cqf-item__phone">{{ c.phone }}</text>
+				</view>
+				<view v-if="list.length == 0" class="cqf-empty"><text>暂无紧急联系人</text></view>
+			</scroll-view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { pageSearchEmergencyContactByKey, EmergencyContact } from '../../api/elder'
+
+	/**
+	 * ContactQuickFill 紧急联系人快捷填充（半屏弹层）
+	 * 契约见规格文档 §9.8：
+	 * - 传入 elderId，加载该老人紧急联系人
+	 * - 选中回调 contact { name, phone }
+	 */
+	const props = withDefaults(defineProps<{
+		visible: boolean
+		elderId: number
+	}>(), {
+		visible: false,
+		elderId: 0
+	})
+
+	const emit = defineEmits<{
+		(e: 'update:visible', value: boolean): void
+		(e: 'select', value: { name: string; phone: string }): void
+		(e: 'close'): void
+	}>()
+
+	const list = ref<EmergencyContact[]>([])
+
+	watch(() => props.visible, (v: boolean) => {
+		if (v && props.elderId > 0 && list.value.length == 0) {
+			load()
+		}
+	})
+
+	async function load() {
+		try {
+			const res = await pageSearchEmergencyContactByKey(props.elderId)
+			list.value = res.list
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function onSelect(c: EmergencyContact) {
+		emit('select', { name: c.name, phone: c.phone })
+		close()
+	}
+
+	function close() {
+		emit('update:visible', false)
+		emit('close')
+	}
+</script>
+
+<style scoped>
+	.cqf-mask {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		justify-content: flex-end;
+		z-index: 999;
+	}
+
+	.cqf-panel {
+		height: 55%;
+		background-color: #FFFFFF;
+		border-top-left-radius: 16px;
+		border-top-right-radius: 16px;
+		flex-direction: column;
+	}
+
+	.cqf-header {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 14px 16px;
+	}
+
+	.cqf-title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.cqf-cancel {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.cqf-list {
+		flex: 1;
+	}
+
+	.cqf-item {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 12px 16px;
+		border-bottom-width: 1px;
+		border-bottom-color: #F0F0F0;
+	}
+
+	.cqf-item__name {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.cqf-item__phone {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.cqf-empty {
+		align-items: center;
+		padding-top: 40px;
+	}
+
+	.cqf-empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+</style>
