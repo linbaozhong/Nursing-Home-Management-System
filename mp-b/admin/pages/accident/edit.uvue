@@ -13,14 +13,20 @@
 			<template #step-0>
 				<view class="step">
 					<view class="field" @click="showElderSearch = true">
-						<text class="field__label">老人 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">老人</text>
+							<text class="field__required">*</text>
+						</view>
 						<view class="field__picker">
 							<text v-if="elder.name != ''" class="field__value">{{ elder.name }}</text>
 							<text v-else class="field__placeholder">点击选择老人</text>
 						</view>
 					</view>
 					<view class="field" @click="showStaffSearch = true">
-						<text class="field__label">护工 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">护工</text>
+							<text class="field__required">*</text>
+						</view>
 						<view class="field__picker">
 							<text v-if="staff.name != ''" class="field__value">{{ staff.name }}</text>
 							<text v-else class="field__placeholder">点击选择护工</text>
@@ -32,7 +38,10 @@
 			<template #step-1>
 				<view class="step">
 					<view class="field">
-						<text class="field__label">发生时间 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">发生时间</text>
+							<text class="field__required">*</text>
+						</view>
 						<DateTimePicker v-model="form.occur_date" />
 					</view>
 				</view>
@@ -41,12 +50,15 @@
 			<template #step-2>
 				<view class="step">
 					<view class="field">
-						<text class="field__label">事故描述 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">事故描述</text>
+							<text class="field__required">*</text>
+						</view>
 						<textarea
 							class="field__textarea"
 							v-model="form.description"
 							placeholder="请描述事故经过（≤500字）"
-							maxlength="500"
+							:maxlength="500"
 						/>
 					</view>
 					<view class="field">
@@ -63,6 +75,11 @@
 </template>
 
 <script setup lang="uts">
+	import ElderSearch from '../../components/elder-search/ElderSearch.uvue'
+	import ImageUploader from '../../components/image-uploader/ImageUploader.uvue'
+	import StaffSearch from '../../components/staff-search/StaffSearch.uvue'
+	import DateTimePicker from '../../components/date-time-picker/DateTimePicker.uvue'
+	import WizardForm from '../../components/wizard-form/WizardForm.uvue'
 	import { onLoad } from '@dcloudio/uni-app'
 	import { addAccident, editAccident, getAccidentById, AccidentForm } from '../../api/accident'
 
@@ -196,6 +213,11 @@
 	.field__label {
 		font-size: 14px;
 		color: #333333;
+	}
+
+	.field__label-row {
+		flex-direction: row;
+		align-items: center;
 		margin-bottom: 8px;
 	}
 

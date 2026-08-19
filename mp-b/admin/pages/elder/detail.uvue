@@ -90,7 +90,7 @@
 					</view>
 					<view class="field">
 						<text class="field__label">电话 <text class="field__required">*</text></text>
-						<input class="field__input" v-model="form.phone" type="number" maxlength="11" placeholder="11 位手机号" />
+						<input class="field__input" v-model="form.phone" type="number" :maxlength="11" placeholder="11 位手机号" />
 					</view>
 					<view class="field">
 						<text class="field__label">关系</text>

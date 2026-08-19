@@ -68,6 +68,7 @@
 </template>
 
 <script setup lang="uts">
+	import StatusTag from '../../components/status-tag/StatusTag.uvue'
 	import { onShow } from '@dcloudio/uni-app'
 	import { pageOrderByKey, listNurseStaff, sendOrder, OrderItem, NurseStaff } from '../../api/order'
 	import { parseTime, formatShortTime, formatMoney, formatDateTime } from '../../utils/util'

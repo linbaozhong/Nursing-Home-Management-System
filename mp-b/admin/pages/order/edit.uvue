@@ -13,18 +13,27 @@
 			<template #step-0>
 				<view class="step">
 					<view class="field" @click="showElderSearch = true">
-						<text class="field__label">老人 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">老人</text>
+							<text class="field__required">*</text>
+						</view>
 						<view class="field__picker">
 							<text v-if="elder.name != ''" class="field__value">{{ elder.name }}</text>
 							<text v-else class="field__placeholder">点击选择老人</text>
 						</view>
 					</view>
 					<view class="field">
-						<text class="field__label">就餐时间 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">就餐时间</text>
+							<text class="field__required">*</text>
+						</view>
 						<DateTimePicker v-model="form.dine_date" />
 					</view>
 					<view class="field">
-						<text class="field__label">就餐方式 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">就餐方式</text>
+							<text class="field__required">*</text>
+						</view>
 						<view class="radio-row">
 							<view v-for="t in dineTypeOptions" :key="t"
 								class="radio" :class="{ 'radio--active': form.dine_type == t }"
@@ -62,6 +71,10 @@
 </template>
 
 <script setup lang="uts">
+	import WizardForm from '../../components/wizard-form/WizardForm.uvue'
+	import ElderSearch from '../../components/elder-search/ElderSearch.uvue'
+	import DateTimePicker from '../../components/date-time-picker/DateTimePicker.uvue'
+	import DishesPicker from '../../components/dishes-picker/DishesPicker.uvue'
 	import { addOrder } from '../../api/order'
 
 	const current = ref(0)
@@ -162,6 +175,11 @@
 	.field__label {
 		font-size: 14px;
 		color: #333333;
+	}
+
+	.field__label-row {
+		flex-direction: row;
+		align-items: center;
 		margin-bottom: 8px;
 	}
 

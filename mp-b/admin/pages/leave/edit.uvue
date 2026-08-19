@@ -6,7 +6,6 @@
 			:steps="['选择老人', '陪同人信息']"
 			:current="current"
 			:disabled="submitting"
-			@update:current="onStepChange"
 			@next="onNext"
 			@prev="onPrev"
 			@submit="doSubmit"
@@ -14,7 +13,10 @@
 			<template #step-0>
 				<view class="step">
 					<view class="field" @click="showElderSearch = true">
-						<text class="field__label">老人 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">老人</text>
+							<text class="field__required">*</text>
+						</view>
 						<view class="field__picker">
 							<text v-if="elder.name != ''" class="field__value">{{ elder.name }}</text>
 							<text v-else class="field__placeholder">点击选择老人</text>
@@ -30,15 +32,24 @@
 					</view>
 
 					<view class="field">
-						<text class="field__label">陪同人姓名 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">陪同人姓名</text>
+							<text class="field__required">*</text>
+						</view>
 						<input class="field__input" v-model="form.chaperone_name" placeholder="请输入姓名" />
 					</view>
 					<view class="field">
-						<text class="field__label">陪同人电话 <text class="field__required">*</text></text>
-						<input class="field__input" v-model="form.chaperone_phone" type="number" maxlength="11" placeholder="11 位手机号" />
+						<view class="field__label-row">
+							<text class="field__label">陪同人电话</text>
+							<text class="field__required">*</text>
+						</view>
+						<input class="field__input" v-model="form.chaperone_phone" type="number" :maxlength="11" placeholder="11 位手机号" />
 					</view>
 					<view class="field">
-						<text class="field__label">陪同人类型 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">陪同人类型</text>
+							<text class="field__required">*</text>
+						</view>
 						<view class="radio-row">
 							<view v-for="t in typeOptions" :key="t"
 								class="radio" :class="{ 'radio--active': form.chaperone_type == t }"
@@ -48,11 +59,17 @@
 						</view>
 					</view>
 					<view class="field">
-						<text class="field__label">外出时间 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">外出时间</text>
+							<text class="field__required">*</text>
+						</view>
 						<DateTimePicker v-model="form.outward_date" />
 					</view>
 					<view class="field">
-						<text class="field__label">计划返回时间 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">计划返回时间</text>
+							<text class="field__required">*</text>
+						</view>
 						<DateTimePicker v-model="form.plan_return_date" />
 					</view>
 				</view>
@@ -71,6 +88,10 @@
 </template>
 
 <script setup lang="uts">
+	import ContactQuickFill from '../../components/contact-quick-fill/ContactQuickFill.uvue'
+	import ElderSearch from '../../components/elder-search/ElderSearch.uvue'
+	import DateTimePicker from '../../components/date-time-picker/DateTimePicker.uvue'
+	import WizardForm from '../../components/wizard-form/WizardForm.uvue'
 	import { addOutward, OutwardForm } from '../../api/outward'
 
 	const current = ref(0)
@@ -95,10 +116,6 @@
 		outward_date: '',
 		plan_return_date: ''
 	})
-
-	function onStepChange(v: number) {
-		current.value = v
-	}
 
 	// 下一步：校验当前步通过后推进
 	function onNext() {
@@ -199,6 +216,11 @@
 	.field__label {
 		font-size: 14px;
 		color: #333333;
+	}
+
+	.field__label-row {
+		flex-direction: row;
+		align-items: center;
 		margin-bottom: 8px;
 	}
 

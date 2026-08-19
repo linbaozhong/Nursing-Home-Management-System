@@ -40,6 +40,7 @@
 </template>
 
 <script setup lang="uts">
+	import StatusTag from '../../components/status-tag/StatusTag.uvue'
 	import { pageSearchElderByKey, ElderItem } from '../../api/elder'
 	import { idNumTail } from '../../utils/util'
 

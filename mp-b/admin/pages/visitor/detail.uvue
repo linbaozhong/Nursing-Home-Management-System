@@ -42,6 +42,7 @@
 </template>
 
 <script setup lang="uts">
+	import StatusTag from '../../components/status-tag/StatusTag.uvue'
 	import { onLoad } from '@dcloudio/uni-app'
 	import { getVisitById, recordLeave, deleteVisit } from '../../api/visit'
 	import { parseTime, formatShortTime, formatDateTime } from '../../utils/util'

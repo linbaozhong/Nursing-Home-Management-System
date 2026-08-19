@@ -10,7 +10,7 @@
 				</view>
 				<view class="field">
 					<text class="field__label">身份证号 <text class="field__required">*</text></text>
-					<input class="field__input" v-model="form.id_num" placeholder="18 位身份证号" maxlength="18" />
+					<input class="field__input" v-model="form.id_num" placeholder="18 位身份证号" :maxlength="18" />
 				</view>
 				<view class="field">
 					<text class="field__label">性别 <text class="field__required">*</text></text>
@@ -28,7 +28,7 @@
 				</view>
 				<view class="field">
 					<text class="field__label">电话 <text class="field__required">*</text></text>
-					<input class="field__input" v-model="form.phone" type="number" maxlength="11" placeholder="11 位手机号" />
+					<input class="field__input" v-model="form.phone" type="number" :maxlength="11" placeholder="11 位手机号" />
 				</view>
 				<view class="field">
 					<text class="field__label">地址 <text class="field__required">*</text></text>
@@ -51,7 +51,7 @@
 
 <script setup lang="uts">
 	import { onLoad } from '@dcloudio/uni-app'
-	import { getElderRecordById, addElderRecord, editElderRecord } from '../../api/elder'
+	import { getElderRecordById, addElderRecord, editElderRecord, ElderRecordForm } from '../../api/elder'
 
 	const sexOptions = [
 		{ label: '男', value: '男' },
@@ -136,7 +136,7 @@
 		form.value.age = parseInt(ageStr.value) || 0
 		submitting.value = true
 		try {
-			const payload = {
+			const payload: ElderRecordForm = {
 				name: form.value.name,
 				id_num: form.value.id_num,
 				sex: form.value.sex,
@@ -145,9 +145,10 @@
 				address: form.value.address
 			}
 			if (isEdit.value) {
-				await editElderRecord({ id: currentId, ...payload } as any)
+				const updatePayload: ElderRecordForm = { ...payload, id: currentId }
+				await editElderRecord(updatePayload)
 			} else {
-				await addElderRecord(payload as any)
+				await addElderRecord(payload)
 			}
 			uni.showToast({ title: '保存成功', icon: 'success' })
 			setTimeout(() => {

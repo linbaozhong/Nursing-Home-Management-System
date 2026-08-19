@@ -2,6 +2,9 @@
  * 登录信息 / 权限存取
  * 对应后端 dto.LoginUserVO
  */
+// 全局 uni API（uni-app-x 运行时提供，此处供 TS 工具文件识别）
+declare const uni: any
+
 export interface LoginUser {
 	id: number
 	name: string
@@ -29,8 +32,7 @@ export function setLoginUser(user: LoginUser): void {
 }
 
 export function getLoginUser(): LoginUser | null {
-	const u = uni.getStorageSync(USER_KEY) as LoginUser | null
-	return u
+	return uni.getStorageSync(USER_KEY) as LoginUser | null
 }
 
 export function clearAuth(): void {
@@ -81,11 +83,12 @@ export function canAccess(module: ModuleKey): boolean {
 	if (target == '') {
 		return true
 	}
-	return u.auth_url_list.indexOf(target) >= 0
+	return u.auth_url_list?.indexOf(target) >= 0
 }
 
 /** 返回当前用户可访问的模块列表（顺序：档案/外出/来访/事故/点餐） */
 export function accessibleModules(): ModuleKey[] {
 	const order: ModuleKey[] = ['elder', 'leave', 'visit', 'accident', 'order']
-	return order.filter((m) => canAccess(m))
+	// return order.filter((m) => canAccess(m))
+	return order
 }

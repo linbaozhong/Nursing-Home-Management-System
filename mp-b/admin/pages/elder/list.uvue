@@ -47,6 +47,7 @@
 </template>
 
 <script setup lang="uts">
+	import StatusTag from '../../components/status-tag/StatusTag.uvue'
 	import { onShow } from '@dcloudio/uni-app'
 	import { pageElderByKey, ElderItem } from '../../api/elder'
 	import { maskPhone } from '../../utils/util'

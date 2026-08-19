@@ -13,7 +13,7 @@
 					class="field__input"
 					v-model="phone"
 					type="number"
-					maxlength="11"
+					:maxlength="11"
 					placeholder="请输入手机号"
 				/>
 			</view>

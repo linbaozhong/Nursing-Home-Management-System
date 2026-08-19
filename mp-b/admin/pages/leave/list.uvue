@@ -49,6 +49,7 @@
 </template>
 
 <script setup lang="uts">
+	import StatusTag from '../../components/status-tag/StatusTag.uvue'
 	import { onShow } from '@dcloudio/uni-app'
 	import { pageOutwardByKey, OutwardItem } from '../../api/outward'
 	import { parseTime, formatShortTime } from '../../utils/util'

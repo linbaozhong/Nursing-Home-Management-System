@@ -13,7 +13,10 @@
 			<template #step-0>
 				<view class="step">
 					<view class="field" @click="showElderSearch = true">
-						<text class="field__label">老人 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">老人</text>
+							<text class="field__required">*</text>
+						</view>
 						<view class="field__picker">
 							<text v-if="elder.name != ''" class="field__value">{{ elder.name }}</text>
 							<text v-else class="field__placeholder">点击选择老人</text>
@@ -25,23 +28,38 @@
 			<template #step-1>
 				<view class="step">
 					<view class="field">
-						<text class="field__label">来访者姓名 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">来访者姓名</text>
+							<text class="field__required">*</text>
+						</view>
 						<input class="field__input" v-model="form.name" placeholder="请输入姓名" />
 					</view>
 					<view class="field">
-						<text class="field__label">来访者电话 <text class="field__required">*</text></text>
-						<input class="field__input" v-model="form.phone" type="number" maxlength="11" placeholder="11 位手机号" />
+						<view class="field__label-row">
+							<text class="field__label">来访者电话</text>
+							<text class="field__required">*</text>
+						</view>
+						<input class="field__input" v-model="form.phone" type="number" :maxlength="11" placeholder="11 位手机号" />
 					</view>
 					<view class="field">
-						<text class="field__label">与老人关系 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">与老人关系</text>
+							<text class="field__required">*</text>
+						</view>
 						<input class="field__input" v-model="form.relation" placeholder="儿子/女儿/护工等" />
 					</view>
 					<view class="field">
-						<text class="field__label">来访时间 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">来访时间</text>
+							<text class="field__required">*</text>
+						</view>
 						<DateTimePicker v-model="form.visit_date" />
 					</view>
 					<view class="field">
-						<text class="field__label">来访人数 <text class="field__required">*</text></text>
+						<view class="field__label-row">
+							<text class="field__label">来访人数</text>
+							<text class="field__required">*</text>
+						</view>
 						<view class="num-row">
 							<view class="num-btn" @click="changeNum(-1)">
 								<text>−</text>
@@ -61,6 +79,9 @@
 </template>
 
 <script setup lang="uts">
+	import WizardForm from '../../components/wizard-form/WizardForm.uvue'
+	import ElderSearch from '../../components/elder-search/ElderSearch.uvue'
+	import DateTimePicker from '../../components/date-time-picker/DateTimePicker.uvue'
 	import { onLoad } from '@dcloudio/uni-app'
 	import { addVisit, editVisit, getVisitById, VisitForm } from '../../api/visit'
 
@@ -207,6 +228,11 @@
 	.field__label {
 		font-size: 14px;
 		color: #333333;
+	}
+
+	.field__label-row {
+		flex-direction: row;
+		align-items: center;
 		margin-bottom: 8px;
 	}
 
