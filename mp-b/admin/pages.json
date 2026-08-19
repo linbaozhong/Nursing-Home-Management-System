@@ -160,7 +160,7 @@
 	"easycom": {
 		"autoscan": true,
 		"custom": {
-			"^WizardForm": "components/high-level/wizard-form/WizardForm.uvue",
+			"^WizardForm": "components/wizard-form/WizardForm.uvue",
 			"^StatusTag": "components/status-tag/StatusTag.uvue",
 			"^DateTimePicker": "components/date-time-picker/DateTimePicker.uvue",
 			"^ElderSearch": "components/elder-search/ElderSearch.uvue",

@@ -8,9 +8,7 @@
 
 ```
 admin/components/
-├── high-level/
-│   ├── list-page/ListPage.uvue          # 列表页高阶模板（6 列表页复用）
-│   └── wizard-form/WizardForm.uvue       # 多步向导模板（4 新增向导复用）
+├── wizard-form/WizardForm.uvue           # 多步向导模板（4 新增向导复用）
 ├── elder-search/ElderSearch.uvue
 ├── staff-search/StaffSearch.uvue
 ├── date-time-picker/DateTimePicker.uvue
