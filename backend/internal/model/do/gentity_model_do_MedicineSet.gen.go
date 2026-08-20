@@ -27,12 +27,15 @@ func NewMedicineSet() *MedicineSet {
 
 // MarshalJSON
 func (p *MedicineSet) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(8 * 50)
+	write := types.NewJsonWriter(9 * 50)
 	if p.MedicineTime != "" {
 		write.WriteRaw("medicine_time", types.Marshal(p.MedicineTime))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.DepositInfoId != 0 {
 		write.WriteRaw("deposit_info_id", types.Marshal(p.DepositInfoId))
@@ -69,6 +72,8 @@ func (p *MedicineSet) UnmarshalJSON(data []byte) error {
 			p.MedicineTime = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "deposit_info_id":
 			p.DepositInfoId = types.BigInt(value.Uint())
 		case "create_id":
@@ -104,6 +109,7 @@ func (p *MedicineSet) Free() {
 func (p *MedicineSet) Reset() {
 	p.MedicineTime = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.DepositInfoId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -121,6 +127,7 @@ func (p *MedicineSet) TableName() string {
 var medicinesetFieldToPtrFunc = map[string]func(*MedicineSet) any{
 	tblmedicineset.MedicineTime.Name:  func(p *MedicineSet) any { return &p.MedicineTime },
 	tblmedicineset.Id.Name:            func(p *MedicineSet) any { return &p.Id },
+	tblmedicineset.TenantId.Name:      func(p *MedicineSet) any { return &p.TenantId },
 	tblmedicineset.DepositInfoId.Name: func(p *MedicineSet) any { return &p.DepositInfoId },
 	tblmedicineset.CreateId.Name:      func(p *MedicineSet) any { return &p.CreateId },
 	tblmedicineset.CreateTime.Name:    func(p *MedicineSet) any { return &p.CreateTime },
@@ -221,6 +228,9 @@ var medicinesetFieldToValueFunc = map[dialect.Field]func(*MedicineSet) (any, boo
 	},
 	tblmedicineset.Id: func(p *MedicineSet) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblmedicineset.TenantId: func(p *MedicineSet) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblmedicineset.DepositInfoId: func(p *MedicineSet) (any, bool) {
 		return p.DepositInfoId, p.DepositInfoId == 0

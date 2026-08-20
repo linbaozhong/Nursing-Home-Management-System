@@ -6,6 +6,21 @@
 			<text class="brand__sub">养老机构数字化管理平台</text>
 		</view>
 
+		<!-- 微信一键登录（主入口） -->
+		<view class="wx-entry">
+			<button class="btn-wx" :loading="wxLoading" :disabled="wxLoading" @click="doWxLogin">
+				微信一键登录
+			</button>
+			<text class="wx-tip">使用微信授权快速登录，自动匹配您的企业身份</text>
+		</view>
+
+		<view class="divider">
+			<view class="divider__line" />
+			<text class="divider__text">或使用账号密码登录</text>
+			<view class="divider__line" />
+		</view>
+
+		<!-- 账号密码登录（备用入口） -->
 		<view class="form">
 			<view class="field">
 				<text class="field__label">手机号</text>
@@ -29,19 +44,98 @@
 				/>
 			</view>
 
-			<button class="submit" :loading="loading" :disabled="loading" @click="doLogin">
+			<button class="btn-pass" :loading="loading" :disabled="loading" @click="doLogin">
 				登 录
 			</button>
+			<text class="form__register" @click="goRegister">没有企业？立即创建企业</text>
 		</view>
 	</view>
 </template>
 
 <script setup lang="uts">
-	import { login } from '../../api/account'
+	import { onLoad } from '@dcloudio/uni-app'
+	import { login, wxLogin, WxLoginResult } from '../../api/account'
+	import { setLoginUser, getCurrentTenantId, getToken } from '../../utils/auth'
 
 	const phone = ref('')
 	const pass = ref('')
 	const loading = ref(false)
+	const wxLoading = ref(false)
+
+	/** 打开小程序时自动静默登录尝试 */
+	onLoad(() => {
+		// 已有登录态直接进入工作台
+		if (getToken() != '') {
+			uni.reLaunch({ url: '/pages/index/index' })
+			return
+		}
+		autoWxLogin()
+	})
+
+	async function autoWxLogin() {
+		try {
+			const code = await getWxCode()
+			const res = await wxLogin(code)
+			if (!res.need_bind && res.user != null) {
+				setLoginUser(res.user!)
+				uni.reLaunch({ url: '/pages/index/index' })
+				return
+			}
+			if (res.need_bind && res.tenants != null && res.tenants.length > 0) {
+				uni.navigateTo({ url: '/pages/switch-tenant/switch' })
+			}
+		} catch (e) {
+			// 静默失败，停留在登录页
+		}
+	}
+
+	/** 微信一键登录 */
+	async function doWxLogin() {
+		wxLoading.value = true
+		try {
+			const code = await getWxCode()
+			const res = await wxLogin(code)
+			handleWxResult(res)
+		} catch (e) {
+			uni.showToast({ title: '微信登录失败，请重试', icon: 'none' })
+		} finally {
+			wxLoading.value = false
+		}
+	}
+
+	function handleWxResult(res: WxLoginResult): void {
+		// 唯一企业且已绑定：直接进入工作台
+		if (!res.need_bind && res.user != null) {
+			setLoginUser(res.user!)
+			uni.showToast({ title: '登录成功', icon: 'success' })
+			setTimeout(() => uni.reLaunch({ url: '/pages/index/index' }), 400)
+			return
+		}
+		// 多企业：跳转切换企业页
+		if (res.need_bind && res.tenants != null && res.tenants.length > 0) {
+			uni.navigateTo({ url: '/pages/switch-tenant/switch' })
+			return
+		}
+		// 新用户/未绑定：进入创建企业引导
+		uni.navigateTo({ url: '/pages/register/register' })
+	}
+
+	/** 调用 uni.login 获取微信 code */
+	function getWxCode(): Promise<string> {
+		return new Promise<string>((resolve, reject) => {
+			uni.login({
+				provider: 'weixin',
+				success: (res) => {
+					if (res.code) {
+						resolve(res.code)
+					} else {
+						reject(new Error('no code'))
+					}
+				},
+				fail: (err) => reject(err)
+			})
+		})
+	}
 
 	function validate(): boolean {
 		if (phone.value.length != 11) {
@@ -61,17 +155,27 @@
 		}
 		loading.value = true
 		try {
-			await login({ phone: phone.value, pass: pass.value })
+			const data = await login({ phone: phone.value, pass: pass.value })
+			// 多企业：跳切换页
+			if (data.need_bind && data.tenants != null && data.tenants.length > 0) {
+				uni.navigateTo({ url: '/pages/switch-tenant/switch' })
+				return
+			}
+			if (data.need_bind) {
+				uni.navigateTo({ url: '/pages/register/register' })
+				return
+			}
 			uni.showToast({ title: '登录成功', icon: 'success' })
-			// 跳转到工作台（按权限显示模块入口）
-			setTimeout(() => {
-				uni.reLaunch({ url: '/pages/index/index' })
-			}, 500)
+			setTimeout(() => uni.reLaunch({ url: '/pages/index/index' }), 400)
 		} catch (e) {
 			// 错误已在 request 统一 toast
 		} finally {
 			loading.value = false
 		}
+	}
+
+	function goRegister(): void {
+		uni.navigateTo({ url: '/pages/register/register' })
 	}
 </script>
 
@@ -86,7 +190,7 @@
 	.brand {
 		align-items: center;
 		margin-top: 120px;
-		margin-bottom: 60px;
+		margin-bottom: 50px;
 	}
 
 	.brand__logo {
@@ -105,6 +209,46 @@
 	.brand__sub {
 		margin-top: 6px;
 		font-size: 13px;
+		color: #999999;
+	}
+
+	.wx-entry {
+		flex-direction: column;
+	}
+
+	.btn-wx {
+		height: 50px;
+		border-radius: 25px;
+		background-color: #2E86AB;
+		color: #FFFFFF;
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	.wx-tip {
+		margin-top: 10px;
+		text-align: center;
+		font-size: 12px;
+		color: #999999;
+	}
+
+	.divider {
+		flex-direction: row;
+		align-items: center;
+		margin-top: 36px;
+		margin-bottom: 28px;
+	}
+
+	.divider__line {
+		flex: 1;
+		height: 1px;
+		background-color: #E8E8E8;
+	}
+
+	.divider__text {
+		padding-left: 12px;
+		padding-right: 12px;
+		font-size: 12px;
 		color: #999999;
 	}
 
@@ -131,13 +275,20 @@
 		font-size: 15px;
 	}
 
-	.submit {
+	.btn-pass {
 		margin-top: 20px;
 		height: 48px;
 		border-radius: 24px;
-		background-color: #007AFF;
-		color: #FFFFFF;
+		background-color: #A8DADC;
+		color: #333333;
 		font-size: 16px;
 		font-weight: 600;
+	}
+
+	.form__register {
+		margin-top: 16px;
+		text-align: center;
+		font-size: 13px;
+		color: #2E86AB;
 	}
 </style>

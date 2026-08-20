@@ -15,6 +15,7 @@ var (
 	DosageForm    = dialect.Field{Name: "dosage_form", Json: "dosage_form", Table: "medicine", Type: "types.String", IsRelation: false}
 	Manufacturer  = dialect.Field{Name: "manufacturer", Json: "manufacturer", Table: "medicine", Type: "types.String", IsRelation: false}
 	Id            = dialect.Field{Name: "id", Json: "id", Table: "medicine", Type: "types.BigInt", IsRelation: false}
+	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "medicine", Type: "types.BigInt", IsRelation: false}
 	CreateId      = dialect.Field{Name: "create_id", Json: "create_id", Table: "medicine", Type: "types.BigInt", IsRelation: false}
 	CreateTime    = dialect.Field{Name: "create_time", Json: "create_time", Table: "medicine", Type: "types.Time", IsRelation: false}
 	UpdateId      = dialect.Field{Name: "update_id", Json: "update_id", Table: "medicine", Type: "types.BigInt", IsRelation: false}
@@ -31,6 +32,7 @@ var (
 		DosageForm,
 		Manufacturer,
 		Id,
+		TenantId,
 		CreateId,
 		CreateTime,
 		UpdateId,
@@ -45,6 +47,7 @@ var (
 		DosageForm,
 		Manufacturer,
 		Id,
+		TenantId,
 		CreateId,
 		CreateTime,
 		UpdateId,

@@ -10,6 +10,7 @@ const TableName = "elder_label"
 
 var (
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "elder_label", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "elder_label", Type: "types.BigInt", IsRelation: false}
 	ElderId    = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "elder_label", Type: "types.BigInt", IsRelation: false}
 	LabelId    = dialect.Field{Name: "label_id", Json: "label_id", Table: "elder_label", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "elder_label", Type: "types.BigInt", IsRelation: false}
@@ -22,6 +23,7 @@ var (
 	// 可写列
 	WritableFields = []dialect.Field{
 		Id,
+		TenantId,
 		ElderId,
 		LabelId,
 		CreateId,
@@ -32,6 +34,7 @@ var (
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Id,
+		TenantId,
 		ElderId,
 		LabelId,
 		CreateId,

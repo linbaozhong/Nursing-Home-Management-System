@@ -16,6 +16,7 @@ var (
 	Address     = dialect.Field{Name: "address", Json: "address", Table: "family_member", Type: "types.String", IsRelation: false}
 	Relation    = dialect.Field{Name: "relation", Json: "relation", Table: "family_member", Type: "types.String", IsRelation: false}
 	Id          = dialect.Field{Name: "id", Json: "id", Table: "family_member", Type: "types.BigInt", IsRelation: false}
+	TenantId    = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "family_member", Type: "types.BigInt", IsRelation: false}
 	ElderId     = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "family_member", Type: "types.BigInt", IsRelation: false}
 	CreateId    = dialect.Field{Name: "create_id", Json: "create_id", Table: "family_member", Type: "types.BigInt", IsRelation: false}
 	CreateTime  = dialect.Field{Name: "create_time", Json: "create_time", Table: "family_member", Type: "types.Time", IsRelation: false}
@@ -35,6 +36,7 @@ var (
 		Address,
 		Relation,
 		Id,
+		TenantId,
 		ElderId,
 		CreateId,
 		CreateTime,
@@ -52,6 +54,7 @@ var (
 		Address,
 		Relation,
 		Id,
+		TenantId,
 		ElderId,
 		CreateId,
 		CreateTime,

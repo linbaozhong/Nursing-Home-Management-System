@@ -27,12 +27,15 @@ func NewLabelType() *LabelType {
 
 // MarshalJSON
 func (p *LabelType) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(8 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -66,6 +69,8 @@ func (p *LabelType) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -99,6 +104,7 @@ func (p *LabelType) Free() {
 func (p *LabelType) Reset() {
 	p.Name = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
@@ -115,6 +121,7 @@ func (p *LabelType) TableName() string {
 var labeltypeFieldToPtrFunc = map[string]func(*LabelType) any{
 	tbllabeltype.Name.Name:       func(p *LabelType) any { return &p.Name },
 	tbllabeltype.Id.Name:         func(p *LabelType) any { return &p.Id },
+	tbllabeltype.TenantId.Name:   func(p *LabelType) any { return &p.TenantId },
 	tbllabeltype.CreateId.Name:   func(p *LabelType) any { return &p.CreateId },
 	tbllabeltype.CreateTime.Name: func(p *LabelType) any { return &p.CreateTime },
 	tbllabeltype.UpdateId.Name:   func(p *LabelType) any { return &p.UpdateId },
@@ -214,6 +221,9 @@ var labeltypeFieldToValueFunc = map[dialect.Field]func(*LabelType) (any, bool){
 	},
 	tbllabeltype.Id: func(p *LabelType) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tbllabeltype.TenantId: func(p *LabelType) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tbllabeltype.CreateId: func(p *LabelType) (any, bool) {
 		return p.CreateId, p.CreateId == 0

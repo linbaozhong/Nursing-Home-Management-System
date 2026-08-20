@@ -27,12 +27,15 @@ func NewSource() *Source {
 
 // MarshalJSON
 func (p *Source) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(8 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -66,6 +69,8 @@ func (p *Source) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -99,6 +104,7 @@ func (p *Source) Free() {
 func (p *Source) Reset() {
 	p.Name = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
@@ -115,6 +121,7 @@ func (p *Source) TableName() string {
 var sourceFieldToPtrFunc = map[string]func(*Source) any{
 	tblsource.Name.Name:       func(p *Source) any { return &p.Name },
 	tblsource.Id.Name:         func(p *Source) any { return &p.Id },
+	tblsource.TenantId.Name:   func(p *Source) any { return &p.TenantId },
 	tblsource.CreateId.Name:   func(p *Source) any { return &p.CreateId },
 	tblsource.CreateTime.Name: func(p *Source) any { return &p.CreateTime },
 	tblsource.UpdateId.Name:   func(p *Source) any { return &p.UpdateId },
@@ -214,6 +221,9 @@ var sourceFieldToValueFunc = map[dialect.Field]func(*Source) (any, bool){
 	},
 	tblsource.Id: func(p *Source) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblsource.TenantId: func(p *Source) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblsource.CreateId: func(p *Source) (any, bool) {
 		return p.CreateId, p.CreateId == 0

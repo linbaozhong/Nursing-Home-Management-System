@@ -27,7 +27,7 @@ func NewVisit() *Visit {
 
 // MarshalJSON
 func (p *Visit) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(14 * 50)
+	write := types.NewJsonWriter(15 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
@@ -39,6 +39,9 @@ func (p *Visit) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -91,6 +94,8 @@ func (p *Visit) UnmarshalJSON(data []byte) error {
 			p.Relation = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "visit_date":
@@ -136,6 +141,7 @@ func (p *Visit) Reset() {
 	p.Phone = ""
 	p.Relation = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.VisitDate = types.Time{}
 	p.LeaveDate = types.Time{}
@@ -159,6 +165,7 @@ var visitFieldToPtrFunc = map[string]func(*Visit) any{
 	tblvisit.Phone.Name:      func(p *Visit) any { return &p.Phone },
 	tblvisit.Relation.Name:   func(p *Visit) any { return &p.Relation },
 	tblvisit.Id.Name:         func(p *Visit) any { return &p.Id },
+	tblvisit.TenantId.Name:   func(p *Visit) any { return &p.TenantId },
 	tblvisit.ElderId.Name:    func(p *Visit) any { return &p.ElderId },
 	tblvisit.VisitDate.Name:  func(p *Visit) any { return &p.VisitDate },
 	tblvisit.LeaveDate.Name:  func(p *Visit) any { return &p.LeaveDate },
@@ -269,6 +276,9 @@ var visitFieldToValueFunc = map[dialect.Field]func(*Visit) (any, bool){
 	},
 	tblvisit.Id: func(p *Visit) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblvisit.TenantId: func(p *Visit) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblvisit.ElderId: func(p *Visit) (any, bool) {
 		return p.ElderId, p.ElderId == 0

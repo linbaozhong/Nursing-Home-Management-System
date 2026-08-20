@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblbed"
 	"api/internal/model/define/table/tblelder"
@@ -26,7 +27,8 @@ var RetreatApply = &retreatApply{}
 func (r *retreatApply) PageRetreatApplyByKey(ctx context.Context, in *dto.PageRetreatApplyByKeyQuery, out *[]dto.PageRetreatByKeyVO) error {
 	q := db.Table(tblretreatapply.TableName).
 		LeftJoin(tblretreatapply.ElderId, tblelder.Id).
-		LeftJoin(tblelder.BedId, tblbed.Id)
+		LeftJoin(tblelder.BedId, tblbed.Id).
+		Where(tblretreatapply.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.ElderName != nil && *in.ElderName != "" {
 		q.And(tblelder.Name.Like(*in.ElderName))
 	}
@@ -53,11 +55,12 @@ func (r *retreatApply) PageSearchElderByKey(ctx context.Context, in *dto.PageSea
 	applies, _, e := dao.RetreatApply(db).List(ctx,
 		db.Table(tblretreatapply.TableName).
 			Cols(tblretreatapply.ElderId).
-			Where(tblretreatapply.ApplyFlag.In(
-				types.Int8(constant.AuditStay),
-				types.Int8(constant.Auditing),
-				types.Int8(constant.AuditPass),
-			)),
+			Where(tblretreatapply.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+				tblretreatapply.ApplyFlag.In(
+					types.Int8(constant.AuditStay),
+					types.Int8(constant.Auditing),
+					types.Int8(constant.AuditPass),
+				)),
 	)
 	if e != nil {
 		return e
@@ -68,7 +71,7 @@ func (r *retreatApply) PageSearchElderByKey(ctx context.Context, in *dto.PageSea
 
 	q := db.Table(tblelder.TableName).
 		LeftJoin(tblelder.BedId, tblbed.Id).
-		Where(tblelder.CheckFlag.Eq(types.Int8(constant.CheckEnter)))
+		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.CheckFlag.Eq(types.Int8(constant.CheckEnter)))
 	if in.Name != nil && *in.Name != "" {
 		q.And(tblelder.Name.Like(*in.Name))
 	}
@@ -91,7 +94,7 @@ func (r *retreatApply) PageSearchElderByKey(ctx context.Context, in *dto.PageSea
 // AddRetreatApply 新增退住申请（校验老人入住中、置退住审核状态、床位退住审核）
 // 对应 Java: RetreatApplyServiceImpl.addRetreatApply -> RetreatApplyFunc.checkElderByRetreatApply
 func (r *retreatApply) AddRetreatApply(ctx context.Context, in *dto.AddRetreatApplyQuery, out *dto.EmptyResp) error {
-	elder, has, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(types.BigInt(*in.ElderID))))
+	elder, has, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Eq(types.BigInt(*in.ElderID))))
 	if e != nil {
 		return e
 	}
@@ -104,6 +107,7 @@ func (r *retreatApply) AddRetreatApply(ctx context.Context, in *dto.AddRetreatAp
 	// 已存在未审核的退住申请则拦截
 	_, exist, e := dao.RetreatApply(db).Get(ctx,
 		ace.Where(
+			tblretreatapply.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblretreatapply.ElderId.Eq(types.BigInt(*in.ElderID))).
 			And(tblretreatapply.ApplyFlag.In(
 				types.Int8(constant.AuditStay),
@@ -119,6 +123,7 @@ func (r *retreatApply) AddRetreatApply(ctx context.Context, in *dto.AddRetreatAp
 	}
 
 	if _, e = dao.RetreatApply(db).InsertOne(ctx, &do.RetreatApply{
+		TenantId:  types.BigInt(lib.TenantID(ctx)),
 		ElderId:   types.BigInt(*in.ElderID),
 		ApplyFlag: types.Int8(constant.AuditStay),
 	}); e != nil {
@@ -143,7 +148,7 @@ func (r *retreatApply) AddRetreatApply(ctx context.Context, in *dto.AddRetreatAp
 
 // GetRetreatApplyById 根据编号获取退住申请详情
 func (r *retreatApply) GetRetreatApplyById(ctx context.Context, in *dto.IDReq, out *dto.PageRetreatByKeyVO) error {
-	obj, has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
+	obj, has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -153,7 +158,7 @@ func (r *retreatApply) GetRetreatApplyById(ctx context.Context, in *dto.IDReq, o
 	out.ApplyID = int64(obj.Id)
 	out.ElderID = int64(obj.ElderId)
 	out.ApplyFlag = conv.Ptr(int8(obj.ApplyFlag))
-	elder, hasE, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(obj.ElderId)))
+	elder, hasE, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Eq(obj.ElderId)))
 	if e != nil {
 		return e
 	}
@@ -170,7 +175,7 @@ func (r *retreatApply) GetRetreatApplyById(ctx context.Context, in *dto.IDReq, o
 
 // EditRetreatApply 修改退住申请（重新提交待审核）
 func (r *retreatApply) EditRetreatApply(ctx context.Context, in *dto.EditRetreatApplyQuery, out *dto.EmptyResp) error {
-	_, has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
+	_, has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -185,14 +190,14 @@ func (r *retreatApply) EditRetreatApply(ctx context.Context, in *dto.EditRetreat
 
 // DeleteRetreatApply 删除退住申请（物理删除，并还原老人/床位状态）
 func (r *retreatApply) DeleteRetreatApply(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	obj, has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
+	obj, has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
 	if !has {
 		return errors.New("退住申请不存在")
 	}
-	elder, hasE, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(obj.ElderId)))
+	elder, hasE, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Eq(obj.ElderId)))
 	if e != nil {
 		return e
 	}

@@ -27,7 +27,7 @@ func NewStaff() *Staff {
 
 // MarshalJSON
 func (p *Staff) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(16 * 50)
+	write := types.NewJsonWriter(17 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
@@ -54,6 +54,9 @@ func (p *Staff) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.RoleId != 0 {
 		write.WriteRaw("role_id", types.Marshal(p.RoleId))
@@ -107,6 +110,8 @@ func (p *Staff) UnmarshalJSON(data []byte) error {
 			p.Address = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "role_id":
 			p.RoleId = types.BigInt(value.Uint())
 		case "create_id":
@@ -151,6 +156,7 @@ func (p *Staff) Reset() {
 	p.Avator = ""
 	p.Address = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.RoleId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -176,6 +182,7 @@ var staffFieldToPtrFunc = map[string]func(*Staff) any{
 	tblstaff.Avator.Name:     func(p *Staff) any { return &p.Avator },
 	tblstaff.Address.Name:    func(p *Staff) any { return &p.Address },
 	tblstaff.Id.Name:         func(p *Staff) any { return &p.Id },
+	tblstaff.TenantId.Name:   func(p *Staff) any { return &p.TenantId },
 	tblstaff.RoleId.Name:     func(p *Staff) any { return &p.RoleId },
 	tblstaff.CreateId.Name:   func(p *Staff) any { return &p.CreateId },
 	tblstaff.CreateTime.Name: func(p *Staff) any { return &p.CreateTime },
@@ -298,6 +305,9 @@ var staffFieldToValueFunc = map[dialect.Field]func(*Staff) (any, bool){
 	},
 	tblstaff.Id: func(p *Staff) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblstaff.TenantId: func(p *Staff) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblstaff.RoleId: func(p *Staff) (any, bool) {
 		return p.RoleId, p.RoleId == 0

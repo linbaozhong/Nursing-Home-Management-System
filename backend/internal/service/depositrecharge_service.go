@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/table/tblbed"
 	"api/internal/model/define/table/tblelder"
 	"api/internal/model/dto"
@@ -33,6 +34,7 @@ func (d *depositrecharge) PageDepositRechargeByKey(ctx context.Context, in *dto.
 	q := db.Table(tblelder.TableName).
 		LeftJoin(tblelder.BedId, tblbed.Id).
 		Where(
+			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblelder.CheckFlag.In(
 				types.Int8(constant.CheckEnter),
 				types.Int8(constant.CheckExitAudit),
@@ -82,6 +84,7 @@ func (d *depositrecharge) PageDepositRechargeByKey(ctx context.Context, in *dto.
 func (d *depositrecharge) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
 	q := db.Table(tblelder.TableName).
 		Where(
+			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblelder.CheckFlag.In(
 				types.Int8(constant.CheckEnter),
 				types.Int8(constant.CheckExitAudit),

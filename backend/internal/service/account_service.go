@@ -9,13 +9,12 @@ import (
 
 	"api/internal/constant"
 	"api/internal/model/define/dao"
-	"api/internal/model/define/table/tblauth"
-	"api/internal/model/define/table/tblroleauth"
-	"api/internal/model/define/table/tblstaff"
+	"api/internal/model/define/table/tblmember"
+	"api/internal/model/define/table/tbltenant"
+	"api/internal/model/define/table/tbluser"
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
-	"github.com/linbaozhong/gentity/pkg/token"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -46,28 +45,76 @@ func (a *account) SendCode(ctx context.Context, in *dto.SendCodeQuery, out *dto.
 	return nil
 }
 
-// Login 登录
+// Login 登录（账号密码，备用登录）
 func (a *account) Login(ctx context.Context, in *dto.LoginQuery, out *dto.LoginUserVO) error {
 	if in.Phone == nil || !isValidPhone(*in.Phone) {
 		return constant.ErrPhoneError
 	}
-	if in.Code == nil || *in.Code == "" {
-		return constant.ErrNullCode
+	if in.Pass == nil || *in.Pass == "" {
+		return constant.ErrPassword
 	}
-	if e := checkCode(*in.Phone, *in.Code); e != nil {
-		return e
-	}
-	staff, has, e := dao.Staff(db).Get(ctx, db.Table(tblstaff.TableName).Where(tblstaff.Phone.Eq(types.String(*in.Phone))))
+	user, has, e := dao.User(db).Get(ctx, db.Table(tbluser.TableName).Where(tbluser.Phone.Eq(types.String(*in.Phone))))
 	if e != nil {
 		return e
 	}
 	if !has {
 		return constant.ErrNoRegister
 	}
-	if in.Pass == nil || *in.Pass != staff.Pass.String() {
+	if *in.Pass != user.Pass.String() {
 		return constant.ErrPassword
 	}
-	return a.fillUser(ctx, staff, out)
+	return a.loginWithUser(ctx, user, out)
+}
+
+// loginWithUser 根据全局用户完成登录分流（单企业直接登录，多企业返回列表）
+func (a *account) loginWithUser(ctx context.Context, user *do.User, out *dto.LoginUserVO) error {
+	userID := user.Id.Int64()
+	memberList, _, e := dao.Member(db).List(ctx, db.Table(tblmember.TableName).
+		Where(tblmember.UserId.Eq(types.BigInt(userID)),
+			tblmember.Status.Eq(types.Int8(constant.MemberStatusActive)),
+			tblmember.DelFlag.Eq(0)))
+	if e != nil {
+		return e
+	}
+	if len(memberList) == 0 {
+		out.NeedBind = true
+		return nil
+	}
+	tenants := make([]dto.TenantVO, 0, len(memberList))
+	for _, m := range memberList {
+		tn, hasT, e2 := dao.Tenant(db).GetByID(ctx, m.TenantId,
+			tbltenant.Id, tbltenant.Name, tbltenant.Logo, tbltenant.ContactName,
+			tbltenant.ContactPhone, tbltenant.Plan, tbltenant.Status,
+			tbltenant.TrialStart, tbltenant.TrialEnd)
+		if e2 != nil {
+			return e2
+		}
+		if !hasT {
+			continue
+		}
+		tenants = append(tenants, dto.TenantVO{
+			ID:           tn.Id.Int64(),
+			Name:         tn.Name.String(),
+			Logo:         tn.Logo.String(),
+			ContactName:  tn.ContactName.String(),
+			ContactPhone: tn.ContactPhone.String(),
+			Plan:         tn.Plan.String(),
+			Status:       tn.Status.Int8(),
+			TrialStart:   tn.TrialStart.Time,
+			TrialEnd:     tn.TrialEnd.Time,
+		})
+	}
+	if len(tenants) == 0 {
+		out.NeedBind = true
+		return nil
+	}
+	out.Tenants = tenants
+	if len(tenants) == 1 {
+		m := memberList[0]
+		return a.fillUserByMember(ctx, userID, m.TenantId.Int64(), m.Id.Int64(), m.RoleId.Int64(), out)
+	}
+	out.NeedBind = true
+	return nil
 }
 
 // Forget 忘记密码
@@ -81,19 +128,19 @@ func (a *account) Forget(ctx context.Context, in *dto.ForgetQuery, out *dto.Logi
 	if e := checkCode(*in.Account, *in.Code); e != nil {
 		return e
 	}
-	staff, has, e := dao.Staff(db).Get(ctx, db.Table(tblstaff.TableName).Where(tblstaff.Phone.Eq(types.String(*in.Account))))
+	user, has, e := dao.User(db).Get(ctx, db.Table(tbluser.TableName).Where(tbluser.Phone.Eq(types.String(*in.Account))))
 	if e != nil {
 		return e
 	}
 	if !has {
 		return constant.ErrNoRegister
 	}
-	_, e = dao.Staff(db).UpdateById(ctx, staff.Id, tblstaff.Pass.Set(types.String(*in.Pass)))
+	_, e = dao.User(db).UpdateById(ctx, user.Id, tbluser.Pass.Set(types.String(md5Str(*in.Pass))))
 	if e != nil {
 		return e
 	}
-	staff.Pass = types.String(*in.Pass)
-	return a.fillUser(ctx, staff, out)
+	user.Pass = types.String(md5Str(*in.Pass))
+	return a.loginWithUser(ctx, user, out)
 }
 
 // Edit 修改密码
@@ -101,73 +148,28 @@ func (a *account) Edit(ctx context.Context, in *dto.EditQuery, out *dto.LoginUse
 	if in.ID == nil {
 		return constant.ErrDataNotExist
 	}
-	staff, has, e := dao.Staff(db).GetByID(ctx, types.BigInt(*in.ID),
-		tblstaff.Id, tblstaff.RoleId, tblstaff.Name, tblstaff.Phone, tblstaff.Avator, tblstaff.Pass)
+	user, has, e := dao.User(db).GetByID(ctx, types.BigInt(*in.ID),
+		tbluser.Id, tbluser.Name, tbluser.Phone, tbluser.Avator, tbluser.Pass)
 	if e != nil {
 		return e
 	}
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	if in.OldPass == nil || *in.OldPass != staff.Pass.String() {
+	if in.OldPass == nil || md5Str(*in.OldPass) != user.Pass.String() {
 		return constant.ErrPassword
 	}
-	_, e = dao.Staff(db).UpdateById(ctx, types.BigInt(*in.ID), tblstaff.Pass.Set(types.String(*in.NewPass)))
+	_, e = dao.User(db).UpdateById(ctx, user.Id, tbluser.Pass.Set(types.String(md5Str(*in.NewPass))))
 	if e != nil {
 		return e
 	}
-	staff.Pass = types.String(*in.NewPass)
-	return a.fillUser(ctx, staff, out)
+	user.Pass = types.String(md5Str(*in.NewPass))
+	return a.loginWithUser(ctx, user, out)
 }
 
 // Logout 退出登录
 func (a *account) Logout(ctx context.Context, in *dto.LoginQuery, out *dto.EmptyResp) error {
 	// 无状态 token，直接返回成功
-	return nil
-}
-
-// fillUser 组装登录用户信息与权限，并生成 token
-func (a *account) fillUser(ctx context.Context, staff *do.Staff, out *dto.LoginUserVO) error {
-	var ras []do.RoleAuth
-	e := db.Table(tblroleauth.TableName).
-		Where(tblroleauth.RoleId.Eq(staff.RoleId)).
-		Cols(tblroleauth.AuthId).
-		Select().
-		Gets(ctx, &ras)
-	if e != nil {
-		return e
-	}
-	var authIDs []int64
-	for _, ra := range ras {
-		authIDs = append(authIDs, int64(ra.AuthId))
-	}
-	var authUrls []string
-	if len(authIDs) > 0 {
-		var auths []do.Auth
-		e = db.Table(tblauth.TableName).
-			Where(tblauth.Id.In(int64ToAny(authIDs)...)).
-			Cols(tblauth.Id, tblauth.Name, tblauth.Url).
-			Select().
-			Gets(ctx, &auths)
-		if e != nil {
-			return e
-		}
-		for _, au := range auths {
-			authUrls = append(authUrls, au.Url.String())
-		}
-	}
-	tk, e := token.GenToken(strconv.FormatInt(int64(staff.Id), 10), "staff")
-	if e != nil {
-		return e
-	}
-	out.ID = int64(staff.Id)
-	out.Name = staff.Name.String()
-	out.Avator = staff.Avator.String()
-	out.Phone = staff.Phone.String()
-	out.Pass = staff.Pass.String()
-	out.AuthIDList = authIDs
-	out.AuthUrlList = authUrls
-	out.Token = tk
 	return nil
 }
 
@@ -206,13 +208,4 @@ func checkCode(phone, code string) error {
 func genCode() string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	return strconv.FormatInt(int64(r.Intn(1000000)), 10)
-}
-
-// int64ToAny []int64 -> []any
-func int64ToAny(in []int64) []any {
-	out := make([]any, len(in))
-	for i, v := range in {
-		out[i] = v
-	}
-	return out
 }

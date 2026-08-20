@@ -27,9 +27,12 @@ func NewDepositInfo() *DepositInfo {
 
 // MarshalJSON
 func (p *DepositInfo) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(10 * 50)
+	write := types.NewJsonWriter(11 * 50)
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.DepositId != 0 {
 		write.WriteRaw("deposit_id", types.Marshal(p.DepositId))
@@ -73,6 +76,8 @@ func (p *DepositInfo) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "deposit_id":
 			p.DepositId = types.BigInt(value.Uint())
 		case "medicine_id":
@@ -113,6 +118,7 @@ func (p *DepositInfo) Free() {
 // Reset
 func (p *DepositInfo) Reset() {
 	p.Id = 0
+	p.TenantId = 0
 	p.DepositId = 0
 	p.MedicineId = 0
 	p.CreateId = 0
@@ -132,6 +138,7 @@ func (p *DepositInfo) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var depositinfoFieldToPtrFunc = map[string]func(*DepositInfo) any{
 	tbldepositinfo.Id.Name:         func(p *DepositInfo) any { return &p.Id },
+	tbldepositinfo.TenantId.Name:   func(p *DepositInfo) any { return &p.TenantId },
 	tbldepositinfo.DepositId.Name:  func(p *DepositInfo) any { return &p.DepositId },
 	tbldepositinfo.MedicineId.Name: func(p *DepositInfo) any { return &p.MedicineId },
 	tbldepositinfo.CreateId.Name:   func(p *DepositInfo) any { return &p.CreateId },
@@ -232,6 +239,9 @@ func (p *DepositInfo) RawAssignValues(d dialect.Dialect, args ...dialect.Field) 
 var depositinfoFieldToValueFunc = map[dialect.Field]func(*DepositInfo) (any, bool){
 	tbldepositinfo.Id: func(p *DepositInfo) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tbldepositinfo.TenantId: func(p *DepositInfo) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tbldepositinfo.DepositId: func(p *DepositInfo) (any, bool) {
 		return p.DepositId, p.DepositId == 0

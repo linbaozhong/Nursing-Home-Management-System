@@ -15,6 +15,7 @@ var (
 	Url        = dialect.Field{Name: "url", Json: "url", Table: "base_attachment", Type: "types.String", IsRelation: false}
 	Suff       = dialect.Field{Name: "suff", Json: "suff", Table: "base_attachment", Type: "types.String", IsRelation: false}
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
 	Size       = dialect.Field{Name: "size", Json: "size", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "base_attachment", Type: "types.Time", IsRelation: false}
@@ -32,6 +33,7 @@ var (
 		Url,
 		Suff,
 		Id,
+		TenantId,
 		Size,
 		CreateId,
 		CreateTime,
@@ -47,6 +49,7 @@ var (
 		Url,
 		Suff,
 		Id,
+		TenantId,
 		Size,
 		CreateId,
 		CreateTime,

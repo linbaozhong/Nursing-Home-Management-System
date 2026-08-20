@@ -12,6 +12,7 @@ var (
 	LeftEar                  = dialect.Field{Name: "left_ear", Json: "left_ear", Table: "health_data", Type: "types.String", IsRelation: false}
 	RightEar                 = dialect.Field{Name: "right_ear", Json: "right_ear", Table: "health_data", Type: "types.String", IsRelation: false}
 	Id                       = dialect.Field{Name: "id", Json: "id", Table: "health_data", Type: "types.BigInt", IsRelation: false}
+	TenantId                 = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "health_data", Type: "types.BigInt", IsRelation: false}
 	ElderId                  = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "health_data", Type: "types.BigInt", IsRelation: false}
 	Weight                   = dialect.Field{Name: "weight", Json: "weight", Table: "health_data", Type: "types.Float64", IsRelation: false}
 	Temperature              = dialect.Field{Name: "temperature", Json: "temperature", Table: "health_data", Type: "types.Float64", IsRelation: false}
@@ -43,6 +44,7 @@ var (
 		LeftEar,
 		RightEar,
 		Id,
+		TenantId,
 		ElderId,
 		Weight,
 		Temperature,
@@ -72,6 +74,7 @@ var (
 		LeftEar,
 		RightEar,
 		Id,
+		TenantId,
 		ElderId,
 		Weight,
 		Temperature,

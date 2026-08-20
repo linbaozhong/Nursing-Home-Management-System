@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tbldishes"
 	"api/internal/model/define/table/tblelder"
@@ -38,7 +39,8 @@ func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKe
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblorder.TableName).
 		LeftJoin(tblorder.ElderId, tblelder.Id).
-		LeftJoin(tblorder.StaffId, tblstaff.Id)
+		LeftJoin(tblorder.StaffId, tblstaff.Id).
+		Where(tblorder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.ElderName != nil && *in.ElderName != "" {
 		q = q.Where(tblelder.Name.Like(*in.ElderName))
 	}
@@ -84,7 +86,7 @@ func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKe
 
 // GetOrderById 查询点餐详情（含菜品）
 func (s *orderService) GetOrderById(ctx context.Context, in *dto.IDReq, out *dto.GetOrderByIDVO) error {
-	order, has, e := dao.Order(db).Get(ctx, ace.Where(tblorder.Id.Eq(types.BigInt(*in.ID))))
+	order, has, e := dao.Order(db).Get(ctx, ace.Where(tblorder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblorder.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -104,7 +106,7 @@ func (s *orderService) GetOrderById(ctx context.Context, in *dto.IDReq, out *dto
 		out.StaffName = st.Name.String()
 	}
 	// 菜品明细
-	dishes, _, de := dao.OrderDishes(db).List(ctx, ace.Where(tblorderdishes.OrderId.Eq(order.Id)))
+	dishes, _, de := dao.OrderDishes(db).List(ctx, ace.Where(tblorderdishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblorderdishes.OrderId.Eq(order.Id)))
 	if de == nil {
 		for _, d := range dishes {
 			out.OrderDishesVOList = append(out.OrderDishesVOList, dto.OrderDishesVO{
@@ -126,6 +128,7 @@ func (s *orderService) AddOrder(ctx context.Context, in *dto.AddOrderQuery, out 
 		return constant.ErrParamInvalid
 	}
 	order := &do.Order{
+		TenantId:  types.BigInt(lib.TenantID(ctx)),
 		DineType:  types.String(orEmpty(in.DineType)),
 		ElderId:   types.BigInt(*in.ElderID),
 		PayAmount: types.Money(0),
@@ -152,6 +155,7 @@ func (s *orderService) AddOrder(ctx context.Context, in *dto.AddOrderQuery, out 
 		reallyPrice := price * num
 		payAmount += reallyPrice
 		od := &do.OrderDishes{
+			TenantId:     types.BigInt(lib.TenantID(ctx)),
 			OrderId:      order.Id,
 			DishesName:   types.String(dishName),
 			DishesPrice:  types.Money(price),
@@ -174,7 +178,7 @@ func (s *orderService) SendOrder(ctx context.Context, in *dto.SendOrderQuery, ou
 	if in.ID == nil || in.StaffID == nil {
 		return constant.ErrParamInvalid
 	}
-	order, has, e := dao.Order(db).Get(ctx, ace.Where(tblorder.Id.Eq(types.BigInt(*in.ID))))
+	order, has, e := dao.Order(db).Get(ctx, ace.Where(tblorder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblorder.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -196,6 +200,7 @@ func (s *orderService) SendOrder(ctx context.Context, in *dto.SendOrderQuery, ou
 		}
 		_, _ = dao.Elder(db).UpdateById(ctx, order.ElderId, tblelder.Balance.Set(types.Float64(newBalance)))
 		consume := &do.Consume{
+			TenantId:      types.BigInt(lib.TenantID(ctx)),
 			ElderId:       order.ElderId,
 			ConsumeType:   types.String("点餐"),
 			ConsumeAmount: order.PayAmount,

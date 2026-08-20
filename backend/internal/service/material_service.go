@@ -5,12 +5,14 @@ import (
 	"errors"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblmaterial"
 	"api/internal/model/define/table/tblmaterialtype"
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/conv"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
@@ -27,7 +29,7 @@ var Material = &material{}
 func (m *material) PageMaterialByKey(ctx context.Context, in *dto.PageMaterialByKeyQuery, out *[]dto.PageMaterialByKeyVO) error {
 	q := db.Table(tblmaterial.TableName).
 		LeftJoin(tblmaterial.TypeId, tblmaterialtype.Id).
-		Where(tblmaterial.DelFlag.Eq(constant.YesNoNo))
+		Where(tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterial.DelFlag.Eq(constant.YesNoNo))
 	if in.MaterialName != nil && *in.MaterialName != "" {
 		q.And(tblmaterial.Name.Like(*in.MaterialName))
 	}
@@ -49,7 +51,7 @@ func (m *material) PageMaterialByKey(ctx context.Context, in *dto.PageMaterialBy
 // GetMaterialById 根据编号获取物资（编辑回显）
 // 对应 Java: MaterialServiceImpl.getMaterialById
 func (m *material) GetMaterialById(ctx context.Context, in *dto.IDReq, out *dto.OperateMaterialVO) error {
-	obj, has, e := dao.Material(db).GetByID(ctx, types.BigInt(*in.ID))
+	obj, has, e := dao.Material(db).Get(ctx, ace.Where(tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterial.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -67,6 +69,7 @@ func (m *material) GetMaterialById(ctx context.Context, in *dto.IDReq, out *dto.
 // 对应 Java: MaterialServiceImpl.addMaterial -> MaterialFunc.getMaterialByName / checkTypeTotal
 func (m *material) AddMaterial(ctx context.Context, in *dto.AddMaterialQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.Material(db).Exists(ctx,
+		tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterial.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tblmaterial.Name.Eq(*in.Name),
 		tblmaterial.DelFlag.Eq(constant.YesNoNo),
@@ -78,6 +81,7 @@ func (m *material) AddMaterial(ctx context.Context, in *dto.AddMaterialQuery, ou
 		return errors.New("该分类下物资名称已存在")
 	}
 	total, e := dao.Material(db).Count(ctx,
+		tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterial.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tblmaterial.DelFlag.Eq(constant.YesNoNo),
 	)
@@ -88,6 +92,7 @@ func (m *material) AddMaterial(ctx context.Context, in *dto.AddMaterialQuery, ou
 		return errors.New("该分类下物资数量已达上限")
 	}
 	bean := do.NewMaterial()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.TypeId = types.BigInt(*in.TypeID)
 	bean.Name = types.String(*in.Name)
 	bean.Price = types.Money(*in.Price)
@@ -100,6 +105,7 @@ func (m *material) AddMaterial(ctx context.Context, in *dto.AddMaterialQuery, ou
 // 对应 Java: MaterialServiceImpl.editMaterial
 func (m *material) EditMaterial(ctx context.Context, in *dto.EditMaterialQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.Material(db).Exists(ctx,
+		tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterial.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tblmaterial.Name.Eq(*in.Name),
 		tblmaterial.DelFlag.Eq(constant.YesNoNo),
@@ -134,7 +140,7 @@ func (m *material) DeleteMaterial(ctx context.Context, in *dto.IDReq, out *dto.E
 // 对应 Java: MaterialServiceImpl.getMaterialType -> MaterialTypeFunc.listNotDelMaerialType
 func (m *material) PageMaterialTypeByKey(ctx context.Context, in *dto.PageMaterialTypeByKeyQuery, out *[]dto.PageMaterialTypeVO) error {
 	q := db.Table(tblmaterial.TableName).
-		Where(tblmaterialtype.DelFlag.Eq(constant.YesNoNo))
+		Where(tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterialtype.DelFlag.Eq(constant.YesNoNo))
 	if in.Name != nil && *in.Name != "" {
 		q.And(tblmaterialtype.Name.Like(*in.Name))
 	}
@@ -151,7 +157,7 @@ func (m *material) PageMaterialTypeByKey(ctx context.Context, in *dto.PageMateri
 // GetMaterialTypeById 根据编号获取物资分类（编辑回显）
 // 对应 Java: MaterialServiceImpl.getMaterialTypeById
 func (m *material) GetMaterialTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateMaterialTypeQuery) error {
-	obj, has, e := dao.MaterialType(db).GetByID(ctx, types.BigInt(*in.ID))
+	obj, has, e := dao.MaterialType(db).Get(ctx, ace.Where(tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterialtype.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -167,6 +173,7 @@ func (m *material) GetMaterialTypeById(ctx context.Context, in *dto.IDReq, out *
 // 对应 Java: MaterialServiceImpl.addMaterialType -> MaterialTypeFunc.getMaterialTypeByName / checkTypeTotal
 func (m *material) AddMaterialType(ctx context.Context, in *dto.AddMaterialTypeQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.MaterialType(db).Exists(ctx,
+		tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterialtype.Name.Eq(*in.Name),
 		tblmaterialtype.DelFlag.Eq(constant.YesNoNo),
 	)
@@ -176,7 +183,10 @@ func (m *material) AddMaterialType(ctx context.Context, in *dto.AddMaterialTypeQ
 	if repeat {
 		return errors.New("物资分类名称已存在")
 	}
-	total, e := dao.MaterialType(db).Count(ctx, tblmaterialtype.DelFlag.Eq(constant.YesNoNo))
+	total, e := dao.MaterialType(db).Count(ctx,
+		tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+		tblmaterialtype.DelFlag.Eq(constant.YesNoNo),
+	)
 	if e != nil {
 		return e
 	}
@@ -184,6 +194,7 @@ func (m *material) AddMaterialType(ctx context.Context, in *dto.AddMaterialTypeQ
 		return errors.New("物资分类数量已达上限")
 	}
 	bean := do.NewMaterialType()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	_, e = dao.MaterialType(db).InsertOne(ctx, bean)
@@ -194,6 +205,7 @@ func (m *material) AddMaterialType(ctx context.Context, in *dto.AddMaterialTypeQ
 // 对应 Java: MaterialServiceImpl.editMaterialType
 func (m *material) EditMaterialType(ctx context.Context, in *dto.EditMaterialTypeQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.MaterialType(db).Exists(ctx,
+		tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterialtype.Name.Eq(*in.Name),
 		tblmaterialtype.DelFlag.Eq(constant.YesNoNo),
 		tblmaterialtype.Id.NotEq(types.BigInt(*in.ID)),
@@ -215,6 +227,7 @@ func (m *material) EditMaterialType(ctx context.Context, in *dto.EditMaterialTyp
 // 对应 Java: MaterialServiceImpl.deleteMaterialType -> MaterialFunc.checkMaterialItem
 func (m *material) DeleteMaterialType(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	hasChild, e := dao.Material(db).Exists(ctx,
+		tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterial.TypeId.Eq(types.BigInt(*in.ID)),
 		tblmaterial.DelFlag.Eq(constant.YesNoNo),
 	)

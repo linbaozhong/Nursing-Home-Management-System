@@ -9,7 +9,7 @@
 			</view>
 			<view class="profile__info">
 				<text class="profile__name">{{ user ? user.name : '' }}</text>
-				<text class="profile__role">养老机构员工端</text>
+				<text class="profile__role">{{ currentTenantName != '' ? currentTenantName : '养老机构员工端' }}</text>
 			</view>
 		</view>
 
@@ -51,6 +51,7 @@
 
 	const user = ref<LoginUser | null>(null)
 	const modules = ref<ModuleEntry[]>([])
+	const currentTenantName = ref('')
 
 	onShow(() => {
 		if (getLoginUser() == null) {
@@ -58,6 +59,18 @@
 			return
 		}
 		user.value = getLoginUser()
+		// 展示当前企业名称
+		const u = user.value!
+		const tid = u.tenant_id
+		let tName = ''
+		if (u.tenants != null) {
+			u.tenants.forEach((t) => {
+				if (t.id == tid) {
+					tName = t.name
+				}
+			})
+		}
+		currentTenantName.value = tName
 		// 按权限过滤模块
 		const access = accessibleModules()
 		modules.value = ALL_MODULES.filter((m) => access.indexOf(m.key) >= 0)

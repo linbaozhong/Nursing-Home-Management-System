@@ -10,6 +10,7 @@ const TableName = "health_info"
 
 var (
 	SelfCare       = dialect.Field{Name: "self_care", Json: "self_care", Table: "health_info", Type: "types.String", IsRelation: false}
+	TenantId       = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "health_info", Type: "types.BigInt", IsRelation: false}
 	Vision         = dialect.Field{Name: "vision", Json: "vision", Table: "health_info", Type: "types.String", IsRelation: false}
 	Hearing        = dialect.Field{Name: "hearing", Json: "hearing", Table: "health_info", Type: "types.String", IsRelation: false}
 	Hospital       = dialect.Field{Name: "hospital", Json: "hospital", Table: "health_info", Type: "types.String", IsRelation: false}
@@ -30,6 +31,7 @@ var (
 	// 可写列
 	WritableFields = []dialect.Field{
 		SelfCare,
+		TenantId,
 		Vision,
 		Hearing,
 		Hospital,
@@ -48,6 +50,7 @@ var (
 	// 可读列
 	ReadableFields = []dialect.Field{
 		SelfCare,
+		TenantId,
 		Vision,
 		Hearing,
 		Hospital,

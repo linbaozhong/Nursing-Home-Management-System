@@ -27,7 +27,7 @@ func NewRetreat() *Retreat {
 
 // MarshalJSON
 func (p *Retreat) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(9 * 50)
+	write := types.NewJsonWriter(10 * 50)
 	if p.RetreatForm != "" {
 		write.WriteRaw("retreat_form", types.Marshal(p.RetreatForm))
 	}
@@ -36,6 +36,9 @@ func (p *Retreat) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -74,6 +77,8 @@ func (p *Retreat) UnmarshalJSON(data []byte) error {
 			p.RetreatCause = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "create_id":
@@ -110,6 +115,7 @@ func (p *Retreat) Reset() {
 	p.RetreatForm = ""
 	p.RetreatCause = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -128,6 +134,7 @@ var retreatFieldToPtrFunc = map[string]func(*Retreat) any{
 	tblretreat.RetreatForm.Name:  func(p *Retreat) any { return &p.RetreatForm },
 	tblretreat.RetreatCause.Name: func(p *Retreat) any { return &p.RetreatCause },
 	tblretreat.Id.Name:           func(p *Retreat) any { return &p.Id },
+	tblretreat.TenantId.Name:     func(p *Retreat) any { return &p.TenantId },
 	tblretreat.ElderId.Name:      func(p *Retreat) any { return &p.ElderId },
 	tblretreat.CreateId.Name:     func(p *Retreat) any { return &p.CreateId },
 	tblretreat.CreateTime.Name:   func(p *Retreat) any { return &p.CreateTime },
@@ -231,6 +238,9 @@ var retreatFieldToValueFunc = map[dialect.Field]func(*Retreat) (any, bool){
 	},
 	tblretreat.Id: func(p *Retreat) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblretreat.TenantId: func(p *Retreat) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblretreat.ElderId: func(p *Retreat) (any, bool) {
 		return p.ElderId, p.ElderId == 0

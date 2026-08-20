@@ -27,9 +27,12 @@ func NewHealthInfo() *HealthInfo {
 
 // MarshalJSON
 func (p *HealthInfo) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(15 * 50)
+	write := types.NewJsonWriter(16 * 50)
 	if p.SelfCare != "" {
 		write.WriteRaw("self_care", types.Marshal(p.SelfCare))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.Vision != "" {
 		write.WriteRaw("vision", types.Marshal(p.Vision))
@@ -88,6 +91,8 @@ func (p *HealthInfo) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "self_care":
 			p.SelfCare = types.String(value.Str)
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "vision":
 			p.Vision = types.String(value.Str)
 		case "hearing":
@@ -138,6 +143,7 @@ func (p *HealthInfo) Free() {
 // Reset
 func (p *HealthInfo) Reset() {
 	p.SelfCare = ""
+	p.TenantId = 0
 	p.Vision = ""
 	p.Hearing = ""
 	p.Hospital = ""
@@ -162,6 +168,7 @@ func (p *HealthInfo) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var healthinfoFieldToPtrFunc = map[string]func(*HealthInfo) any{
 	tblhealthinfo.SelfCare.Name:       func(p *HealthInfo) any { return &p.SelfCare },
+	tblhealthinfo.TenantId.Name:       func(p *HealthInfo) any { return &p.TenantId },
 	tblhealthinfo.Vision.Name:         func(p *HealthInfo) any { return &p.Vision },
 	tblhealthinfo.Hearing.Name:        func(p *HealthInfo) any { return &p.Hearing },
 	tblhealthinfo.Hospital.Name:       func(p *HealthInfo) any { return &p.Hospital },
@@ -267,6 +274,9 @@ func (p *HealthInfo) RawAssignValues(d dialect.Dialect, args ...dialect.Field) (
 var healthinfoFieldToValueFunc = map[dialect.Field]func(*HealthInfo) (any, bool){
 	tblhealthinfo.SelfCare: func(p *HealthInfo) (any, bool) {
 		return p.SelfCare, p.SelfCare == ""
+	},
+	tblhealthinfo.TenantId: func(p *HealthInfo) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblhealthinfo.Vision: func(p *HealthInfo) (any, bool) {
 		return p.Vision, p.Vision == ""

@@ -27,7 +27,7 @@ func NewFamilyMember() *FamilyMember {
 
 // MarshalJSON
 func (p *FamilyMember) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(14 * 50)
+	write := types.NewJsonWriter(15 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
@@ -48,6 +48,9 @@ func (p *FamilyMember) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -97,6 +100,8 @@ func (p *FamilyMember) UnmarshalJSON(data []byte) error {
 			p.Relation = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "create_id":
@@ -139,6 +144,7 @@ func (p *FamilyMember) Reset() {
 	p.Address = ""
 	p.Relation = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -162,6 +168,7 @@ var familymemberFieldToPtrFunc = map[string]func(*FamilyMember) any{
 	tblfamilymember.Address.Name:     func(p *FamilyMember) any { return &p.Address },
 	tblfamilymember.Relation.Name:    func(p *FamilyMember) any { return &p.Relation },
 	tblfamilymember.Id.Name:          func(p *FamilyMember) any { return &p.Id },
+	tblfamilymember.TenantId.Name:    func(p *FamilyMember) any { return &p.TenantId },
 	tblfamilymember.ElderId.Name:     func(p *FamilyMember) any { return &p.ElderId },
 	tblfamilymember.CreateId.Name:    func(p *FamilyMember) any { return &p.CreateId },
 	tblfamilymember.CreateTime.Name:  func(p *FamilyMember) any { return &p.CreateTime },
@@ -278,6 +285,9 @@ var familymemberFieldToValueFunc = map[dialect.Field]func(*FamilyMember) (any, b
 	},
 	tblfamilymember.Id: func(p *FamilyMember) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblfamilymember.TenantId: func(p *FamilyMember) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblfamilymember.ElderId: func(p *FamilyMember) (any, bool) {
 		return p.ElderId, p.ElderId == 0

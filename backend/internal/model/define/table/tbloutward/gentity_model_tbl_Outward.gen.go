@@ -13,6 +13,7 @@ var (
 	ChaperonePhone = dialect.Field{Name: "chaperone_phone", Json: "chaperone_phone", Table: "outward", Type: "types.String", IsRelation: false}
 	ChaperoneType  = dialect.Field{Name: "chaperone_type", Json: "chaperone_type", Table: "outward", Type: "types.String", IsRelation: false}
 	Id             = dialect.Field{Name: "id", Json: "id", Table: "outward", Type: "types.BigInt", IsRelation: false}
+	TenantId       = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "outward", Type: "types.BigInt", IsRelation: false}
 	ElderId        = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "outward", Type: "types.BigInt", IsRelation: false}
 	OutwardDate    = dialect.Field{Name: "outward_date", Json: "outward_date", Table: "outward", Type: "types.Time", IsRelation: false}
 	PlanReturnDate = dialect.Field{Name: "plan_return_date", Json: "plan_return_date", Table: "outward", Type: "types.Time", IsRelation: false}
@@ -31,6 +32,7 @@ var (
 		ChaperonePhone,
 		ChaperoneType,
 		Id,
+		TenantId,
 		ElderId,
 		OutwardDate,
 		PlanReturnDate,
@@ -47,6 +49,7 @@ var (
 		ChaperonePhone,
 		ChaperoneType,
 		Id,
+		TenantId,
 		ElderId,
 		OutwardDate,
 		PlanReturnDate,

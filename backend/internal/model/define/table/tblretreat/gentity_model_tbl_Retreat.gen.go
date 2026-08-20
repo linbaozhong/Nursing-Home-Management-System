@@ -12,6 +12,7 @@ var (
 	RetreatForm  = dialect.Field{Name: "retreat_form", Json: "retreat_form", Table: "retreat", Type: "types.String", IsRelation: false}
 	RetreatCause = dialect.Field{Name: "retreat_cause", Json: "retreat_cause", Table: "retreat", Type: "types.String", IsRelation: false}
 	Id           = dialect.Field{Name: "id", Json: "id", Table: "retreat", Type: "types.BigInt", IsRelation: false}
+	TenantId     = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "retreat", Type: "types.BigInt", IsRelation: false}
 	ElderId      = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "retreat", Type: "types.BigInt", IsRelation: false}
 	CreateId     = dialect.Field{Name: "create_id", Json: "create_id", Table: "retreat", Type: "types.BigInt", IsRelation: false}
 	CreateTime   = dialect.Field{Name: "create_time", Json: "create_time", Table: "retreat", Type: "types.Time", IsRelation: false}
@@ -26,6 +27,7 @@ var (
 		RetreatForm,
 		RetreatCause,
 		Id,
+		TenantId,
 		ElderId,
 		CreateId,
 		CreateTime,
@@ -38,6 +40,7 @@ var (
 		RetreatForm,
 		RetreatCause,
 		Id,
+		TenantId,
 		ElderId,
 		CreateId,
 		CreateTime,

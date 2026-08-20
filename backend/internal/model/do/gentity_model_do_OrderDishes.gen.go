@@ -27,12 +27,15 @@ func NewOrderDishes() *OrderDishes {
 
 // MarshalJSON
 func (p *OrderDishes) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(12 * 50)
+	write := types.NewJsonWriter(13 * 50)
 	if p.DishesName != "" {
 		write.WriteRaw("dishes_name", types.Marshal(p.DishesName))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.OrderId != 0 {
 		write.WriteRaw("order_id", types.Marshal(p.OrderId))
@@ -81,6 +84,8 @@ func (p *OrderDishes) UnmarshalJSON(data []byte) error {
 			p.DishesName = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "order_id":
 			p.OrderId = types.BigInt(value.Uint())
 		case "dishes_price":
@@ -124,6 +129,7 @@ func (p *OrderDishes) Free() {
 func (p *OrderDishes) Reset() {
 	p.DishesName = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.OrderId = 0
 	p.DishesPrice = 0
 	p.TotalAmount = 0
@@ -145,6 +151,7 @@ func (p *OrderDishes) TableName() string {
 var orderdishesFieldToPtrFunc = map[string]func(*OrderDishes) any{
 	tblorderdishes.DishesName.Name:   func(p *OrderDishes) any { return &p.DishesName },
 	tblorderdishes.Id.Name:           func(p *OrderDishes) any { return &p.Id },
+	tblorderdishes.TenantId.Name:     func(p *OrderDishes) any { return &p.TenantId },
 	tblorderdishes.OrderId.Name:      func(p *OrderDishes) any { return &p.OrderId },
 	tblorderdishes.DishesPrice.Name:  func(p *OrderDishes) any { return &p.DishesPrice },
 	tblorderdishes.TotalAmount.Name:  func(p *OrderDishes) any { return &p.TotalAmount },
@@ -249,6 +256,9 @@ var orderdishesFieldToValueFunc = map[dialect.Field]func(*OrderDishes) (any, boo
 	},
 	tblorderdishes.Id: func(p *OrderDishes) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblorderdishes.TenantId: func(p *OrderDishes) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblorderdishes.OrderId: func(p *OrderDishes) (any, bool) {
 		return p.OrderId, p.OrderId == 0

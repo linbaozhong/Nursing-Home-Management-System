@@ -22,6 +22,7 @@ DROP TABLE IF EXISTS `accident`;
 
 CREATE TABLE `accident` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `staff_id` bigint(20) NOT NULL COMMENT '值班护工编号',
   `occur_date` datetime NOT NULL COMMENT '发生时间',
@@ -48,6 +49,7 @@ DROP TABLE IF EXISTS `active`;
 
 CREATE TABLE `active` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `type_id` bigint(20) NOT NULL COMMENT '活动类别编号',
   `theme` varchar(10) NOT NULL COMMENT '活动主题',
   `name` varchar(25) NOT NULL COMMENT '活动名称',
@@ -77,6 +79,7 @@ DROP TABLE IF EXISTS `active_participant`;
 
 CREATE TABLE `active_participant` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `active_id` bigint(20) NOT NULL COMMENT '活动编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -99,6 +102,7 @@ DROP TABLE IF EXISTS `active_type`;
 
 CREATE TABLE `active_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(10) NOT NULL COMMENT '活动类型名称',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -187,6 +191,7 @@ DROP TABLE IF EXISTS `base_attachment`;
 
 CREATE TABLE `base_attachment` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(225) NOT NULL COMMENT '上传后文件名',
   `real_name` varchar(225) NOT NULL COMMENT '文件真实名称',
   `path` varchar(225) NOT NULL COMMENT '文件绝对路径',
@@ -317,6 +322,7 @@ DROP TABLE IF EXISTS `bed`;
 
 CREATE TABLE `bed` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `room_id` bigint(20) NOT NULL COMMENT '房间编号',
   `name` varchar(40) NOT NULL COMMENT '床位名称',
   `bed_flag` varchar(5) NOT NULL COMMENT '床位状态(空闲/预定/入住/退住审核)',
@@ -348,6 +354,7 @@ DROP TABLE IF EXISTS `building`;
 
 CREATE TABLE `building` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(10) NOT NULL COMMENT '楼栋名称',
   `floor_num` int(11) NOT NULL COMMENT '楼层数量',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
@@ -382,6 +389,7 @@ DROP TABLE IF EXISTS `catering_set`;
 
 CREATE TABLE `catering_set` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(10) NOT NULL COMMENT '餐饮套餐名称',
   `month_price` decimal(10,2) NOT NULL COMMENT '月套餐费用',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
@@ -407,6 +415,7 @@ DROP TABLE IF EXISTS `communication_record`;
 
 CREATE TABLE `communication_record` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `record_date` datetime NOT NULL COMMENT '记录时间',
   `communication_record` varchar(255) NOT NULL COMMENT '沟通记录',
@@ -429,6 +438,7 @@ DROP TABLE IF EXISTS `consult`;
 
 CREATE TABLE `consult` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `source_id` bigint(20) NOT NULL COMMENT '来源渠道编号',
   `staff_id` bigint(20) NOT NULL COMMENT '接待人编号',
@@ -526,6 +536,7 @@ DROP TABLE IF EXISTS `consume`;
 
 CREATE TABLE `consume` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `consume_type` varchar(10) NOT NULL COMMENT '消费类别',
   `consume_amount` decimal(10,2) NOT NULL COMMENT '消费金额',
@@ -555,6 +566,7 @@ DROP TABLE IF EXISTS `contract`;
 
 CREATE TABLE `contract` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `staff_id` bigint(20) NOT NULL COMMENT '销售人员编号',
   `sign_date` datetime NOT NULL COMMENT '合同签订日期',
@@ -583,6 +595,7 @@ DROP TABLE IF EXISTS `deposit_info`;
 
 CREATE TABLE `deposit_info` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `deposit_id` bigint(20) NOT NULL COMMENT '药品缴存编号',
   `medicine_id` bigint(20) NOT NULL COMMENT '药品编号',
   `deposit_num` int(11) NOT NULL COMMENT '缴存数量',
@@ -603,6 +616,7 @@ DROP TABLE IF EXISTS `dishes`;
 
 CREATE TABLE `dishes` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `type_id` bigint(20) NOT NULL COMMENT '菜品类别编号',
   `name` varchar(15) NOT NULL COMMENT '菜品名称',
   `price` decimal(10,2) NOT NULL COMMENT '菜品价格',
@@ -629,6 +643,7 @@ DROP TABLE IF EXISTS `dishes_type`;
 
 CREATE TABLE `dishes_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(10) NOT NULL COMMENT '菜品类别名称',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -654,6 +669,7 @@ DROP TABLE IF EXISTS `drug_deposit`;
 
 CREATE TABLE `drug_deposit` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `mode` varchar(5) NOT NULL COMMENT '缴存药品方式',
   `deposit_flag` varchar(5) NOT NULL COMMENT '缴存状态',
@@ -673,6 +689,7 @@ DROP TABLE IF EXISTS `elder`;
 
 CREATE TABLE `elder` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `nursing_grade_id` bigint(20) DEFAULT NULL COMMENT '护理等级编号',
   `catering_set_id` bigint(20) DEFAULT NULL COMMENT '餐饮套餐编号',
   `bed_id` bigint(20) DEFAULT NULL COMMENT '床位编号',
@@ -781,6 +798,7 @@ DROP TABLE IF EXISTS `elder_label`;
 
 CREATE TABLE `elder_label` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `label_id` bigint(20) NOT NULL COMMENT '标签编号',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -804,6 +822,7 @@ DROP TABLE IF EXISTS `emergency_contact`;
 
 CREATE TABLE `emergency_contact` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `name` varchar(10) NOT NULL COMMENT '紧急联系人姓名',
   `phone` varchar(11) NOT NULL COMMENT '紧急联系人电话',
@@ -834,6 +853,7 @@ DROP TABLE IF EXISTS `family_member`;
 
 CREATE TABLE `family_member` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `name` varchar(10) NOT NULL COMMENT '家属姓名',
   `id_num` varchar(18) NOT NULL COMMENT '身份证号',
@@ -858,6 +878,7 @@ DROP TABLE IF EXISTS `floor`;
 
 CREATE TABLE `floor` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `building_id` bigint(20) NOT NULL COMMENT '楼栋编号',
   `name` varchar(20) NOT NULL COMMENT '楼层名称',
   `room_num` int(11) NOT NULL COMMENT '房间数量',
@@ -890,6 +911,7 @@ DROP TABLE IF EXISTS `health_data`;
 
 CREATE TABLE `health_data` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `height` int(11) NOT NULL COMMENT '身高',
   `weight` double NOT NULL COMMENT '体重',
@@ -926,6 +948,7 @@ DROP TABLE IF EXISTS `health_info`;
 
 CREATE TABLE `health_info` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `self_care` varchar(5) NOT NULL COMMENT '自理情况',
   `vision` varchar(5) NOT NULL COMMENT '视力',
@@ -951,6 +974,7 @@ DROP TABLE IF EXISTS `label`;
 
 CREATE TABLE `label` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `type_id` bigint(20) NOT NULL COMMENT '类别编号',
   `name` varchar(10) NOT NULL COMMENT '标签名称',
   `color` varchar(15) NOT NULL COMMENT '标签颜色',
@@ -986,6 +1010,7 @@ DROP TABLE IF EXISTS `label_type`;
 
 CREATE TABLE `label_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(10) NOT NULL COMMENT '分类名称',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -1016,6 +1041,7 @@ DROP TABLE IF EXISTS `material`;
 
 CREATE TABLE `material` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `type_id` bigint(20) NOT NULL COMMENT '物资类别编号',
   `name` varchar(15) NOT NULL COMMENT '物资名称',
   `price` decimal(10,2) NOT NULL COMMENT '物资单价',
@@ -1040,6 +1066,7 @@ DROP TABLE IF EXISTS `material_type`;
 
 CREATE TABLE `material_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(10) NOT NULL COMMENT '物资类别名称',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -1061,6 +1088,7 @@ DROP TABLE IF EXISTS `medicine`;
 
 CREATE TABLE `medicine` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(15) NOT NULL COMMENT '药品名称',
   `type` varchar(5) NOT NULL COMMENT '药品类别',
   `specification` varchar(10) NOT NULL COMMENT '药品规格',
@@ -1082,6 +1110,7 @@ DROP TABLE IF EXISTS `medicine_record`;
 
 CREATE TABLE `medicine_record` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `deposit_info_id` bigint(20) NOT NULL COMMENT '药品缴存信息编号',
   `medicine_time` varchar(5) NOT NULL COMMENT '用药时间（早/中/晚）',
@@ -1101,6 +1130,7 @@ DROP TABLE IF EXISTS `medicine_set`;
 
 CREATE TABLE `medicine_set` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `deposit_info_id` bigint(20) NOT NULL COMMENT '药品缴存信息编号',
   `medicine_time` varchar(5) NOT NULL COMMENT '用药时间（餐前/餐后）',
   `day_frequency` int(11) NOT NULL COMMENT '天频率',
@@ -1119,6 +1149,7 @@ DROP TABLE IF EXISTS `nurse`;
 
 CREATE TABLE `nurse` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `staff_id` bigint(20) NOT NULL COMMENT '护理人员编号',
   `nurse_date` datetime NOT NULL COMMENT '护理时间',
@@ -1142,6 +1173,7 @@ DROP TABLE IF EXISTS `nurse_grade`;
 
 CREATE TABLE `nurse_grade` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(10) NOT NULL COMMENT '级别名称',
   `type` varchar(5) NOT NULL COMMENT '护理类型',
   `month_price` decimal(10,2) NOT NULL COMMENT '月护理费用',
@@ -1169,6 +1201,7 @@ DROP TABLE IF EXISTS `nurse_group`;
 
 CREATE TABLE `nurse_group` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `staff_id` bigint(20) NOT NULL COMMENT '护工小组组长编号',
   `name` varchar(10) NOT NULL COMMENT '护工小组名称',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
@@ -1187,6 +1220,7 @@ DROP TABLE IF EXISTS `nurse_group_member`;
 
 CREATE TABLE `nurse_group_member` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `group_id` bigint(20) NOT NULL COMMENT '护工小组编号',
   `staff_id` bigint(20) NOT NULL COMMENT '护工编号',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -1204,6 +1238,7 @@ DROP TABLE IF EXISTS `nurse_item`;
 
 CREATE TABLE `nurse_item` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `grade_id` bigint(20) NOT NULL COMMENT '护理等级编号',
   `service_id` bigint(20) NOT NULL COMMENT '服务项目编号',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -1243,6 +1278,7 @@ DROP TABLE IF EXISTS `nurse_reserve`;
 
 CREATE TABLE `nurse_reserve` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `staff_id` bigint(20) DEFAULT NULL COMMENT '服务人编号',
   `service_name` varchar(10) NOT NULL COMMENT '服务项目名称',
@@ -1275,6 +1311,7 @@ DROP TABLE IF EXISTS `order`;
 
 CREATE TABLE `order` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `staff_id` bigint(20) DEFAULT NULL COMMENT '送餐人编号',
   `deliver_dishes_date` datetime DEFAULT NULL COMMENT '送餐时间',
@@ -1304,6 +1341,7 @@ DROP TABLE IF EXISTS `order_dishes`;
 
 CREATE TABLE `order_dishes` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `order_id` bigint(20) NOT NULL COMMENT '订餐编号',
   `dishes_name` varchar(15) NOT NULL COMMENT '菜品名称',
   `dishes_price` decimal(10,2) NOT NULL COMMENT '菜品价格',
@@ -1335,6 +1373,7 @@ DROP TABLE IF EXISTS `outbound_material`;
 
 CREATE TABLE `outbound_material` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `outbound_record_id` bigint(20) NOT NULL COMMENT '出库登记编号',
   `warehouse_material_id` bigint(20) NOT NULL COMMENT '入库物资编号',
   `material_id` bigint(20) NOT NULL COMMENT '物资编号',
@@ -1361,6 +1400,7 @@ DROP TABLE IF EXISTS `outbound_record`;
 
 CREATE TABLE `outbound_record` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `warehouse_id` bigint(20) NOT NULL COMMENT '仓库编号',
   `staff_id` bigint(20) NOT NULL COMMENT '经办人编号',
   `recipient_id` bigint(20) NOT NULL COMMENT '领用人编号',
@@ -1389,6 +1429,7 @@ DROP TABLE IF EXISTS `outward`;
 
 CREATE TABLE `outward` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `chaperone_name` varchar(10) NOT NULL COMMENT '陪同人姓名',
   `chaperone_phone` varchar(11) NOT NULL COMMENT '陪同人电话',
@@ -1419,6 +1460,7 @@ DROP TABLE IF EXISTS `reserve`;
 
 CREATE TABLE `reserve` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `staff_id` bigint(20) NOT NULL COMMENT '销售人员编号',
   `name` varchar(10) NOT NULL COMMENT '交款人姓名',
@@ -1446,6 +1488,7 @@ DROP TABLE IF EXISTS `retreat`;
 
 CREATE TABLE `retreat` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `retreat_form` varchar(5) NOT NULL COMMENT '退住形式',
   `evaluate` int(11) NOT NULL COMMENT '对老人评价',
@@ -1465,6 +1508,7 @@ DROP TABLE IF EXISTS `retreat_apply`;
 
 CREATE TABLE `retreat_apply` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `apply_flag` varchar(5) NOT NULL COMMENT '申请状态',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -1504,11 +1548,13 @@ CREATE TABLE `role` (
 
 /*Data for the table `role` */
 
-insert  into `role`(`id`,`name`,`create_id`,`create_time`,`update_id`,`update_time`) values 
+insert  into `role`(`id`,`name`,`create_id`,`create_time`,`update_id`,`update_time`) values
 (1,'超级管理员',1,'2022-12-31 22:40:22',1,'2022-12-31 22:40:29'),
 (2,'销售管理员',1,'2023-01-02 18:23:58',1,'2023-01-02 18:24:01'),
+(3,'入住管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15'),
 (4,'人事管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15'),
 (5,'服务管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15'),
+(6,'仓库管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15'),
 (7,'餐饮管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15'),
 (8,'财务管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15');
 
@@ -1613,38 +1659,13 @@ insert  into `role_auth`(`id`,`role_id`,`auth_id`,`create_id`,`create_time`,`upd
 (81,8,33,1,'2023-01-03 14:17:32',1,'2023-01-03 14:17:32'),
 (82,8,34,1,'2023-01-03 14:17:32',1,'2023-01-03 14:17:32');
 
-/*Table structure for table `role_copy1` */
-
-DROP TABLE IF EXISTS `role_copy1`;
-
-CREATE TABLE `role_copy1` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `name` varchar(10) NOT NULL COMMENT '角色名称',
-  `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
-  `create_time` datetime NOT NULL COMMENT '创建时间',
-  `update_id` bigint(20) NOT NULL COMMENT '修改人编号',
-  `update_time` datetime NOT NULL COMMENT '修改时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
-
-/*Data for the table `role_copy1` */
-
-insert  into `role_copy1`(`id`,`name`,`create_id`,`create_time`,`update_id`,`update_time`) values 
-(1,'超级管理员',1,'2022-12-31 22:40:22',1,'2022-12-31 22:40:29'),
-(2,'销售管理员',1,'2023-01-02 18:23:58',1,'2023-01-02 18:24:01'),
-(3,'入住管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15'),
-(4,'人事管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15'),
-(5,'服务管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15'),
-(6,'仓库管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15'),
-(7,'餐饮管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15'),
-(8,'财务管理员',1,'2023-01-02 18:26:12',1,'2023-01-02 18:26:15');
-
 /*Table structure for table `room` */
 
 DROP TABLE IF EXISTS `room`;
 
 CREATE TABLE `room` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `type_id` bigint(20) NOT NULL COMMENT '房间类型编号',
   `floor_id` bigint(20) NOT NULL COMMENT '楼层编号',
   `name` varchar(30) NOT NULL COMMENT '房间名称',
@@ -1676,6 +1697,7 @@ DROP TABLE IF EXISTS `room_type`;
 
 CREATE TABLE `room_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(10) NOT NULL COMMENT '房间类型名称',
   `month_price` decimal(10,2) NOT NULL COMMENT '月房间费用',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
@@ -1701,6 +1723,7 @@ DROP TABLE IF EXISTS `service_item`;
 
 CREATE TABLE `service_item` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `type_id` bigint(20) NOT NULL COMMENT '服务项目类别编号',
   `name` varchar(10) NOT NULL COMMENT '服务名称',
   `charge_method` varchar(3) NOT NULL COMMENT '收费方式',
@@ -1742,6 +1765,7 @@ DROP TABLE IF EXISTS `service_type`;
 
 CREATE TABLE `service_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(10) NOT NULL COMMENT '服务项目名称',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -1774,6 +1798,7 @@ DROP TABLE IF EXISTS `set_dishes`;
 
 CREATE TABLE `set_dishes` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `set_id` bigint(20) NOT NULL COMMENT '餐饮套餐编号',
   `dishes_id` bigint(20) NOT NULL COMMENT '菜品食物编号',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -1803,6 +1828,7 @@ DROP TABLE IF EXISTS `source`;
 
 CREATE TABLE `source` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(10) NOT NULL COMMENT '来源渠道名称',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -1827,6 +1853,7 @@ DROP TABLE IF EXISTS `staff`;
 
 CREATE TABLE `staff` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `role_id` bigint(20) NOT NULL COMMENT '角色编号',
   `name` varchar(10) NOT NULL COMMENT '姓名',
   `id_num` varchar(18) NOT NULL COMMENT '身份证号',
@@ -1863,6 +1890,7 @@ DROP TABLE IF EXISTS `visit`;
 
 CREATE TABLE `visit` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `name` varchar(10) NOT NULL COMMENT '来访者姓名',
   `phone` varchar(11) NOT NULL COMMENT '来访者电话',
@@ -1893,6 +1921,7 @@ DROP TABLE IF EXISTS `visit_plan`;
 
 CREATE TABLE `visit_plan` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `elder_id` bigint(20) NOT NULL COMMENT '老人编号',
   `title` varchar(25) NOT NULL COMMENT '回访计划标题',
   `plan_date` datetime NOT NULL COMMENT '计划回访时间',
@@ -1918,6 +1947,7 @@ DROP TABLE IF EXISTS `warehouse`;
 
 CREATE TABLE `warehouse` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `staff_id` bigint(20) NOT NULL COMMENT '仓库管理员编号',
   `name` varchar(10) NOT NULL COMMENT '仓库名称',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
@@ -1940,6 +1970,7 @@ DROP TABLE IF EXISTS `warehouse_material`;
 
 CREATE TABLE `warehouse_material` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `warehouse_record_id` bigint(20) NOT NULL COMMENT '入库登记编号',
   `material_id` bigint(20) NOT NULL COMMENT '物资编号',
   `warehouse_num` int(11) NOT NULL COMMENT '入库数量',
@@ -1967,6 +1998,7 @@ DROP TABLE IF EXISTS `warehouse_record`;
 
 CREATE TABLE `warehouse_record` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `warehouse_id` bigint(20) NOT NULL COMMENT '仓库编号',
   `staff_id` bigint(20) NOT NULL COMMENT '经办人编号',
   `source` varchar(5) NOT NULL COMMENT '物资来源',
@@ -1985,6 +2017,83 @@ CREATE TABLE `warehouse_record` (
 insert  into `warehouse_record`(`id`,`warehouse_id`,`staff_id`,`source`,`warehouse_date`,`warehouse_flag`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values 
 (1,1,6,'购买','2022-12-13 00:00:00','已通过','N',1,'2023-01-30 11:06:01',1,'2023-01-30 11:33:27'),
 (2,2,6,'购买','2022-12-13 00:00:00','已通过','N',1,'2023-01-30 11:08:22',1,'2023-01-30 11:08:22');
+
+/*Table structure for table `tenant` */
+
+DROP TABLE IF EXISTS `tenant`;
+
+CREATE TABLE `tenant` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `name` varchar(50) NOT NULL COMMENT '企业名称',
+  `logo` varchar(255) NOT NULL DEFAULT '' COMMENT '企业logo',
+  `contact_name` varchar(10) NOT NULL DEFAULT '' COMMENT '联系人姓名',
+  `contact_phone` varchar(11) NOT NULL DEFAULT '' COMMENT '联系电话',
+  `plan` varchar(20) NOT NULL DEFAULT '' COMMENT '套餐',
+  `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态：0试用中 1正式 2锁定',
+  `trial_start` datetime DEFAULT NULL COMMENT '试用开始',
+  `trial_end` datetime DEFAULT NULL COMMENT '试用结束',
+  `create_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '创建人编号',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '修改人编号',
+  `update_time` datetime NOT NULL COMMENT '修改时间',
+  `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除状态（Y/N）',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户表';
+
+/*Table structure for table `user` */
+
+DROP TABLE IF EXISTS `user`;
+
+CREATE TABLE `user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `union_id` varchar(64) NOT NULL DEFAULT '' COMMENT '微信UnionID（全局唯一）',
+  `openid` varchar(64) NOT NULL DEFAULT '' COMMENT '微信OpenID（兜底匹配）',
+  `phone` varchar(11) NOT NULL DEFAULT '' COMMENT '手机号（账号密码登录）',
+  `pass` varchar(64) NOT NULL DEFAULT '' COMMENT '密码(md5)',
+  `name` varchar(10) NOT NULL DEFAULT '' COMMENT '姓名',
+  `avator` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_time` datetime NOT NULL COMMENT '更新时间',
+  `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除状态（Y/N）',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `uk_union_id` (`union_id`),
+  UNIQUE KEY `uk_phone` (`phone`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='全局用户表';
+
+/*Table structure for table `member` */
+
+DROP TABLE IF EXISTS `member`;
+
+CREATE TABLE `member` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `user_id` bigint(20) NOT NULL COMMENT '全局用户编号',
+  `tenant_id` bigint(20) NOT NULL COMMENT '租户编号',
+  `role_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '角色编号(关联role)',
+  `permissions` varchar(255) NOT NULL DEFAULT '' COMMENT '预留：细粒度权限',
+  `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态：0在职 1离职',
+  `create_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '创建人编号',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '修改人编号',
+  `update_time` datetime NOT NULL COMMENT '修改时间',
+  `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除状态（Y/N）',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `uk_user_tenant` (`user_id`,`tenant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='成员关联表';
+
+/*Data for the table `tenant` */
+
+insert  into `tenant`(`id`,`name`,`logo`,`contact_name`,`contact_phone`,`plan`,`status`,`trial_start`,`trial_end`,`create_id`,`create_time`,`update_id`,`update_time`,`del_flag`) values 
+(1,'平台租户','','平台','','','',1,NULL,NULL,0,'2023-01-01 00:00:00',0,'2023-01-01 00:00:00',0);
+
+/*Data for the table `user` */
+
+insert  into `user`(`id`,`union_id`,`openid`,`phone`,`pass`,`name`,`avator`,`create_time`,`update_time`,`del_flag`) values 
+(1,'','','13547584400','7217ac017b4fb2352ec9e65576c5c0b1','超级管理员','http://127.0.0.1:9001/upload/img/20230405/1643600038046306304_logo.png','2022-12-31 12:34:43','2023-04-26 15:48:02',0);
+
+/*Data for the table `member` */
+
+insert  into `member`(`id`,`user_id`,`tenant_id`,`role_id`,`permissions`,`status`,`create_id`,`create_time`,`update_id`,`update_time`,`del_flag`) values 
+(1,1,1,1,'',0,0,'2022-12-31 12:34:43',0,'2022-12-31 12:34:43',0);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

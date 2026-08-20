@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblconsult"
 	"api/internal/model/define/table/tblelder"
@@ -30,7 +31,8 @@ func (c *consult) PageConsultByKey(ctx context.Context, in *dto.PageConsultByKey
 	q := db.Table(tblconsult.TableName).
 		LeftJoin(tblconsult.ElderId, tblelder.Id).
 		LeftJoin(tblconsult.StaffId, tblstaff.Id).
-		LeftJoin(tblconsult.SourceId, tblsource.Id)
+		LeftJoin(tblconsult.SourceId, tblsource.Id).
+		Where(tblconsult.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.ConsultName != nil && *in.ConsultName != "" {
 		q.And(tblconsult.Name.Like(*in.ConsultName))
 	}
@@ -82,6 +84,7 @@ func (c *consult) PageConsultByKey(ctx context.Context, in *dto.PageConsultByKey
 // 对应 Java: ConsultServiceImpl.getConsultByConsultIdAndElderId
 func (c *consult) GetConsultByConsultIdAndElderId(ctx context.Context, in *dto.GetConsultByConsultIdAndElderIdQuery, out *dto.GetConsultByConsultIDAndElderIDVO) error {
 	obj, has, e := dao.Consult(db).Get(ctx, ace.Where(
+		tblconsult.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblconsult.Id.Eq(types.BigInt(*in.ConsultID)),
 		tblconsult.ElderId.Eq(types.BigInt(*in.ElderID)),
 	))
@@ -108,6 +111,7 @@ func (c *consult) GetConsultByConsultIdAndElderId(ctx context.Context, in *dto.G
 func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultQuery, out *dto.EmptyResp) error {
 	// 校验身份证号是否已存在（排除已删除老人）
 	repeat, e := dao.Elder(db).Exists(ctx,
+		tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblelder.IdNum.Eq(*in.IDNum),
 		tblelder.CheckFlag.NotEq(types.Int8(constant.CheckFailure)),
 	)
@@ -119,6 +123,7 @@ func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultQuery, out *
 	}
 	// 新增老人（状态：咨询）
 	elder := do.NewElder()
+	elder.TenantId = types.BigInt(lib.TenantID(ctx))
 	elder.Name = types.String(*in.ElderName)
 	elder.IdNum = types.String(*in.IDNum)
 	elder.Age = types.Int32(parseInt32(*in.Age))
@@ -133,6 +138,7 @@ func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultQuery, out *
 	}
 	// 新增咨询记录
 	bean := do.NewConsult()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.ElderId = types.BigInt(elder.Id)
 	bean.Name = types.String(*in.ConsultName)
 	bean.Phone = types.String(*in.ConsultPhone)
@@ -148,7 +154,8 @@ func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultQuery, out *
 // PageSearchElderByKey 分页搜索老人（供咨询选择老人）
 // 对应 Java: ConsultServiceImpl.pageSearchElderByKey -> ElderFunc.listElderByKey
 func (c *consult) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
-	q := db.Table(tblelder.TableName)
+	q := db.Table(tblelder.TableName).
+		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.Name != nil {
 		q.And(tblelder.Name.Like(*in.Name))
 	}
@@ -175,6 +182,7 @@ func (c *consult) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchEl
 func (c *consult) PageIntentByKey(ctx context.Context, in *dto.PageIntentByKeyQuery, out *[]dto.PageIntentionByKeyVO) error {
 	q := db.Table(tblelder.TableName).
 		Where(
+			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblelder.CheckFlag.Eq(types.Int8(constant.CheckIntention)),
 		)
 	if in.Key != nil {

@@ -10,6 +10,7 @@ const TableName = "nurse_item"
 
 var (
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "nurse_item", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "nurse_item", Type: "types.BigInt", IsRelation: false}
 	GradeId    = dialect.Field{Name: "grade_id", Json: "grade_id", Table: "nurse_item", Type: "types.BigInt", IsRelation: false}
 	ServiceId  = dialect.Field{Name: "service_id", Json: "service_id", Table: "nurse_item", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "nurse_item", Type: "types.BigInt", IsRelation: false}
@@ -22,6 +23,7 @@ var (
 	// 可写列
 	WritableFields = []dialect.Field{
 		Id,
+		TenantId,
 		GradeId,
 		ServiceId,
 		CreateId,
@@ -32,6 +34,7 @@ var (
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Id,
+		TenantId,
 		GradeId,
 		ServiceId,
 		CreateId,

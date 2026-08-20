@@ -27,9 +27,12 @@ func NewSetDishes() *SetDishes {
 
 // MarshalJSON
 func (p *SetDishes) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(8 * 50)
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.SetId != 0 {
 		write.WriteRaw("set_id", types.Marshal(p.SetId))
@@ -64,6 +67,8 @@ func (p *SetDishes) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "set_id":
 			p.SetId = types.BigInt(value.Uint())
 		case "dishes_id":
@@ -98,6 +103,7 @@ func (p *SetDishes) Free() {
 // Reset
 func (p *SetDishes) Reset() {
 	p.Id = 0
+	p.TenantId = 0
 	p.SetId = 0
 	p.DishesId = 0
 	p.CreateId = 0
@@ -114,6 +120,7 @@ func (p *SetDishes) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var setdishesFieldToPtrFunc = map[string]func(*SetDishes) any{
 	tblsetdishes.Id.Name:         func(p *SetDishes) any { return &p.Id },
+	tblsetdishes.TenantId.Name:   func(p *SetDishes) any { return &p.TenantId },
 	tblsetdishes.SetId.Name:      func(p *SetDishes) any { return &p.SetId },
 	tblsetdishes.DishesId.Name:   func(p *SetDishes) any { return &p.DishesId },
 	tblsetdishes.CreateId.Name:   func(p *SetDishes) any { return &p.CreateId },
@@ -211,6 +218,9 @@ func (p *SetDishes) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([
 var setdishesFieldToValueFunc = map[dialect.Field]func(*SetDishes) (any, bool){
 	tblsetdishes.Id: func(p *SetDishes) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblsetdishes.TenantId: func(p *SetDishes) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblsetdishes.SetId: func(p *SetDishes) (any, bool) {
 		return p.SetId, p.SetId == 0

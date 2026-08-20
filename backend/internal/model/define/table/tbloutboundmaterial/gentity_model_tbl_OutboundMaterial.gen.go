@@ -10,6 +10,7 @@ const TableName = "outbound_material"
 
 var (
 	Id                  = dialect.Field{Name: "id", Json: "id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
+	TenantId            = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
 	OutboundRecordId    = dialect.Field{Name: "outbound_record_id", Json: "outbound_record_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
 	WarehouseMaterialId = dialect.Field{Name: "warehouse_material_id", Json: "warehouse_material_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
 	MaterialId          = dialect.Field{Name: "material_id", Json: "material_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
@@ -24,6 +25,7 @@ var (
 	// 可写列
 	WritableFields = []dialect.Field{
 		Id,
+		TenantId,
 		OutboundRecordId,
 		WarehouseMaterialId,
 		MaterialId,
@@ -36,6 +38,7 @@ var (
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Id,
+		TenantId,
 		OutboundRecordId,
 		WarehouseMaterialId,
 		MaterialId,

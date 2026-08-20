@@ -12,6 +12,7 @@ var (
 	Name         = dialect.Field{Name: "name", Json: "name", Table: "service_item", Type: "types.String", IsRelation: false}
 	ChargeMethod = dialect.Field{Name: "charge_method", Json: "charge_method", Table: "service_item", Type: "types.String", IsRelation: false}
 	Id           = dialect.Field{Name: "id", Json: "id", Table: "service_item", Type: "types.BigInt", IsRelation: false}
+	TenantId     = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "service_item", Type: "types.BigInt", IsRelation: false}
 	TypeId       = dialect.Field{Name: "type_id", Json: "type_id", Table: "service_item", Type: "types.BigInt", IsRelation: false}
 	Price        = dialect.Field{Name: "price", Json: "price", Table: "service_item", Type: "types.Money", IsRelation: false}
 	CreateId     = dialect.Field{Name: "create_id", Json: "create_id", Table: "service_item", Type: "types.BigInt", IsRelation: false}
@@ -28,6 +29,7 @@ var (
 		Name,
 		ChargeMethod,
 		Id,
+		TenantId,
 		TypeId,
 		Price,
 		CreateId,
@@ -42,6 +44,7 @@ var (
 		Name,
 		ChargeMethod,
 		Id,
+		TenantId,
 		TypeId,
 		Price,
 		CreateId,

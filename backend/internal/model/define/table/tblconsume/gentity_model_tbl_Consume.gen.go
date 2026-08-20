@@ -11,6 +11,7 @@ const TableName = "consume"
 var (
 	ConsumeType   = dialect.Field{Name: "consume_type", Json: "consume_type", Table: "consume", Type: "types.String", IsRelation: false}
 	Id            = dialect.Field{Name: "id", Json: "id", Table: "consume", Type: "types.BigInt", IsRelation: false}
+	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "consume", Type: "types.BigInt", IsRelation: false}
 	ElderId       = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "consume", Type: "types.BigInt", IsRelation: false}
 	ConsumeAmount = dialect.Field{Name: "consume_amount", Json: "consume_amount", Table: "consume", Type: "types.Money", IsRelation: false}
 	ConsumeDate   = dialect.Field{Name: "consume_date", Json: "consume_date", Table: "consume", Type: "types.Time", IsRelation: false}
@@ -25,6 +26,7 @@ var (
 	WritableFields = []dialect.Field{
 		ConsumeType,
 		Id,
+		TenantId,
 		ElderId,
 		ConsumeAmount,
 		ConsumeDate,
@@ -37,6 +39,7 @@ var (
 	ReadableFields = []dialect.Field{
 		ConsumeType,
 		Id,
+		TenantId,
 		ElderId,
 		ConsumeAmount,
 		ConsumeDate,

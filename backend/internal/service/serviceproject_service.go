@@ -5,12 +5,14 @@ import (
 	"errors"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblserviceitem"
 	"api/internal/model/define/table/tblservicetype"
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -26,7 +28,7 @@ var ServiceProject = &serviceproject{}
 func (s *serviceproject) ListServiceType(ctx context.Context, in *dto.OperateServiceTypeQuery, out *[]dto.DropDown) error {
 	list, _, e := dao.ServiceType(db).List(ctx,
 		db.Table(tblservicetype.TableName).
-			Where(tblservicetype.DelFlag.Eq(constant.YesNoNo)),
+			Where(tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblservicetype.DelFlag.Eq(constant.YesNoNo)),
 	)
 	if e != nil {
 		return e
@@ -46,7 +48,7 @@ func (s *serviceproject) ListServiceType(ctx context.Context, in *dto.OperateSer
 func (s *serviceproject) PageServiceByKey(ctx context.Context, in *dto.PageServiceByKeyQuery, out *[]dto.PageServiceByKeyVO) error {
 	q := db.Table(tblserviceitem.TableName).
 		LeftJoin(tblserviceitem.TypeId, tblservicetype.Id).
-		Where(tblserviceitem.DelFlag.Eq(constant.YesNoNo))
+		Where(tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblserviceitem.DelFlag.Eq(constant.YesNoNo))
 	if in.ServiceName != nil && *in.ServiceName != "" {
 		q.And(tblserviceitem.Name.Like(*in.ServiceName))
 	}
@@ -70,7 +72,7 @@ func (s *serviceproject) PageServiceByKey(ctx context.Context, in *dto.PageServi
 // GetServiceById 根据编号获取服务项目（编辑回显）
 // 对应 Java: ServiceProjectServiceImpl.getServiceById
 func (s *serviceproject) GetServiceById(ctx context.Context, in *dto.IDReq, out *dto.OperateServiceQuery) error {
-	obj, has, e := dao.ServiceItem(db).GetByID(ctx, types.BigInt(*in.ID))
+	obj, has, e := dao.ServiceItem(db).Get(ctx, ace.Where(tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblserviceitem.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -90,6 +92,7 @@ func (s *serviceproject) GetServiceById(ctx context.Context, in *dto.IDReq, out 
 // 对应 Java: ServiceProjectServiceImpl.addService -> ServiceItemFunc.getServiceItemByName / checkServiceTotal
 func (s *serviceproject) AddService(ctx context.Context, in *dto.OperateServiceQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.ServiceItem(db).Exists(ctx,
+		tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tblserviceitem.Name.Eq(*in.Name),
 		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
@@ -101,6 +104,7 @@ func (s *serviceproject) AddService(ctx context.Context, in *dto.OperateServiceQ
 		return errors.New("该服务类型下服务名称已存在")
 	}
 	total, e := dao.ServiceItem(db).Count(ctx,
+		tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 	)
@@ -111,6 +115,7 @@ func (s *serviceproject) AddService(ctx context.Context, in *dto.OperateServiceQ
 		return errors.New("该服务类型下服务项目数量已达上限")
 	}
 	bean := do.NewServiceItem()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.TypeId = types.BigInt(*in.TypeID)
 	bean.Name = types.String(*in.Name)
 	bean.ChargeMethod = types.String(*in.ChargeMethod)
@@ -125,6 +130,7 @@ func (s *serviceproject) AddService(ctx context.Context, in *dto.OperateServiceQ
 // 对应 Java: ServiceProjectServiceImpl.editService
 func (s *serviceproject) EditService(ctx context.Context, in *dto.OperateServiceQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.ServiceItem(db).Exists(ctx,
+		tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tblserviceitem.Name.Eq(*in.Name),
 		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
@@ -137,6 +143,7 @@ func (s *serviceproject) EditService(ctx context.Context, in *dto.OperateService
 		return errors.New("该服务类型下服务名称已存在")
 	}
 	total, e := dao.ServiceItem(db).Count(ctx,
+		tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 	)
@@ -171,6 +178,7 @@ func (s *serviceproject) DeleteService(ctx context.Context, in *dto.IDReq, out *
 // 对应 Java: ServiceProjectServiceImpl.addServiceType -> ServiceTypeFunc.getServiceTypeByName / checkTypeTotal
 func (s *serviceproject) AddServiceType(ctx context.Context, in *dto.OperateServiceTypeQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.ServiceType(db).Exists(ctx,
+		tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblservicetype.Name.Eq(*in.Name),
 		tblservicetype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 	)
@@ -180,7 +188,10 @@ func (s *serviceproject) AddServiceType(ctx context.Context, in *dto.OperateServ
 	if repeat {
 		return errors.New("服务类型名称已存在")
 	}
-	total, e := dao.ServiceType(db).Count(ctx, tblservicetype.DelFlag.Eq(constant.YesNoNo))
+	total, e := dao.ServiceType(db).Count(ctx,
+		tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+		tblservicetype.DelFlag.Eq(constant.YesNoNo),
+	)
 	if e != nil {
 		return e
 	}
@@ -188,6 +199,7 @@ func (s *serviceproject) AddServiceType(ctx context.Context, in *dto.OperateServ
 		return errors.New("服务类型数量已达上限")
 	}
 	bean := do.NewServiceType()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	_, e = dao.ServiceType(db).InsertOne(ctx, bean)
@@ -197,7 +209,7 @@ func (s *serviceproject) AddServiceType(ctx context.Context, in *dto.OperateServ
 // GetServiceTypeById 根据编号获取服务类型（编辑回显）
 // 对应 Java: ServiceProjectServiceImpl.getServiceTypeById
 func (s *serviceproject) GetServiceTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateServiceTypeQuery) error {
-	obj, has, e := dao.ServiceType(db).GetByID(ctx, types.BigInt(*in.ID))
+	obj, has, e := dao.ServiceType(db).Get(ctx, ace.Where(tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblservicetype.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -213,6 +225,7 @@ func (s *serviceproject) GetServiceTypeById(ctx context.Context, in *dto.IDReq, 
 // 对应 Java: ServiceProjectServiceImpl.editServiceType
 func (s *serviceproject) EditServiceType(ctx context.Context, in *dto.OperateServiceTypeQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.ServiceType(db).Exists(ctx,
+		tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblservicetype.Name.Eq(*in.Name),
 		tblservicetype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 		tblservicetype.Id.NotEq(types.BigInt(*in.ID)),
@@ -223,7 +236,10 @@ func (s *serviceproject) EditServiceType(ctx context.Context, in *dto.OperateSer
 	if repeat {
 		return errors.New("服务类型名称已存在")
 	}
-	total, e := dao.ServiceType(db).Count(ctx, tblservicetype.DelFlag.Eq(constant.YesNoNo))
+	total, e := dao.ServiceType(db).Count(ctx,
+		tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+		tblservicetype.DelFlag.Eq(constant.YesNoNo),
+	)
 	if e != nil {
 		return e
 	}
@@ -241,6 +257,7 @@ func (s *serviceproject) EditServiceType(ctx context.Context, in *dto.OperateSer
 // 对应 Java: ServiceProjectServiceImpl.deleteServiceType -> ServiceItemFunc.checkServiceItem
 func (s *serviceproject) DeleteServiceType(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	hasChild, e := dao.ServiceItem(db).Exists(ctx,
+		tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblserviceitem.TypeId.Eq(types.BigInt(*in.ID)),
 		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 	)

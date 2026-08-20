@@ -27,12 +27,15 @@ func NewCommunicationRecord() *CommunicationRecord {
 
 // MarshalJSON
 func (p *CommunicationRecord) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(9 * 50)
+	write := types.NewJsonWriter(10 * 50)
 	if p.CommunicationRecord != "" {
 		write.WriteRaw("communication_record", types.Marshal(p.CommunicationRecord))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -72,6 +75,8 @@ func (p *CommunicationRecord) UnmarshalJSON(data []byte) error {
 			p.CommunicationRecord = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "record_date":
@@ -109,6 +114,7 @@ func (p *CommunicationRecord) Free() {
 func (p *CommunicationRecord) Reset() {
 	p.CommunicationRecord = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.RecordDate = types.Time{}
 	p.CreateId = 0
@@ -127,6 +133,7 @@ func (p *CommunicationRecord) TableName() string {
 var communicationrecordFieldToPtrFunc = map[string]func(*CommunicationRecord) any{
 	tblcommunicationrecord.CommunicationRecord.Name: func(p *CommunicationRecord) any { return &p.CommunicationRecord },
 	tblcommunicationrecord.Id.Name:                  func(p *CommunicationRecord) any { return &p.Id },
+	tblcommunicationrecord.TenantId.Name:            func(p *CommunicationRecord) any { return &p.TenantId },
 	tblcommunicationrecord.ElderId.Name:             func(p *CommunicationRecord) any { return &p.ElderId },
 	tblcommunicationrecord.RecordDate.Name:          func(p *CommunicationRecord) any { return &p.RecordDate },
 	tblcommunicationrecord.CreateId.Name:            func(p *CommunicationRecord) any { return &p.CreateId },
@@ -228,6 +235,9 @@ var communicationrecordFieldToValueFunc = map[dialect.Field]func(*CommunicationR
 	},
 	tblcommunicationrecord.Id: func(p *CommunicationRecord) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblcommunicationrecord.TenantId: func(p *CommunicationRecord) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblcommunicationrecord.ElderId: func(p *CommunicationRecord) (any, bool) {
 		return p.ElderId, p.ElderId == 0

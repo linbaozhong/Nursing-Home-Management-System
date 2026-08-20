@@ -27,7 +27,7 @@ func NewOutboundRecord() *OutboundRecord {
 
 // MarshalJSON
 func (p *OutboundRecord) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(13 * 50)
+	write := types.NewJsonWriter(14 * 50)
 	if p.RecipientType != "" {
 		write.WriteRaw("recipient_type", types.Marshal(p.RecipientType))
 	}
@@ -36,6 +36,9 @@ func (p *OutboundRecord) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.WarehouseId != 0 {
 		write.WriteRaw("warehouse_id", types.Marshal(p.WarehouseId))
@@ -86,6 +89,8 @@ func (p *OutboundRecord) UnmarshalJSON(data []byte) error {
 			p.MaterialUse = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "warehouse_id":
 			p.WarehouseId = types.BigInt(value.Uint())
 		case "staff_id":
@@ -130,6 +135,7 @@ func (p *OutboundRecord) Reset() {
 	p.RecipientType = ""
 	p.MaterialUse = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.WarehouseId = 0
 	p.StaffId = 0
 	p.RecipientId = 0
@@ -152,6 +158,7 @@ var outboundrecordFieldToPtrFunc = map[string]func(*OutboundRecord) any{
 	tbloutboundrecord.RecipientType.Name: func(p *OutboundRecord) any { return &p.RecipientType },
 	tbloutboundrecord.MaterialUse.Name:   func(p *OutboundRecord) any { return &p.MaterialUse },
 	tbloutboundrecord.Id.Name:            func(p *OutboundRecord) any { return &p.Id },
+	tbloutboundrecord.TenantId.Name:      func(p *OutboundRecord) any { return &p.TenantId },
 	tbloutboundrecord.WarehouseId.Name:   func(p *OutboundRecord) any { return &p.WarehouseId },
 	tbloutboundrecord.StaffId.Name:       func(p *OutboundRecord) any { return &p.StaffId },
 	tbloutboundrecord.RecipientId.Name:   func(p *OutboundRecord) any { return &p.RecipientId },
@@ -259,6 +266,9 @@ var outboundrecordFieldToValueFunc = map[dialect.Field]func(*OutboundRecord) (an
 	},
 	tbloutboundrecord.Id: func(p *OutboundRecord) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tbloutboundrecord.TenantId: func(p *OutboundRecord) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tbloutboundrecord.WarehouseId: func(p *OutboundRecord) (any, bool) {
 		return p.WarehouseId, p.WarehouseId == 0

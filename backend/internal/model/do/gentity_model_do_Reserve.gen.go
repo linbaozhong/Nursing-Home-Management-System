@@ -27,7 +27,7 @@ func NewReserve() *Reserve {
 
 // MarshalJSON
 func (p *Reserve) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(12 * 50)
+	write := types.NewJsonWriter(13 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
@@ -36,6 +36,9 @@ func (p *Reserve) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -83,6 +86,8 @@ func (p *Reserve) UnmarshalJSON(data []byte) error {
 			p.Phone = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "staff_id":
@@ -125,6 +130,7 @@ func (p *Reserve) Reset() {
 	p.Name = ""
 	p.Phone = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.StaffId = 0
 	p.DueDate = types.Time{}
@@ -146,6 +152,7 @@ var reserveFieldToPtrFunc = map[string]func(*Reserve) any{
 	tblreserve.Name.Name:        func(p *Reserve) any { return &p.Name },
 	tblreserve.Phone.Name:       func(p *Reserve) any { return &p.Phone },
 	tblreserve.Id.Name:          func(p *Reserve) any { return &p.Id },
+	tblreserve.TenantId.Name:    func(p *Reserve) any { return &p.TenantId },
 	tblreserve.ElderId.Name:     func(p *Reserve) any { return &p.ElderId },
 	tblreserve.StaffId.Name:     func(p *Reserve) any { return &p.StaffId },
 	tblreserve.DueDate.Name:     func(p *Reserve) any { return &p.DueDate },
@@ -252,6 +259,9 @@ var reserveFieldToValueFunc = map[dialect.Field]func(*Reserve) (any, bool){
 	},
 	tblreserve.Id: func(p *Reserve) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblreserve.TenantId: func(p *Reserve) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblreserve.ElderId: func(p *Reserve) (any, bool) {
 		return p.ElderId, p.ElderId == 0

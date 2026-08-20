@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tbldishes"
 	"api/internal/model/define/table/tbldishestype"
@@ -24,7 +25,7 @@ var Dishes = &dishes{}
 func (d *dishes) PageDishesByKey(ctx context.Context, in *dto.PageDishesByKeyQuery, out *[]dto.PageDishesByKeyVO) error {
 	q := db.Table(tbldishes.TableName).
 		LeftJoin(tbldishes.TypeId, tbldishestype.Id).
-		Where(tbldishes.DelFlag.Eq(constant.YesNoNo))
+		Where(tbldishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbldishes.DelFlag.Eq(constant.YesNoNo))
 	if in.TypeID != nil {
 		q.And(tbldishes.TypeId.Eq(types.BigInt(*in.TypeID)))
 	}
@@ -67,6 +68,7 @@ func (d *dishes) GetDishesById(ctx context.Context, in *dto.IDReq, out *dto.Oper
 // AddDishes 新增菜品（校验名称+类别唯一）
 func (d *dishes) AddDishes(ctx context.Context, in *dto.OperateDishesQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.Dishes(db).Exists(ctx,
+		tbldishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbldishes.Name.Eq(*in.Name),
 		tbldishes.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tbldishes.DelFlag.Eq(constant.YesNoNo),
@@ -78,6 +80,7 @@ func (d *dishes) AddDishes(ctx context.Context, in *dto.OperateDishesQuery, out 
 		return errors.New("菜品已存在")
 	}
 	bean := do.NewDishes()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.TypeId = types.BigInt(*in.TypeID)
 	bean.Name = types.String(*in.Name)
 	bean.Price = types.Money(*in.Price)
@@ -88,6 +91,7 @@ func (d *dishes) AddDishes(ctx context.Context, in *dto.OperateDishesQuery, out 
 // EditDishes 编辑菜品（校验同名不同编号）
 func (d *dishes) EditDishes(ctx context.Context, in *dto.OperateDishesQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.Dishes(db).Exists(ctx,
+		tbldishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbldishes.Name.Eq(*in.Name),
 		tbldishes.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tbldishes.DelFlag.Eq(constant.YesNoNo),
@@ -119,7 +123,7 @@ func (d *dishes) DeleteDishes(ctx context.Context, in *dto.IDReq, out *dto.Empty
 // 对应 Java: DishesServiceImpl.pageDishesTypeByKey -> DishesTypeFunc.listDishesType
 func (d *dishes) PageDishesTypeByKey(ctx context.Context, in *dto.PageDishesTypeByKeyQuery, out *[]dto.DropDown) error {
 	q := db.Table(tbldishestype.TableName).
-		Where(tbldishestype.DelFlag.Eq(constant.YesNoNo))
+		Where(tbldishestype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbldishestype.DelFlag.Eq(constant.YesNoNo))
 	if in.Name != nil && *in.Name != "" {
 		q.And(tbldishestype.Name.Like(*in.Name))
 	}
@@ -149,7 +153,10 @@ func (d *dishes) GetDishesTypeById(ctx context.Context, in *dto.IDReq, out *dto.
 
 // AddDishesType 新增菜品类别（校验名称唯一 + 类别总数上限）
 func (d *dishes) AddDishesType(ctx context.Context, in *dto.OperateDishesTypeQuery, out *dto.EmptyResp) error {
-	total, e := dao.DishesType(db).Count(ctx, tbldishestype.DelFlag.Eq(constant.YesNoNo))
+	total, e := dao.DishesType(db).Count(ctx,
+		tbldishestype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+		tbldishestype.DelFlag.Eq(constant.YesNoNo),
+	)
 	if e != nil {
 		return e
 	}
@@ -157,6 +164,7 @@ func (d *dishes) AddDishesType(ctx context.Context, in *dto.OperateDishesTypeQue
 		return errors.New("菜品类别已经达到上限")
 	}
 	repeat, e := dao.DishesType(db).Exists(ctx,
+		tbldishestype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbldishestype.Name.Eq(*in.Name),
 		tbldishestype.DelFlag.Eq(constant.YesNoNo),
 	)
@@ -167,6 +175,7 @@ func (d *dishes) AddDishesType(ctx context.Context, in *dto.OperateDishesTypeQue
 		return errors.New("菜品类别已存在")
 	}
 	bean := do.NewDishesType()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
 	_, e = dao.DishesType(db).InsertOne(ctx, bean)
 	return e
@@ -175,6 +184,7 @@ func (d *dishes) AddDishesType(ctx context.Context, in *dto.OperateDishesTypeQue
 // EditDishesType 编辑菜品类别（校验同名不同编号）
 func (d *dishes) EditDishesType(ctx context.Context, in *dto.OperateDishesTypeQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.DishesType(db).Exists(ctx,
+		tbldishestype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbldishestype.Name.Eq(*in.Name),
 		tbldishestype.DelFlag.Eq(constant.YesNoNo),
 		tbldishestype.Id.NotEq(types.BigInt(*in.ID)),
@@ -194,6 +204,7 @@ func (d *dishes) EditDishesType(ctx context.Context, in *dto.OperateDishesTypeQu
 // DeleteDishesType 删除菜品类别（逻辑删除，需无子菜品）
 func (d *dishes) DeleteDishesType(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	hasChild, e := dao.Dishes(db).Exists(ctx,
+		tbldishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbldishes.TypeId.Eq(types.BigInt(*in.ID)),
 		tbldishes.DelFlag.Eq(constant.YesNoNo),
 	)

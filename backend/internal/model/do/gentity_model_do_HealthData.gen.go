@@ -27,7 +27,7 @@ func NewHealthData() *HealthData {
 
 // MarshalJSON
 func (p *HealthData) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(26 * 50)
+	write := types.NewJsonWriter(27 * 50)
 	if p.LeftEar != "" {
 		write.WriteRaw("left_ear", types.Marshal(p.LeftEar))
 	}
@@ -36,6 +36,9 @@ func (p *HealthData) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -125,6 +128,8 @@ func (p *HealthData) UnmarshalJSON(data []byte) error {
 			p.RightEar = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "weight":
@@ -195,6 +200,7 @@ func (p *HealthData) Reset() {
 	p.LeftEar = ""
 	p.RightEar = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.Weight = 0
 	p.Temperature = 0
@@ -230,6 +236,7 @@ var healthdataFieldToPtrFunc = map[string]func(*HealthData) any{
 	tblhealthdata.LeftEar.Name:                  func(p *HealthData) any { return &p.LeftEar },
 	tblhealthdata.RightEar.Name:                 func(p *HealthData) any { return &p.RightEar },
 	tblhealthdata.Id.Name:                       func(p *HealthData) any { return &p.Id },
+	tblhealthdata.TenantId.Name:                 func(p *HealthData) any { return &p.TenantId },
 	tblhealthdata.ElderId.Name:                  func(p *HealthData) any { return &p.ElderId },
 	tblhealthdata.Weight.Name:                   func(p *HealthData) any { return &p.Weight },
 	tblhealthdata.Temperature.Name:              func(p *HealthData) any { return &p.Temperature },
@@ -350,6 +357,9 @@ var healthdataFieldToValueFunc = map[dialect.Field]func(*HealthData) (any, bool)
 	},
 	tblhealthdata.Id: func(p *HealthData) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblhealthdata.TenantId: func(p *HealthData) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblhealthdata.ElderId: func(p *HealthData) (any, bool) {
 		return p.ElderId, p.ElderId == 0

@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblelder"
 	"api/internal/model/define/table/tblvisit"
@@ -26,7 +27,7 @@ func (v *visit) PageVisitByKey(ctx context.Context, in *dto.PageVisitByKeyQuery,
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblvisit.TableName).
 		LeftJoin(tblvisit.ElderId, tblelder.Id).
-		Where(tblvisit.DelFlag.Eq(constant.YesNoNo))
+		Where(tblvisit.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblvisit.DelFlag.Eq(constant.YesNoNo))
 	if in.ElderName != nil && *in.ElderName != "" {
 		q.And(tblelder.Name.Like(*in.ElderName))
 	}
@@ -67,7 +68,7 @@ func parseVisitFlag(s string) int8 {
 // AddVisit 新增来访登记（校验老人存在、设置来访状态为在院）
 // 对应 Java: VisitServiceImpl.addVisit -> VisitFunc.checkElderByVisit
 func (v *visit) AddVisit(ctx context.Context, in *dto.AddVisitQuery, out *dto.EmptyResp) error {
-	_, has, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(types.BigInt(*in.ElderID))))
+	_, has, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Eq(types.BigInt(*in.ElderID))))
 	if e != nil {
 		return e
 	}
@@ -75,6 +76,7 @@ func (v *visit) AddVisit(ctx context.Context, in *dto.AddVisitQuery, out *dto.Em
 		return errors.New("老人不存在")
 	}
 	bean := do.NewVisit()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.ElderId = types.BigInt(*in.ElderID)
 	bean.Name = types.String(*in.Name)
 	bean.Phone = types.String(*in.Phone)
@@ -90,7 +92,7 @@ func (v *visit) AddVisit(ctx context.Context, in *dto.AddVisitQuery, out *dto.Em
 // GetVisitById 根据编号获取来访登记（编辑回显，关联老人姓名）
 // 对应 Java: VisitServiceImpl.getVisitById
 func (v *visit) GetVisitById(ctx context.Context, in *dto.IDReq, out *dto.GetVisitByIDVO) error {
-	obj, has, e := dao.Visit(db).Get(ctx, ace.Where(tblvisit.Id.Eq(types.BigInt(*in.ID))))
+	obj, has, e := dao.Visit(db).Get(ctx, ace.Where(tblvisit.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblvisit.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -103,7 +105,7 @@ func (v *visit) GetVisitById(ctx context.Context, in *dto.IDReq, out *dto.GetVis
 	out.Relation = obj.Relation.String()
 	out.VisitDate = obj.VisitDate.Time
 	out.VisitNum = int64(obj.VisitNum)
-	elder, hasE, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(obj.ElderId)))
+	elder, hasE, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Eq(obj.ElderId)))
 	if e != nil {
 		return e
 	}
@@ -116,7 +118,7 @@ func (v *visit) GetVisitById(ctx context.Context, in *dto.IDReq, out *dto.GetVis
 // EditVisit 修改来访登记（不含老人编号、来访状态）
 // 对应 Java: VisitServiceImpl.updateVisit
 func (v *visit) EditVisit(ctx context.Context, in *dto.EditVisitQuery, out *dto.EmptyResp) error {
-	_, has, e := dao.Visit(db).Get(ctx, ace.Where(tblvisit.Id.Eq(types.BigInt(*in.ID))))
+	_, has, e := dao.Visit(db).Get(ctx, ace.Where(tblvisit.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblvisit.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -143,7 +145,7 @@ func (v *visit) EditVisit(ctx context.Context, in *dto.EditVisitQuery, out *dto.
 // RecordLeave 登记离开（更新离开时间、置来访状态为已离开）
 // 对应 Java: VisitServiceImpl.recordLeave
 func (v *visit) RecordLeave(ctx context.Context, in *dto.RecordLeaveQuery, out *dto.EmptyResp) error {
-	_, has, e := dao.Visit(db).Get(ctx, ace.Where(tblvisit.Id.Eq(types.BigInt(*in.ID))))
+	_, has, e := dao.Visit(db).Get(ctx, ace.Where(tblvisit.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblvisit.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}

@@ -27,12 +27,15 @@ func NewBed() *Bed {
 
 // MarshalJSON
 func (p *Bed) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(9 * 50)
+	write := types.NewJsonWriter(10 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.RoomId != 0 {
 		write.WriteRaw("room_id", types.Marshal(p.RoomId))
@@ -72,6 +75,8 @@ func (p *Bed) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "room_id":
 			p.RoomId = types.BigInt(value.Uint())
 		case "create_id":
@@ -109,6 +114,7 @@ func (p *Bed) Free() {
 func (p *Bed) Reset() {
 	p.Name = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.RoomId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -127,6 +133,7 @@ func (p *Bed) TableName() string {
 var bedFieldToPtrFunc = map[string]func(*Bed) any{
 	tblbed.Name.Name:       func(p *Bed) any { return &p.Name },
 	tblbed.Id.Name:         func(p *Bed) any { return &p.Id },
+	tblbed.TenantId.Name:   func(p *Bed) any { return &p.TenantId },
 	tblbed.RoomId.Name:     func(p *Bed) any { return &p.RoomId },
 	tblbed.CreateId.Name:   func(p *Bed) any { return &p.CreateId },
 	tblbed.CreateTime.Name: func(p *Bed) any { return &p.CreateTime },
@@ -228,6 +235,9 @@ var bedFieldToValueFunc = map[dialect.Field]func(*Bed) (any, bool){
 	},
 	tblbed.Id: func(p *Bed) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblbed.TenantId: func(p *Bed) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblbed.RoomId: func(p *Bed) (any, bool) {
 		return p.RoomId, p.RoomId == 0

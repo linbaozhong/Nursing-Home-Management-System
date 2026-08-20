@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblelder"
 	"api/internal/model/define/table/tblmaterial"
@@ -42,7 +43,8 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 	q := db.Table(tbloutboundrecord.TableName).
 		LeftJoin(tbloutboundrecord.WarehouseId, tblwarehouse.Id).
 		LeftJoin(tbloutboundrecord.StaffId, tblstaff.Id).
-		LeftJoin(tbloutboundrecord.RecipientId, tblelder.Id)
+		LeftJoin(tbloutboundrecord.RecipientId, tblelder.Id).
+		Where(tbloutboundrecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.WarehouseName != nil && *in.WarehouseName != "" {
 		q = q.Where(tblwarehouse.Name.Like(*in.WarehouseName))
 	}
@@ -88,7 +90,7 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 
 // GetOutboundRecordById 查询出库记录详情
 func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *dto.IDReq, out *dto.GetOutboundRecordByIDVO) error {
-	rec, has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.Id.Eq(types.BigInt(*in.ID))))
+	rec, has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutboundrecord.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -108,7 +110,7 @@ func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *d
 		out.StaffName = st.Name.String()
 	}
 	// 出库物资明细
-	materials, _, me := dao.OutboundMaterial(db).List(ctx, ace.Where(tbloutboundmaterial.OutboundRecordId.Eq(rec.Id)))
+	materials, _, me := dao.OutboundMaterial(db).List(ctx, ace.Where(tbloutboundmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutboundmaterial.OutboundRecordId.Eq(rec.Id)))
 	if me == nil {
 		for _, m := range materials {
 			mn := ""
@@ -131,6 +133,7 @@ func (s *outboundRecordService) PageSearchElderByKey(ctx context.Context, in *dt
 	}
 	q := db.Table(tblelder.TableName).
 		InnerJoin(tblelder.BedId, tblbed.Id).
+		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx)))).
 		Cols(
 			tblelder.Id,
 			tblelder.Name,
@@ -172,7 +175,8 @@ func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, 
 		return constant.ErrParamInvalid
 	}
 	q := db.Table(tblwarehousematerial.TableName).
-		LeftJoin(tblwarehousematerial.MaterialId, tblmaterial.Id)
+		LeftJoin(tblwarehousematerial.MaterialId, tblmaterial.Id).
+		Where(tblwarehousematerial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.MaterialName != nil && *in.MaterialName != "" {
 		q = q.Where(tblmaterial.Name.Like(*in.MaterialName))
 	}
@@ -219,6 +223,7 @@ func (s *outboundRecordService) AddOutboundRecord(ctx context.Context, in *dto.A
 		return constant.ErrParamInvalid
 	}
 	rec := &do.OutboundRecord{
+		TenantId:      types.BigInt(lib.TenantID(ctx)),
 		RecipientType: types.String(orEmpty(in.RecipientType)),
 		MaterialUse:   types.String(orEmpty(in.MaterialUse)),
 		WarehouseId:   types.BigInt(*in.WarehouseID),
@@ -243,6 +248,7 @@ func (s *outboundRecordService) AddOutboundRecord(ctx context.Context, in *dto.A
 				_, _ = dao.WarehouseMaterial(db).UpdateById(ctx, wm.Id, tblwarehousematerial.Inventory.Set(types.Int32(newInv)))
 			}
 			om := &do.OutboundMaterial{
+				TenantId:            types.BigInt(lib.TenantID(ctx)),
 				OutboundRecordId:    rec.Id,
 				WarehouseMaterialId: types.BigInt(*m.WarehouseMaterialID),
 				MaterialId:          wm.MaterialId,
@@ -260,7 +266,7 @@ func (s *outboundRecordService) AuditOutboundRecord(ctx context.Context, in *dto
 	if in.OutboundRecordID == nil || in.AuditResult == nil {
 		return constant.ErrParamInvalid
 	}
-	rec, has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.Id.Eq(types.BigInt(*in.OutboundRecordID))))
+	rec, has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutboundrecord.Id.Eq(types.BigInt(*in.OutboundRecordID))))
 	if e != nil {
 		return e
 	}

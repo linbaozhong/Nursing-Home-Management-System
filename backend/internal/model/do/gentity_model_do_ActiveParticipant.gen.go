@@ -27,9 +27,12 @@ func NewActiveParticipant() *ActiveParticipant {
 
 // MarshalJSON
 func (p *ActiveParticipant) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(8 * 50)
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ActiveId != 0 {
 		write.WriteRaw("active_id", types.Marshal(p.ActiveId))
@@ -64,6 +67,8 @@ func (p *ActiveParticipant) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "active_id":
 			p.ActiveId = types.BigInt(value.Uint())
 		case "elder_id":
@@ -98,6 +103,7 @@ func (p *ActiveParticipant) Free() {
 // Reset
 func (p *ActiveParticipant) Reset() {
 	p.Id = 0
+	p.TenantId = 0
 	p.ActiveId = 0
 	p.ElderId = 0
 	p.CreateId = 0
@@ -114,6 +120,7 @@ func (p *ActiveParticipant) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var activeparticipantFieldToPtrFunc = map[string]func(*ActiveParticipant) any{
 	tblactiveparticipant.Id.Name:         func(p *ActiveParticipant) any { return &p.Id },
+	tblactiveparticipant.TenantId.Name:   func(p *ActiveParticipant) any { return &p.TenantId },
 	tblactiveparticipant.ActiveId.Name:   func(p *ActiveParticipant) any { return &p.ActiveId },
 	tblactiveparticipant.ElderId.Name:    func(p *ActiveParticipant) any { return &p.ElderId },
 	tblactiveparticipant.CreateId.Name:   func(p *ActiveParticipant) any { return &p.CreateId },
@@ -211,6 +218,9 @@ func (p *ActiveParticipant) RawAssignValues(d dialect.Dialect, args ...dialect.F
 var activeparticipantFieldToValueFunc = map[dialect.Field]func(*ActiveParticipant) (any, bool){
 	tblactiveparticipant.Id: func(p *ActiveParticipant) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblactiveparticipant.TenantId: func(p *ActiveParticipant) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblactiveparticipant.ActiveId: func(p *ActiveParticipant) (any, bool) {
 		return p.ActiveId, p.ActiveId == 0

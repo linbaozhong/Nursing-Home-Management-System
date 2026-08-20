@@ -27,7 +27,7 @@ func NewNurseGrade() *NurseGrade {
 
 // MarshalJSON
 func (p *NurseGrade) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(9 * 50)
+	write := types.NewJsonWriter(10 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
@@ -36,6 +36,9 @@ func (p *NurseGrade) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.MonthPrice != 0 {
 		write.WriteRaw("month_price", types.Marshal(p.MonthPrice))
@@ -74,6 +77,8 @@ func (p *NurseGrade) UnmarshalJSON(data []byte) error {
 			p.Type = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "month_price":
 			e = types.Unmarshal(value, &p.MonthPrice)
 		case "create_id":
@@ -110,6 +115,7 @@ func (p *NurseGrade) Reset() {
 	p.Name = ""
 	p.Type = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.MonthPrice = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -128,6 +134,7 @@ var nursegradeFieldToPtrFunc = map[string]func(*NurseGrade) any{
 	tblnursegrade.Name.Name:       func(p *NurseGrade) any { return &p.Name },
 	tblnursegrade.Type.Name:       func(p *NurseGrade) any { return &p.Type },
 	tblnursegrade.Id.Name:         func(p *NurseGrade) any { return &p.Id },
+	tblnursegrade.TenantId.Name:   func(p *NurseGrade) any { return &p.TenantId },
 	tblnursegrade.MonthPrice.Name: func(p *NurseGrade) any { return &p.MonthPrice },
 	tblnursegrade.CreateId.Name:   func(p *NurseGrade) any { return &p.CreateId },
 	tblnursegrade.CreateTime.Name: func(p *NurseGrade) any { return &p.CreateTime },
@@ -231,6 +238,9 @@ var nursegradeFieldToValueFunc = map[dialect.Field]func(*NurseGrade) (any, bool)
 	},
 	tblnursegrade.Id: func(p *NurseGrade) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblnursegrade.TenantId: func(p *NurseGrade) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblnursegrade.MonthPrice: func(p *NurseGrade) (any, bool) {
 		return p.MonthPrice, p.MonthPrice == 0

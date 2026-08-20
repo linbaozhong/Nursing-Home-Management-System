@@ -27,7 +27,7 @@ func NewEmergencyContact() *EmergencyContact {
 
 // MarshalJSON
 func (p *EmergencyContact) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(11 * 50)
+	write := types.NewJsonWriter(12 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
@@ -42,6 +42,9 @@ func (p *EmergencyContact) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -84,6 +87,8 @@ func (p *EmergencyContact) UnmarshalJSON(data []byte) error {
 			p.Relation = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "create_id":
@@ -122,6 +127,7 @@ func (p *EmergencyContact) Reset() {
 	p.Email = ""
 	p.Relation = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -142,6 +148,7 @@ var emergencycontactFieldToPtrFunc = map[string]func(*EmergencyContact) any{
 	tblemergencycontact.Email.Name:       func(p *EmergencyContact) any { return &p.Email },
 	tblemergencycontact.Relation.Name:    func(p *EmergencyContact) any { return &p.Relation },
 	tblemergencycontact.Id.Name:          func(p *EmergencyContact) any { return &p.Id },
+	tblemergencycontact.TenantId.Name:    func(p *EmergencyContact) any { return &p.TenantId },
 	tblemergencycontact.ElderId.Name:     func(p *EmergencyContact) any { return &p.ElderId },
 	tblemergencycontact.CreateId.Name:    func(p *EmergencyContact) any { return &p.CreateId },
 	tblemergencycontact.CreateTime.Name:  func(p *EmergencyContact) any { return &p.CreateTime },
@@ -251,6 +258,9 @@ var emergencycontactFieldToValueFunc = map[dialect.Field]func(*EmergencyContact)
 	},
 	tblemergencycontact.Id: func(p *EmergencyContact) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblemergencycontact.TenantId: func(p *EmergencyContact) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblemergencycontact.ElderId: func(p *EmergencyContact) (any, bool) {
 		return p.ElderId, p.ElderId == 0

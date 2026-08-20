@@ -10,6 +10,7 @@ const TableName = "consult"
 
 var (
 	Name           = dialect.Field{Name: "name", Json: "name", Table: "consult", Type: "types.String", IsRelation: false}
+	TenantId       = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "consult", Type: "types.BigInt", IsRelation: false}
 	Phone          = dialect.Field{Name: "phone", Json: "phone", Table: "consult", Type: "types.String", IsRelation: false}
 	Relation       = dialect.Field{Name: "relation", Json: "relation", Table: "consult", Type: "types.String", IsRelation: false}
 	ConsultContent = dialect.Field{Name: "consult_content", Json: "consult_content", Table: "consult", Type: "types.String", IsRelation: false}
@@ -28,6 +29,7 @@ var (
 	// 可写列
 	WritableFields = []dialect.Field{
 		Name,
+		TenantId,
 		Phone,
 		Relation,
 		ConsultContent,
@@ -44,6 +46,7 @@ var (
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Name,
+		TenantId,
 		Phone,
 		Relation,
 		ConsultContent,

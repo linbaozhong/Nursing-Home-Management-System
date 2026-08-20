@@ -13,6 +13,7 @@ var (
 	TakeMedicine = dialect.Field{Name: "take_medicine", Json: "take_medicine", Table: "nurse", Type: "types.String", IsRelation: false}
 	Active       = dialect.Field{Name: "active", Json: "active", Table: "nurse", Type: "types.String", IsRelation: false}
 	Id           = dialect.Field{Name: "id", Json: "id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
+	TenantId     = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
 	ElderId      = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
 	StaffId      = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
 	NurseDate    = dialect.Field{Name: "nurse_date", Json: "nurse_date", Table: "nurse", Type: "types.Time", IsRelation: false}
@@ -31,6 +32,7 @@ var (
 		TakeMedicine,
 		Active,
 		Id,
+		TenantId,
 		ElderId,
 		StaffId,
 		NurseDate,
@@ -47,6 +49,7 @@ var (
 		TakeMedicine,
 		Active,
 		Id,
+		TenantId,
 		ElderId,
 		StaffId,
 		NurseDate,

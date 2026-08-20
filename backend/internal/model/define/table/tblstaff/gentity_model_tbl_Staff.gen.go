@@ -18,6 +18,7 @@ var (
 	Avator     = dialect.Field{Name: "avator", Json: "avator", Table: "staff", Type: "types.String", IsRelation: false}
 	Address    = dialect.Field{Name: "address", Json: "address", Table: "staff", Type: "types.String", IsRelation: false}
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "staff", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
 	RoleId     = dialect.Field{Name: "role_id", Json: "role_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "staff", Type: "types.Time", IsRelation: false}
@@ -39,6 +40,7 @@ var (
 		Avator,
 		Address,
 		Id,
+		TenantId,
 		RoleId,
 		CreateId,
 		CreateTime,
@@ -58,6 +60,7 @@ var (
 		Avator,
 		Address,
 		Id,
+		TenantId,
 		RoleId,
 		CreateId,
 		CreateTime,
