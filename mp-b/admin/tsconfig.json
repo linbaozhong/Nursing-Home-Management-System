@@ -1,0 +1,25 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"strict": true,
+		"jsx": "preserve",
+		"allowJs": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"lib": ["ESNext", "DOM"],
+		"types": []
+	},
+	"include": [
+		"**/*.ts",
+		"**/*.uts",
+		"**/*.d.ts",
+		"**/*.uvue"
+	],
+	"exclude": [
+		"node_modules",
+		"unpackage"
+	]
+}

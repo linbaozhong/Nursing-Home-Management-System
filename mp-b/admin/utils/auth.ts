@@ -53,7 +53,11 @@ export function setLoginUser(user: LoginUser): void {
 }
 
 export function getLoginUser(): LoginUser | null {
-	return uni.getStorageSync(USER_KEY) as LoginUser | null
+	const raw = uni.getStorageSync(USER_KEY)
+	if (raw == null || raw == '') {
+		return null
+	}
+	return raw as LoginUser
 }
 
 /** 当前选择的租户编号（记住上次选择） */
@@ -114,12 +118,13 @@ export function canAccess(module: ModuleKey): boolean {
 	if (target == '') {
 		return true
 	}
+	console.log(u.auth_url_list)
 	return u.auth_url_list?.indexOf(target) >= 0
 }
 
 /** 返回当前用户可访问的模块列表（顺序：档案/外出/来访/事故/点餐） */
 export function accessibleModules(): ModuleKey[] {
 	const order: ModuleKey[] = ['elder', 'leave', 'visit', 'accident', 'order']
-	// return order.filter((m) => canAccess(m))
-	return order
+	return order.filter((m) => canAccess(m))
+	// return order
 }
