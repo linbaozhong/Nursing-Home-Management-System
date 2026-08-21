@@ -1,0 +1,157 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'选择企业'" />
+
+		<text class="page-tip">您关联了多家企业，请选择进入的工作空间</text>
+
+		<view class="list">
+			<view
+				v-for="t in tenants"
+				:key="t.id"
+				class="item"
+				@click="doSwitch(t.id)"
+			>
+				<view class="item__logo">
+					<text>{{ t.name.charAt(0) }}</text>
+				</view>
+				<view class="item__info">
+					<text class="item__name">{{ t.name }}</text>
+					<text class="item__status">{{ statusText(t.status) }}</text>
+				</view>
+				<text class="item__arrow">›</text>
+			</view>
+		</view>
+
+		<view v-if="tenants.length == 0" class="empty">
+			<text>暂无可用企业</text>
+			<text class="empty__link" @click="goCreate">创建企业</text>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onShow } from '@dcloudio/uni-app'
+	import { myTenants, switchTenant } from '../../api/tenant'
+	import { TenantVO } from '../../api/tenant'
+
+	const tenants = ref<TenantVO[]>([])
+	const loading = ref(false)
+
+	onShow(() => {
+		load()
+	})
+
+	async function load() {
+		loading.value = true
+		try {
+			const data = await myTenants()
+			tenants.value = data.tenants
+		} catch (e) {
+			// 错误已统一 toast
+		} finally {
+			loading.value = false
+		}
+	}
+
+	function statusText(status: number): string {
+		if (status == 1) {
+			return '正式'
+		}
+		if (status == 2) {
+			return '已锁定'
+		}
+		return '试用中'
+	}
+
+	async function doSwitch(id: number) {
+		try {
+			await switchTenant(id)
+			uni.showToast({ title: '切换成功', icon: 'success' })
+			setTimeout(() => uni.reLaunch({ url: '/pages/index/index' }), 400)
+		} catch (e) {
+			// 错误已统一 toast
+		}
+	}
+
+	function goCreate(): void {
+		uni.navigateTo({ url: '/pages/register/register' })
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F7FA;
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+
+	.page-tip {
+		margin-top: 20px;
+		margin-bottom: 16px;
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.list {
+		flex-direction: column;
+	}
+
+	.item {
+		flex-direction: row;
+		align-items: center;
+		background-color: #FFFFFF;
+		border-radius: 12px;
+		padding: 18px;
+		margin-bottom: 12px;
+	}
+
+	.item__logo {
+		width: 48px;
+		height: 48px;
+		border-radius: 10px;
+		background-color: #2E86AB;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.item__logo text {
+		color: #FFFFFF;
+		font-size: 20px;
+		font-weight: 600;
+	}
+
+	.item__info {
+		flex: 1;
+		margin-left: 14px;
+		flex-direction: column;
+	}
+
+	.item__name {
+		font-size: 16px;
+		color: #333333;
+		font-weight: 500;
+	}
+
+	.item__status {
+		margin-top: 4px;
+		font-size: 12px;
+		color: #999999;
+	}
+
+	.item__arrow {
+		font-size: 22px;
+		color: #CCCCCC;
+	}
+
+	.empty {
+		align-items: center;
+		margin-top: 80px;
+	}
+
+	.empty__link {
+		margin-top: 12px;
+		color: #2E86AB;
+		font-size: 14px;
+	}
+</style>

@@ -1,0 +1,109 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'加入企业'" />
+
+		<text class="page-tip">输入企业邀请码，加入该企业成为成员</text>
+
+		<view class="card">
+			<view class="field">
+				<text class="field__label">邀请码</text>
+				<input
+					class="field__input"
+					v-model="inviteCode"
+					placeholder="请输入企业邀请码"
+				/>
+			</view>
+			<button class="btn-submit" :loading="loading" :disabled="loading" @click="doJoin">
+				确认加入
+			</button>
+		</view>
+
+		<text class="create-link" @click="goCreate">没有邀请码？创建企业</text>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { joinMember } from '../../api/tenant'
+
+	const inviteCode = ref('')
+	const loading = ref(false)
+
+	async function doJoin() {
+		if (inviteCode.value == '') {
+			uni.showToast({ title: '请输入邀请码', icon: 'none' })
+			return
+		}
+		loading.value = true
+		try {
+			await joinMember(inviteCode.value)
+			uni.showToast({ title: '加入成功', icon: 'success' })
+			setTimeout(() => uni.reLaunch({ url: '/pages/index/index' }), 400)
+		} catch (e) {
+			// 错误已统一 toast
+		} finally {
+			loading.value = false
+		}
+	}
+
+	function goCreate(): void {
+		uni.navigateTo({ url: '/pages/register/register' })
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F7FA;
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+
+	.page-tip {
+		margin-top: 24px;
+		margin-bottom: 16px;
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 12px;
+		padding: 24px;
+	}
+
+	.field {
+		flex-direction: column;
+		margin-bottom: 20px;
+	}
+
+	.field__label {
+		font-size: 14px;
+		color: #666666;
+		margin-bottom: 8px;
+	}
+
+	.field__input {
+		height: 46px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 14px;
+		font-size: 15px;
+	}
+
+	.btn-submit {
+		margin-top: 12px;
+		height: 46px;
+		border-radius: 23px;
+		background-color: #2E86AB;
+		color: #FFFFFF;
+		font-size: 15px;
+		font-weight: 600;
+	}
+
+	.create-link {
+		margin-top: 20px;
+		text-align: center;
+		font-size: 13px;
+		color: #2E86AB;
+	}
+</style>
