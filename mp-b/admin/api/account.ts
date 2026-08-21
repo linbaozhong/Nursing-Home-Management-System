@@ -12,9 +12,19 @@ export interface LoginParams {
 
 /** 账号密码登录：成功后写入本地登录态 */
 export async function login(params: LoginParams): Promise<LoginUser> {
-	const data = await post<LoginUser>('/account/login', params)
-	setLoginUser(data)
-	return data
+	// const data = await post<LoginUser>('/account/login', params)
+	// setLoginUser(data)
+	// ====== MOCK（后台未完成，测试前端用；后台完成后放开上方注释并删除此段）======
+	const mockUser: LoginUser = {
+		id: 1,
+		name: '管理员',
+		avator: '',
+		phone: params.phone,
+		auth_id_list: [],
+		auth_url_list: ['/people/old', '/check-in/leave', '/check-in/visit', '/check-in/accident', '/food/order'],
+		token: 'mock-token-001'
+	}
+	setLoginUser(mockUser)
 }
 
 export interface WxLoginResult {
