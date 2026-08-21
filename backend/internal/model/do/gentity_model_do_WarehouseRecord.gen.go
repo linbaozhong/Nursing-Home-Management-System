@@ -27,12 +27,15 @@ func NewWarehouseRecord() *WarehouseRecord {
 
 // MarshalJSON
 func (p *WarehouseRecord) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(11 * 50)
+	write := types.NewJsonWriter(12 * 50)
 	if p.Source != "" {
 		write.WriteRaw("source", types.Marshal(p.Source))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.WarehouseId != 0 {
 		write.WriteRaw("warehouse_id", types.Marshal(p.WarehouseId))
@@ -78,6 +81,8 @@ func (p *WarehouseRecord) UnmarshalJSON(data []byte) error {
 			p.Source = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "warehouse_id":
 			p.WarehouseId = types.BigInt(value.Uint())
 		case "staff_id":
@@ -119,6 +124,7 @@ func (p *WarehouseRecord) Free() {
 func (p *WarehouseRecord) Reset() {
 	p.Source = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.WarehouseId = 0
 	p.StaffId = 0
 	p.WarehouseDate = types.Time{}
@@ -139,6 +145,7 @@ func (p *WarehouseRecord) TableName() string {
 var warehouserecordFieldToPtrFunc = map[string]func(*WarehouseRecord) any{
 	tblwarehouserecord.Source.Name:        func(p *WarehouseRecord) any { return &p.Source },
 	tblwarehouserecord.Id.Name:            func(p *WarehouseRecord) any { return &p.Id },
+	tblwarehouserecord.TenantId.Name:      func(p *WarehouseRecord) any { return &p.TenantId },
 	tblwarehouserecord.WarehouseId.Name:   func(p *WarehouseRecord) any { return &p.WarehouseId },
 	tblwarehouserecord.StaffId.Name:       func(p *WarehouseRecord) any { return &p.StaffId },
 	tblwarehouserecord.WarehouseDate.Name: func(p *WarehouseRecord) any { return &p.WarehouseDate },
@@ -242,6 +249,9 @@ var warehouserecordFieldToValueFunc = map[dialect.Field]func(*WarehouseRecord) (
 	},
 	tblwarehouserecord.Id: func(p *WarehouseRecord) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblwarehouserecord.TenantId: func(p *WarehouseRecord) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblwarehouserecord.WarehouseId: func(p *WarehouseRecord) (any, bool) {
 		return p.WarehouseId, p.WarehouseId == 0

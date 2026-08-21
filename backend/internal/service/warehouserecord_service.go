@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblmaterial"
 	"api/internal/model/define/table/tblstaff"
@@ -38,7 +39,7 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 	q := db.Table(tblwarehouserecord.TableName).
 		InnerJoin(tblwarehouserecord.WarehouseId, tblwarehouse.Id).
 		InnerJoin(tblwarehouserecord.StaffId, tblstaff.Id).
-		Where(tblwarehouserecord.DelFlag.Eq(types.Int8(constant.YesNoNo)))
+		Where(tblwarehouserecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouserecord.DelFlag.Eq(types.Int8(constant.YesNoNo)))
 	if in.WarehouseName != nil {
 		q = q.And(tblwarehouse.Name.Like(*in.WarehouseName))
 	}
@@ -121,7 +122,7 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 
 // ListWarehouse 仓库下拉
 func (s *warehouseRecordService) ListWarehouse(ctx context.Context, in *dto.EmptyReq, out *[]dto.DropDown) error {
-	list, _, e := dao.Warehouse(db).List(ctx, ace.Where(tblwarehouse.DelFlag.Eq(types.Int8(constant.YesNoNo))).Cols(tblwarehouse.Id, tblwarehouse.Name))
+	list, _, e := dao.Warehouse(db).List(ctx, ace.Where(tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouse.DelFlag.Eq(types.Int8(constant.YesNoNo))).Cols(tblwarehouse.Id, tblwarehouse.Name))
 	if e != nil {
 		return e
 	}
@@ -137,7 +138,7 @@ func (s *warehouseRecordService) ListWarehouse(ctx context.Context, in *dto.Empt
 func (s *warehouseRecordService) PageMaterialByKey(ctx context.Context, in *dto.PageWarehouseMaterialByKeyQuery, out *[]dto.PageWarehouseMaterialByKeyVO) error {
 	q := db.Table(tblwarehousematerial.TableName).
 		InnerJoin(tblwarehousematerial.MaterialId, tblmaterial.Id).
-		Where(tblwarehousematerial.WarehouseRecordId.Gt(0))
+		Where(tblwarehousematerial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehousematerial.WarehouseRecordId.Gt(0))
 	if in.WarehouseID != nil {
 		// 通过 warehouse_material 的库存记录不分仓库，此处仅按物资名过滤
 		_ = in.WarehouseID
@@ -161,6 +162,7 @@ func (s *warehouseRecordService) PageMaterialByKey(ctx context.Context, in *dto.
 // AddWarehouseRecord 新增入库记录
 func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto.AddWarehouseRecordQuery, out *dto.EmptyResp) error {
 	record := new(do.WarehouseRecord)
+	record.TenantId = types.BigInt(lib.TenantID(ctx))
 	record.WarehouseId = types.BigInt(*in.WarehouseID)
 	record.StaffId = types.BigInt(*in.StaffID)
 	record.Source = types.String(*in.Source)
@@ -168,7 +170,7 @@ func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto
 	record.WarehouseFlag = types.Int8(constant.AuditStay)
 	record.DelFlag = types.Int8(constant.YesNoNo)
 	if _, e := dao.WarehouseRecord(db).InsertOne(ctx, record,
-		tblwarehouserecord.WarehouseId, tblwarehouserecord.StaffId, tblwarehouserecord.Source,
+		tblwarehouserecord.TenantId, tblwarehouserecord.WarehouseId, tblwarehouserecord.StaffId, tblwarehouserecord.Source,
 		tblwarehouserecord.WarehouseDate, tblwarehouserecord.WarehouseFlag, tblwarehouserecord.DelFlag,
 		tblwarehouserecord.CreateId, tblwarehouserecord.CreateTime); e != nil {
 		return e
@@ -187,6 +189,7 @@ func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto
 	beans := make([]*do.WarehouseMaterial, 0, len(group))
 	for mid, m := range group {
 		wm := new(do.WarehouseMaterial)
+		wm.TenantId = types.BigInt(lib.TenantID(ctx))
 		wm.WarehouseRecordId = record.Id
 		wm.MaterialId = types.BigInt(mid)
 		wm.ProductDate = types.Time{*m.ProductDate}
@@ -196,7 +199,7 @@ func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto
 		beans = append(beans, wm)
 	}
 	if _, e := dao.WarehouseMaterial(db).InsertBatch(ctx, beans,
-		tblwarehousematerial.WarehouseRecordId, tblwarehousematerial.MaterialId, tblwarehousematerial.ProductDate,
+		tblwarehousematerial.TenantId, tblwarehousematerial.WarehouseRecordId, tblwarehousematerial.MaterialId, tblwarehousematerial.ProductDate,
 		tblwarehousematerial.ExpireDate, tblwarehousematerial.WarehouseNum, tblwarehousematerial.Inventory); e != nil {
 		return e
 	}
@@ -208,7 +211,7 @@ func (s *warehouseRecordService) GetWarehouseRecordById(ctx context.Context, in 
 	e := db.Table(tblwarehouserecord.TableName).
 		InnerJoin(tblwarehouserecord.WarehouseId, tblwarehouse.Id).
 		InnerJoin(tblwarehouserecord.StaffId, tblstaff.Id).
-		Where(tblwarehouserecord.Id.Eq(types.BigInt(*in.ID))).
+		Where(tblwarehouserecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouserecord.Id.Eq(types.BigInt(*in.ID))).
 		Cols(
 			tblwarehouserecord.Id,
 			tblwarehouserecord.Source,
@@ -230,7 +233,7 @@ func (s *warehouseRecordService) GetWarehouseRecordById(ctx context.Context, in 
 	// 入库物资列表
 	e = db.Table(tblwarehousematerial.TableName).
 		InnerJoin(tblwarehousematerial.MaterialId, tblmaterial.Id).
-		Where(tblwarehousematerial.WarehouseRecordId.Eq(types.BigInt(*in.ID))).
+		Where(tblwarehousematerial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehousematerial.WarehouseRecordId.Eq(types.BigInt(*in.ID))).
 		Cols(
 			tblmaterial.Name.As("material_name"),
 			tblwarehousematerial.WarehouseNum,
@@ -253,6 +256,7 @@ func (s *warehouseRecordService) AuditWarehouseRecord(ctx context.Context, in *d
 	record, has, e := dao.WarehouseRecord(db).
 		Get(ctx,
 			ace.Where(
+				tblwarehouserecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 				tblwarehouserecord.Id.Eq(types.BigInt(*in.WarehouseRecordID)),
 			).
 				Cols(

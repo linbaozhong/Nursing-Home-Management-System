@@ -2,6 +2,7 @@ package service
 
 import (
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblactive"
 	"api/internal/model/define/table/tblactiveparticipant"
@@ -31,7 +32,7 @@ var Active = &active{}
 // typeName 通过预加载 active_type map 补齐（替代 mapper 联表）。
 func (a *active) PageActiveByKey(ctx context.Context, in *dto.PageActiveByKeyQuery, out *[]dto.PageActiveByKeyVO) error {
 	// 1) 预加载活动类型，用于补齐 typeName
-	typeList, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.DelFlag.Eq(constant.YesNoNo)))
+	typeList, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.DelFlag.Eq(constant.YesNoNo)))
 	if e != nil {
 		return e
 	}
@@ -41,7 +42,7 @@ func (a *active) PageActiveByKey(ctx context.Context, in *dto.PageActiveByKeyQue
 	}
 
 	// 2) 条件构造 + 分页
-	q := db.Table(tblactive.TableName).Where(tblactive.DelFlag.Eq(constant.YesNoNo))
+	q := db.Table(tblactive.TableName).Where(tblactive.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactive.DelFlag.Eq(constant.YesNoNo))
 	if in.TypeID != nil {
 		q.And(tblactive.TypeId.Eq(types.BigInt(*in.TypeID)))
 	}
@@ -99,7 +100,7 @@ func (a *active) GetActiveById(ctx context.Context, in *dto.IDReq, out *dto.GetA
 	out.ActivePicture = &activePicture
 
 	// 查询参与老人关联
-	participants, _, e := dao.ActiveParticipant(db).List(ctx, ace.Where(tblactiveparticipant.ActiveId.Eq(types.BigInt(*in.ID))))
+	participants, _, e := dao.ActiveParticipant(db).List(ctx, ace.Where(tblactiveparticipant.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactiveparticipant.ActiveId.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -140,6 +141,7 @@ func (a *active) GetActiveById(ctx context.Context, in *dto.IDReq, out *dto.GetA
 // 说明：Java 为 @Transactional。Go 端分两步写入（框架未启用显式事务）。
 func (a *active) AddActive(ctx context.Context, in *dto.OperateActiveQuery, out *dto.EmptyResp) error {
 	bean := do.NewActive()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.TypeId = types.BigInt(*in.TypeID)
 	bean.Theme = types.String(*in.Theme)
 	bean.Name = types.String(*in.Name)
@@ -157,6 +159,7 @@ func (a *active) AddActive(ctx context.Context, in *dto.OperateActiveQuery, out 
 
 	for _, elderId := range in.ElderIDList {
 		if _, e = dao.ActiveParticipant(db).Insert(ctx,
+			tblactiveparticipant.TenantId.Set(types.BigInt(lib.TenantID(ctx))),
 			tblactiveparticipant.ActiveId.Set(bean.Id),
 			tblactiveparticipant.ElderId.Set(types.BigInt(elderId)),
 		); e != nil {
@@ -192,6 +195,7 @@ func (a *active) EditActive(ctx context.Context, in *dto.OperateActiveQuery, out
 
 	for _, elderId := range in.ElderIDList {
 		if _, e := dao.ActiveParticipant(db).Insert(ctx,
+			tblactiveparticipant.TenantId.Set(types.BigInt(lib.TenantID(ctx))),
 			tblactiveparticipant.ActiveId.Set(types.BigInt(*in.ID)),
 			tblactiveparticipant.ElderId.Set(types.BigInt(elderId)),
 		); e != nil {
@@ -217,7 +221,7 @@ func (a *active) DeleteActive(ctx context.Context, in *dto.IDReq, out *dto.Empty
 // 说明：Java 侧按 checkFlag in (咨询/意向/预定/退住) 过滤；Go 端对齐 CheckContract 的咨询口径。
 func (a *active) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.ParticipateElderVO) error {
 	// 注：elder 表无 del_flag 字段，此处用恒真条件占位
-	query := ace.Where(tblelder.Id.Gte(types.BigInt(0)))
+	query := ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Gte(types.BigInt(0)))
 	if in.Name != nil {
 		query.And(tblelder.Name.Like(*in.Name))
 	}
@@ -243,7 +247,7 @@ func (a *active) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchEld
 // 对应 Java: ActiveServiceImpl.getActiveType -> activeTypeMapper.listNotDelActiveType
 // SQL: SELECT * FROM active_type WHERE del_flag = 0
 func (a *active) GetActiveType(ctx context.Context, in *dto.EmptyReq, out *[]dto.DropDown) error {
-	list, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.DelFlag.Eq(constant.YesNoNo)))
+	list, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.DelFlag.Eq(constant.YesNoNo)))
 	if e != nil {
 		return e
 	}

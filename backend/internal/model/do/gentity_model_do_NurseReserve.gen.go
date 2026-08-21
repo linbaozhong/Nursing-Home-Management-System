@@ -27,7 +27,7 @@ func NewNurseReserve() *NurseReserve {
 
 // MarshalJSON
 func (p *NurseReserve) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(15 * 50)
+	write := types.NewJsonWriter(16 * 50)
 	if p.ServiceName != "" {
 		write.WriteRaw("service_name", types.Marshal(p.ServiceName))
 	}
@@ -36,6 +36,9 @@ func (p *NurseReserve) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -92,6 +95,8 @@ func (p *NurseReserve) UnmarshalJSON(data []byte) error {
 			p.ChargeMethod = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "staff_id":
@@ -140,6 +145,7 @@ func (p *NurseReserve) Reset() {
 	p.ServiceName = ""
 	p.ChargeMethod = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.StaffId = 0
 	p.ServicePrice = 0
@@ -164,6 +170,7 @@ var nursereserveFieldToPtrFunc = map[string]func(*NurseReserve) any{
 	tblnursereserve.ServiceName.Name:  func(p *NurseReserve) any { return &p.ServiceName },
 	tblnursereserve.ChargeMethod.Name: func(p *NurseReserve) any { return &p.ChargeMethod },
 	tblnursereserve.Id.Name:           func(p *NurseReserve) any { return &p.Id },
+	tblnursereserve.TenantId.Name:     func(p *NurseReserve) any { return &p.TenantId },
 	tblnursereserve.ElderId.Name:      func(p *NurseReserve) any { return &p.ElderId },
 	tblnursereserve.StaffId.Name:      func(p *NurseReserve) any { return &p.StaffId },
 	tblnursereserve.ServicePrice.Name: func(p *NurseReserve) any { return &p.ServicePrice },
@@ -273,6 +280,9 @@ var nursereserveFieldToValueFunc = map[dialect.Field]func(*NurseReserve) (any, b
 	},
 	tblnursereserve.Id: func(p *NurseReserve) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblnursereserve.TenantId: func(p *NurseReserve) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblnursereserve.ElderId: func(p *NurseReserve) (any, bool) {
 		return p.ElderId, p.ElderId == 0

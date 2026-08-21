@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblbed"
 	"api/internal/model/define/table/tblelder"
@@ -28,7 +29,7 @@ func (e *elderrecord) PageElderRecordByKey(ctx context.Context, in *dto.PageElde
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblelder.TableName).
 		LeftJoin(tblelder.BedId, tblbed.Id).
-		Where(tblelder.Id.Gt(types.BigInt(0)))
+		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Gt(types.BigInt(0)))
 	if in.ElderName != nil && *in.ElderName != "" {
 		q.And(tblelder.Name.Like(*in.ElderName))
 	}
@@ -86,7 +87,7 @@ func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out
 			tblemergencycontact.Relation,
 			tblemergencycontact.ReceiveFlag,
 		).
-		Where(tblemergencycontact.ElderId.Eq(types.BigInt(*in.ID))).
+		Where(tblemergencycontact.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblemergencycontact.ElderId.Eq(types.BigInt(*in.ID))).
 		Select().
 		Gets(ctx, &contacts)
 	if e2 != nil {
@@ -109,6 +110,7 @@ func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out
 // 对应 Java 不存在, Go handler 注册, 实现基础 elder 插入 + 紧急联系人
 func (e *elderrecord) AddElderRecord(ctx context.Context, in *dto.AddElderRecordQuery, out *dto.EmptyResp) error {
 	bean := do.NewElder()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
 	bean.IdNum = types.String(*in.IDNum)
 	bean.Sex = types.String(*in.Sex)
@@ -146,6 +148,7 @@ func (e *elderrecord) EditElderRecord(ctx context.Context, in *dto.EditElderReco
 // AddEmergencyContact 新增紧急联系人
 func (e *elderrecord) AddEmergencyContact(ctx context.Context, in *dto.AddEmergencyContactQuery, out *dto.EmptyResp) error {
 	bean := do.NewEmergencyContact()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.ElderId = types.BigInt(*in.ElderID)
 	bean.Name = types.String(*in.Name)
 	bean.Phone = types.String(*in.Phone)
@@ -218,7 +221,7 @@ func (e *elderrecord) DeleteElderRecord(ctx context.Context, in *dto.IDReq, out 
 func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblelder.TableName).
-		Where(tblelder.Id.Gt(types.BigInt(0)))
+		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Gt(types.BigInt(0)))
 	if in.Name != nil && *in.Name != "" {
 		q.And(tblelder.Name.Like(*in.Name))
 	}
@@ -244,7 +247,7 @@ func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSear
 func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *dto.PageSearchEmergencyContactByKeyQuery, out *[]dto.PageSearchEmergencyContactByKeyVO) error {
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblemergencycontact.TableName).
-		Where(tblemergencycontact.ElderId.Eq(types.BigInt(*in.ElderID)))
+		Where(tblemergencycontact.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblemergencycontact.ElderId.Eq(types.BigInt(*in.ElderID)))
 	if in.Key != nil && *in.Key != "" {
 		q.And(tblemergencycontact.Name.Like(*in.Key))
 		q.Or(tblemergencycontact.Phone.Like(*in.Key))
@@ -266,7 +269,7 @@ func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *d
 func (e *elderrecord) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyQuery, out *[]dto.ListLabelVO) error {
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tbllabel.TableName).
-		Where(tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)))
+		Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)))
 	if in.Key != nil && *in.Key != "" {
 		q.And(tbllabel.Name.Like(*in.Key))
 	}

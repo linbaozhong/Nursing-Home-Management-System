@@ -27,12 +27,15 @@ func NewWarehouse() *Warehouse {
 
 // MarshalJSON
 func (p *Warehouse) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(8 * 50)
+	write := types.NewJsonWriter(9 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.StaffId != 0 {
 		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
@@ -69,6 +72,8 @@ func (p *Warehouse) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "staff_id":
 			p.StaffId = types.BigInt(value.Uint())
 		case "create_id":
@@ -104,6 +109,7 @@ func (p *Warehouse) Free() {
 func (p *Warehouse) Reset() {
 	p.Name = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.StaffId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -121,6 +127,7 @@ func (p *Warehouse) TableName() string {
 var warehouseFieldToPtrFunc = map[string]func(*Warehouse) any{
 	tblwarehouse.Name.Name:       func(p *Warehouse) any { return &p.Name },
 	tblwarehouse.Id.Name:         func(p *Warehouse) any { return &p.Id },
+	tblwarehouse.TenantId.Name:   func(p *Warehouse) any { return &p.TenantId },
 	tblwarehouse.StaffId.Name:    func(p *Warehouse) any { return &p.StaffId },
 	tblwarehouse.CreateId.Name:   func(p *Warehouse) any { return &p.CreateId },
 	tblwarehouse.CreateTime.Name: func(p *Warehouse) any { return &p.CreateTime },
@@ -221,6 +228,9 @@ var warehouseFieldToValueFunc = map[dialect.Field]func(*Warehouse) (any, bool){
 	},
 	tblwarehouse.Id: func(p *Warehouse) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblwarehouse.TenantId: func(p *Warehouse) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblwarehouse.StaffId: func(p *Warehouse) (any, bool) {
 		return p.StaffId, p.StaffId == 0

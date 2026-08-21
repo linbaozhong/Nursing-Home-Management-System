@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblbed"
 	"api/internal/model/define/table/tblelder"
@@ -41,7 +42,8 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 	}
 	q := db.Table(tblnursereserve.TableName).
 		LeftJoin(tblnursereserve.ElderId, tblelder.Id).
-		LeftJoin(tblelder.BedId, tblbed.Id)
+		LeftJoin(tblelder.BedId, tblbed.Id).
+		Where(tblnursereserve.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.ElderName != nil && *in.ElderName != "" {
 		q = q.Where(tblelder.Name.Like(*in.ElderName))
 	}
@@ -97,7 +99,7 @@ func (s *nurseReserveService) GetNurseReserveByReserveIdAndElderId(ctx context.C
 		return constant.ErrParamInvalid
 	}
 
-	nr, has, e := dao.NurseReserve(db).Get(ctx, ace.Where(tblnursereserve.Id.Eq(types.BigInt(*in.ReserveID))).
+	nr, has, e := dao.NurseReserve(db).Get(ctx, ace.Where(tblnursereserve.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblnursereserve.Id.Eq(types.BigInt(*in.ReserveID))).
 		And(tblnursereserve.ElderId.Eq(types.BigInt(*in.ElderID))))
 	if e != nil {
 		return e
@@ -132,6 +134,7 @@ func (s *nurseReserveService) AddNurseReserve(ctx context.Context, in *dto.AddNu
 		return constant.ErrParamInvalid
 	}
 	rec := &do.NurseReserve{
+		TenantId:     types.BigInt(lib.TenantID(ctx)),
 		ElderId:      types.BigInt(*in.ElderID),
 		ServiceName:  types.String(*in.ServiceName),
 		NeedDate:     types.Int32(int32(*in.NeedDate)),
@@ -179,7 +182,8 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
-	q := db.Table(tblelder.TableName)
+	q := db.Table(tblelder.TableName).
+		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.Name != nil && *in.Name != "" {
 		q = q.Where(tblelder.Name.Like(*in.Name))
 	}
@@ -217,11 +221,12 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 // ListNurseStaff 查询护理员工（护理员列表）
 func (s *nurseReserveService) ListNurseStaff(ctx context.Context, in *dto.EmptyReq, out *[]dto.PageSearchStaffByKeyVO) error {
 	staffs, has, e := dao.Staff(db).List(ctx,
-		ace.Cols(
-			tblstaff.Id,
-			tblstaff.Name,
-			tblstaff.Phone,
-		).Desc(tblstaff.Id))
+		ace.Where(tblstaff.TenantId.Eq(types.BigInt(lib.TenantID(ctx)))).
+			Cols(
+				tblstaff.Id,
+				tblstaff.Name,
+				tblstaff.Phone,
+			).Desc(tblstaff.Id))
 	if e != nil {
 		return e
 	}

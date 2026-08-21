@@ -27,12 +27,15 @@ func NewOrder() *Order {
 
 // MarshalJSON
 func (p *Order) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(12 * 50)
+	write := types.NewJsonWriter(13 * 50)
 	if p.DineType != "" {
 		write.WriteRaw("dine_type", types.Marshal(p.DineType))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -81,6 +84,8 @@ func (p *Order) UnmarshalJSON(data []byte) error {
 			p.DineType = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "staff_id":
@@ -124,6 +129,7 @@ func (p *Order) Free() {
 func (p *Order) Reset() {
 	p.DineType = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.StaffId = 0
 	p.DeliverDishesDate = types.Time{}
@@ -145,6 +151,7 @@ func (p *Order) TableName() string {
 var orderFieldToPtrFunc = map[string]func(*Order) any{
 	tblorder.DineType.Name:          func(p *Order) any { return &p.DineType },
 	tblorder.Id.Name:                func(p *Order) any { return &p.Id },
+	tblorder.TenantId.Name:          func(p *Order) any { return &p.TenantId },
 	tblorder.ElderId.Name:           func(p *Order) any { return &p.ElderId },
 	tblorder.StaffId.Name:           func(p *Order) any { return &p.StaffId },
 	tblorder.DeliverDishesDate.Name: func(p *Order) any { return &p.DeliverDishesDate },
@@ -249,6 +256,9 @@ var orderFieldToValueFunc = map[dialect.Field]func(*Order) (any, bool){
 	},
 	tblorder.Id: func(p *Order) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblorder.TenantId: func(p *Order) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblorder.ElderId: func(p *Order) (any, bool) {
 		return p.ElderId, p.ElderId == 0

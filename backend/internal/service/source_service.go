@@ -2,12 +2,14 @@ package service
 
 import (
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblsource"
 	"api/internal/model/do"
 	"api/internal/model/dto"
 	"context"
 	"errors"
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -21,6 +23,7 @@ var Source = &source{}
 func (s *source) PageSourceByKey(ctx context.Context, in *dto.PageSourceByKeyQuery, out *[]dto.PageSourceByKeyVO) error {
 	q := db.Table(tblsource.TableName).
 		Where(
+			tblsource.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblsource.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 		).
 		Desc(tblsource.CreateTime)
@@ -38,6 +41,7 @@ func (s *source) PageSourceByKey(ctx context.Context, in *dto.PageSourceByKeyQue
 func (s *source) AddSource(ctx context.Context, in *dto.StringReq, out *dto.EmptyResp) error {
 	// 判断来源渠道是否已存在
 	has, e := dao.Source(db).Exists(ctx,
+		tblsource.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblsource.Name.Eq(*in.Value),
 		tblsource.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 	)
@@ -51,6 +55,7 @@ func (s *source) AddSource(ctx context.Context, in *dto.StringReq, out *dto.Empt
 	bean := do.NewSource()
 	defer bean.Free()
 
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Value)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	// 新增
@@ -62,7 +67,7 @@ func (s *source) AddSource(ctx context.Context, in *dto.StringReq, out *dto.Empt
 // 对应 Java: SourceServiceImpl.getSourceById -> sourceMapper.selectById
 func (s *source) GetSourceById(ctx context.Context, in *dto.IDReq, out *dto.OperateSourceVo) error {
 	return db.Table(tblsource.TableName).
-		Where(tblsource.Id.Eq(*in.ID)).
+		Where(tblsource.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblsource.Id.Eq(*in.ID)).
 		Cols(
 			tblsource.Id,
 			tblsource.Name).
@@ -74,6 +79,7 @@ func (s *source) GetSourceById(ctx context.Context, in *dto.IDReq, out *dto.Oper
 func (s *source) EditSource(ctx context.Context, in *dto.OperateSourceQuery, out *dto.EmptyResp) error {
 	// 判断来源渠道是否已存在(排除自身)
 	has, e := dao.Source(db).Exists(ctx,
+		tblsource.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblsource.Name.Eq(*in.Name),
 		tblsource.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 		tblsource.Id.NotEq(types.BigInt(*in.ID)),
@@ -95,7 +101,14 @@ func (s *source) EditSource(ctx context.Context, in *dto.OperateSourceQuery, out
 // DeleteSource 删除来源渠道(软删除)
 // 对应 Java: SourceServiceImpl.deleteSource -> sourceMapper.updateById(delFlag=YES)
 func (s *source) DeleteSource(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	_, e := dao.Source(db).UpdateById(ctx, types.BigInt(*in.ID),
+	_, has, e := dao.Source(db).Get(ctx, ace.Where(tblsource.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblsource.Id.Eq(types.BigInt(*in.ID))))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return errors.New("来源渠道不存在")
+	}
+	_, e = dao.Source(db).UpdateById(ctx, types.BigInt(*in.ID),
 		tblsource.DelFlag.Set(types.Int8(constant.YesNoYes)),
 	)
 	return e

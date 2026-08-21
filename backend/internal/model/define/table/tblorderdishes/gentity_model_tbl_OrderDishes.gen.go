@@ -11,6 +11,7 @@ const TableName = "order_dishes"
 var (
 	DishesName   = dialect.Field{Name: "dishes_name", Json: "dishes_name", Table: "order_dishes", Type: "types.String", IsRelation: false}
 	Id           = dialect.Field{Name: "id", Json: "id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
+	TenantId     = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
 	OrderId      = dialect.Field{Name: "order_id", Json: "order_id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
 	DishesPrice  = dialect.Field{Name: "dishes_price", Json: "dishes_price", Table: "order_dishes", Type: "types.Money", IsRelation: false}
 	TotalAmount  = dialect.Field{Name: "total_amount", Json: "total_amount", Table: "order_dishes", Type: "types.Money", IsRelation: false}
@@ -28,6 +29,7 @@ var (
 	WritableFields = []dialect.Field{
 		DishesName,
 		Id,
+		TenantId,
 		OrderId,
 		DishesPrice,
 		TotalAmount,
@@ -43,6 +45,7 @@ var (
 	ReadableFields = []dialect.Field{
 		DishesName,
 		Id,
+		TenantId,
 		OrderId,
 		DishesPrice,
 		TotalAmount,

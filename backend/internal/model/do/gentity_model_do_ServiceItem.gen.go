@@ -27,7 +27,7 @@ func NewServiceItem() *ServiceItem {
 
 // MarshalJSON
 func (p *ServiceItem) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(11 * 50)
+	write := types.NewJsonWriter(12 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
@@ -36,6 +36,9 @@ func (p *ServiceItem) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.TypeId != 0 {
 		write.WriteRaw("type_id", types.Marshal(p.TypeId))
@@ -80,6 +83,8 @@ func (p *ServiceItem) UnmarshalJSON(data []byte) error {
 			p.ChargeMethod = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "type_id":
 			p.TypeId = types.BigInt(value.Uint())
 		case "price":
@@ -120,6 +125,7 @@ func (p *ServiceItem) Reset() {
 	p.Name = ""
 	p.ChargeMethod = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.TypeId = 0
 	p.Price = 0
 	p.CreateId = 0
@@ -140,6 +146,7 @@ var serviceitemFieldToPtrFunc = map[string]func(*ServiceItem) any{
 	tblserviceitem.Name.Name:         func(p *ServiceItem) any { return &p.Name },
 	tblserviceitem.ChargeMethod.Name: func(p *ServiceItem) any { return &p.ChargeMethod },
 	tblserviceitem.Id.Name:           func(p *ServiceItem) any { return &p.Id },
+	tblserviceitem.TenantId.Name:     func(p *ServiceItem) any { return &p.TenantId },
 	tblserviceitem.TypeId.Name:       func(p *ServiceItem) any { return &p.TypeId },
 	tblserviceitem.Price.Name:        func(p *ServiceItem) any { return &p.Price },
 	tblserviceitem.CreateId.Name:     func(p *ServiceItem) any { return &p.CreateId },
@@ -245,6 +252,9 @@ var serviceitemFieldToValueFunc = map[dialect.Field]func(*ServiceItem) (any, boo
 	},
 	tblserviceitem.Id: func(p *ServiceItem) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblserviceitem.TenantId: func(p *ServiceItem) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblserviceitem.TypeId: func(p *ServiceItem) (any, bool) {
 		return p.TypeId, p.TypeId == 0

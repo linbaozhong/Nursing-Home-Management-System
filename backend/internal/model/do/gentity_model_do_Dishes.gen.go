@@ -27,12 +27,15 @@ func NewDishes() *Dishes {
 
 // MarshalJSON
 func (p *Dishes) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(9 * 50)
+	write := types.NewJsonWriter(10 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.TypeId != 0 {
 		write.WriteRaw("type_id", types.Marshal(p.TypeId))
@@ -72,6 +75,8 @@ func (p *Dishes) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "type_id":
 			p.TypeId = types.BigInt(value.Uint())
 		case "price":
@@ -109,6 +114,7 @@ func (p *Dishes) Free() {
 func (p *Dishes) Reset() {
 	p.Name = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.TypeId = 0
 	p.Price = 0
 	p.CreateId = 0
@@ -127,6 +133,7 @@ func (p *Dishes) TableName() string {
 var dishesFieldToPtrFunc = map[string]func(*Dishes) any{
 	tbldishes.Name.Name:       func(p *Dishes) any { return &p.Name },
 	tbldishes.Id.Name:         func(p *Dishes) any { return &p.Id },
+	tbldishes.TenantId.Name:   func(p *Dishes) any { return &p.TenantId },
 	tbldishes.TypeId.Name:     func(p *Dishes) any { return &p.TypeId },
 	tbldishes.Price.Name:      func(p *Dishes) any { return &p.Price },
 	tbldishes.CreateId.Name:   func(p *Dishes) any { return &p.CreateId },
@@ -228,6 +235,9 @@ var dishesFieldToValueFunc = map[dialect.Field]func(*Dishes) (any, bool){
 	},
 	tbldishes.Id: func(p *Dishes) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tbldishes.TenantId: func(p *Dishes) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tbldishes.TypeId: func(p *Dishes) (any, bool) {
 		return p.TypeId, p.TypeId == 0

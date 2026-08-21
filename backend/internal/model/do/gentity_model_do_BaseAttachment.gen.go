@@ -27,7 +27,7 @@ func NewBaseAttachment() *BaseAttachment {
 
 // MarshalJSON
 func (p *BaseAttachment) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(12 * 50)
+	write := types.NewJsonWriter(13 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
@@ -45,6 +45,9 @@ func (p *BaseAttachment) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.Size != 0 {
 		write.WriteRaw("size", types.Marshal(p.Size))
@@ -89,6 +92,8 @@ func (p *BaseAttachment) UnmarshalJSON(data []byte) error {
 			p.Suff = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "size":
 			p.Size = types.BigInt(value.Uint())
 		case "create_id":
@@ -128,6 +133,7 @@ func (p *BaseAttachment) Reset() {
 	p.Url = ""
 	p.Suff = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.Size = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -149,6 +155,7 @@ var baseattachmentFieldToPtrFunc = map[string]func(*BaseAttachment) any{
 	tblbaseattachment.Url.Name:        func(p *BaseAttachment) any { return &p.Url },
 	tblbaseattachment.Suff.Name:       func(p *BaseAttachment) any { return &p.Suff },
 	tblbaseattachment.Id.Name:         func(p *BaseAttachment) any { return &p.Id },
+	tblbaseattachment.TenantId.Name:   func(p *BaseAttachment) any { return &p.TenantId },
 	tblbaseattachment.Size.Name:       func(p *BaseAttachment) any { return &p.Size },
 	tblbaseattachment.CreateId.Name:   func(p *BaseAttachment) any { return &p.CreateId },
 	tblbaseattachment.CreateTime.Name: func(p *BaseAttachment) any { return &p.CreateTime },
@@ -261,6 +268,9 @@ var baseattachmentFieldToValueFunc = map[dialect.Field]func(*BaseAttachment) (an
 	},
 	tblbaseattachment.Id: func(p *BaseAttachment) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblbaseattachment.TenantId: func(p *BaseAttachment) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblbaseattachment.Size: func(p *BaseAttachment) (any, bool) {
 		return p.Size, p.Size == 0

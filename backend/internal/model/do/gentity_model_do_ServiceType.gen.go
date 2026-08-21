@@ -27,12 +27,15 @@ func NewServiceType() *ServiceType {
 
 // MarshalJSON
 func (p *ServiceType) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(8 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -66,6 +69,8 @@ func (p *ServiceType) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -99,6 +104,7 @@ func (p *ServiceType) Free() {
 func (p *ServiceType) Reset() {
 	p.Name = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
@@ -115,6 +121,7 @@ func (p *ServiceType) TableName() string {
 var servicetypeFieldToPtrFunc = map[string]func(*ServiceType) any{
 	tblservicetype.Name.Name:       func(p *ServiceType) any { return &p.Name },
 	tblservicetype.Id.Name:         func(p *ServiceType) any { return &p.Id },
+	tblservicetype.TenantId.Name:   func(p *ServiceType) any { return &p.TenantId },
 	tblservicetype.CreateId.Name:   func(p *ServiceType) any { return &p.CreateId },
 	tblservicetype.CreateTime.Name: func(p *ServiceType) any { return &p.CreateTime },
 	tblservicetype.UpdateId.Name:   func(p *ServiceType) any { return &p.UpdateId },
@@ -214,6 +221,9 @@ var servicetypeFieldToValueFunc = map[dialect.Field]func(*ServiceType) (any, boo
 	},
 	tblservicetype.Id: func(p *ServiceType) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblservicetype.TenantId: func(p *ServiceType) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblservicetype.CreateId: func(p *ServiceType) (any, bool) {
 		return p.CreateId, p.CreateId == 0

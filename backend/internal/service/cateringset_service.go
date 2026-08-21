@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblcateringset"
 	"api/internal/model/define/table/tbldishes"
@@ -25,7 +26,7 @@ var CateringSet = &cateringset{}
 // 对应 Java: CateringSetServiceImpl.pageCateringSetByKey -> CateringSetFunc.listNotDelCateringSet
 func (c *cateringset) PageCateringSetByKey(ctx context.Context, in *dto.PageCateringSetByKeyQuery, out *[]dto.PageCateringSetByKeyVO) error {
 	q := db.Table(tblcateringset.TableName).
-		Where(tblcateringset.DelFlag.Eq(constant.YesNoNo))
+		Where(tblcateringset.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblcateringset.DelFlag.Eq(constant.YesNoNo))
 	if in.SetName != nil {
 		q.And(tblcateringset.Name.Like(*in.SetName))
 	}
@@ -68,6 +69,7 @@ func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out
 	e = db.Table(tblsetdishes.TableName).
 		LeftJoin(tblsetdishes.DishesId, tbldishes.Id).
 		Where(
+			tblsetdishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblsetdishes.SetId.Eq(types.BigInt(*in.ID)),
 			tbldishes.DelFlag.Eq(constant.YesNoNo),
 		).
@@ -95,6 +97,7 @@ func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out
 // checkNameRepeat 校验套餐名称是否重复（排除指定编号）
 func (c *cateringset) checkNameRepeat(ctx context.Context, name string, excludeID *int64) (bool, error) {
 	cond := []dialect.Condition{
+		tblcateringset.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblcateringset.Name.Eq(name),
 		tblcateringset.DelFlag.Eq(constant.YesNoNo),
 	}
@@ -107,7 +110,9 @@ func (c *cateringset) checkNameRepeat(ctx context.Context, name string, excludeI
 // saveBatchSetDishes 批量写入套餐菜品明细（编辑时先删后插）
 func (c *cateringset) saveBatchSetDishes(ctx context.Context, setID int64, dishesIDList []int64, editFlag bool) error {
 	if editFlag {
-		_, e := dao.SetDishes(db).Delete(ctx, tblsetdishes.SetId.Eq(types.BigInt(setID)))
+		_, e := dao.SetDishes(db).Delete(ctx,
+			tblsetdishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+			tblsetdishes.SetId.Eq(types.BigInt(setID)))
 		if e != nil {
 			return e
 		}
@@ -121,6 +126,7 @@ func (c *cateringset) saveBatchSetDishes(ctx context.Context, setID int64, dishe
 		}
 		seen[dishesID] = struct{}{}
 		bean := do.NewSetDishes()
+		bean.TenantId = types.BigInt(lib.TenantID(ctx))
 		bean.SetId = types.BigInt(setID)
 		bean.DishesId = types.BigInt(dishesID)
 		list = append(list, bean)
@@ -145,6 +151,7 @@ func (c *cateringset) AddCateringSet(ctx context.Context, in *dto.OperateCaterin
 	}
 	// 新增主表
 	bean := do.NewCateringSet()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
 	bean.MonthPrice = types.Money(*in.MonthPrice)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
@@ -184,6 +191,7 @@ func (c *cateringset) EditCateringSet(ctx context.Context, in *dto.OperateCateri
 func (c *cateringset) DeleteCateringSet(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	// 判断是否有入住/退住审核中的老人选择该餐饮套餐
 	used, e := dao.Elder(db).Exists(ctx,
+		tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblelder.CateringSetId.Eq(types.BigInt(*in.ID)),
 		tblelder.CheckFlag.In(
 			types.Int8(constant.CheckEnter),

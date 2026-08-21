@@ -27,7 +27,7 @@ func NewActive() *Active {
 
 // MarshalJSON
 func (p *Active) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(15 * 50)
+	write := types.NewJsonWriter(16 * 50)
 	if p.Theme != "" {
 		write.WriteRaw("theme", types.Marshal(p.Theme))
 	}
@@ -51,6 +51,9 @@ func (p *Active) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.TypeId != 0 {
 		write.WriteRaw("type_id", types.Marshal(p.TypeId))
@@ -102,6 +105,8 @@ func (p *Active) UnmarshalJSON(data []byte) error {
 			p.ActivePicture = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "type_id":
 			p.TypeId = types.BigInt(value.Uint())
 		case "active_date":
@@ -145,6 +150,7 @@ func (p *Active) Reset() {
 	p.Phone = ""
 	p.ActivePicture = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.TypeId = 0
 	p.ActiveDate = types.Time{}
 	p.CreateId = 0
@@ -169,6 +175,7 @@ var activeFieldToPtrFunc = map[string]func(*Active) any{
 	tblactive.Phone.Name:         func(p *Active) any { return &p.Phone },
 	tblactive.ActivePicture.Name: func(p *Active) any { return &p.ActivePicture },
 	tblactive.Id.Name:            func(p *Active) any { return &p.Id },
+	tblactive.TenantId.Name:      func(p *Active) any { return &p.TenantId },
 	tblactive.TypeId.Name:        func(p *Active) any { return &p.TypeId },
 	tblactive.ActiveDate.Name:    func(p *Active) any { return &p.ActiveDate },
 	tblactive.CreateId.Name:      func(p *Active) any { return &p.CreateId },
@@ -288,6 +295,9 @@ var activeFieldToValueFunc = map[dialect.Field]func(*Active) (any, bool){
 	},
 	tblactive.Id: func(p *Active) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblactive.TenantId: func(p *Active) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblactive.TypeId: func(p *Active) (any, bool) {
 		return p.TypeId, p.TypeId == 0

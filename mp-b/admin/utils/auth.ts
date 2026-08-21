@@ -5,18 +5,36 @@
 // 全局 uni API（uni-app-x 运行时提供，此处供 TS 工具文件识别）
 declare const uni: any
 
+export interface TenantVO {
+	id: number
+	name: string
+	logo: string
+	contact_name: string
+	contact_phone: string
+	plan: string
+	status: number
+	trial_start: string
+	trial_end: string
+}
+
 export interface LoginUser {
 	id: number
 	name: string
 	avator: string
 	phone: string
+	tenant_id: number
+	member_id: number
+	role_id: number
+	need_bind: boolean
 	auth_id_list: number[]
 	auth_url_list: string[]
+	tenants: TenantVO[]
 	token: string
 }
 
 const TOKEN_KEY = 'token'
 const USER_KEY = 'login_user'
+const TENANT_KEY = 'current_tenant'
 
 export function setToken(token: string): void {
 	uni.setStorageSync(TOKEN_KEY, token)
@@ -29,15 +47,28 @@ export function getToken(): string {
 export function setLoginUser(user: LoginUser): void {
 	setToken(user.token)
 	uni.setStorageSync(USER_KEY, user)
+	if (user.tenant_id && user.tenant_id > 0) {
+		uni.setStorageSync(TENANT_KEY, user.tenant_id)
+	}
 }
 
 export function getLoginUser(): LoginUser | null {
 	return uni.getStorageSync(USER_KEY) as LoginUser | null
 }
 
+/** 当前选择的租户编号（记住上次选择） */
+export function getCurrentTenantId(): number {
+	return (uni.getStorageSync(TENANT_KEY) as number) || 0
+}
+
+export function setCurrentTenantId(id: number): void {
+	uni.setStorageSync(TENANT_KEY, id)
+}
+
 export function clearAuth(): void {
 	uni.removeStorageSync(TOKEN_KEY)
 	uni.removeStorageSync(USER_KEY)
+	uni.removeStorageSync(TENANT_KEY)
 }
 
 /** 是否拥有指定权限 id */

@@ -17,6 +17,7 @@ var (
 	Phone         = dialect.Field{Name: "phone", Json: "phone", Table: "active", Type: "types.String", IsRelation: false}
 	ActivePicture = dialect.Field{Name: "active_picture", Json: "active_picture", Table: "active", Type: "types.String", IsRelation: false}
 	Id            = dialect.Field{Name: "id", Json: "id", Table: "active", Type: "types.BigInt", IsRelation: false}
+	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "active", Type: "types.BigInt", IsRelation: false}
 	TypeId        = dialect.Field{Name: "type_id", Json: "type_id", Table: "active", Type: "types.BigInt", IsRelation: false}
 	ActiveDate    = dialect.Field{Name: "active_date", Json: "active_date", Table: "active", Type: "types.Time", IsRelation: false}
 	CreateId      = dialect.Field{Name: "create_id", Json: "create_id", Table: "active", Type: "types.BigInt", IsRelation: false}
@@ -37,6 +38,7 @@ var (
 		Phone,
 		ActivePicture,
 		Id,
+		TenantId,
 		TypeId,
 		ActiveDate,
 		CreateId,
@@ -55,6 +57,7 @@ var (
 		Phone,
 		ActivePicture,
 		Id,
+		TenantId,
 		TypeId,
 		ActiveDate,
 		CreateId,

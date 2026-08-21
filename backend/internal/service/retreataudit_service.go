@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblelder"
 	"api/internal/model/define/table/tblretreatapply"
@@ -33,7 +34,8 @@ func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto
 	}
 	q := db.Table(tblretreatapply.TableName).
 		LeftJoin(tblretreatapply.ElderId, tblelder.Id).
-		LeftJoin(tblretreatapply.CreateId, tblstaff.Id)
+		LeftJoin(tblretreatapply.CreateId, tblstaff.Id).
+		Where(tblretreatapply.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.Key != nil && *in.Key != "" {
 		q = q.Where(tblelder.Name.Like(*in.Key))
 	}
@@ -69,7 +71,7 @@ func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto
 // GetRetreatAuditById 查询退住审核详情（含老人信息）
 func (s *retreatAuditService) GetRetreatAuditById(ctx context.Context, in *dto.IDReq, out *dto.GetRetreatAuditByIDVO) error {
 	apply := new(do.RetreatApply)
-	has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
+	has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -81,7 +83,7 @@ func (s *retreatAuditService) GetRetreatAuditById(ctx context.Context, in *dto.I
 	out.ApplyFlag = constant.AuditStatus(apply.ApplyFlag).String()
 	// 关联老人姓名
 	elder := new(do.Elder)
-	if eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(apply.ElderId))); ee == nil && eh {
+	if eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Eq(apply.ElderId))); ee == nil && eh {
 		out.ElderName = elder.Name.String()
 	}
 	return nil
@@ -93,7 +95,7 @@ func (s *retreatAuditService) AuditRetreat(ctx context.Context, in *dto.AuditRet
 		return constant.ErrParamInvalid
 	}
 	apply := new(do.RetreatApply)
-	has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
+	has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}

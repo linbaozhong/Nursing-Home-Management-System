@@ -27,9 +27,12 @@ func NewWarehouseMaterial() *WarehouseMaterial {
 
 // MarshalJSON
 func (p *WarehouseMaterial) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(11 * 50)
+	write := types.NewJsonWriter(12 * 50)
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.WarehouseRecordId != 0 {
 		write.WriteRaw("warehouse_record_id", types.Marshal(p.WarehouseRecordId))
@@ -76,6 +79,8 @@ func (p *WarehouseMaterial) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "warehouse_record_id":
 			p.WarehouseRecordId = types.BigInt(value.Uint())
 		case "material_id":
@@ -118,6 +123,7 @@ func (p *WarehouseMaterial) Free() {
 // Reset
 func (p *WarehouseMaterial) Reset() {
 	p.Id = 0
+	p.TenantId = 0
 	p.WarehouseRecordId = 0
 	p.MaterialId = 0
 	p.ProductDate = types.Time{}
@@ -138,6 +144,7 @@ func (p *WarehouseMaterial) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var warehousematerialFieldToPtrFunc = map[string]func(*WarehouseMaterial) any{
 	tblwarehousematerial.Id.Name:                func(p *WarehouseMaterial) any { return &p.Id },
+	tblwarehousematerial.TenantId.Name:          func(p *WarehouseMaterial) any { return &p.TenantId },
 	tblwarehousematerial.WarehouseRecordId.Name: func(p *WarehouseMaterial) any { return &p.WarehouseRecordId },
 	tblwarehousematerial.MaterialId.Name:        func(p *WarehouseMaterial) any { return &p.MaterialId },
 	tblwarehousematerial.ProductDate.Name:       func(p *WarehouseMaterial) any { return &p.ProductDate },
@@ -239,6 +246,9 @@ func (p *WarehouseMaterial) RawAssignValues(d dialect.Dialect, args ...dialect.F
 var warehousematerialFieldToValueFunc = map[dialect.Field]func(*WarehouseMaterial) (any, bool){
 	tblwarehousematerial.Id: func(p *WarehouseMaterial) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblwarehousematerial.TenantId: func(p *WarehouseMaterial) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblwarehousematerial.WarehouseRecordId: func(p *WarehouseMaterial) (any, bool) {
 		return p.WarehouseRecordId, p.WarehouseRecordId == 0

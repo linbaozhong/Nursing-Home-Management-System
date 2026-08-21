@@ -27,12 +27,15 @@ func NewActiveType() *ActiveType {
 
 // MarshalJSON
 func (p *ActiveType) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(8 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -66,6 +69,8 @@ func (p *ActiveType) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -99,6 +104,7 @@ func (p *ActiveType) Free() {
 func (p *ActiveType) Reset() {
 	p.Name = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
@@ -115,6 +121,7 @@ func (p *ActiveType) TableName() string {
 var activetypeFieldToPtrFunc = map[string]func(*ActiveType) any{
 	tblactivetype.Name.Name:       func(p *ActiveType) any { return &p.Name },
 	tblactivetype.Id.Name:         func(p *ActiveType) any { return &p.Id },
+	tblactivetype.TenantId.Name:   func(p *ActiveType) any { return &p.TenantId },
 	tblactivetype.CreateId.Name:   func(p *ActiveType) any { return &p.CreateId },
 	tblactivetype.CreateTime.Name: func(p *ActiveType) any { return &p.CreateTime },
 	tblactivetype.UpdateId.Name:   func(p *ActiveType) any { return &p.UpdateId },
@@ -214,6 +221,9 @@ var activetypeFieldToValueFunc = map[dialect.Field]func(*ActiveType) (any, bool)
 	},
 	tblactivetype.Id: func(p *ActiveType) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblactivetype.TenantId: func(p *ActiveType) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblactivetype.CreateId: func(p *ActiveType) (any, bool) {
 		return p.CreateId, p.CreateId == 0

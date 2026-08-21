@@ -27,7 +27,7 @@ func NewMedicine() *Medicine {
 
 // MarshalJSON
 func (p *Medicine) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(11 * 50)
+	write := types.NewJsonWriter(12 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
@@ -45,6 +45,9 @@ func (p *Medicine) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -86,6 +89,8 @@ func (p *Medicine) UnmarshalJSON(data []byte) error {
 			p.Manufacturer = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -123,6 +128,7 @@ func (p *Medicine) Reset() {
 	p.DosageForm = ""
 	p.Manufacturer = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
@@ -143,6 +149,7 @@ var medicineFieldToPtrFunc = map[string]func(*Medicine) any{
 	tblmedicine.DosageForm.Name:    func(p *Medicine) any { return &p.DosageForm },
 	tblmedicine.Manufacturer.Name:  func(p *Medicine) any { return &p.Manufacturer },
 	tblmedicine.Id.Name:            func(p *Medicine) any { return &p.Id },
+	tblmedicine.TenantId.Name:      func(p *Medicine) any { return &p.TenantId },
 	tblmedicine.CreateId.Name:      func(p *Medicine) any { return &p.CreateId },
 	tblmedicine.CreateTime.Name:    func(p *Medicine) any { return &p.CreateTime },
 	tblmedicine.UpdateId.Name:      func(p *Medicine) any { return &p.UpdateId },
@@ -254,6 +261,9 @@ var medicineFieldToValueFunc = map[dialect.Field]func(*Medicine) (any, bool){
 	},
 	tblmedicine.Id: func(p *Medicine) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblmedicine.TenantId: func(p *Medicine) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblmedicine.CreateId: func(p *Medicine) (any, bool) {
 		return p.CreateId, p.CreateId == 0

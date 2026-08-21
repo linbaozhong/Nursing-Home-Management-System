@@ -27,12 +27,15 @@ func NewConsume() *Consume {
 
 // MarshalJSON
 func (p *Consume) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(9 * 50)
+	write := types.NewJsonWriter(10 * 50)
 	if p.ConsumeType != "" {
 		write.WriteRaw("consume_type", types.Marshal(p.ConsumeType))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -72,6 +75,8 @@ func (p *Consume) UnmarshalJSON(data []byte) error {
 			p.ConsumeType = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "consume_amount":
@@ -109,6 +114,7 @@ func (p *Consume) Free() {
 func (p *Consume) Reset() {
 	p.ConsumeType = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.ConsumeAmount = 0
 	p.ConsumeDate = types.Time{}
@@ -127,6 +133,7 @@ func (p *Consume) TableName() string {
 var consumeFieldToPtrFunc = map[string]func(*Consume) any{
 	tblconsume.ConsumeType.Name:   func(p *Consume) any { return &p.ConsumeType },
 	tblconsume.Id.Name:            func(p *Consume) any { return &p.Id },
+	tblconsume.TenantId.Name:      func(p *Consume) any { return &p.TenantId },
 	tblconsume.ElderId.Name:       func(p *Consume) any { return &p.ElderId },
 	tblconsume.ConsumeAmount.Name: func(p *Consume) any { return &p.ConsumeAmount },
 	tblconsume.ConsumeDate.Name:   func(p *Consume) any { return &p.ConsumeDate },
@@ -228,6 +235,9 @@ var consumeFieldToValueFunc = map[dialect.Field]func(*Consume) (any, bool){
 	},
 	tblconsume.Id: func(p *Consume) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblconsume.TenantId: func(p *Consume) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblconsume.ElderId: func(p *Consume) (any, bool) {
 		return p.ElderId, p.ElderId == 0

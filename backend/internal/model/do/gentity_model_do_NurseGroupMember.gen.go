@@ -27,9 +27,12 @@ func NewNurseGroupMember() *NurseGroupMember {
 
 // MarshalJSON
 func (p *NurseGroupMember) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(8 * 50)
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.GroupId != 0 {
 		write.WriteRaw("group_id", types.Marshal(p.GroupId))
@@ -64,6 +67,8 @@ func (p *NurseGroupMember) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "group_id":
 			p.GroupId = types.BigInt(value.Uint())
 		case "staff_id":
@@ -98,6 +103,7 @@ func (p *NurseGroupMember) Free() {
 // Reset
 func (p *NurseGroupMember) Reset() {
 	p.Id = 0
+	p.TenantId = 0
 	p.GroupId = 0
 	p.StaffId = 0
 	p.CreateId = 0
@@ -114,6 +120,7 @@ func (p *NurseGroupMember) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var nursegroupmemberFieldToPtrFunc = map[string]func(*NurseGroupMember) any{
 	tblnursegroupmember.Id.Name:         func(p *NurseGroupMember) any { return &p.Id },
+	tblnursegroupmember.TenantId.Name:   func(p *NurseGroupMember) any { return &p.TenantId },
 	tblnursegroupmember.GroupId.Name:    func(p *NurseGroupMember) any { return &p.GroupId },
 	tblnursegroupmember.StaffId.Name:    func(p *NurseGroupMember) any { return &p.StaffId },
 	tblnursegroupmember.CreateId.Name:   func(p *NurseGroupMember) any { return &p.CreateId },
@@ -211,6 +218,9 @@ func (p *NurseGroupMember) RawAssignValues(d dialect.Dialect, args ...dialect.Fi
 var nursegroupmemberFieldToValueFunc = map[dialect.Field]func(*NurseGroupMember) (any, bool){
 	tblnursegroupmember.Id: func(p *NurseGroupMember) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblnursegroupmember.TenantId: func(p *NurseGroupMember) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblnursegroupmember.GroupId: func(p *NurseGroupMember) (any, bool) {
 		return p.GroupId, p.GroupId == 0

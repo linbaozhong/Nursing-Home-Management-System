@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblroomtype"
 	"api/internal/model/do"
@@ -21,7 +22,7 @@ var RoomType = &roomtype{}
 // 对应 Java: RoomTypeServiceImpl.pageRoomTypeByKey -> RoomTypeFunc.listNotDelRoomType
 func (r *roomtype) PageRoomTypeByKey(ctx context.Context, in *dto.PageRoomTypeByKeyQuery, out *[]dto.PageRoomTypeByKeyVO) error {
 	q := db.Table(tblroomtype.TableName).
-		Where(tblroomtype.DelFlag.Eq(constant.YesNoNo))
+		Where(tblroomtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblroomtype.DelFlag.Eq(constant.YesNoNo))
 	if in.RoomTypeName != nil && *in.RoomTypeName != "" {
 		q.And(tblroomtype.Name.Like(*in.RoomTypeName))
 	}
@@ -56,6 +57,7 @@ func (r *roomtype) GetRoomTypeById(ctx context.Context, in *dto.IDReq, out *dto.
 // 对应 Java: RoomTypeServiceImpl.addRoomType -> RoomTypeFunc.getRoomTypeByName
 func (r *roomtype) AddRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.RoomType(db).Exists(ctx,
+		tblroomtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblroomtype.Name.Eq(*in.Name),
 		tblroomtype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 	)
@@ -66,6 +68,7 @@ func (r *roomtype) AddRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery
 		return errors.New("房间类型名称已存在")
 	}
 	bean := do.NewRoomType()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
 	bean.MonthPrice = types.Money(*in.MonthPrice)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
@@ -77,6 +80,7 @@ func (r *roomtype) AddRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery
 // 对应 Java: RoomTypeServiceImpl.editRoomType
 func (r *roomtype) EditRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.RoomType(db).Exists(ctx,
+		tblroomtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblroomtype.Name.Eq(*in.Name),
 		tblroomtype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 		tblroomtype.Id.NotEq(types.BigInt(*in.ID)),

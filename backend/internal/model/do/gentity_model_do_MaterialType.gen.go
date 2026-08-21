@@ -27,12 +27,15 @@ func NewMaterialType() *MaterialType {
 
 // MarshalJSON
 func (p *MaterialType) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(8 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -66,6 +69,8 @@ func (p *MaterialType) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -99,6 +104,7 @@ func (p *MaterialType) Free() {
 func (p *MaterialType) Reset() {
 	p.Name = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
@@ -115,6 +121,7 @@ func (p *MaterialType) TableName() string {
 var materialtypeFieldToPtrFunc = map[string]func(*MaterialType) any{
 	tblmaterialtype.Name.Name:       func(p *MaterialType) any { return &p.Name },
 	tblmaterialtype.Id.Name:         func(p *MaterialType) any { return &p.Id },
+	tblmaterialtype.TenantId.Name:   func(p *MaterialType) any { return &p.TenantId },
 	tblmaterialtype.CreateId.Name:   func(p *MaterialType) any { return &p.CreateId },
 	tblmaterialtype.CreateTime.Name: func(p *MaterialType) any { return &p.CreateTime },
 	tblmaterialtype.UpdateId.Name:   func(p *MaterialType) any { return &p.UpdateId },
@@ -214,6 +221,9 @@ var materialtypeFieldToValueFunc = map[dialect.Field]func(*MaterialType) (any, b
 	},
 	tblmaterialtype.Id: func(p *MaterialType) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblmaterialtype.TenantId: func(p *MaterialType) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblmaterialtype.CreateId: func(p *MaterialType) (any, bool) {
 		return p.CreateId, p.CreateId == 0

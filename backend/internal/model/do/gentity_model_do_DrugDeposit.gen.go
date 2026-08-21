@@ -27,12 +27,15 @@ func NewDrugDeposit() *DrugDeposit {
 
 // MarshalJSON
 func (p *DrugDeposit) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(9 * 50)
+	write := types.NewJsonWriter(10 * 50)
 	if p.Mode != "" {
 		write.WriteRaw("mode", types.Marshal(p.Mode))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -72,6 +75,8 @@ func (p *DrugDeposit) UnmarshalJSON(data []byte) error {
 			p.Mode = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "create_id":
@@ -109,6 +114,7 @@ func (p *DrugDeposit) Free() {
 func (p *DrugDeposit) Reset() {
 	p.Mode = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -127,6 +133,7 @@ func (p *DrugDeposit) TableName() string {
 var drugdepositFieldToPtrFunc = map[string]func(*DrugDeposit) any{
 	tbldrugdeposit.Mode.Name:        func(p *DrugDeposit) any { return &p.Mode },
 	tbldrugdeposit.Id.Name:          func(p *DrugDeposit) any { return &p.Id },
+	tbldrugdeposit.TenantId.Name:    func(p *DrugDeposit) any { return &p.TenantId },
 	tbldrugdeposit.ElderId.Name:     func(p *DrugDeposit) any { return &p.ElderId },
 	tbldrugdeposit.CreateId.Name:    func(p *DrugDeposit) any { return &p.CreateId },
 	tbldrugdeposit.CreateTime.Name:  func(p *DrugDeposit) any { return &p.CreateTime },
@@ -228,6 +235,9 @@ var drugdepositFieldToValueFunc = map[dialect.Field]func(*DrugDeposit) (any, boo
 	},
 	tbldrugdeposit.Id: func(p *DrugDeposit) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tbldrugdeposit.TenantId: func(p *DrugDeposit) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tbldrugdeposit.ElderId: func(p *DrugDeposit) (any, bool) {
 		return p.ElderId, p.ElderId == 0

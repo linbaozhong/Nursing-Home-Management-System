@@ -5,12 +5,14 @@ import (
 	"errors"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblwarehouse"
 	"api/internal/model/define/table/tblwarehousematerial"
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/conv"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
@@ -24,7 +26,7 @@ var Warehouse = &warehouse{}
 // 注: staff_name 需联表 user 表(仓库管理员名), 因 user 表尚未在 Go 侧生成, 暂未联表, staff_name 留空。
 func (w *warehouse) PageWarehouseByKey(ctx context.Context, in *dto.PageWarehouseByKeyQuery, out *[]dto.PageWarehouseByKeyVO) error {
 	q := db.Table(tblwarehouse.TableName).
-		Where(tblwarehouse.DelFlag.Eq(constant.YesNoNo))
+		Where(tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouse.DelFlag.Eq(constant.YesNoNo))
 	if in.WarehouseName != nil && *in.WarehouseName != "" {
 		q.And(tblwarehouse.Name.Like(*in.WarehouseName))
 	}
@@ -50,6 +52,7 @@ func (w *warehouse) ListWarehouseStaff(ctx context.Context, in *dto.EmptyReq, ou
 // 对应 Java: WarehouseServiceImpl.addWarehouse -> WarehouseFunc.getWarehouseByName
 func (w *warehouse) AddWarehouse(ctx context.Context, in *dto.OperateWarehouseQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.Warehouse(db).Exists(ctx,
+		tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblwarehouse.Name.Eq(*in.Name),
 		tblwarehouse.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 	)
@@ -60,6 +63,7 @@ func (w *warehouse) AddWarehouse(ctx context.Context, in *dto.OperateWarehouseQu
 		return errors.New("仓库名称已存在")
 	}
 	bean := do.NewWarehouse()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.StaffId = types.BigInt(*in.StaffID)
 	bean.Name = types.String(*in.Name)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
@@ -70,7 +74,7 @@ func (w *warehouse) AddWarehouse(ctx context.Context, in *dto.OperateWarehouseQu
 // GetWarehouseById 根据编号获取仓库（编辑回显）
 // 对应 Java: WarehouseServiceImpl.getWarehouseById
 func (w *warehouse) GetWarehouseById(ctx context.Context, in *dto.IDReq, out *dto.OperateWarehouseVO) error {
-	obj, has, e := dao.Warehouse(db).GetByID(ctx, types.BigInt(*in.ID))
+	obj, has, e := dao.Warehouse(db).Get(ctx, ace.Where(tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouse.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -87,6 +91,7 @@ func (w *warehouse) GetWarehouseById(ctx context.Context, in *dto.IDReq, out *dt
 // 对应 Java: WarehouseServiceImpl.editWarehouse
 func (w *warehouse) EditWarehouse(ctx context.Context, in *dto.OperateWarehouseQuery, out *dto.EmptyResp) error {
 	repeat, e := dao.Warehouse(db).Exists(ctx,
+		tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblwarehouse.Name.Eq(*in.Name),
 		tblwarehouse.DelFlag.Eq(types.Int8(constant.YesNoNo)),
 		tblwarehouse.Id.NotEq(types.BigInt(*in.ID)),
@@ -109,6 +114,7 @@ func (w *warehouse) EditWarehouse(ctx context.Context, in *dto.OperateWarehouseQ
 // 对应 Java: WarehouseServiceImpl.deleteWarehouse -> warehouseMaterialMapper.sumWarehouseMaterialNumByWarehouseId
 func (w *warehouse) DeleteWarehouse(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	hasMaterial, e := dao.WarehouseMaterial(db).Exists(ctx,
+		tblwarehousematerial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblwarehousematerial.WarehouseRecordId.Eq(types.BigInt(*in.ID)),
 	)
 	if e != nil {

@@ -6,9 +6,11 @@ import (
 	"errors"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/do"
 	"api/internal/model/dto"
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
@@ -20,7 +22,7 @@ var ActiveType = &activetype{}
 // PageActiveTypeByKey 分页查询活动类型
 // 对应 Java: ActiveTypeServiceImpl.pageActiveTypeByKey -> ActiveTypeFunc.listNotDelActiveType
 func (a *activetype) PageActiveTypeByKey(ctx context.Context, in *dto.PageActiveTypeByKeyQuery, out *[]dto.PageActiveTypeByKeyVO) error {
-	q := db.Table(tblactivetype.TableName).Where(tblactivetype.DelFlag.Eq(constant.YesNoNo))
+	q := db.Table(tblactivetype.TableName).Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.DelFlag.Eq(constant.YesNoNo))
 	if in.ActiveTypeName != nil {
 		q.And(tblactivetype.Name.Like(*in.ActiveTypeName))
 	}
@@ -38,7 +40,7 @@ func (a *activetype) PageActiveTypeByKey(ctx context.Context, in *dto.PageActive
 // GetActiveTypeById 根据编号获取活动类型
 // 对应 Java: ActiveTypeServiceImpl.getActiveTypeById -> activeTypeMapper.selectById
 func (a *activetype) GetActiveTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateActiveTypeVO) error {
-	obj, has, e := dao.ActiveType(db).GetByID(ctx, types.BigInt(*in.ID))
+	obj, has, e := dao.ActiveType(db).Get(ctx, ace.Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -62,6 +64,7 @@ func (a *activetype) AddActiveType(ctx context.Context, in *dto.AddActiveTypeQue
 		return errors.New("活动分类已存在")
 	}
 	bean := do.NewActiveType()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	_, e = dao.ActiveType(db).InsertOne(ctx, bean)
@@ -99,6 +102,7 @@ func (a *activetype) DeleteActiveType(ctx context.Context, in *dto.IDReq, out *d
 // getActiveTypeByName 根据名称判断是否存在未删除的活动分类
 func (a *activetype) getActiveTypeByName(ctx context.Context, name string) (bool, error) {
 	return dao.ActiveType(db).Exists(ctx,
+		tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblactivetype.Name.Eq(types.String(name)),
 		tblactivetype.DelFlag.Eq(constant.YesNoNo),
 	)
@@ -107,6 +111,7 @@ func (a *activetype) getActiveTypeByName(ctx context.Context, name string) (bool
 // getActiveTypeByNameExclude 根据名称判断是否存在未删除的活动分类（排除指定 id）
 func (a *activetype) getActiveTypeByNameExclude(ctx context.Context, name string, excludeID int64) (bool, error) {
 	return dao.ActiveType(db).Exists(ctx,
+		tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblactivetype.Name.Eq(types.String(name)),
 		tblactivetype.DelFlag.Eq(constant.YesNoNo),
 		tblactivetype.Id.NotEq(types.BigInt(excludeID)),

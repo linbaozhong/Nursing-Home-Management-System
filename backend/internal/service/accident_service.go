@@ -2,6 +2,7 @@ package service
 
 import (
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblaccident"
 	"api/internal/model/define/table/tblelder"
@@ -26,6 +27,7 @@ func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentBy
 		LeftJoin(tblaccident.ElderId, tblelder.Id).
 		LeftJoin(tblaccident.StaffId, tblstaff.Id).
 		Where(
+			tblaccident.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblaccident.DelFlag.Eq(constant.YesNoNo),
 		).
 		Cols(
@@ -56,7 +58,7 @@ func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentBy
 func (a *accident) GetAccidentById(ctx context.Context, in *dto.IDReq, out *dto.GetAccidentByIDVO) error {
 	return db.Table(tblaccident.TableName).
 		LeftJoin(tblaccident.ElderId, tblelder.Id).
-		Where(tblaccident.Id.Eq(*in.ID)).
+		Where(tblaccident.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblaccident.Id.Eq(*in.ID)).
 		Cols(
 			tblaccident.Id,
 			tblelder.Name.AsName("elder_name"),
@@ -73,6 +75,7 @@ func (a *accident) GetAccidentById(ctx context.Context, in *dto.IDReq, out *dto.
 func (a *accident) AddAccident(ctx context.Context, in *dto.AddAccidentQuery, out *dto.EmptyResp) error {
 	// 初始化事故登记
 	bean := do.NewAccident()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	if in.ElderID != nil {
 		bean.ElderId = types.BigInt(*in.ElderID)
 	}

@@ -12,6 +12,7 @@ var (
 	Title        = dialect.Field{Name: "title", Json: "title", Table: "visit_plan", Type: "types.String", IsRelation: false}
 	Content      = dialect.Field{Name: "content", Json: "content", Table: "visit_plan", Type: "types.String", IsRelation: false}
 	Id           = dialect.Field{Name: "id", Json: "id", Table: "visit_plan", Type: "types.BigInt", IsRelation: false}
+	TenantId     = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "visit_plan", Type: "types.BigInt", IsRelation: false}
 	ElderId      = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "visit_plan", Type: "types.BigInt", IsRelation: false}
 	PlanDate     = dialect.Field{Name: "plan_date", Json: "plan_date", Table: "visit_plan", Type: "types.Time", IsRelation: false}
 	CompleteDate = dialect.Field{Name: "complete_date", Json: "complete_date", Table: "visit_plan", Type: "types.Time", IsRelation: false}
@@ -28,6 +29,7 @@ var (
 		Title,
 		Content,
 		Id,
+		TenantId,
 		ElderId,
 		PlanDate,
 		CompleteDate,
@@ -42,6 +44,7 @@ var (
 		Title,
 		Content,
 		Id,
+		TenantId,
 		ElderId,
 		PlanDate,
 		CompleteDate,

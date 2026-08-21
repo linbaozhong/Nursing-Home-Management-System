@@ -27,12 +27,15 @@ func NewMaterial() *Material {
 
 // MarshalJSON
 func (p *Material) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(9 * 50)
+	write := types.NewJsonWriter(10 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.TypeId != 0 {
 		write.WriteRaw("type_id", types.Marshal(p.TypeId))
@@ -72,6 +75,8 @@ func (p *Material) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "type_id":
 			p.TypeId = types.BigInt(value.Uint())
 		case "price":
@@ -109,6 +114,7 @@ func (p *Material) Free() {
 func (p *Material) Reset() {
 	p.Name = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.TypeId = 0
 	p.Price = 0
 	p.CreateId = 0
@@ -127,6 +133,7 @@ func (p *Material) TableName() string {
 var materialFieldToPtrFunc = map[string]func(*Material) any{
 	tblmaterial.Name.Name:       func(p *Material) any { return &p.Name },
 	tblmaterial.Id.Name:         func(p *Material) any { return &p.Id },
+	tblmaterial.TenantId.Name:   func(p *Material) any { return &p.TenantId },
 	tblmaterial.TypeId.Name:     func(p *Material) any { return &p.TypeId },
 	tblmaterial.Price.Name:      func(p *Material) any { return &p.Price },
 	tblmaterial.CreateId.Name:   func(p *Material) any { return &p.CreateId },
@@ -228,6 +235,9 @@ var materialFieldToValueFunc = map[dialect.Field]func(*Material) (any, bool){
 	},
 	tblmaterial.Id: func(p *Material) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblmaterial.TenantId: func(p *Material) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblmaterial.TypeId: func(p *Material) (any, bool) {
 		return p.TypeId, p.TypeId == 0

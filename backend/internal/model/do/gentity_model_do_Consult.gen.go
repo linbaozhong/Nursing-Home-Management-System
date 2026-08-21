@@ -27,9 +27,12 @@ func NewConsult() *Consult {
 
 // MarshalJSON
 func (p *Consult) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(13 * 50)
+	write := types.NewJsonWriter(14 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.Phone != "" {
 		write.WriteRaw("phone", types.Marshal(p.Phone))
@@ -82,6 +85,8 @@ func (p *Consult) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "phone":
 			p.Phone = types.String(value.Str)
 		case "relation":
@@ -128,6 +133,7 @@ func (p *Consult) Free() {
 // Reset
 func (p *Consult) Reset() {
 	p.Name = ""
+	p.TenantId = 0
 	p.Phone = ""
 	p.Relation = ""
 	p.ConsultContent = ""
@@ -150,6 +156,7 @@ func (p *Consult) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var consultFieldToPtrFunc = map[string]func(*Consult) any{
 	tblconsult.Name.Name:           func(p *Consult) any { return &p.Name },
+	tblconsult.TenantId.Name:       func(p *Consult) any { return &p.TenantId },
 	tblconsult.Phone.Name:          func(p *Consult) any { return &p.Phone },
 	tblconsult.Relation.Name:       func(p *Consult) any { return &p.Relation },
 	tblconsult.ConsultContent.Name: func(p *Consult) any { return &p.ConsultContent },
@@ -253,6 +260,9 @@ func (p *Consult) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]s
 var consultFieldToValueFunc = map[dialect.Field]func(*Consult) (any, bool){
 	tblconsult.Name: func(p *Consult) (any, bool) {
 		return p.Name, p.Name == ""
+	},
+	tblconsult.TenantId: func(p *Consult) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblconsult.Phone: func(p *Consult) (any, bool) {
 		return p.Phone, p.Phone == ""

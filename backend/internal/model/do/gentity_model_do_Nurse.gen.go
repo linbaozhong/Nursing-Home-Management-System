@@ -27,7 +27,7 @@ func NewNurse() *Nurse {
 
 // MarshalJSON
 func (p *Nurse) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(13 * 50)
+	write := types.NewJsonWriter(14 * 50)
 	if p.Rest != "" {
 		write.WriteRaw("rest", types.Marshal(p.Rest))
 	}
@@ -39,6 +39,9 @@ func (p *Nurse) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -88,6 +91,8 @@ func (p *Nurse) UnmarshalJSON(data []byte) error {
 			p.Active = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "staff_id":
@@ -131,6 +136,7 @@ func (p *Nurse) Reset() {
 	p.TakeMedicine = ""
 	p.Active = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.StaffId = 0
 	p.NurseDate = types.Time{}
@@ -153,6 +159,7 @@ var nurseFieldToPtrFunc = map[string]func(*Nurse) any{
 	tblnurse.TakeMedicine.Name: func(p *Nurse) any { return &p.TakeMedicine },
 	tblnurse.Active.Name:       func(p *Nurse) any { return &p.Active },
 	tblnurse.Id.Name:           func(p *Nurse) any { return &p.Id },
+	tblnurse.TenantId.Name:     func(p *Nurse) any { return &p.TenantId },
 	tblnurse.ElderId.Name:      func(p *Nurse) any { return &p.ElderId },
 	tblnurse.StaffId.Name:      func(p *Nurse) any { return &p.StaffId },
 	tblnurse.NurseDate.Name:    func(p *Nurse) any { return &p.NurseDate },
@@ -262,6 +269,9 @@ var nurseFieldToValueFunc = map[dialect.Field]func(*Nurse) (any, bool){
 	},
 	tblnurse.Id: func(p *Nurse) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblnurse.TenantId: func(p *Nurse) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblnurse.ElderId: func(p *Nurse) (any, bool) {
 		return p.ElderId, p.ElderId == 0

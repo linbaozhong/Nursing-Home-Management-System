@@ -27,9 +27,12 @@ func NewRetreatApply() *RetreatApply {
 
 // MarshalJSON
 func (p *RetreatApply) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(8 * 50)
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -64,6 +67,8 @@ func (p *RetreatApply) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "create_id":
@@ -98,6 +103,7 @@ func (p *RetreatApply) Free() {
 // Reset
 func (p *RetreatApply) Reset() {
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -114,6 +120,7 @@ func (p *RetreatApply) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var retreatapplyFieldToPtrFunc = map[string]func(*RetreatApply) any{
 	tblretreatapply.Id.Name:         func(p *RetreatApply) any { return &p.Id },
+	tblretreatapply.TenantId.Name:   func(p *RetreatApply) any { return &p.TenantId },
 	tblretreatapply.ElderId.Name:    func(p *RetreatApply) any { return &p.ElderId },
 	tblretreatapply.CreateId.Name:   func(p *RetreatApply) any { return &p.CreateId },
 	tblretreatapply.CreateTime.Name: func(p *RetreatApply) any { return &p.CreateTime },
@@ -211,6 +218,9 @@ func (p *RetreatApply) RawAssignValues(d dialect.Dialect, args ...dialect.Field)
 var retreatapplyFieldToValueFunc = map[dialect.Field]func(*RetreatApply) (any, bool){
 	tblretreatapply.Id: func(p *RetreatApply) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblretreatapply.TenantId: func(p *RetreatApply) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblretreatapply.ElderId: func(p *RetreatApply) (any, bool) {
 		return p.ElderId, p.ElderId == 0

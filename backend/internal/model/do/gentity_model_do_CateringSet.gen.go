@@ -27,12 +27,15 @@ func NewCateringSet() *CateringSet {
 
 // MarshalJSON
 func (p *CateringSet) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(8 * 50)
+	write := types.NewJsonWriter(9 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.MonthPrice != 0 {
 		write.WriteRaw("month_price", types.Marshal(p.MonthPrice))
@@ -69,6 +72,8 @@ func (p *CateringSet) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "month_price":
 			e = types.Unmarshal(value, &p.MonthPrice)
 		case "create_id":
@@ -104,6 +109,7 @@ func (p *CateringSet) Free() {
 func (p *CateringSet) Reset() {
 	p.Name = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.MonthPrice = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
@@ -121,6 +127,7 @@ func (p *CateringSet) TableName() string {
 var cateringsetFieldToPtrFunc = map[string]func(*CateringSet) any{
 	tblcateringset.Name.Name:       func(p *CateringSet) any { return &p.Name },
 	tblcateringset.Id.Name:         func(p *CateringSet) any { return &p.Id },
+	tblcateringset.TenantId.Name:   func(p *CateringSet) any { return &p.TenantId },
 	tblcateringset.MonthPrice.Name: func(p *CateringSet) any { return &p.MonthPrice },
 	tblcateringset.CreateId.Name:   func(p *CateringSet) any { return &p.CreateId },
 	tblcateringset.CreateTime.Name: func(p *CateringSet) any { return &p.CreateTime },
@@ -221,6 +228,9 @@ var cateringsetFieldToValueFunc = map[dialect.Field]func(*CateringSet) (any, boo
 	},
 	tblcateringset.Id: func(p *CateringSet) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblcateringset.TenantId: func(p *CateringSet) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblcateringset.MonthPrice: func(p *CateringSet) (any, bool) {
 		return p.MonthPrice, p.MonthPrice == 0

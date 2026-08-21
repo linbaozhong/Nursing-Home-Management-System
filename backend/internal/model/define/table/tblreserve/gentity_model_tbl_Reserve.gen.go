@@ -12,6 +12,7 @@ var (
 	Name        = dialect.Field{Name: "name", Json: "name", Table: "reserve", Type: "types.String", IsRelation: false}
 	Phone       = dialect.Field{Name: "phone", Json: "phone", Table: "reserve", Type: "types.String", IsRelation: false}
 	Id          = dialect.Field{Name: "id", Json: "id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
+	TenantId    = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
 	ElderId     = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
 	StaffId     = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
 	DueDate     = dialect.Field{Name: "due_date", Json: "due_date", Table: "reserve", Type: "types.Time", IsRelation: false}
@@ -29,6 +30,7 @@ var (
 		Name,
 		Phone,
 		Id,
+		TenantId,
 		ElderId,
 		StaffId,
 		DueDate,
@@ -44,6 +46,7 @@ var (
 		Name,
 		Phone,
 		Id,
+		TenantId,
 		ElderId,
 		StaffId,
 		DueDate,

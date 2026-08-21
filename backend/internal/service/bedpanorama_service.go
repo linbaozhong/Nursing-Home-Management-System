@@ -10,6 +10,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/ace"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/do"
 	"api/internal/model/dto"
@@ -25,7 +26,7 @@ var BedPanorama = &bedpanorama{}
 func (b *bedpanorama) ListBuilding(ctx context.Context, in *dto.EmptyReq, out *[]dto.DropDown) error {
 	return db.Table(tblbuilding.TableName).
 		Cols(tblbuilding.Id, tblbuilding.Name).
-		Where(tblbuilding.DelFlag.Eq(constant.YesNoNo)).
+		Where(tblbuilding.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblbuilding.DelFlag.Eq(constant.YesNoNo)).
 		Select().
 		Gets(ctx, out)
 }
@@ -35,7 +36,7 @@ func (b *bedpanorama) ListBuilding(ctx context.Context, in *dto.EmptyReq, out *[
 func (b *bedpanorama) ListFloorByBuildingId(ctx context.Context, in *dto.ListFloorByBuildingIdQuery, out *[]dto.DropDown) error {
 	q := db.Table(tblfloor.TableName).
 		Cols(tblfloor.Id, tblfloor.Name).
-		Where(tblfloor.DelFlag.Eq(constant.YesNoNo))
+		Where(tblfloor.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblfloor.DelFlag.Eq(constant.YesNoNo))
 	if in.BuildingID != nil {
 		q = q.Where(tblfloor.BuildingId.Eq(types.BigInt(*in.BuildingID)))
 	}
@@ -50,7 +51,7 @@ func (b *bedpanorama) ListRoomByKey(ctx context.Context, in *dto.ListRoomByKeyQu
 		tblfloor.Id,
 		tblfloor.Name,
 	).
-		Where(tblfloor.DelFlag.Eq(constant.YesNoNo))
+		Where(tblfloor.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblfloor.DelFlag.Eq(constant.YesNoNo))
 	if in.BuildingID != nil {
 		q.And(tblfloor.BuildingId.Eq(*in.BuildingID))
 	}
@@ -75,6 +76,7 @@ func (b *bedpanorama) ListRoomByKey(ctx context.Context, in *dto.ListRoomByKeyQu
 	// 2. 根据楼层编号获取未删除的房间
 	rooms, _, e := dao.Room(db).List(ctx,
 		ace.Where(
+			tblroom.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblroom.DelFlag.Eq(constant.YesNoNo),
 			tblroom.FloorId.In(floorIds...),
 		))
@@ -92,6 +94,7 @@ func (b *bedpanorama) ListRoomByKey(ctx context.Context, in *dto.ListRoomByKeyQu
 	// 3. 获取未删除的床位
 	beds, _, e := dao.Bed(db).List(ctx,
 		ace.Where(
+			tblbed.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblbed.DelFlag.Eq(constant.YesNoNo),
 			tblbed.RoomId.In(roomIds...),
 		))
@@ -104,7 +107,7 @@ func (b *bedpanorama) ListRoomByKey(ctx context.Context, in *dto.ListRoomByKeyQu
 		tblelder.BedId,
 		tblelder.Name,
 		tblelder.Age,
-	).Where(tblelder.CheckFlag.Eq(constant.YesNoYes))
+	).Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.CheckFlag.Eq(constant.YesNoYes))
 	if in.ElderName != nil {
 		elderCond.And(tblelder.Name.Like(*in.ElderName))
 	}

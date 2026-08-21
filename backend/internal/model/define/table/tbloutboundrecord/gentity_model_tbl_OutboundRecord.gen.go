@@ -12,6 +12,7 @@ var (
 	RecipientType = dialect.Field{Name: "recipient_type", Json: "recipient_type", Table: "outbound_record", Type: "types.String", IsRelation: false}
 	MaterialUse   = dialect.Field{Name: "material_use", Json: "material_use", Table: "outbound_record", Type: "types.String", IsRelation: false}
 	Id            = dialect.Field{Name: "id", Json: "id", Table: "outbound_record", Type: "types.BigInt", IsRelation: false}
+	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "outbound_record", Type: "types.BigInt", IsRelation: false}
 	WarehouseId   = dialect.Field{Name: "warehouse_id", Json: "warehouse_id", Table: "outbound_record", Type: "types.BigInt", IsRelation: false}
 	StaffId       = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "outbound_record", Type: "types.BigInt", IsRelation: false}
 	RecipientId   = dialect.Field{Name: "recipient_id", Json: "recipient_id", Table: "outbound_record", Type: "types.BigInt", IsRelation: false}
@@ -30,6 +31,7 @@ var (
 		RecipientType,
 		MaterialUse,
 		Id,
+		TenantId,
 		WarehouseId,
 		StaffId,
 		RecipientId,
@@ -46,6 +48,7 @@ var (
 		RecipientType,
 		MaterialUse,
 		Id,
+		TenantId,
 		WarehouseId,
 		StaffId,
 		RecipientId,

@@ -7,6 +7,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/conv"
 
 	"api/internal/constant"
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblbed"
 	"api/internal/model/define/table/tblbuilding"
@@ -37,6 +38,7 @@ func (c *checkcontract) PageCheckContractByKey(ctx context.Context, in *dto.Page
 	q := db.Table(tblelder.TableName).
 		Where(
 			// tblelder.DelFlag.Eq(constant.YesNoNo),
+			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblelder.CheckFlag.In(
 				constant.CheckEnter,
 				constant.CheckExitAudit,
@@ -70,6 +72,7 @@ func (c *checkcontract) PageSearchElderByKey(ctx context.Context, in *dto.PageSe
 	q := db.Table(tblelder.TableName).
 		Where(
 			// tblelder.DelFlag.Eq(constant.YesNoNo),
+			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblelder.CheckFlag.In(
 				types.Int8(constant.CheckConsult),
 				types.Int8(constant.CheckIntention),
@@ -102,7 +105,7 @@ func (c *checkcontract) PageSearchElderByKey(ctx context.Context, in *dto.PageSe
 func (c *checkcontract) ListNurseGrade(ctx context.Context, in *dto.EmptyReq, out *[]dto.DropDown) error {
 	return db.Table(tblnursegrade.TableName).
 		Cols(tblnursegrade.Id, tblnursegrade.Name).
-		Where(tblnursegrade.DelFlag.Eq(constant.YesNoNo)).
+		Where(tblnursegrade.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblnursegrade.DelFlag.Eq(constant.YesNoNo)).
 		Select().
 		Gets(ctx, out)
 }
@@ -111,7 +114,7 @@ func (c *checkcontract) ListNurseGrade(ctx context.Context, in *dto.EmptyReq, ou
 func (c *checkcontract) ListCateringSet(ctx context.Context, in *dto.EmptyReq, out *[]dto.DropDown) error {
 	return db.Table(tblcateringset.TableName).
 		Cols(tblcateringset.Id, tblcateringset.Name).
-		Where(tblcateringset.DelFlag.Eq(constant.YesNoNo)).
+		Where(tblcateringset.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblcateringset.DelFlag.Eq(constant.YesNoNo)).
 		Select().
 		Gets(ctx, out)
 }
@@ -121,7 +124,7 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 	var buildings []do.Building
 	e := db.Table(tblbuilding.TableName).
 		Cols(tblbuilding.Id, tblbuilding.Name).
-		Where(tblbuilding.DelFlag.Eq(constant.YesNoNo)).
+		Where(tblbuilding.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblbuilding.DelFlag.Eq(constant.YesNoNo)).
 		Select().
 		Gets(ctx, &buildings)
 	if e != nil {
@@ -139,6 +142,7 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 	e = db.Table(tblfloor.TableName).
 		Cols(tblfloor.Id, tblfloor.Name, tblfloor.BuildingId).
 		Where(
+			tblfloor.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblfloor.DelFlag.Eq(constant.YesNoNo),
 			tblfloor.BuildingId.In(buildingIds...),
 		).
@@ -156,6 +160,7 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 		e = db.Table(tblroom.TableName).
 			Cols(tblroom.Id, tblroom.Name, tblroom.FloorId).
 			Where(
+				tblroom.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 				tblroom.DelFlag.Eq(constant.YesNoNo),
 				tblroom.FloorId.In(floorIds...),
 			).
@@ -216,6 +221,7 @@ func (c *checkcontract) GetBedById(ctx context.Context, in *dto.IDReq, out *dto.
 // checkNamePhoneExist 校验客户姓名+电话是否已存在（除指定老人外）
 func (c *checkcontract) checkNamePhoneExist(ctx context.Context, name, phone string, excludeID *int64) (bool, error) {
 	cond := []dialect.Condition{
+		tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblelder.Name.Eq(name),
 		tblelder.Phone.Eq(phone),
 	}
@@ -251,6 +257,7 @@ func (c *checkcontract) AddCheckContract(ctx context.Context, in *dto.OperateChe
 	}
 	// 新增合同
 	contract := do.NewContract()
+	contract.TenantId = types.BigInt(lib.TenantID(ctx))
 	contract.ElderId = types.BigInt(*in.ID)
 	contract.StaffId = types.BigInt(*in.StaffID)
 	// contract.NursingGradeId = types.BigInt(*in.NursingGradeID)
@@ -276,6 +283,7 @@ func (c *checkcontract) AddCheckContract(ctx context.Context, in *dto.OperateChe
 		list := make([]*do.EmergencyContact, 0, len(in.EmergencyContactQueryList))
 		for _, ec := range in.EmergencyContactQueryList {
 			bean := do.NewEmergencyContact()
+			bean.TenantId = types.BigInt(lib.TenantID(ctx))
 			bean.ElderId = types.BigInt(*in.ID)
 			bean.Name = types.String(*ec.Name)
 			bean.Phone = types.String(*ec.Phone)
@@ -337,7 +345,7 @@ func (c *checkcontract) GetCheckContractById(ctx context.Context, in *dto.IDReq,
 			tblemergencycontact.Id, tblemergencycontact.Name,
 			tblemergencycontact.Phone, tblemergencycontact.Relation, tblemergencycontact.ReceiveFlag,
 		).
-		Where(tblemergencycontact.ElderId.Eq(types.BigInt(*in.ID))).
+		Where(tblemergencycontact.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblemergencycontact.ElderId.Eq(types.BigInt(*in.ID))).
 		Select().
 		Gets(ctx, &contacts)
 	if e != nil {
@@ -396,6 +404,7 @@ func (c *checkcontract) EditCheckContract(ctx context.Context, in *dto.OperateCh
 		list := make([]*do.EmergencyContact, 0, len(in.EmergencyContactQueryList))
 		for _, ec := range in.EmergencyContactQueryList {
 			bean := do.NewEmergencyContact()
+			bean.TenantId = types.BigInt(lib.TenantID(ctx))
 			bean.ElderId = types.BigInt(*in.ID)
 			bean.Name = types.String(*ec.Name)
 			bean.Phone = types.String(*ec.Phone)
@@ -446,7 +455,7 @@ func (c *checkcontract) DeleteCheckContract(ctx context.Context, in *dto.IDReq, 
 // PageVisitPlanByKey 分页查询回访计划
 func (c *checkcontract) PageVisitPlanByKey(ctx context.Context, in *dto.PageVisitPlanQuery, out *[]dto.PageVisitPlanVO) error {
 	q := db.Table(tblvisitplan.TableName).
-		Where(tblvisitplan.DelFlag.Eq(constant.YesNoNo))
+		Where(tblvisitplan.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblvisitplan.DelFlag.Eq(constant.YesNoNo))
 	if in.ElderID != nil {
 		q.And(tblvisitplan.ElderId.Eq(types.BigInt(*in.ElderID)))
 	}
@@ -474,6 +483,7 @@ func (c *checkcontract) PageVisitPlanByKey(ctx context.Context, in *dto.PageVisi
 // AddVisitPlan 新增回访计划
 func (c *checkcontract) AddVisitPlan(ctx context.Context, in *dto.AddVisitPlanQuery, out *dto.EmptyResp) error {
 	bean := do.NewVisitPlan()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.ElderId = types.BigInt(*in.ElderID)
 	bean.Title = types.String(*in.Title)
 	bean.PlanDate = types.Time{*in.PlanDate}
@@ -499,7 +509,7 @@ func (c *checkcontract) DeleteVisitPlan(ctx context.Context, in *dto.DeleteVisit
 // PageCommunicationRecordByKey 分页查询沟通记录
 func (c *checkcontract) PageCommunicationRecordByKey(ctx context.Context, in *dto.PageCommunicationRecordQuery, out *[]dto.PageCommunicationRecordVO) error {
 	q := db.Table(tblcommunicationrecord.TableName).
-		Where(tblcommunicationrecord.DelFlag.Eq(constant.YesNoNo))
+		Where(tblcommunicationrecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblcommunicationrecord.DelFlag.Eq(constant.YesNoNo))
 	if in.ElderID != nil {
 		q.And(tblcommunicationrecord.ElderId.Eq(types.BigInt(*in.ElderID)))
 	}
@@ -517,6 +527,7 @@ func (c *checkcontract) PageCommunicationRecordByKey(ctx context.Context, in *dt
 // AddCommunicationRecord 新增沟通记录
 func (c *checkcontract) AddCommunicationRecord(ctx context.Context, in *dto.AddCommunicationRecordQuery, out *dto.EmptyResp) error {
 	bean := do.NewCommunicationRecord()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.ElderId = types.BigInt(*in.ElderID)
 	bean.RecordDate = types.Time{*in.RecordDate}
 	bean.CommunicationRecord = types.String(*in.CommunicationRecord)

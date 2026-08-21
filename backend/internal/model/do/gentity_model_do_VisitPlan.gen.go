@@ -27,7 +27,7 @@ func NewVisitPlan() *VisitPlan {
 
 // MarshalJSON
 func (p *VisitPlan) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(11 * 50)
+	write := types.NewJsonWriter(12 * 50)
 	if p.Title != "" {
 		write.WriteRaw("title", types.Marshal(p.Title))
 	}
@@ -36,6 +36,9 @@ func (p *VisitPlan) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -80,6 +83,8 @@ func (p *VisitPlan) UnmarshalJSON(data []byte) error {
 			p.Content = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "plan_date":
@@ -120,6 +125,7 @@ func (p *VisitPlan) Reset() {
 	p.Title = ""
 	p.Content = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.PlanDate = types.Time{}
 	p.CompleteDate = types.Time{}
@@ -140,6 +146,7 @@ var visitplanFieldToPtrFunc = map[string]func(*VisitPlan) any{
 	tblvisitplan.Title.Name:        func(p *VisitPlan) any { return &p.Title },
 	tblvisitplan.Content.Name:      func(p *VisitPlan) any { return &p.Content },
 	tblvisitplan.Id.Name:           func(p *VisitPlan) any { return &p.Id },
+	tblvisitplan.TenantId.Name:     func(p *VisitPlan) any { return &p.TenantId },
 	tblvisitplan.ElderId.Name:      func(p *VisitPlan) any { return &p.ElderId },
 	tblvisitplan.PlanDate.Name:     func(p *VisitPlan) any { return &p.PlanDate },
 	tblvisitplan.CompleteDate.Name: func(p *VisitPlan) any { return &p.CompleteDate },
@@ -245,6 +252,9 @@ var visitplanFieldToValueFunc = map[dialect.Field]func(*VisitPlan) (any, bool){
 	},
 	tblvisitplan.Id: func(p *VisitPlan) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblvisitplan.TenantId: func(p *VisitPlan) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblvisitplan.ElderId: func(p *VisitPlan) (any, bool) {
 		return p.ElderId, p.ElderId == 0

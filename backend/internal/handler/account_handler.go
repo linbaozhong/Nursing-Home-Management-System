@@ -19,6 +19,9 @@ func (a *account) RegisterRoute(group ack.Party) {
 	// 登录
 	_g.Post("/login", a.login)
 
+	// 微信静默登录
+	_g.Post("/wxLogin", a.wxLogin)
+
 	// 发送验证码
 	_g.Post("/sendCode", a.sendCode)
 
@@ -41,6 +44,18 @@ func (a *account) RegisterRoute(group ack.Party) {
 // @Router /account/login [post]
 func (a *account) login(ctx ack.Context) {
 	ack.Post(ctx, service.Account.Login)
+}
+
+// 微信静默登录
+// @Summary 微信静默登录
+// @Tags 账户
+// @Accept application/json
+// @Produce application/json
+// @Param data body dto.WxLoginQuery true "WxLoginQuery"
+// @Success 200 {object} dto.WxLoginVO
+// @Router /account/wxLogin [post]
+func (a *account) wxLogin(ctx ack.Context) {
+	ack.Post(ctx, service.Tenant.WxLogin)
 }
 
 // 发送验证码

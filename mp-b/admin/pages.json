@@ -15,6 +15,27 @@
 			}
 		},
 		{
+			"path": "pages/register/register",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "创建企业"
+			}
+		},
+		{
+			"path": "pages/switch-tenant/switch",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "选择企业"
+			}
+		},
+		{
+			"path": "pages/join-tenant/join",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "加入企业"
+			}
+		},
+		{
 			"path": "pages/elder/list",
 			"style": {
 				"navigationStyle": "custom",

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblconsume"
 	"api/internal/model/define/table/tblelder"
@@ -23,7 +24,8 @@ var Consume = &consume{}
 // 对应 Java: ConsumeServiceImpl.pageConsumeByKey
 func (c *consume) PageConsumeByKey(ctx context.Context, in *dto.PageConsumeByKeyQuery, out *[]dto.PageConsumeByKeyVO) error {
 	q := db.Table(tblconsume.TableName).
-		LeftJoin(tblconsume.ElderId, tblelder.Id)
+		LeftJoin(tblconsume.ElderId, tblelder.Id).
+		Where(tblconsume.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.ElderName != nil && *in.ElderName != "" {
 		q.And(tblelder.Name.Like(*in.ElderName))
 	}
@@ -73,6 +75,7 @@ func (c *consume) GetConsumeById(ctx context.Context, in *dto.IDReq, out *dto.Ge
 // AddConsume 新增消费
 func (c *consume) AddConsume(ctx context.Context, in *dto.AddConsumeQuery, out *dto.EmptyResp) error {
 	bean := do.NewConsume()
+	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.ElderId = types.BigInt(*in.ElderID)
 	bean.ConsumeType = types.String(*in.ConsumeType)
 	bean.ConsumeAmount = *in.ConsumeAmount

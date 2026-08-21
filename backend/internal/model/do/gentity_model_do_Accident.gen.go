@@ -27,7 +27,7 @@ func NewAccident() *Accident {
 
 // MarshalJSON
 func (p *Accident) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(11 * 50)
+	write := types.NewJsonWriter(12 * 50)
 	if p.Description != "" {
 		write.WriteRaw("description", types.Marshal(p.Description))
 	}
@@ -36,6 +36,9 @@ func (p *Accident) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -80,6 +83,8 @@ func (p *Accident) UnmarshalJSON(data []byte) error {
 			p.Picture = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "staff_id":
@@ -120,6 +125,7 @@ func (p *Accident) Reset() {
 	p.Description = ""
 	p.Picture = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.StaffId = 0
 	p.OccurDate = types.Time{}
@@ -140,6 +146,7 @@ var accidentFieldToPtrFunc = map[string]func(*Accident) any{
 	tblaccident.Description.Name: func(p *Accident) any { return &p.Description },
 	tblaccident.Picture.Name:     func(p *Accident) any { return &p.Picture },
 	tblaccident.Id.Name:          func(p *Accident) any { return &p.Id },
+	tblaccident.TenantId.Name:    func(p *Accident) any { return &p.TenantId },
 	tblaccident.ElderId.Name:     func(p *Accident) any { return &p.ElderId },
 	tblaccident.StaffId.Name:     func(p *Accident) any { return &p.StaffId },
 	tblaccident.OccurDate.Name:   func(p *Accident) any { return &p.OccurDate },
@@ -245,6 +252,9 @@ var accidentFieldToValueFunc = map[dialect.Field]func(*Accident) (any, bool){
 	},
 	tblaccident.Id: func(p *Accident) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblaccident.TenantId: func(p *Accident) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblaccident.ElderId: func(p *Accident) (any, bool) {
 		return p.ElderId, p.ElderId == 0

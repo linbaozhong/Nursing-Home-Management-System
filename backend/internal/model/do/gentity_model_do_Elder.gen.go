@@ -27,7 +27,7 @@ func NewElder() *Elder {
 
 // MarshalJSON
 func (p *Elder) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(16 * 50)
+	write := types.NewJsonWriter(17 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
@@ -45,6 +45,9 @@ func (p *Elder) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.NursingGradeId != 0 {
 		write.WriteRaw("nursing_grade_id", types.Marshal(p.NursingGradeId))
@@ -101,6 +104,8 @@ func (p *Elder) UnmarshalJSON(data []byte) error {
 			p.Address = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "nursing_grade_id":
 			p.NursingGradeId = types.BigInt(value.Uint())
 		case "catering_set_id":
@@ -148,6 +153,7 @@ func (p *Elder) Reset() {
 	p.Phone = ""
 	p.Address = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.NursingGradeId = 0
 	p.CateringSetId = 0
 	p.BedId = 0
@@ -173,6 +179,7 @@ var elderFieldToPtrFunc = map[string]func(*Elder) any{
 	tblelder.Phone.Name:          func(p *Elder) any { return &p.Phone },
 	tblelder.Address.Name:        func(p *Elder) any { return &p.Address },
 	tblelder.Id.Name:             func(p *Elder) any { return &p.Id },
+	tblelder.TenantId.Name:       func(p *Elder) any { return &p.TenantId },
 	tblelder.NursingGradeId.Name: func(p *Elder) any { return &p.NursingGradeId },
 	tblelder.CateringSetId.Name:  func(p *Elder) any { return &p.CateringSetId },
 	tblelder.BedId.Name:          func(p *Elder) any { return &p.BedId },
@@ -289,6 +296,9 @@ var elderFieldToValueFunc = map[dialect.Field]func(*Elder) (any, bool){
 	},
 	tblelder.Id: func(p *Elder) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblelder.TenantId: func(p *Elder) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblelder.NursingGradeId: func(p *Elder) (any, bool) {
 		return p.NursingGradeId, p.NursingGradeId == 0

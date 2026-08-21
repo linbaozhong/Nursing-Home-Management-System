@@ -10,6 +10,7 @@ import (
 type ActiveParticipant struct {
 	pool.Model
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	ActiveId   types.BigInt `json:"active_id,omitempty" db:"'active_id' size:20"` // 活动编号
 	ElderId    types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`   // 老人编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
@@ -24,6 +25,7 @@ type Consume struct {
 	pool.Model
 	ConsumeType   types.String `json:"consume_type,omitempty" db:"'consume_type' size:10"`       // 消费类别
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                   // 编号
+	TenantId      types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`             // 租户编号
 	ElderId       types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`               // 老人编号
 	ConsumeAmount types.Money  `json:"consume_amount,omitempty" db:"'consume_amount' size:10|2"` // 消费金额
 	ConsumeDate   types.Time   `json:"consume_date,omitempty" db:"'consume_date'"`               // 消费日期
@@ -38,6 +40,7 @@ type Consume struct {
 type Contract struct {
 	pool.Model
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	ElderId    types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`   // 老人编号
 	StaffId    types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`   // 销售人员编号
 	SignDate   types.Time   `json:"sign_date,omitempty" db:"'sign_date'"`         // 合同签订日期
@@ -67,6 +70,7 @@ type RoleAuth struct {
 type SetDishes struct {
 	pool.Model
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	SetId      types.BigInt `json:"set_id,omitempty" db:"'set_id' size:20"`       // 餐饮套餐编号
 	DishesId   types.BigInt `json:"dishes_id,omitempty" db:"'dishes_id' size:20"` // 菜品食物编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
@@ -81,6 +85,7 @@ type Bed struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:40"`           // 床位名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	RoomId     types.BigInt `json:"room_id,omitempty" db:"'room_id' size:20"`     // 房间编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
@@ -95,6 +100,7 @@ type Bed struct {
 type Consult struct {
 	pool.Model
 	Name           types.String `json:"name,omitempty" db:"'name' size:10"`                        // 咨询人姓名
+	TenantId       types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`              // 租户编号
 	Phone          types.String `json:"phone,omitempty" db:"'phone' size:11"`                      // 咨询人电话
 	Relation       types.String `json:"relation,omitempty" db:"'relation' size:5"`                 // 与老人关系
 	ConsultContent types.String `json:"consult_content,omitempty" db:"'consult_content' size:255"` // 咨询内容
@@ -114,6 +120,7 @@ type Consult struct {
 type HealthInfo struct {
 	pool.Model
 	SelfCare       types.String `json:"self_care,omitempty" db:"'self_care' size:5"`               // 自理情况
+	TenantId       types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`              // 租户编号
 	Vision         types.String `json:"vision,omitempty" db:"'vision' size:5"`                     // 视力
 	Hearing        types.String `json:"hearing,omitempty" db:"'hearing' size:10"`                  // 听力
 	Hospital       types.String `json:"hospital,omitempty" db:"'hospital' size:50"`                // 主治医院
@@ -136,6 +143,7 @@ type MaterialType struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 物资类别名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
@@ -148,6 +156,7 @@ type MaterialType struct {
 type RetreatApply struct {
 	pool.Model
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`        // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`  // 租户编号
 	ElderId    types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`    // 老人编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`  // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`      // 创建时间
@@ -161,6 +170,7 @@ type RetreatApply struct {
 type DepositInfo struct {
 	pool.Model
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`           // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`     // 租户编号
 	DepositId  types.BigInt `json:"deposit_id,omitempty" db:"'deposit_id' size:20"`   // 药品缴存编号
 	MedicineId types.BigInt `json:"medicine_id,omitempty" db:"'medicine_id' size:20"` // 药品编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`     // 创建人编号
@@ -177,6 +187,7 @@ type DepositInfo struct {
 type OutboundMaterial struct {
 	pool.Model
 	Id                  types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                               // 编号
+	TenantId            types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`                         // 租户编号
 	OutboundRecordId    types.BigInt `json:"outbound_record_id,omitempty" db:"'outbound_record_id' size:20"`       // 出库登记编号
 	WarehouseMaterialId types.BigInt `json:"warehouse_material_id,omitempty" db:"'warehouse_material_id' size:20"` // 入库物资编号
 	MaterialId          types.BigInt `json:"material_id,omitempty" db:"'material_id' size:20"`                     // 物资编号
@@ -195,6 +206,7 @@ type Visit struct {
 	Phone      types.String `json:"phone,omitempty" db:"'phone' size:11"`          // 来访者电话
 	Relation   types.String `json:"relation,omitempty" db:"'relation' size:5"`     // 与老人关系
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`        // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`  // 租户编号
 	ElderId    types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`    // 老人编号
 	VisitDate  types.Time   `json:"visit_date,omitempty" db:"'visit_date'"`        // 来访时间
 	LeaveDate  types.Time   `json:"leave_date,omitempty" db:"'leave_date'"`        // 离开时间
@@ -212,6 +224,7 @@ type Visit struct {
 type WarehouseMaterial struct {
 	pool.Model
 	Id                types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                           // 编号
+	TenantId          types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`                     // 租户编号
 	WarehouseRecordId types.BigInt `json:"warehouse_record_id,omitempty" db:"'warehouse_record_id' size:20"` // 入库登记编号
 	MaterialId        types.BigInt `json:"material_id,omitempty" db:"'material_id' size:20"`                 // 物资编号
 	ProductDate       types.Time   `json:"product_date,omitempty" db:"'product_date'"`                       // 生产日期
@@ -230,6 +243,7 @@ type LabelType struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 分类名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
@@ -244,6 +258,7 @@ type NurseGrade struct {
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`                 // 级别名称
 	Type       types.String `json:"type,omitempty" db:"'type' size:5"`                  // 护理类型
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`             // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`       // 租户编号
 	MonthPrice types.Money  `json:"month_price,omitempty" db:"'month_price' size:10|2"` // 月护理费用
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`       // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`           // 创建时间
@@ -258,6 +273,7 @@ type ActiveType struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 活动类型名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
@@ -271,6 +287,7 @@ type CommunicationRecord struct {
 	pool.Model
 	CommunicationRecord types.String `json:"communication_record,omitempty" db:"'communication_record' size:255"` // 沟通记录
 	Id                  types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                              // 编号
+	TenantId            types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`                        // 租户编号
 	ElderId             types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`                          // 老人编号
 	RecordDate          types.Time   `json:"record_date,omitempty" db:"'record_date'"`                            // 记录时间
 	CreateId            types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`                        // 创建人编号
@@ -286,6 +303,7 @@ type DishesType struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 菜品类别名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
@@ -300,6 +318,7 @@ type HealthData struct {
 	LeftEar                  types.String  `json:"left_ear,omitempty" db:"'left_ear' size:5"`                                      // 左耳
 	RightEar                 types.String  `json:"right_ear,omitempty" db:"'right_ear' size:5"`                                    // 右耳
 	Id                       types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`                                         // 编号
+	TenantId                 types.BigInt  `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`                                   // 租户编号
 	ElderId                  types.BigInt  `json:"elder_id,omitempty" db:"'elder_id' size:20"`                                     // 老人编号
 	Weight                   types.Float64 `json:"weight,omitempty" db:"'weight'"`                                                 // 体重
 	Temperature              types.Float64 `json:"temperature,omitempty" db:"'temperature'"`                                       // 体温
@@ -333,6 +352,7 @@ type Outward struct {
 	ChaperonePhone types.String `json:"chaperone_phone,omitempty" db:"'chaperone_phone' size:11"` // 陪同人电话
 	ChaperoneType  types.String `json:"chaperone_type,omitempty" db:"'chaperone_type' size:5"`    // 陪同人类型（家属/护工）
 	Id             types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                   // 编号
+	TenantId       types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`             // 租户编号
 	ElderId        types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`               // 老人编号
 	OutwardDate    types.Time   `json:"outward_date,omitempty" db:"'outward_date'"`               // 外出时间
 	PlanReturnDate types.Time   `json:"plan_return_date,omitempty" db:"'plan_return_date'"`       // 计划返回时间
@@ -351,6 +371,7 @@ type Reserve struct {
 	Name        types.String  `json:"name,omitempty" db:"'name' size:10"`                // 交款人姓名
 	Phone       types.String  `json:"phone,omitempty" db:"'phone' size:11"`              // 交款人电话
 	Id          types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`            // 编号
+	TenantId    types.BigInt  `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`      // 租户编号
 	ElderId     types.BigInt  `json:"elder_id,omitempty" db:"'elder_id' size:20"`        // 老人编号
 	StaffId     types.BigInt  `json:"staff_id,omitempty" db:"'staff_id' size:20"`        // 销售人员编号
 	DueDate     types.Time    `json:"due_date,omitempty" db:"'due_date'"`                // 预定到期时间
@@ -369,6 +390,7 @@ type VisitPlan struct {
 	Title        types.String `json:"title,omitempty" db:"'title' size:25"`         // 回访计划标题
 	Content      types.String `json:"content,omitempty" db:"'content' size:255"`    // 回访计划内容
 	Id           types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId     types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	ElderId      types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`   // 老人编号
 	PlanDate     types.Time   `json:"plan_date,omitempty" db:"'plan_date'"`         // 计划回访时间
 	CompleteDate types.Time   `json:"complete_date,omitempty" db:"'complete_date'"` // 计划完成时间
@@ -384,6 +406,7 @@ type VisitPlan struct {
 type ElderLabel struct {
 	pool.Model
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	ElderId    types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`   // 老人编号
 	LabelId    types.BigInt `json:"label_id,omitempty" db:"'label_id' size:20"`   // 标签编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
@@ -399,6 +422,7 @@ type Label struct {
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 标签名称
 	Color      types.String `json:"color,omitempty" db:"'color' size:15"`         // 标签颜色
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	TypeId     types.BigInt `json:"type_id,omitempty" db:"'type_id' size:20"`     // 类别编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
@@ -413,6 +437,7 @@ type Dishes struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:15"`           // 菜品名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	TypeId     types.BigInt `json:"type_id,omitempty" db:"'type_id' size:20"`     // 菜品类别编号
 	Price      types.Money  `json:"price,omitempty" db:"'price' size:10|2"`       // 菜品价格
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
@@ -428,6 +453,7 @@ type Material struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:15"`           // 物资名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	TypeId     types.BigInt `json:"type_id,omitempty" db:"'type_id' size:20"`     // 物资类别编号
 	Price      types.Money  `json:"price,omitempty" db:"'price' size:10|2"`       // 物资单价
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
@@ -443,6 +469,7 @@ type RoomType struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`                 // 房间类型名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`             // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`       // 租户编号
 	MonthPrice types.Money  `json:"month_price,omitempty" db:"'month_price' size:10|2"` // 月房间费用
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`       // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`           // 创建时间
@@ -476,6 +503,7 @@ type ServiceType struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 服务项目名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
@@ -489,6 +517,7 @@ type NurseGroup struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 护工小组名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	StaffId    types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`   // 护工小组组长编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
@@ -504,6 +533,7 @@ type Retreat struct {
 	RetreatForm  types.String `json:"retreat_form,omitempty" db:"'retreat_form' size:5"`     // 退住形式
 	RetreatCause types.String `json:"retreat_cause,omitempty" db:"'retreat_cause' size:255"` // 退住原因
 	Id           types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                // 编号
+	TenantId     types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`          // 租户编号
 	ElderId      types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`            // 老人编号
 	CreateId     types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`          // 创建人编号
 	CreateTime   types.Time   `json:"create_time,omitempty" db:"'create_time'"`              // 创建时间
@@ -530,6 +560,7 @@ type MedicineRecord struct {
 	pool.Model
 	MedicineTime  types.String `json:"medicine_time,omitempty" db:"'medicine_time' size:5"`      // 用药时间（早/中/晚）
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                   // 编号
+	TenantId      types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`             // 租户编号
 	ElderId       types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`               // 老人编号
 	DepositInfoId types.BigInt `json:"deposit_info_id,omitempty" db:"'deposit_info_id' size:20"` // 药品缴存信息编号
 	MedicineDate  types.Time   `json:"medicine_date,omitempty" db:"'medicine_date'"`             // 用药日期
@@ -544,6 +575,7 @@ type MedicineRecord struct {
 type NurseItem struct {
 	pool.Model
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`         // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`   // 租户编号
 	GradeId    types.BigInt `json:"grade_id,omitempty" db:"'grade_id' size:20"`     // 护理等级编号
 	ServiceId  types.BigInt `json:"service_id,omitempty" db:"'service_id' size:20"` // 服务项目编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`   // 创建人编号
@@ -559,6 +591,7 @@ type NurseReserve struct {
 	ServiceName  types.String `json:"service_name,omitempty" db:"'service_name' size:10"`     // 服务项目名称
 	ChargeMethod types.String `json:"charge_method,omitempty" db:"'charge_method' size:3"`    // 收费方式
 	Id           types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                 // 编号
+	TenantId     types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`           // 租户编号
 	ElderId      types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`             // 老人编号
 	StaffId      types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`             // 服务人编号
 	ServicePrice types.Money  `json:"service_price,omitempty" db:"'service_price' size:10|2"` // 服务费用
@@ -579,6 +612,7 @@ type WarehouseRecord struct {
 	pool.Model
 	Source        types.String `json:"source,omitempty" db:"'source' size:5"`                 // 物资来源
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                // 编号
+	TenantId      types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`          // 租户编号
 	WarehouseId   types.BigInt `json:"warehouse_id,omitempty" db:"'warehouse_id' size:20"`    // 仓库编号
 	StaffId       types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`            // 经办人编号
 	WarehouseDate types.Time   `json:"warehouse_date,omitempty" db:"'warehouse_date'"`        // 入库时间
@@ -596,6 +630,7 @@ type Building struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 楼栋名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
@@ -610,6 +645,7 @@ type OrderDishes struct {
 	pool.Model
 	DishesName   types.String `json:"dishes_name,omitempty" db:"'dishes_name' size:15"`       // 菜品名称
 	Id           types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                 // 编号
+	TenantId     types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`           // 租户编号
 	OrderId      types.BigInt `json:"order_id,omitempty" db:"'order_id' size:20"`             // 订餐编号
 	DishesPrice  types.Money  `json:"dishes_price,omitempty" db:"'dishes_price' size:10|2"`   // 菜品价格
 	TotalAmount  types.Money  `json:"total_amount,omitempty" db:"'total_amount' size:10|2"`   // 菜品总额
@@ -634,6 +670,7 @@ type Active struct {
 	Phone         types.String `json:"phone,omitempty" db:"'phone' size:11"`                    // 组织者电话
 	ActivePicture types.String `json:"active_picture,omitempty" db:"'active_picture' size:255"` // 活动图片
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                  // 编号
+	TenantId      types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`            // 租户编号
 	TypeId        types.BigInt `json:"type_id,omitempty" db:"'type_id' size:20"`                // 活动类别编号
 	ActiveDate    types.Time   `json:"active_date,omitempty" db:"'active_date'"`                // 活动日期
 	CreateId      types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`            // 创建人编号
@@ -649,6 +686,7 @@ type CateringSet struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`                 // 餐饮套餐名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`             // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`       // 租户编号
 	MonthPrice types.Money  `json:"month_price,omitempty" db:"'month_price' size:10|2"` // 月套餐费用
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`       // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`           // 创建时间
@@ -663,6 +701,7 @@ type DrugDeposit struct {
 	pool.Model
 	Mode        types.String `json:"mode,omitempty" db:"'mode' size:5"`                 // 缴存药品方式
 	Id          types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`            // 编号
+	TenantId    types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`      // 租户编号
 	ElderId     types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`        // 老人编号
 	CreateId    types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`      // 创建人编号
 	CreateTime  types.Time   `json:"create_time,omitempty" db:"'create_time'"`          // 创建时间
@@ -683,6 +722,7 @@ type FamilyMember struct {
 	Address     types.String `json:"address,omitempty" db:"'address' size:50"`          // 地址
 	Relation    types.String `json:"relation,omitempty" db:"'relation' size:5"`         // 与老人关系
 	Id          types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`            // 编号
+	TenantId    types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`      // 租户编号
 	ElderId     types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`        // 老人编号
 	CreateId    types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`      // 创建人编号
 	CreateTime  types.Time   `json:"create_time,omitempty" db:"'create_time'"`          // 创建时间
@@ -702,6 +742,7 @@ type Medicine struct {
 	DosageForm    types.String `json:"dosage_form,omitempty" db:"'dosage_form' size:5"`      // 药品剂型
 	Manufacturer  types.String `json:"manufacturer,omitempty" db:"'manufacturer' size:25"`   // 生产厂家
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`               // 编号
+	TenantId      types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`         // 租户编号
 	CreateId      types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`         // 创建人编号
 	CreateTime    types.Time   `json:"create_time,omitempty" db:"'create_time'"`             // 创建时间
 	UpdateId      types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`         // 修改人编号
@@ -714,6 +755,7 @@ type Medicine struct {
 type NurseGroupMember struct {
 	pool.Model
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	GroupId    types.BigInt `json:"group_id,omitempty" db:"'group_id' size:20"`   // 护工小组编号
 	StaffId    types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`   // 护工编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
@@ -728,6 +770,7 @@ type Source struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 来源渠道名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
@@ -741,6 +784,7 @@ type Warehouse struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 仓库名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	StaffId    types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`   // 仓库管理员编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
@@ -755,6 +799,7 @@ type MedicineSet struct {
 	pool.Model
 	MedicineTime  types.String `json:"medicine_time,omitempty" db:"'medicine_time' size:5"`      // 用药时间（餐前/餐后）
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                   // 编号
+	TenantId      types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`             // 租户编号
 	DepositInfoId types.BigInt `json:"deposit_info_id,omitempty" db:"'deposit_info_id' size:20"` // 药品缴存信息编号
 	CreateId      types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`             // 创建人编号
 	CreateTime    types.Time   `json:"create_time,omitempty" db:"'create_time'"`                 // 创建时间
@@ -770,6 +815,7 @@ type Accident struct {
 	Description types.String `json:"description,omitempty" db:"'description' size:255"` // 事故描述
 	Picture     types.String `json:"picture,omitempty" db:"'picture' size:255"`         // 事故图片
 	Id          types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`            // 编号
+	TenantId    types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`      // 租户编号
 	ElderId     types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`        // 老人编号
 	StaffId     types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`        // 值班护工编号
 	OccurDate   types.Time   `json:"occur_date,omitempty" db:"'occur_date'"`            // 发生时间
@@ -789,6 +835,7 @@ type EmergencyContact struct {
 	Email       types.String `json:"email,omitempty" db:"'email' size:30"`              // 紧急联系人邮箱
 	Relation    types.String `json:"relation,omitempty" db:"'relation' size:5"`         // 与老人关系
 	Id          types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`            // 编号
+	TenantId    types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`      // 租户编号
 	ElderId     types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`        // 老人编号
 	CreateId    types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`      // 创建人编号
 	CreateTime  types.Time   `json:"create_time,omitempty" db:"'create_time'"`          // 创建时间
@@ -805,6 +852,7 @@ type Nurse struct {
 	TakeMedicine types.String `json:"take_medicine,omitempty" db:"'take_medicine' size:5"` // 服药
 	Active       types.String `json:"active,omitempty" db:"'active' size:5"`               // 活动
 	Id           types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`              // 编号
+	TenantId     types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`        // 租户编号
 	ElderId      types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`          // 老人编号
 	StaffId      types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`          // 护理人员编号
 	NurseDate    types.Time   `json:"nurse_date,omitempty" db:"'nurse_date'"`              // 护理时间
@@ -814,18 +862,6 @@ type Nurse struct {
 	UpdateTime   types.Time   `json:"update_time,omitempty" db:"'update_time'"`            // 修改时间
 	CompleteFlag types.Int8   `json:"complete_flag,omitempty" db:"'complete_flag' size:5"` // 护理完成情况
 	DineFlag     types.Int8   `json:"dine_flag,omitempty" db:"'dine_flag' size:5"`         // 进餐情况
-}
-
-// RoleCopy1
-// @tablename role_copy1
-type RoleCopy1 struct {
-	pool.Model
-	Name       types.String `json:"name,omitempty" db:"'name' size:10"`           // 角色名称
-	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
-	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
-	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
-	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
-	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
 }
 
 // BaseAttachment
@@ -838,6 +874,7 @@ type BaseAttachment struct {
 	Url        types.String `json:"url,omitempty" db:"'url' size:225"`             // url相对路径
 	Suff       types.String `json:"suff,omitempty" db:"'suff' size:225"`           // 文件后缀
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`        // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`  // 租户编号
 	Size       types.BigInt `json:"size,omitempty" db:"'size' size:20"`            // 文件大小 B
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`  // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`      // 创建时间
@@ -852,6 +889,7 @@ type Order struct {
 	pool.Model
 	DineType          types.String `json:"dine_type,omitempty" db:"'dine_type' size:5"`              // 就餐方式
 	Id                types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                   // 编号
+	TenantId          types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`             // 租户编号
 	ElderId           types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`               // 老人编号
 	StaffId           types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`               // 送餐人编号
 	DeliverDishesDate types.Time   `json:"deliver_dishes_date,omitempty" db:"'deliver_dishes_date'"` // 送餐时间
@@ -870,6 +908,7 @@ type Room struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:30"`           // 房间名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
 	TypeId     types.BigInt `json:"type_id,omitempty" db:"'type_id' size:20"`     // 房间类型编号
 	FloorId    types.BigInt `json:"floor_id,omitempty" db:"'floor_id' size:20"`   // 楼层编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
@@ -893,6 +932,7 @@ type Staff struct {
 	Avator     types.String `json:"avator,omitempty" db:"'avator' size:255"`       // 头像
 	Address    types.String `json:"address,omitempty" db:"'address' size:50"`      // 地址
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`        // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`  // 租户编号
 	RoleId     types.BigInt `json:"role_id,omitempty" db:"'role_id' size:20"`      // 角色编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`  // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`      // 创建时间
@@ -912,6 +952,7 @@ type Elder struct {
 	Phone          types.String `json:"phone,omitempty" db:"'phone' size:11"`                       // 老人电话
 	Address        types.String `json:"address,omitempty" db:"'address' size:50"`                   // 地址
 	Id             types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                     // 编号
+	TenantId       types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`               // 租户编号
 	NursingGradeId types.BigInt `json:"nursing_grade_id,omitempty" db:"'nursing_grade_id' size:20"` // 护理等级编号
 	CateringSetId  types.BigInt `json:"catering_set_id,omitempty" db:"'catering_set_id' size:20"`   // 餐饮套餐编号
 	BedId          types.BigInt `json:"bed_id,omitempty" db:"'bed_id' size:20"`                     // 床位编号
@@ -930,6 +971,7 @@ type Floor struct {
 	pool.Model
 	Name       types.String `json:"name,omitempty" db:"'name' size:20"`               // 楼层名称
 	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`           // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`     // 租户编号
 	BuildingId types.BigInt `json:"building_id,omitempty" db:"'building_id' size:20"` // 楼栋编号
 	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`     // 创建人编号
 	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`         // 创建时间
@@ -946,6 +988,7 @@ type OutboundRecord struct {
 	RecipientType types.String `json:"recipient_type,omitempty" db:"'recipient_type' size:5"` // 领用人类型
 	MaterialUse   types.String `json:"material_use,omitempty" db:"'material_use' size:5"`     // 物资去向
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                // 编号
+	TenantId      types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`          // 租户编号
 	WarehouseId   types.BigInt `json:"warehouse_id,omitempty" db:"'warehouse_id' size:20"`    // 仓库编号
 	StaffId       types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`            // 经办人编号
 	RecipientId   types.BigInt `json:"recipient_id,omitempty" db:"'recipient_id' size:20"`    // 领用人编号
@@ -965,6 +1008,7 @@ type ServiceItem struct {
 	Name         types.String `json:"name,omitempty" db:"'name' size:10"`                  // 服务名称
 	ChargeMethod types.String `json:"charge_method,omitempty" db:"'charge_method' size:3"` // 收费方式
 	Id           types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`              // 编号
+	TenantId     types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`        // 租户编号
 	TypeId       types.BigInt `json:"type_id,omitempty" db:"'type_id' size:20"`            // 服务项目类别编号
 	Price        types.Money  `json:"price,omitempty" db:"'price' size:10|2"`              // 服务费用
 	CreateId     types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`        // 创建人编号
@@ -1002,4 +1046,57 @@ type FamilyRecharge struct {
 	CreateTime types.Time   `db:"create_time" json:"create_time"`
 	UpdateTime types.Time   `db:"update_time" json:"update_time"`
 	DelFlag    types.Int8   `db:"del_flag" json:"del_flag"`
+}
+
+// Tenant 租户（企业/工作空间）
+// @tablename tenant
+type Tenant struct {
+	pool.Model
+	Id           types.BigInt `db:"'id' pk auto size:20" json:"id"`
+	Name         types.String `db:"name" json:"name"`                   // 企业名称
+	Logo         types.String `db:"logo" json:"logo"`                   // 企业logo
+	ContactName  types.String `db:"contact_name" json:"contact_name"`   // 联系人姓名
+	ContactPhone types.String `db:"contact_phone" json:"contact_phone"` // 联系电话
+	Plan         types.String `db:"plan" json:"plan"`                   // 套餐
+	Status       types.Int8   `db:"status" json:"status"`               // 状态：0试用中 1正式 2锁定
+	TrialStart   types.Time   `db:"trial_start" json:"trial_start"`     // 试用开始
+	TrialEnd     types.Time   `db:"trial_end" json:"trial_end"`         // 试用结束
+	CreateId     types.BigInt `db:"create_id" json:"create_id"`
+	CreateTime   types.Time   `db:"create_time" json:"create_time"`
+	UpdateId     types.BigInt `db:"update_id" json:"update_id"`
+	UpdateTime   types.Time   `db:"update_time" json:"update_time"`
+	DelFlag      types.Int8   `db:"del_flag" json:"del_flag"`
+}
+
+// User 全局用户（微信 UnionID 唯一标识一个人）
+// @tablename user
+type User struct {
+	pool.Model
+	Id         types.BigInt `db:"'id' pk auto size:20" json:"id"`
+	UnionId    types.String `db:"union_id" json:"union_id"` // 微信 UnionID（全局唯一）
+	Openid     types.String `db:"openid" json:"openid"`     // 微信 OpenID（兜底匹配）
+	Phone      types.String `db:"phone" json:"phone"`       // 手机号（账号密码登录）
+	Pass       types.String `db:"pass" json:"pass"`         // 密码(md5)
+	Name       types.String `db:"name" json:"name"`         // 姓名
+	Avator     types.String `db:"avator" json:"avator"`     // 头像
+	CreateTime types.Time   `db:"create_time" json:"create_time"`
+	UpdateTime types.Time   `db:"update_time" json:"update_time"`
+	DelFlag    types.Int8   `db:"del_flag" json:"del_flag"`
+}
+
+// Member 成员（连接 User 与 Tenant，承载角色与在职状态）
+// @tablename member
+type Member struct {
+	pool.Model
+	Id          types.BigInt `db:"'id' pk auto size:20" json:"id"`
+	UserId      types.BigInt `db:"user_id" json:"user_id"`         // 全局用户编号
+	TenantId    types.BigInt `db:"tenant_id" json:"tenant_id"`     // 租户编号
+	RoleId      types.BigInt `db:"role_id" json:"role_id"`         // 角色编号(关联 role)
+	Permissions types.String `db:"permissions" json:"permissions"` // 预留：细粒度权限
+	Status      types.Int8   `db:"status" json:"status"`           // 状态：0在职 1离职
+	CreateId    types.BigInt `db:"create_id" json:"create_id"`
+	CreateTime  types.Time   `db:"create_time" json:"create_time"`
+	UpdateId    types.BigInt `db:"update_id" json:"update_id"`
+	UpdateTime  types.Time   `db:"update_time" json:"update_time"`
+	DelFlag     types.Int8   `db:"del_flag" json:"del_flag"`
 }

@@ -11,6 +11,7 @@ const TableName = "room"
 var (
 	Name       = dialect.Field{Name: "name", Json: "name", Table: "room", Type: "types.String", IsRelation: false}
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "room", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "room", Type: "types.BigInt", IsRelation: false}
 	TypeId     = dialect.Field{Name: "type_id", Json: "type_id", Table: "room", Type: "types.BigInt", IsRelation: false}
 	FloorId    = dialect.Field{Name: "floor_id", Json: "floor_id", Table: "room", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "room", Type: "types.BigInt", IsRelation: false}
@@ -26,6 +27,7 @@ var (
 	WritableFields = []dialect.Field{
 		Name,
 		Id,
+		TenantId,
 		TypeId,
 		FloorId,
 		CreateId,
@@ -39,6 +41,7 @@ var (
 	ReadableFields = []dialect.Field{
 		Name,
 		Id,
+		TenantId,
 		TypeId,
 		FloorId,
 		CreateId,

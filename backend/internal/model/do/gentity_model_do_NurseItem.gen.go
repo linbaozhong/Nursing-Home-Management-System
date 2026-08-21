@@ -27,9 +27,12 @@ func NewNurseItem() *NurseItem {
 
 // MarshalJSON
 func (p *NurseItem) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(8 * 50)
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.GradeId != 0 {
 		write.WriteRaw("grade_id", types.Marshal(p.GradeId))
@@ -64,6 +67,8 @@ func (p *NurseItem) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "grade_id":
 			p.GradeId = types.BigInt(value.Uint())
 		case "service_id":
@@ -98,6 +103,7 @@ func (p *NurseItem) Free() {
 // Reset
 func (p *NurseItem) Reset() {
 	p.Id = 0
+	p.TenantId = 0
 	p.GradeId = 0
 	p.ServiceId = 0
 	p.CreateId = 0
@@ -114,6 +120,7 @@ func (p *NurseItem) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var nurseitemFieldToPtrFunc = map[string]func(*NurseItem) any{
 	tblnurseitem.Id.Name:         func(p *NurseItem) any { return &p.Id },
+	tblnurseitem.TenantId.Name:   func(p *NurseItem) any { return &p.TenantId },
 	tblnurseitem.GradeId.Name:    func(p *NurseItem) any { return &p.GradeId },
 	tblnurseitem.ServiceId.Name:  func(p *NurseItem) any { return &p.ServiceId },
 	tblnurseitem.CreateId.Name:   func(p *NurseItem) any { return &p.CreateId },
@@ -211,6 +218,9 @@ func (p *NurseItem) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([
 var nurseitemFieldToValueFunc = map[dialect.Field]func(*NurseItem) (any, bool){
 	tblnurseitem.Id: func(p *NurseItem) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblnurseitem.TenantId: func(p *NurseItem) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblnurseitem.GradeId: func(p *NurseItem) (any, bool) {
 		return p.GradeId, p.GradeId == 0

@@ -27,7 +27,7 @@ func NewOutward() *Outward {
 
 // MarshalJSON
 func (p *Outward) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(13 * 50)
+	write := types.NewJsonWriter(14 * 50)
 	if p.ChaperoneName != "" {
 		write.WriteRaw("chaperone_name", types.Marshal(p.ChaperoneName))
 	}
@@ -39,6 +39,9 @@ func (p *Outward) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -88,6 +91,8 @@ func (p *Outward) UnmarshalJSON(data []byte) error {
 			p.ChaperoneType = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "outward_date":
@@ -131,6 +136,7 @@ func (p *Outward) Reset() {
 	p.ChaperonePhone = ""
 	p.ChaperoneType = ""
 	p.Id = 0
+	p.TenantId = 0
 	p.ElderId = 0
 	p.OutwardDate = types.Time{}
 	p.PlanReturnDate = types.Time{}
@@ -153,6 +159,7 @@ var outwardFieldToPtrFunc = map[string]func(*Outward) any{
 	tbloutward.ChaperonePhone.Name: func(p *Outward) any { return &p.ChaperonePhone },
 	tbloutward.ChaperoneType.Name:  func(p *Outward) any { return &p.ChaperoneType },
 	tbloutward.Id.Name:             func(p *Outward) any { return &p.Id },
+	tbloutward.TenantId.Name:       func(p *Outward) any { return &p.TenantId },
 	tbloutward.ElderId.Name:        func(p *Outward) any { return &p.ElderId },
 	tbloutward.OutwardDate.Name:    func(p *Outward) any { return &p.OutwardDate },
 	tbloutward.PlanReturnDate.Name: func(p *Outward) any { return &p.PlanReturnDate },
@@ -262,6 +269,9 @@ var outwardFieldToValueFunc = map[dialect.Field]func(*Outward) (any, bool){
 	},
 	tbloutward.Id: func(p *Outward) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tbloutward.TenantId: func(p *Outward) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tbloutward.ElderId: func(p *Outward) (any, bool) {
 		return p.ElderId, p.ElderId == 0
