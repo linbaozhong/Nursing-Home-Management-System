@@ -13,11 +13,12 @@ import (
 	"api/internal/model/define/table/tblstaff"
 	"api/internal/model/do"
 	"api/internal/model/dto"
+
 	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-var _ = (*orderService)(nil)
+var Order = (*orderService)(nil)
 
 type orderService struct{}
 

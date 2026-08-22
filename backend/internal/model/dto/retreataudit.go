@@ -20,10 +20,7 @@ type AuditRetreatReq struct {
 	AuditRemark *string `json:"audit_remark"`                  // 审核备注
 }
 
-// PageRetreatAuditReq 分页查询退住审核请求（定义见 retreatapply.go）
-
-// AuditElderFeeReq 审核老人费用详情请求（定义见 elderrecord.go）
-
-// ============ RetreatAuditController 响应 ============
-
-// GetElderFeeByIDResp 根据编号获取老人费用详情响应（定义见 common.go）
+// AuditRetreatResp
+// @response
+type AuditRetreatResp struct {
+}

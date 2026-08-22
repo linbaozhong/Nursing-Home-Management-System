@@ -11,11 +11,12 @@ import (
 	"api/internal/model/define/table/tblstaff"
 	"api/internal/model/do"
 	"api/internal/model/dto"
+
 	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-var _ = (*retreatAuditService)(nil)
+var RetreatAudit = (*retreatAuditService)(nil)
 
 type retreatAuditService struct{}
 
@@ -90,7 +91,7 @@ func (s *retreatAuditService) GetRetreatAuditById(ctx context.Context, in *dto.I
 }
 
 // AuditRetreat 审核退住申请（通过/不通过）
-func (s *retreatAuditService) AuditRetreat(ctx context.Context, in *dto.AuditRetreatReq) error {
+func (s *retreatAuditService) AuditRetreat(ctx context.Context, in *dto.AuditRetreatReq, out *dto.AuditRetreatResp) error {
 	if in.ID == nil || in.AuditResult == nil {
 		return constant.ErrParamInvalid
 	}

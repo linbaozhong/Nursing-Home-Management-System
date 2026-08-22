@@ -16,7 +16,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-var _ = (*intentionService)(nil)
+var Intention = (*intentionService)(nil)
 
 type intentionService struct{}
 
@@ -78,7 +78,7 @@ func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageI
 		}
 		for _, lid := range labelMap[int64(el.Id)] {
 			if lv, ok := labelNameMap[lid]; ok {
-				vo.LabelVOList = append(vo.LabelVOList, lv)
+				vo.LabelRespList = append(vo.LabelRespList, lv)
 			}
 		}
 		res = append(res, vo)

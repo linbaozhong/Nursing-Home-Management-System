@@ -75,7 +75,7 @@ func (i *intention) getIntentById(ctx ack.Context) {
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/addIntent [post]
 func (i *intention) addIntent(ctx ack.Context) {
-	ack.Post(ctx, service.Intention.AddIntent)
+	ack.Post(ctx, service.Intention.AddIntention)
 }
 
 // 编辑Intent
@@ -87,7 +87,7 @@ func (i *intention) addIntent(ctx ack.Context) {
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/editIntent [post]
 func (i *intention) editIntent(ctx ack.Context) {
-	ack.Post(ctx, service.Intention.EditIntent)
+	ack.Post(ctx, service.Intention.EditIntention)
 }
 
 // 删除Intent
@@ -99,7 +99,7 @@ func (i *intention) editIntent(ctx ack.Context) {
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/deleteIntent [post]
 func (i *intention) deleteIntent(ctx ack.Context) {
-	ack.Post(ctx, service.Intention.DeleteIntent)
+	ack.Post(ctx, service.Intention.DeleteIntention)
 }
 
 // 查询标签

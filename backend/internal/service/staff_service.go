@@ -15,7 +15,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-var _ = (*staffService)(nil)
+var Staff = (*staffService)(nil)
 
 type staffService struct{}
 

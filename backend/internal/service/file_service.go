@@ -14,7 +14,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-var _ = (*fileService)(nil)
+var File = (*fileService)(nil)
 
 type fileService struct{}
 

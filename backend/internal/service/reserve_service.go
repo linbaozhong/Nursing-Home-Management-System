@@ -14,11 +14,12 @@ import (
 	"api/internal/model/define/table/tblstaff"
 	"api/internal/model/do"
 	"api/internal/model/dto"
+
 	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-var _ = (*reserveService)(nil)
+var Reserve = (*reserveService)(nil)
 
 type reserveService struct{}
 

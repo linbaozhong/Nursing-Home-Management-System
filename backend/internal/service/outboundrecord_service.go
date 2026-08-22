@@ -16,11 +16,12 @@ import (
 	"api/internal/model/define/table/tblwarehousematerial"
 	"api/internal/model/do"
 	"api/internal/model/dto"
+
 	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-var _ = (*outboundRecordService)(nil)
+var OutboundRecord = (*outboundRecordService)(nil)
 
 type outboundRecordService struct{}
 

@@ -11,6 +11,7 @@ import (
 	"api/internal/model/do"
 	"api/internal/model/dto"
 	"context"
+
 	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
@@ -18,7 +19,7 @@ import (
 // nurseRoleID 护理员角色编号（对应用户端 role=护理员）
 const nurseRoleID = 6
 
-var _ = (*nurseGradeService)(nil)
+var NurseGrade = (*nurseGradeService)(nil)
 
 type nurseGradeService struct{}
 

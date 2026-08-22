@@ -20,7 +20,7 @@ import (
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
-var _ = (*warehouseRecordService)(nil)
+var WarehouseRecord = (*warehouseRecordService)(nil)
 
 type warehouseRecordService struct{}
 

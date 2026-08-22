@@ -93,9 +93,9 @@ func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out
 	if e2 != nil {
 		return e2
 	}
-	out.ElderEmergencyContactByIDVOList = make([]dto.OperateEmergencyContactReq, 0, len(contacts))
+	out.ElderEmergencyContactByIDRespList = make([]dto.OperateEmergencyContactReq, 0, len(contacts))
 	for _, ct := range contacts {
-		out.ElderEmergencyContactByIDVOList = append(out.ElderEmergencyContactByIDVOList, dto.OperateEmergencyContactReq{
+		out.ElderEmergencyContactByIDRespList = append(out.ElderEmergencyContactByIDRespList, dto.OperateEmergencyContactReq{
 			Name:        conv.Ptr(ct.Name.String()),
 			Phone:       conv.Ptr(ct.Phone.String()),
 			Email:       conv.Ptr(ct.Email.String()),
