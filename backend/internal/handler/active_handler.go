@@ -29,7 +29,7 @@ func (a *active) RegisterRoute(group ack.Party) {
 // @Tags 活动
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageActiveByKeyQuery true "PageActiveByKeyQuery"
+// @Param data query dto.PageActiveByKeyReq true "PageActiveByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /active/pageActiveByKey [get]
 func (a *active) pageActiveByKey(ctx ack.Context) {
@@ -53,7 +53,7 @@ func (a *active) getActiveById(ctx ack.Context) {
 // @Tags 活动
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateActiveQuery true "OperateActiveQuery"
+// @Param data body dto.OperateActiveReq true "OperateActiveReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /active/addActive [post]
 func (a *active) addActive(ctx ack.Context) {
@@ -65,7 +65,7 @@ func (a *active) addActive(ctx ack.Context) {
 // @Tags 活动
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateActiveQuery true "OperateActiveQuery"
+// @Param data body dto.OperateActiveReq true "OperateActiveReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /active/editActive [post]
 func (a *active) editActive(ctx ack.Context) {
@@ -89,7 +89,7 @@ func (a *active) deleteActive(ctx ack.Context) {
 // @Tags 活动
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /active/pageSearchElderByKey [get]
 func (a *active) pageSearchElderByKey(ctx ack.Context) {

@@ -4,31 +4,31 @@ import "github.com/linbaozhong/gentity/pkg/types"
 
 // ============ ServiceProjectController 请求 ============
 
+// PageServiceByKeyReq 分页查询服务请求
 // @request
-// PageServiceByKeyQuery 分页查询服务请求
-type PageServiceByKeyQuery struct {
+type PageServiceByKeyReq struct {
 	PageNum     *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize    *int    `json:"page_size" valid:"required"` // 条数
 	ServiceName *string `json:"service_name"`               // 服务名称
 	TypeName    *string `json:"type_name"`                  // 服务类型名称
 }
 
+// OperateServiceTypeReq 操作服务类型请求
 // @request
-// OperateServiceTypeQuery 操作服务类型请求
-type OperateServiceTypeQuery struct {
+type OperateServiceTypeReq struct {
 	ID   *int64  `json:"id"`                    // id
 	Name *string `json:"name" valid:"required"` // 服务类型名称
 }
 
-// OperateServiceTypeQuery 操作服务类型请求（定义见 common.go）
+// OperateServiceTypeReq 操作服务类型请求（定义见 common.go）
 
-// OperateServiceQuery 操作服务请求（定义见 common.go）
+// OperateServiceReq 操作服务请求（定义见 common.go）
 
 // ============ ServiceProjectController 响应 ============
 
+// PageServiceByKeyResp 分页查询服务响应
 // @response
-// PageServiceByKeyVO 分页查询服务响应
-type PageServiceByKeyVO struct {
+type PageServiceByKeyResp struct {
 	ID           int64       `json:"id"`            // id
 	TypeName     string      `json:"type_name"`     // 服务类型名称
 	ServiceName  string      `json:"service_name"`  // 服务名称

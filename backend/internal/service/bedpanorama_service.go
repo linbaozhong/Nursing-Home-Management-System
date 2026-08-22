@@ -33,7 +33,7 @@ func (b *bedpanorama) ListBuilding(ctx context.Context, in *dto.EmptyReq, out *[
 
 // ListFloorByBuildingId 获取楼层列表
 // 对应 Java: BedPanoramaServiceImpl.listFloorByBuildingId -> floorFunc.listNotDelFloorByBuildingId
-func (b *bedpanorama) ListFloorByBuildingId(ctx context.Context, in *dto.ListFloorByBuildingIdQuery, out *[]dto.DropDown) error {
+func (b *bedpanorama) ListFloorByBuildingId(ctx context.Context, in *dto.ListFloorByBuildingIdReq, out *[]dto.DropDown) error {
 	q := db.Table(tblfloor.TableName).
 		Cols(tblfloor.Id, tblfloor.Name).
 		Where(tblfloor.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblfloor.DelFlag.Eq(constant.YesNoNo))
@@ -45,7 +45,7 @@ func (b *bedpanorama) ListFloorByBuildingId(ctx context.Context, in *dto.ListFlo
 
 // ListRoomByKey 获取房间列表（含床位与入住老人）
 // 对应 Java: BedPanoramaServiceImpl.listRoomByKey -> roomFunc.generateRoomTree
-func (b *bedpanorama) ListRoomByKey(ctx context.Context, in *dto.ListRoomByKeyQuery, out *[]dto.FloorItemVO) error {
+func (b *bedpanorama) ListRoomByKey(ctx context.Context, in *dto.ListRoomByKeyReq, out *[]dto.FloorItemResp) error {
 	// 1. 获取楼层编号列表
 	q := db.Cols(
 		tblfloor.Id,
@@ -130,19 +130,19 @@ func (b *bedpanorama) ListRoomByKey(ctx context.Context, in *dto.ListRoomByKeyQu
 		bedByRoom[int64(bd.RoomId)] = append(bedByRoom[int64(bd.RoomId)], bd)
 	}
 
-	*out = make([]dto.FloorItemVO, 0, len(floorIdSet))
+	*out = make([]dto.FloorItemResp, 0, len(floorIdSet))
 	for _, floor := range floorIdSet {
-		floorVO := dto.FloorItemVO{
+		floorVO := dto.FloorItemResp{
 			ID:      int64(floor.Id),
 			Name:    floor.Name.String(),
-			BedList: make([]dto.RoomItemVO, 0),
+			BedList: make([]dto.RoomItemResp, 0),
 		}
 		bedNum := 0
 		for _, room := range roomByFloor[int64(floor.Id)] {
 			roomBeds := bedByRoom[int64(room.Id)]
 			bedNum += len(roomBeds)
 			for _, bed := range roomBeds {
-				bedVO := dto.RoomItemVO{
+				bedVO := dto.RoomItemResp{
 					ID:      int64(bed.Id),
 					Name:    bed.Name.String(),
 					BedFlag: bed.BedFlag.String(),

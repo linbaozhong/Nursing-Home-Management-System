@@ -2,32 +2,32 @@ package dto
 
 // ============ SourceController 请求 ============
 
+// PageSourceByKeyReq 分页查询来源渠道请求
 // @request
-// PageSourceByKeyQuery 分页查询来源渠道请求
-type PageSourceByKeyQuery struct {
+type PageSourceByKeyReq struct {
 	PageNum    *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize   *int    `json:"page_size" valid:"required"` // 条数
 	SourceName *string `json:"source_name"`                // 来源渠道名称
 }
 
+// OperateSourceReq 操作来源渠道请求
 // @request
-// OperateSourceQuery 操作来源渠道请求
-type OperateSourceQuery struct {
+type OperateSourceReq struct {
 	ID   *int64  `json:"id" valid:"required"`   // id
 	Name *string `json:"name" valid:"required"` // 来源渠道名称
 }
 
 // ============ SourceController 响应 ============
 
+// PageSourceByKeyResp 分页查询来源渠道响应
 // @response
-// PageSourceByKeyVO 分页查询来源渠道响应
-type PageSourceByKeyVO struct {
+type PageSourceByKeyResp struct {
 	ID   int64  `json:"id"`   // id
 	Name string `json:"name"` // 来源渠道名称
 }
 
-// OperateSourceVo 操作来源渠道响应
+// OperateSourceResp 操作来源渠道响应
 // @response
-type OperateSourceVo struct {
-	OperateSourceQuery
+type OperateSourceResp struct {
+	OperateSourceReq
 }

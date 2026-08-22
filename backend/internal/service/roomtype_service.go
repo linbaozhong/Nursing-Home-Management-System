@@ -20,7 +20,7 @@ var RoomType = &roomtype{}
 
 // PageRoomTypeByKey 分页查询房间类型（按名称模糊过滤 + 未删除）
 // 对应 Java: RoomTypeServiceImpl.pageRoomTypeByKey -> RoomTypeFunc.listNotDelRoomType
-func (r *roomtype) PageRoomTypeByKey(ctx context.Context, in *dto.PageRoomTypeByKeyQuery, out *[]dto.PageRoomTypeByKeyVO) error {
+func (r *roomtype) PageRoomTypeByKey(ctx context.Context, in *dto.PageRoomTypeByKeyReq, out *[]dto.PageRoomTypeByKeyResp) error {
 	q := db.Table(tblroomtype.TableName).
 		Where(tblroomtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblroomtype.DelFlag.Eq(constant.YesNoNo))
 	if in.RoomTypeName != nil && *in.RoomTypeName != "" {
@@ -38,8 +38,8 @@ func (r *roomtype) PageRoomTypeByKey(ctx context.Context, in *dto.PageRoomTypeBy
 }
 
 // GetRoomTypeById 根据编号获取房间类型（编辑回显）
-// 对应 Java: RoomTypeServiceImpl.getRoomTypeById -> OperateRoomTypeVo
-func (r *roomtype) GetRoomTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateRoomTypeVo) error {
+// 对应 Java: RoomTypeServiceImpl.getRoomTypeById -> OperateRoomTypeResp
+func (r *roomtype) GetRoomTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateRoomTypeResp) error {
 	obj, has, e := dao.RoomType(db).GetByID(ctx, types.BigInt(*in.ID))
 	if e != nil {
 		return e
@@ -55,7 +55,7 @@ func (r *roomtype) GetRoomTypeById(ctx context.Context, in *dto.IDReq, out *dto.
 
 // AddRoomType 新增房间类型（校验名称不重复）
 // 对应 Java: RoomTypeServiceImpl.addRoomType -> RoomTypeFunc.getRoomTypeByName
-func (r *roomtype) AddRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery, out *dto.EmptyResp) error {
+func (r *roomtype) AddRoomType(ctx context.Context, in *dto.OperateRoomTypeReq, out *dto.EmptyResp) error {
 	repeat, e := dao.RoomType(db).Exists(ctx,
 		tblroomtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblroomtype.Name.Eq(*in.Name),
@@ -78,7 +78,7 @@ func (r *roomtype) AddRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery
 
 // EditRoomType 编辑房间类型（校验名称不重复排除自身）
 // 对应 Java: RoomTypeServiceImpl.editRoomType
-func (r *roomtype) EditRoomType(ctx context.Context, in *dto.OperateRoomTypeQuery, out *dto.EmptyResp) error {
+func (r *roomtype) EditRoomType(ctx context.Context, in *dto.OperateRoomTypeReq, out *dto.EmptyResp) error {
 	repeat, e := dao.RoomType(db).Exists(ctx,
 		tblroomtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblroomtype.Name.Eq(*in.Name),

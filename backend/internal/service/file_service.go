@@ -19,7 +19,7 @@ var _ = (*fileService)(nil)
 type fileService struct{}
 
 // UploadImage 上传图片，保存附件记录并返回访问信息
-func (s *fileService) UploadImage(ctx context.Context, in *dto.UploadImageQuery, out *dto.FileInfoVO) error {
+func (s *fileService) UploadImage(ctx context.Context, in *dto.UploadImageReq, out *dto.FileInfoResp) error {
 	// file 字段约定为完整的访问 URL（或相对路径），取文件名作附件名
 	name := ""
 	if in.File != nil {
@@ -43,7 +43,7 @@ func (s *fileService) UploadImage(ctx context.Context, in *dto.UploadImageQuery,
 }
 
 // UploadFile 上传文件，保存附件记录并返回访问信息
-func (s *fileService) UploadFile(ctx context.Context, in *dto.UploadFileQuery, out *dto.FileInfoVO) error {
+func (s *fileService) UploadFile(ctx context.Context, in *dto.UploadFileReq, out *dto.FileInfoResp) error {
 	name := ""
 	if in.File != nil {
 		name = path.Base(*in.File)
@@ -66,7 +66,7 @@ func (s *fileService) UploadFile(ctx context.Context, in *dto.UploadFileQuery, o
 }
 
 // DownloadFile 根据编号下载文件，返回附件记录
-func (s *fileService) DownloadFile(ctx context.Context, in *dto.DownloadFileQuery, out *dto.FileInfoVO) error {
+func (s *fileService) DownloadFile(ctx context.Context, in *dto.DownloadFileReq, out *dto.FileInfoResp) error {
 	if in.ID == nil {
 		return constant.ErrParamInvalid
 	}

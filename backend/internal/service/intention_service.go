@@ -21,7 +21,7 @@ var _ = (*intentionService)(nil)
 type intentionService struct{}
 
 // PageIntentionByKey 分页查询意向客户（elder 表中 check_flag=意向）
-func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageIntentionByKeyQuery, out *[]dto.PageIntentionByKeyVO) error {
+func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageIntentionByKeyReq, out *[]dto.PageIntentionByKeyResp) error {
 	q := db.Table(tblelder.TableName).
 		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.CheckFlag.Eq(types.Int8(constant.CheckIntention)))
 	if in.ElderName != nil {
@@ -57,19 +57,19 @@ func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageI
 			allLabelIds = append(allLabelIds, types.BigInt(lid))
 		}
 	}
-	labelNameMap := make(map[int64]dto.IntentionLabelVO)
+	labelNameMap := make(map[int64]dto.IntentionLabelResp)
 	if len(allLabelIds) > 0 {
 		lbs, _, e := dao.Label(db).List(ctx, ace.Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.Id.In(allLabelIds...).And(tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)))).Cols(tbllabel.Id, tbllabel.Name, tbllabel.Color))
 		if e != nil {
 			return e
 		}
 		for _, lb := range lbs {
-			labelNameMap[int64(lb.Id)] = dto.IntentionLabelVO{Name: lb.Name.String(), Color: lb.Color.String()}
+			labelNameMap[int64(lb.Id)] = dto.IntentionLabelResp{Name: lb.Name.String(), Color: lb.Color.String()}
 		}
 	}
-	res := make([]dto.PageIntentionByKeyVO, 0, len(list))
+	res := make([]dto.PageIntentionByKeyResp, 0, len(list))
 	for _, el := range list {
-		vo := dto.PageIntentionByKeyVO{
+		vo := dto.PageIntentionByKeyResp{
 			ID:    int64(el.Id),
 			Name:  el.Name.String(),
 			Phone: el.Phone.String(),
@@ -88,7 +88,7 @@ func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageI
 }
 
 // AddIntention 新增意向客户（写入 elder 表，check_flag=意向）
-func (s *intentionService) AddIntention(ctx context.Context, in *dto.AddIntentQuery, out *dto.EmptyResp) error {
+func (s *intentionService) AddIntention(ctx context.Context, in *dto.AddIntentReq, out *dto.EmptyResp) error {
 	exist, has, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.IdNum.Eq(types.String(*in.IDNum))).Cols(tblelder.Id, tblelder.CheckFlag))
 	if e != nil {
 		return e
@@ -127,7 +127,7 @@ func (s *intentionService) AddIntention(ctx context.Context, in *dto.AddIntentQu
 }
 
 // GetIntentById 查询意向客户详情（含标签）
-func (s *intentionService) GetIntentById(ctx context.Context, in *dto.IDReq, out *dto.OperateIntentionVO) error {
+func (s *intentionService) GetIntentById(ctx context.Context, in *dto.IDReq, out *dto.OperateIntentionResp) error {
 	bean, has, e := dao.Elder(db).GetByID(ctx, types.BigInt(*in.ID),
 		tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Age, tblelder.Sex, tblelder.Phone, tblelder.Address)
 	if e != nil {
@@ -159,16 +159,16 @@ func (s *intentionService) GetIntentById(ctx context.Context, in *dto.IDReq, out
 	if e != nil {
 		return e
 	}
-	list := make([]dto.IntentionLabelVO, 0, len(lbs))
+	list := make([]dto.IntentionLabelResp, 0, len(lbs))
 	for _, lb := range lbs {
-		list = append(list, dto.IntentionLabelVO{Name: lb.Name.String(), Color: lb.Color.String()})
+		list = append(list, dto.IntentionLabelResp{Name: lb.Name.String(), Color: lb.Color.String()})
 	}
-	out.IntentionLabelVOList = list
+	out.IntentionLabelRespList = list
 	return nil
 }
 
 // EditIntention 编辑意向客户
-func (s *intentionService) EditIntention(ctx context.Context, in *dto.EditIntentQuery, out *dto.EmptyResp) error {
+func (s *intentionService) EditIntention(ctx context.Context, in *dto.EditIntentReq, out *dto.EmptyResp) error {
 	_, has, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e

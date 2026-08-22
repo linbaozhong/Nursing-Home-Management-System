@@ -37,7 +37,7 @@ func idNumTailMatch(full, tail string) bool {
 }
 
 // SendCode 发送家属注册/绑定验证码
-func (s *family) SendCode(ctx context.Context, in *dto.FamilySendCodeQuery, out *dto.LoginUserVO) error {
+func (s *family) SendCode(ctx context.Context, in *dto.FamilySendCodeReq, out *dto.LoginUserResp) error {
 	if in.Phone == nil || !isValidPhone(*in.Phone) {
 		return constant.ErrPhoneError
 	}
@@ -51,7 +51,7 @@ func (s *family) SendCode(ctx context.Context, in *dto.FamilySendCodeQuery, out 
 }
 
 // RegisterBind 家属注册并绑定一位老人
-func (s *family) RegisterBind(ctx context.Context, in *dto.RegisterBindQuery, out *dto.EmptyResp) error {
+func (s *family) RegisterBind(ctx context.Context, in *dto.RegisterBindReq, out *dto.EmptyResp) error {
 	if in.Phone == nil || in.Code == nil || in.Password == nil ||
 		in.ElderName == nil || in.IdNumTail == nil {
 		return constant.ErrParamError
@@ -88,7 +88,7 @@ func (s *family) RegisterBind(ctx context.Context, in *dto.RegisterBindQuery, ou
 }
 
 // BindElder 已注册家属绑定更多老人
-func (s *family) BindElder(ctx context.Context, in *dto.BindElderQuery, out *dto.EmptyResp) error {
+func (s *family) BindElder(ctx context.Context, in *dto.BindElderReq, out *dto.EmptyResp) error {
 	if in.Phone == nil || in.Code == nil ||
 		in.ElderName == nil || in.IdNumTail == nil {
 		return constant.ErrParamError
@@ -132,7 +132,7 @@ func (s *family) bindElderRecord(ctx context.Context, phone string, elder *do.El
 }
 
 // Login 家属登录，返回 token 与绑定老人列表
-func (s *family) Login(ctx context.Context, in *dto.FamilyLoginQuery, out *dto.FamilyLoginVO) error {
+func (s *family) Login(ctx context.Context, in *dto.FamilyLoginReq, out *dto.FamilyLoginResp) error {
 	if in.Phone == nil || in.Password == nil {
 		return constant.ErrParamError
 	}
@@ -160,7 +160,7 @@ func (s *family) Login(ctx context.Context, in *dto.FamilyLoginQuery, out *dto.F
 }
 
 // MyElders 我的老人列表（家属端数据范围）
-func (s *family) MyElders(ctx context.Context, in *dto.FamilyMyEldersQuery, out *dto.FamilyMyEldersVO) error {
+func (s *family) MyElders(ctx context.Context, in *dto.FamilyMyEldersReq, out *dto.FamilyMyEldersResp) error {
 	if in.Phone == nil {
 		return constant.ErrParamError
 	}
@@ -172,15 +172,15 @@ func (s *family) MyElders(ctx context.Context, in *dto.FamilyMyEldersQuery, out 
 	return nil
 }
 
-func (s *family) myElders(ctx context.Context, phone string) ([]*dto.FamilyElderVO, error) {
+func (s *family) myElders(ctx context.Context, phone string) ([]*dto.FamilyElderResp, error) {
 	beans, _, e := dao.FamilyMember(db).List(ctx, db.Table(tblfamilymember.TableName).
 		Where(tblfamilymember.Phone.Eq(types.String(phone)), tblfamilymember.DelFlag.Eq(0)))
 	if e != nil {
 		return nil, e
 	}
-	out := make([]*dto.FamilyElderVO, 0, len(beans))
+	out := make([]*dto.FamilyElderResp, 0, len(beans))
 	for _, b := range beans {
-		out = append(out, &dto.FamilyElderVO{
+		out = append(out, &dto.FamilyElderResp{
 			ElderID:  b.ElderId.Int64(),
 			Name:     b.Name.String(),
 			Relation: b.Relation.String(),
@@ -220,7 +220,7 @@ func (s *family) IsMyElder(ctx context.Context, phone string, elderID int64) (bo
 }
 
 // BindOpenid 家属绑定微信 openid（基于 gentity 的 wechat 小程序包做登录验证）
-func (s *family) BindOpenid(ctx context.Context, in *dto.BindOpenidQuery, out *dto.BindOpenidVO) error {
+func (s *family) BindOpenid(ctx context.Context, in *dto.BindOpenidReq, out *dto.BindOpenidResp) error {
 	if in.Phone == nil || in.Code == nil {
 		return constant.ErrParamError
 	}

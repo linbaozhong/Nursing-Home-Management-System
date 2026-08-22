@@ -29,7 +29,7 @@ func (w *warehouse) RegisterRoute(group ack.Party) {
 // @Tags 仓库
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageWarehouseByKeyQuery true "PageWarehouseByKeyQuery"
+// @Param data query dto.PageWarehouseByKeyReq true "PageWarehouseByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /warehouse/pageWarehouseByKey [get]
 func (w *warehouse) pageWarehouseByKey(ctx ack.Context) {
@@ -53,7 +53,7 @@ func (w *warehouse) listWarehouseStaff(ctx ack.Context) {
 // @Tags 仓库
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateWarehouseQuery true "OperateWarehouseQuery"
+// @Param data body dto.OperateWarehouseReq true "OperateWarehouseReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /warehouse/addWarehouse [post]
 func (w *warehouse) addWarehouse(ctx ack.Context) {
@@ -77,7 +77,7 @@ func (w *warehouse) getWarehouseById(ctx ack.Context) {
 // @Tags 仓库
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateWarehouseQuery true "OperateWarehouseQuery"
+// @Param data body dto.OperateWarehouseReq true "OperateWarehouseReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /warehouse/editWarehouse [post]
 func (w *warehouse) editWarehouse(ctx ack.Context) {

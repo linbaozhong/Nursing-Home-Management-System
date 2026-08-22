@@ -24,7 +24,7 @@ var CateringSet = &cateringset{}
 
 // PageCateringSetByKey 分页查询套餐
 // 对应 Java: CateringSetServiceImpl.pageCateringSetByKey -> CateringSetFunc.listNotDelCateringSet
-func (c *cateringset) PageCateringSetByKey(ctx context.Context, in *dto.PageCateringSetByKeyQuery, out *[]dto.PageCateringSetByKeyVO) error {
+func (c *cateringset) PageCateringSetByKey(ctx context.Context, in *dto.PageCateringSetByKeyReq, out *[]dto.PageCateringSetByKeyResp) error {
 	q := db.Table(tblcateringset.TableName).
 		Where(tblcateringset.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblcateringset.DelFlag.Eq(constant.YesNoNo))
 	if in.SetName != nil {
@@ -47,7 +47,7 @@ func (c *cateringset) PageCateringSetByKey(ctx context.Context, in *dto.PageCate
 
 // GetCateringSetById 根据编号获取套餐（含菜品明细）
 // 对应 Java: CateringSetServiceImpl.getCateringSetById -> CateringSetFunc.getCateringSetById
-func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out *dto.GetCateringSetByIDVO) error {
+func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out *dto.GetCateringSetByIDResp) error {
 	// 1. 查询套餐主表
 	set, has, e := dao.CateringSet(db).GetByID(ctx, types.BigInt(*in.ID),
 		tblcateringset.Id,
@@ -83,9 +83,9 @@ func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out
 	if e != nil {
 		return e
 	}
-	out.SetDishes = make([]dto.SetDishesVO, 0, len(dishes))
+	out.SetDishes = make([]dto.SetDishesResp, 0, len(dishes))
 	for _, d := range dishes {
-		out.SetDishes = append(out.SetDishes, dto.SetDishesVO{
+		out.SetDishes = append(out.SetDishes, dto.SetDishesResp{
 			ID:    int64(d.Id),
 			Name:  d.Name.String(),
 			Price: d.Price,
@@ -140,7 +140,7 @@ func (c *cateringset) saveBatchSetDishes(ctx context.Context, setID int64, dishe
 
 // AddCateringSet 新增套餐（含菜品明细）
 // 对应 Java: CateringSetServiceImpl.addCateringSet
-func (c *cateringset) AddCateringSet(ctx context.Context, in *dto.OperateCateringSetQuery, out *dto.EmptyResp) error {
+func (c *cateringset) AddCateringSet(ctx context.Context, in *dto.OperateCateringSetReq, out *dto.EmptyResp) error {
 	// 校验套餐名称是否已存在
 	repeat, e := c.checkNameRepeat(ctx, *in.Name, nil)
 	if e != nil {
@@ -165,7 +165,7 @@ func (c *cateringset) AddCateringSet(ctx context.Context, in *dto.OperateCaterin
 
 // EditCateringSet 编辑套餐（先删后插明细）
 // 对应 Java: CateringSetServiceImpl.editCateringSet
-func (c *cateringset) EditCateringSet(ctx context.Context, in *dto.OperateCateringSetQuery, out *dto.EmptyResp) error {
+func (c *cateringset) EditCateringSet(ctx context.Context, in *dto.OperateCateringSetReq, out *dto.EmptyResp) error {
 	// 校验套餐名称是否已存在（排除自身）
 	repeat, e := c.checkNameRepeat(ctx, *in.Name, in.ID)
 	if e != nil {

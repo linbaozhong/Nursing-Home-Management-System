@@ -25,6 +25,7 @@ export interface LoginUser {
 	tenant_id: number
 	member_id: number
 	role_id: number
+	role_name: string
 	need_bind: boolean
 	auth_id_list: number[]
 	auth_url_list: string[]
@@ -100,7 +101,7 @@ export function isLogin(): boolean {
  */
 export type ModuleKey = 'elder' | 'leave' | 'visit' | 'accident' | 'order'
 
-const MODULE_AUTH_URL: Record<string, string> = {
+const MODULE_AUTH_URL: Record<ModuleKey, string> = {
 	elder: '/people/old',
 	leave: '/check-in/leave',
 	visit: '/check-in/visit',
@@ -108,23 +109,20 @@ const MODULE_AUTH_URL: Record<string, string> = {
 	order: '/food/order'
 }
 
-/** 判断当前登录用户是否有某模块权限（基于 auth_url_list 前缀匹配） */
-export function canAccess(module: ModuleKey): boolean {
-	const u = getLoginUser()
+/** 判断当前登录用户是否有某模块权限（基于 auth_url_list 精确匹配）。
+ * 可传入已取好的 user 以避免重复读取本地存储；不传则内部取一次。 */
+export function canAccess(module: ModuleKey, user?: LoginUser | null): boolean {
+	const u = user === undefined ? getLoginUser() : user
 	if (u == null) {
 		return false
 	}
-	const target = MODULE_AUTH_URL[module]
-	if (target == '') {
-		return true
-	}
-	console.log(u.auth_url_list)
-	return u.auth_url_list?.indexOf(target) >= 0
+	return (u.auth_url_list ?? []).indexOf(MODULE_AUTH_URL[module]) >= 0
 }
 
-/** 返回当前用户可访问的模块列表（顺序：档案/外出/来访/事故/点餐） */
-export function accessibleModules(): ModuleKey[] {
+/** 返回当前用户可访问的模块列表（顺序：档案/外出/来访/事故/点餐）。
+ * 可传入已取好的 user 以避免重复读取本地存储；不传则内部取一次。 */
+export function accessibleModules(user?: LoginUser | null): ModuleKey[] {
+	const u = user === undefined ? getLoginUser() : user // 只读一次本地存储，循环内复用
 	const order: ModuleKey[] = ['elder', 'leave', 'visit', 'accident', 'order']
-	return order.filter((m) => canAccess(m))
-	// return order
+	return order.filter((m) => canAccess(m, u))
 }

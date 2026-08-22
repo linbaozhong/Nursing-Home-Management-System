@@ -4,9 +4,9 @@ import "time"
 
 // ============ ActiveController 请求 ============
 
+// PageActiveByKeyReq 分页查询活动请求
 // @request
-// PageActiveByKeyQuery 分页查询活动请求
-type PageActiveByKeyQuery struct {
+type PageActiveByKeyReq struct {
 	PageNum   *int       `json:"page_num" valid:"required"`  // 页码
 	PageSize  *int       `json:"page_size" valid:"required"` // 条数
 	TypeID    *int64     `json:"type_id"`                    // 活动类型编号
@@ -15,9 +15,9 @@ type PageActiveByKeyQuery struct {
 	EndTime   *time.Time `json:"end_time"`                   // 结束时间
 }
 
+// OperateActiveReq 操作活动请求
 // @request
-// OperateActiveQuery 操作活动请求
-type OperateActiveQuery struct {
+type OperateActiveReq struct {
 	ID            *int64     `json:"id"`                              // id
 	TypeID        *int64     `json:"type_id" valid:"required"`        // 活动类型编号
 	Theme         *string    `json:"theme" valid:"required"`          // 活动主题
@@ -33,9 +33,9 @@ type OperateActiveQuery struct {
 
 // ============ ActiveController 响应 ============
 
+// PageActiveByKeyResp 分页查询活动响应
 // @response
-// PageActiveByKeyVO 分页查询活动响应
-type PageActiveByKeyVO struct {
+type PageActiveByKeyResp struct {
 	ID            int64     `json:"id"`             // id
 	TypeName      string    `json:"type_name"`      // 活动分类名称
 	Theme         string    `json:"theme"`          // 活动主题
@@ -48,16 +48,16 @@ type PageActiveByKeyVO struct {
 	ActivePicture string    `json:"active_picture"` // 活动图片
 }
 
+// GetActiveByIDResp 根据编号获取活动响应（继承 OperateActiveReq）
 // @response
-// GetActiveByIDVO 根据编号获取活动响应（继承 OperateActiveQuery）
-type GetActiveByIDVO struct {
-	OperateActiveQuery
-	ParticipateElderVOList []ParticipateElderVO `json:"participate_elder_vo_list"` // 参加活动老人列表
+type GetActiveByIDResp struct {
+	OperateActiveReq
+	ParticipateElderRespList []ParticipateElderResp `json:"participate_elder_vo_list"` // 参加活动老人列表
 }
 
+// ParticipateElderResp 参加活动老人响应
 // @response
-// ParticipateElderVO 参加活动老人响应
-type ParticipateElderVO struct {
+type ParticipateElderResp struct {
 	ID    int64  `json:"id"`    // id
 	Name  string `json:"name"`  // 老人姓名
 	Phone string `json:"phone"` // 老人电话

@@ -41,7 +41,7 @@ func (s *staff) getRole(ctx ack.Context) {
 // @Tags 员工
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageStaffByKeyQuery true "PageStaffByKeyQuery"
+// @Param data query dto.PageStaffByKeyReq true "PageStaffByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /staff/pageStaffByKey [get]
 func (s *staff) pageStaffByKey(ctx ack.Context) {
@@ -53,7 +53,7 @@ func (s *staff) pageStaffByKey(ctx ack.Context) {
 // @Tags 员工
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateStaffQuery true "OperateStaffQuery"
+// @Param data body dto.OperateStaffReq true "OperateStaffReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /staff/addStaff [post]
 func (s *staff) addStaff(ctx ack.Context) {
@@ -77,7 +77,7 @@ func (s *staff) getStaffById(ctx ack.Context) {
 // @Tags 员工
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateStaffQuery true "OperateStaffQuery"
+// @Param data body dto.OperateStaffReq true "OperateStaffReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /staff/editStaff [post]
 func (s *staff) editStaff(ctx ack.Context) {

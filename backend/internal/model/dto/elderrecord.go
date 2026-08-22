@@ -2,9 +2,9 @@ package dto
 
 // ============ ElderRecordController 请求 ============
 
+// PageElderByKeyReq 分页查询长者请求
 // @request
-// PageElderByKeyQuery 分页查询长者请求
-type PageElderByKeyQuery struct {
+type PageElderByKeyReq struct {
 	PageNum   *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize  *int    `json:"page_size" valid:"required"` // 条数
 	ElderName *string `json:"elder_name"`                 // 老人姓名
@@ -13,24 +13,24 @@ type PageElderByKeyQuery struct {
 }
 
 // // @request
-// // PageSearchElderByKeyQuery 分页搜索老人请求
-// type PageSearchElderByKeyQuery struct {
+// // PageSearchElderByKeyReq 分页搜索老人请求
+// type PageSearchElderByKeyReq struct {
 // 	PageNum  *int    `json:"page_num" valid:"required"`  // 页码
 // 	PageSize *int    `json:"page_size" valid:"required"` // 条数
 // 	Name     *string `json:"name"`                       // 老人姓名
 // 	Phone    *string `json:"phone"`                      // 老人电话
 // }
 
+// EditElderLabelReq 编辑老人标签请求
 // @request
-// EditElderLabelQuery 编辑老人标签请求
-type EditElderLabelQuery struct {
+type EditElderLabelReq struct {
 	ElderID     *int64  `json:"elder_id" valid:"required"`      // 老人编号
 	LabelIDList []int64 `json:"label_id_list" valid:"required"` // 标签编号列表
 }
 
+// AuditElderFeeReq 审核老人费用详情请求
 // @request
-// AuditElderFeeQuery 审核老人费用详情请求
-type AuditElderFeeQuery struct {
+type AuditElderFeeReq struct {
 	ApplyID     *int64  `json:"apply_id" valid:"required"`     // 申请编号
 	ElderID     *int64  `json:"elder_id" valid:"required"`     // 老人编号
 	AuditResult *string `json:"audit_result" valid:"required"` // 审核结果
@@ -38,9 +38,9 @@ type AuditElderFeeQuery struct {
 
 // ============ ElderRecordController 响应 ============
 
+// PageElderByKeyResp 分页查询长者响应
 // @response
-// PageElderByKeyVO 分页查询长者响应
-type PageElderByKeyVO struct {
+type PageElderByKeyResp struct {
 	ID        int64  `json:"id"`         // id
 	BedName   string `json:"bed_name"`   // 床位名称
 	Name      string `json:"name"`       // 姓名
@@ -52,15 +52,15 @@ type PageElderByKeyVO struct {
 	CheckFlag string `json:"check_flag"` // 入住状态
 }
 
-// GetElderRecordByIDVO 长者档案详情响应（定义见 common.go）
+// GetElderRecordByIDResp 长者档案详情响应（定义见 common.go）
 
-// GetElderFeeByIDVO 老人费用详情响应（定义见 common.go）
+// GetElderFeeByIDResp 老人费用详情响应（定义见 common.go）
 
-// GetElderLabelByIDLabelVO 客户标签响应（定义见 common.go）
+// GetElderLabelByIDLabelResp 客户标签响应（定义见 common.go）
 
+// PageElderRecordByKeyReq 分页查询长者档案请求
 // @request
-// PageElderRecordByKeyQuery 分页查询长者档案请求
-type PageElderRecordByKeyQuery struct {
+type PageElderRecordByKeyReq struct {
 	PageNum   *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize  *int    `json:"page_size" valid:"required"` // 条数
 	ElderName *string `json:"elder_name"`                 // 老人姓名
@@ -68,9 +68,9 @@ type PageElderRecordByKeyQuery struct {
 	ElderSex  *string `json:"elder_sex"`                  // 老人性别
 }
 
+// AddElderRecordReq 新增长者档案请求
 // @request
-// AddElderRecordQuery 新增长者档案请求
-type AddElderRecordQuery struct {
+type AddElderRecordReq struct {
 	ID         *int64  `json:"id"`                       // id
 	Name       *string `json:"name" valid:"required"`    // 姓名
 	IDNum      *string `json:"id_num" valid:"required"`  // 身份证号
@@ -82,9 +82,9 @@ type AddElderRecordQuery struct {
 	CheckFlag  *string `json:"check_flag"`               // 入住状态
 }
 
+// EditElderRecordReq 编辑长者档案请求
 // @request
-// EditElderRecordQuery 编辑长者档案请求
-type EditElderRecordQuery struct {
+type EditElderRecordReq struct {
 	ID         *int64  `json:"id"`                       // id
 	Name       *string `json:"name" valid:"required"`    // 姓名
 	IDNum      *string `json:"id_num" valid:"required"`  // 身份证号
@@ -96,35 +96,35 @@ type EditElderRecordQuery struct {
 	CheckFlag  *string `json:"check_flag"`               // 入住状态
 }
 
+// PageSearchEmergencyContactByKeyReq 分页查询紧急联系人请求
 // @request
-// PageSearchEmergencyContactByKeyQuery 分页查询紧急联系人请求
-type PageSearchEmergencyContactByKeyQuery struct {
+type PageSearchEmergencyContactByKeyReq struct {
 	PageNum  *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize *int    `json:"page_size" valid:"required"` // 条数
 	ElderID  *int64  `json:"elder_id" valid:"required"`  // 老人编号
 	Key      *string `json:"key"`                        // 关键字(联系人姓名/电话), 可选
 }
 
+// PageLabelByKeyReq 分页查询客户标签请求
 // @request
-// PageLabelByKeyQuery 分页查询客户标签请求
-type PageLabelByKeyQuery struct {
+type PageLabelByKeyReq struct {
 	PageNum  *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize *int    `json:"page_size" valid:"required"` // 条数
 	Key      *string `json:"key"`                        // 关键字(标签名称), 可选
 }
 
+// AddEmergencyContactReq 新增紧急联系人请求
 // @request
-// AddEmergencyContactQuery 新增紧急联系人请求
-type AddEmergencyContactQuery struct {
+type AddEmergencyContactReq struct {
 	ElderID  *int64  `json:"elder_id" valid:"required"` // 老人编号
 	Name     *string `json:"name" valid:"required"`     // 联系人姓名
 	Phone    *string `json:"phone" valid:"required"`    // 联系人电话
 	Relation *string `json:"relation"`                  // 与老人关系
 }
 
+// EditEmergencyContactReq 编辑紧急联系人请求
 // @request
-// EditEmergencyContactQuery 编辑紧急联系人请求
-type EditEmergencyContactQuery struct {
+type EditEmergencyContactReq struct {
 	ID       *int64  `json:"id" valid:"required"` // 紧急联系人编号
 	ElderID  *int64  `json:"elder_id"`            // 老人编号
 	Name     *string `json:"name"`                // 联系人姓名
@@ -132,16 +132,16 @@ type EditEmergencyContactQuery struct {
 	Relation *string `json:"relation"`            // 与老人关系
 }
 
+// DeleteEmergencyContactReq 删除紧急联系人请求
 // @request
-// DeleteEmergencyContactQuery 删除紧急联系人请求
-type DeleteEmergencyContactQuery struct {
+type DeleteEmergencyContactReq struct {
 	ID      *int64 `json:"id" valid:"required"` // 紧急联系人编号
 	ElderID *int64 `json:"elder_id"`            // 老人编号(可选, 仅作校验)
 }
 
+// PageSearchEmergencyContactByKeyResp 分页查询紧急联系人响应
 // @response
-// PageSearchEmergencyContactByKeyVO 分页查询紧急联系人响应
-type PageSearchEmergencyContactByKeyVO struct {
+type PageSearchEmergencyContactByKeyResp struct {
 	ID       int64  `json:"id"`       // 紧急联系人编号
 	ElderId  int64  `json:"elder_id"` // 老人编号
 	Name     string `json:"name"`     // 联系人姓名
@@ -150,4 +150,4 @@ type PageSearchEmergencyContactByKeyVO struct {
 	Remark   string `json:"remark"`   // 备注（DB 当前无该列，保留字段以兼容 gen 序列化）
 }
 
-// ListLabelVO 客户标签分类列表响应（定义见 common.go）
+// ListLabelResp 客户标签分类列表响应（定义见 common.go）

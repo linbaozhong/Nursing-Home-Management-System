@@ -36,7 +36,7 @@ type nurseReserveJoin struct {
 }
 
 // PageNurseReserveByKey 分页查询护理预定
-func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto.PageNurseReserveByKeyQuery, out *[]dto.PageNurseReserveByKeyVO) error {
+func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto.PageNurseReserveByKeyReq, out *[]dto.PageNurseReserveByKeyResp) error {
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
@@ -73,9 +73,9 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 	if e != nil {
 		return e
 	}
-	res := make([]dto.PageNurseReserveByKeyVO, 0, len(joins))
+	res := make([]dto.PageNurseReserveByKeyResp, 0, len(joins))
 	for _, j := range joins {
-		res = append(res, dto.PageNurseReserveByKeyVO{
+		res = append(res, dto.PageNurseReserveByKeyResp{
 			ID:           int64(j.ID),
 			ElderName:    j.ElderName.String(),
 			BedName:      j.BedName.String(),
@@ -94,7 +94,7 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 }
 
 // GetNurseReserveByReserveIdAndElderId 按护理预定/老人编号查询护理预定
-func (s *nurseReserveService) GetNurseReserveByReserveIdAndElderId(ctx context.Context, in *dto.GetNurseReserveByReserveIdAndElderIdQuery, out *dto.GetNurseReserveByReserveIdAndElderIdVO) error {
+func (s *nurseReserveService) GetNurseReserveByReserveIdAndElderId(ctx context.Context, in *dto.GetNurseReserveByReserveIdAndElderIdReq, out *dto.GetNurseReserveByReserveIdAndElderIdResp) error {
 	if in.ReserveID == nil || in.ElderID == nil {
 		return constant.ErrParamInvalid
 	}
@@ -129,7 +129,7 @@ func (s *nurseReserveService) GetNurseReserveByReserveIdAndElderId(ctx context.C
 }
 
 // AddNurseReserve 新增护理预定
-func (s *nurseReserveService) AddNurseReserve(ctx context.Context, in *dto.AddNurseReserveQuery, out *dto.EmptyResp) error {
+func (s *nurseReserveService) AddNurseReserve(ctx context.Context, in *dto.AddNurseReserveReq, out *dto.EmptyResp) error {
 	if in.ElderID == nil || in.ServiceName == nil || in.PayAmount == nil {
 		return constant.ErrParamInvalid
 	}
@@ -152,7 +152,7 @@ func (s *nurseReserveService) AddNurseReserve(ctx context.Context, in *dto.AddNu
 }
 
 // EditNurseReserve 编辑护理预定
-func (s *nurseReserveService) EditNurseReserve(ctx context.Context, in *dto.EditNurseReserveQuery, out *dto.EmptyResp) error {
+func (s *nurseReserveService) EditNurseReserve(ctx context.Context, in *dto.EditNurseReserveReq, out *dto.EmptyResp) error {
 	if in.ID == nil {
 		return constant.ErrParamInvalid
 	}
@@ -178,7 +178,7 @@ func (s *nurseReserveService) DeleteNurseReserve(ctx context.Context, in *dto.ID
 }
 
 // PageSearchElderByKey 分页查询老人（供护理预定选择）
-func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyReq, out *[]dto.PageSearchElderByKeyResp) error {
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
@@ -198,7 +198,7 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 	if e != nil {
 		return e
 	}
-	res := make([]dto.PageSearchElderByKeyVO, 0, len(elders))
+	res := make([]dto.PageSearchElderByKeyResp, 0, len(elders))
 	for _, el := range elders {
 		bedName := ""
 		if el.BedId != 0 {
@@ -206,7 +206,7 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 				bedName = b.Name.String()
 			}
 		}
-		res = append(res, dto.PageSearchElderByKeyVO{
+		res = append(res, dto.PageSearchElderByKeyResp{
 			ElderID:   int64(el.Id),
 			ElderName: el.Name.String(),
 			IDNum:     el.IdNum.String(),
@@ -219,7 +219,7 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 }
 
 // ListNurseStaff 查询护理员工（护理员列表）
-func (s *nurseReserveService) ListNurseStaff(ctx context.Context, in *dto.EmptyReq, out *[]dto.PageSearchStaffByKeyVO) error {
+func (s *nurseReserveService) ListNurseStaff(ctx context.Context, in *dto.EmptyReq, out *[]dto.PageSearchStaffByKeyResp) error {
 	staffs, has, e := dao.Staff(db).List(ctx,
 		ace.Where(tblstaff.TenantId.Eq(types.BigInt(lib.TenantID(ctx)))).
 			Cols(
@@ -233,9 +233,9 @@ func (s *nurseReserveService) ListNurseStaff(ctx context.Context, in *dto.EmptyR
 	if !has {
 		return nil
 	}
-	res := make([]dto.PageSearchStaffByKeyVO, 0, len(staffs))
+	res := make([]dto.PageSearchStaffByKeyResp, 0, len(staffs))
 	for _, st := range staffs {
-		res = append(res, dto.PageSearchStaffByKeyVO{
+		res = append(res, dto.PageSearchStaffByKeyResp{
 			ID:    int64(st.Id),
 			Name:  st.Name.String(),
 			Phone: st.Phone.String(),

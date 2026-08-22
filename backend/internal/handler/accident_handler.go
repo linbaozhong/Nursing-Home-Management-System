@@ -28,7 +28,7 @@ func (a *accident) RegisterRoute(group ack.Party) {
 // @Tags 事故记录
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageAccidentByKeyQuery true "PageAccidentByKeyQuery"
+// @Param data query dto.PageAccidentByKeyReq true "PageAccidentByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /accident/pageAccidentByKey [get]
 func (a *accident) pageAccidentByKey(ctx ack.Context) {
@@ -52,7 +52,7 @@ func (a *accident) getAccidentById(ctx ack.Context) {
 // @Tags 事故记录
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddAccidentQuery true "AddAccidentQuery"
+// @Param data body dto.AddAccidentReq true "AddAccidentReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /accident/addAccident [post]
 func (a *accident) addAccident(ctx ack.Context) {
@@ -64,7 +64,7 @@ func (a *accident) addAccident(ctx ack.Context) {
 // @Tags 事故记录
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditAccidentQuery true "EditAccidentQuery"
+// @Param data body dto.EditAccidentReq true "EditAccidentReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /accident/editAccident [post]
 func (a *accident) editAccident(ctx ack.Context) {

@@ -33,7 +33,7 @@ func (l *label) RegisterRoute(group ack.Party) {
 // @Tags 标签
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageLabelByKeyQuery true "PageLabelByKeyQuery"
+// @Param data query dto.PageLabelByKeyReq true "PageLabelByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /label/pageLabelByKey [get]
 func (l *label) pageLabelByKey(ctx ack.Context) {
@@ -57,7 +57,7 @@ func (l *label) getLabelById(ctx ack.Context) {
 // @Tags 标签
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddLabelQuery true "AddLabelQuery"
+// @Param data body dto.AddLabelReq true "AddLabelReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /label/addLabel [post]
 func (l *label) addLabel(ctx ack.Context) {
@@ -69,7 +69,7 @@ func (l *label) addLabel(ctx ack.Context) {
 // @Tags 标签
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditLabelQuery true "EditLabelQuery"
+// @Param data body dto.EditLabelReq true "EditLabelReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /label/editLabel [post]
 func (l *label) editLabel(ctx ack.Context) {
@@ -93,7 +93,7 @@ func (l *label) deleteLabel(ctx ack.Context) {
 // @Tags 标签
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageLabelTypeByKeyQuery true "PageLabelTypeByKeyQuery"
+// @Param data query dto.PageLabelTypeByKeyReq true "PageLabelTypeByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /label/pageLabelTypeByKey [get]
 func (l *label) pageLabelTypeByKey(ctx ack.Context) {
@@ -117,7 +117,7 @@ func (l *label) getLabelTypeById(ctx ack.Context) {
 // @Tags 标签
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddLabelTypeQuery true "AddLabelTypeQuery"
+// @Param data body dto.AddLabelTypeReq true "AddLabelTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /label/addLabelType [post]
 func (l *label) addLabelType(ctx ack.Context) {
@@ -129,7 +129,7 @@ func (l *label) addLabelType(ctx ack.Context) {
 // @Tags 标签
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditLabelTypeQuery true "EditLabelTypeQuery"
+// @Param data body dto.EditLabelTypeReq true "EditLabelTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /label/editLabelType [post]
 func (l *label) editLabelType(ctx ack.Context) {

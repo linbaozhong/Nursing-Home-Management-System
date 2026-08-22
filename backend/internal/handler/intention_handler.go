@@ -47,7 +47,7 @@ func (i *intention) RegisterRoute(group ack.Party) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageIntentionByKeyQuery true "PageIntentionByKeyQuery"
+// @Param data query dto.PageIntentionByKeyReq true "PageIntentionByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/pageIntentByKey [get]
 func (i *intention) pageIntentByKey(ctx ack.Context) {
@@ -71,7 +71,7 @@ func (i *intention) getIntentById(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddIntentQuery true "AddIntentQuery"
+// @Param data body dto.AddIntentReq true "AddIntentReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/addIntent [post]
 func (i *intention) addIntent(ctx ack.Context) {
@@ -83,7 +83,7 @@ func (i *intention) addIntent(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditIntentQuery true "EditIntentQuery"
+// @Param data body dto.EditIntentReq true "EditIntentReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/editIntent [post]
 func (i *intention) editIntent(ctx ack.Context) {
@@ -107,7 +107,7 @@ func (i *intention) deleteIntent(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.ListLabelQuery true "ListLabelQuery"
+// @Param data query dto.ListLabelReq true "ListLabelReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/listLabel [get]
 func (i *intention) listLabel(ctx ack.Context) {
@@ -119,7 +119,7 @@ func (i *intention) listLabel(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/pageSearchElderByKey [get]
 func (i *intention) pageSearchElderByKey(ctx ack.Context) {
@@ -131,7 +131,7 @@ func (i *intention) pageSearchElderByKey(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.GetElderLabelByIdQuery true "GetElderLabelByIdQuery"
+// @Param data query dto.GetElderLabelByIdReq true "GetElderLabelByIdReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/getElderLabelById [get]
 func (i *intention) getElderLabelById(ctx ack.Context) {
@@ -155,7 +155,7 @@ func (i *intention) getEditElderLabelById(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditElderLabelQuery true "EditElderLabelQuery"
+// @Param data body dto.EditElderLabelReq true "EditElderLabelReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/editElderLabel [post]
 func (i *intention) editElderLabel(ctx ack.Context) {
@@ -167,7 +167,7 @@ func (i *intention) editElderLabel(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageVisitPlanQuery true "PageVisitPlanQuery"
+// @Param data query dto.PageVisitPlanReq true "PageVisitPlanReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/pageVisitPlan [get]
 func (i *intention) visitPlanByKey(ctx ack.Context) {
@@ -179,7 +179,7 @@ func (i *intention) visitPlanByKey(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddVisitPlanQuery true "AddVisitPlanQuery"
+// @Param data body dto.AddVisitPlanReq true "AddVisitPlanReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/addVisitPlan [post]
 func (i *intention) addVisitPlan(ctx ack.Context) {
@@ -215,7 +215,7 @@ func (i *intention) deleteVisitPlan(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageCommunicationRecordQuery true "PageCommunicationRecordQuery"
+// @Param data query dto.PageCommunicationRecordReq true "PageCommunicationRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/pageCommunicationRecord [get]
 func (i *intention) pageCommunicationRecord(ctx ack.Context) {
@@ -227,7 +227,7 @@ func (i *intention) pageCommunicationRecord(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddCommunicationRecordQuery true "AddCommunicationRecordQuery"
+// @Param data body dto.AddCommunicationRecordReq true "AddCommunicationRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/addCommunicationRecord [post]
 func (i *intention) addCommunicationRecord(ctx ack.Context) {
@@ -239,7 +239,7 @@ func (i *intention) addCommunicationRecord(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditCommunicationRecordQuery true "EditCommunicationRecordQuery"
+// @Param data body dto.EditCommunicationRecordReq true "EditCommunicationRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/editCommunicationRecord [post]
 func (i *intention) editCommunicationRecord(ctx ack.Context) {
@@ -251,7 +251,7 @@ func (i *intention) editCommunicationRecord(ctx ack.Context) {
 // @Tags 意向客户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.DeleteCommunicationRecordQuery true "DeleteCommunicationRecordQuery"
+// @Param data body dto.DeleteCommunicationRecordReq true "DeleteCommunicationRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /intention/deleteCommunicationRecord [post]
 func (i *intention) deleteCommunicationRecord(ctx ack.Context) {

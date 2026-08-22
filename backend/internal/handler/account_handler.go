@@ -39,8 +39,8 @@ func (a *account) RegisterRoute(group ack.Party) {
 // @Tags 账户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.LoginQuery true "LoginQuery"
-// @Success 200 {object} dto.LoginUserVO
+// @Param data body dto.LoginReq true "LoginReq"
+// @Success 200 {object} dto.LoginUserResp
 // @Router /account/login [post]
 func (a *account) login(ctx ack.Context) {
 	ack.Post(ctx, service.Account.Login)
@@ -51,8 +51,8 @@ func (a *account) login(ctx ack.Context) {
 // @Tags 账户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.WxLoginQuery true "WxLoginQuery"
-// @Success 200 {object} dto.WxLoginVO
+// @Param data body dto.WxLoginReq true "WxLoginReq"
+// @Success 200 {object} dto.WxLoginResp
 // @Router /account/wxLogin [post]
 func (a *account) wxLogin(ctx ack.Context) {
 	ack.Post(ctx, service.Tenant.WxLogin)
@@ -63,7 +63,7 @@ func (a *account) wxLogin(ctx ack.Context) {
 // @Tags 账户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.SendCodeQuery true "SendCodeQuery"
+// @Param data body dto.SendCodeReq true "SendCodeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /account/sendCode [post]
 func (a *account) sendCode(ctx ack.Context) {
@@ -75,8 +75,8 @@ func (a *account) sendCode(ctx ack.Context) {
 // @Tags 账户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.ForgetQuery true "ForgetQuery"
-// @Success 200 {object} dto.LoginUserVO
+// @Param data body dto.ForgetReq true "ForgetReq"
+// @Success 200 {object} dto.LoginUserResp
 // @Router /account/forget [post]
 func (a *account) forget(ctx ack.Context) {
 	ack.Post(ctx, service.Account.Forget)
@@ -87,7 +87,7 @@ func (a *account) forget(ctx ack.Context) {
 // @Tags 账户
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditQuery true "EditQuery"
+// @Param data body dto.EditReq true "EditReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /account/edit [post]
 func (a *account) edit(ctx ack.Context) {

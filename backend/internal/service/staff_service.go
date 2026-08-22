@@ -34,7 +34,7 @@ func (s *staffService) GetRole(ctx context.Context, in *dto.EmptyReq, out *[]dto
 }
 
 // PageStaffByKey 分页查询员工（联角色表）
-func (s *staffService) PageStaffByKey(ctx context.Context, in *dto.PageStaffByKeyQuery, out *[]dto.PageStaffByKeyVO) error {
+func (s *staffService) PageStaffByKey(ctx context.Context, in *dto.PageStaffByKeyReq, out *[]dto.PageStaffByKeyResp) error {
 	q := db.Table(tblstaff.TableName).
 		LeftJoin(tblstaff.RoleId, tblrole.Id).
 		Where(tblstaff.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
@@ -63,7 +63,7 @@ func (s *staffService) PageStaffByKey(ctx context.Context, in *dto.PageStaffByKe
 }
 
 // PageSearchStaffByKey 分页搜索员工
-func (s *staffService) PageSearchStaffByKey(ctx context.Context, in *dto.PageSearchStaffByKeyQuery, out *[]dto.PageSearchStaffByKeyVO) error {
+func (s *staffService) PageSearchStaffByKey(ctx context.Context, in *dto.PageSearchStaffByKeyReq, out *[]dto.PageSearchStaffByKeyResp) error {
 	q := db.Table(tblstaff.TableName).
 		Where(tblstaff.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.Name != nil {
@@ -83,7 +83,7 @@ func (s *staffService) PageSearchStaffByKey(ctx context.Context, in *dto.PageSea
 }
 
 // AddStaff 新增员工
-func (s *staffService) AddStaff(ctx context.Context, in *dto.OperateStaffQuery, out *dto.EmptyResp) error {
+func (s *staffService) AddStaff(ctx context.Context, in *dto.OperateStaffReq, out *dto.EmptyResp) error {
 	has, e := dao.Staff(db).Exists(ctx,
 		tblstaff.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblstaff.Phone.Eq(*in.Phone).
@@ -122,7 +122,7 @@ func (s *staffService) AddStaff(ctx context.Context, in *dto.OperateStaffQuery, 
 }
 
 // GetStaffById 查询员工详情
-func (s *staffService) GetStaffById(ctx context.Context, in *dto.IDReq, out *dto.OperateStaffVO) error {
+func (s *staffService) GetStaffById(ctx context.Context, in *dto.IDReq, out *dto.OperateStaffResp) error {
 	bean, has, e := dao.Staff(db).GetByID(ctx, types.BigInt(*in.ID),
 		tblstaff.Id, tblstaff.RoleId, tblstaff.Name, tblstaff.IdNum, tblstaff.Age,
 		tblstaff.Sex, tblstaff.Phone, tblstaff.Email, tblstaff.Address, tblstaff.Avator)
@@ -146,7 +146,7 @@ func (s *staffService) GetStaffById(ctx context.Context, in *dto.IDReq, out *dto
 }
 
 // EditStaff 编辑员工
-func (s *staffService) EditStaff(ctx context.Context, in *dto.OperateStaffQuery, out *dto.EmptyResp) error {
+func (s *staffService) EditStaff(ctx context.Context, in *dto.OperateStaffReq, out *dto.EmptyResp) error {
 	has, e := dao.Staff(db).Exists(ctx,
 		tblstaff.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblstaff.Phone.Eq(types.String(*in.Phone)).

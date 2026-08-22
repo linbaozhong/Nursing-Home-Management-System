@@ -30,7 +30,7 @@ var Active = &active{}
 //
 // 说明：Java 实际为查全量后 PageUtil 内存分页。Go 端用独立 builder 做 DB 分页，
 // typeName 通过预加载 active_type map 补齐（替代 mapper 联表）。
-func (a *active) PageActiveByKey(ctx context.Context, in *dto.PageActiveByKeyQuery, out *[]dto.PageActiveByKeyVO) error {
+func (a *active) PageActiveByKey(ctx context.Context, in *dto.PageActiveByKeyReq, out *[]dto.PageActiveByKeyResp) error {
 	// 1) 预加载活动类型，用于补齐 typeName
 	typeList, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.DelFlag.Eq(constant.YesNoNo)))
 	if e != nil {
@@ -68,7 +68,7 @@ func (a *active) PageActiveByKey(ctx context.Context, in *dto.PageActiveByKeyQue
 // GetActiveById 根据编号获取活动（含参与老人列表）
 // 对应 Java: ActiveServiceImpl.getActiveById -> activeMapper.selectByPrimaryKey + activeParticipantMapper.listParticipateElder
 // 说明：参与老人 Java 联 elder 取 name/phone；Go 端查 elder_active 后批量取 elder 补齐。
-func (a *active) GetActiveById(ctx context.Context, in *dto.IDReq, out *dto.GetActiveByIDVO) error {
+func (a *active) GetActiveById(ctx context.Context, in *dto.IDReq, out *dto.GetActiveByIDResp) error {
 	obj, has, e := dao.Active(db).GetByID(ctx, types.BigInt(*in.ID))
 	if e != nil {
 		return e
@@ -105,7 +105,7 @@ func (a *active) GetActiveById(ctx context.Context, in *dto.IDReq, out *dto.GetA
 		return e
 	}
 	if len(participants) == 0 {
-		out.ParticipateElderVOList = []dto.ParticipateElderVO{}
+		out.ParticipateElderRespList = []dto.ParticipateElderResp{}
 		return nil
 	}
 	ids := make([]any, 0, len(participants))
@@ -120,26 +120,26 @@ func (a *active) GetActiveById(ctx context.Context, in *dto.IDReq, out *dto.GetA
 	for _, el := range elders {
 		elderMap[uint64(el.Id)] = el
 	}
-	voList := make([]dto.ParticipateElderVO, 0, len(participants))
+	voList := make([]dto.ParticipateElderResp, 0, len(participants))
 	for _, p := range participants {
 		el, ok := elderMap[uint64(p.ElderId)]
 		if !ok {
 			continue
 		}
-		voList = append(voList, dto.ParticipateElderVO{
+		voList = append(voList, dto.ParticipateElderResp{
 			ID:    int64(el.Id),
 			Name:  string(el.Name),
 			Phone: string(el.Phone),
 		})
 	}
-	out.ParticipateElderVOList = voList
+	out.ParticipateElderRespList = voList
 	return nil
 }
 
 // AddActive 新增活动（同时写入参与老人 elder_active）
 // 对应 Java: ActiveServiceImpl.addActive -> activeMapper.insertSelective 后批量 insert elder_active
 // 说明：Java 为 @Transactional。Go 端分两步写入（框架未启用显式事务）。
-func (a *active) AddActive(ctx context.Context, in *dto.OperateActiveQuery, out *dto.EmptyResp) error {
+func (a *active) AddActive(ctx context.Context, in *dto.OperateActiveReq, out *dto.EmptyResp) error {
 	bean := do.NewActive()
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.TypeId = types.BigInt(*in.TypeID)
@@ -172,7 +172,7 @@ func (a *active) AddActive(ctx context.Context, in *dto.OperateActiveQuery, out 
 // EditActive 编辑活动（先删后插参与老人 elder_active）
 // 对应 Java: ActiveServiceImpl.editActive -> 更新 active + 删除旧 elder_active + 批量新增
 // 说明：Java 为 @Transactional。Go 端分三步写入。
-func (a *active) EditActive(ctx context.Context, in *dto.OperateActiveQuery, out *dto.EmptyResp) error {
+func (a *active) EditActive(ctx context.Context, in *dto.OperateActiveReq, out *dto.EmptyResp) error {
 	sets := []dialect.Setter{
 		tblactive.TypeId.Set(*in.TypeID),
 		tblactive.Theme.Set(*in.Theme),
@@ -219,7 +219,7 @@ func (a *active) DeleteActive(ctx context.Context, in *dto.IDReq, out *dto.Empty
 // 对应 Java: ActiveServiceImpl.pageSearchElderByKey -> CommonFunc.pageSearchElderByKeyResult
 // Java SQL: SELECT * FROM elder WHERE (elder_name LIKE %key% OR id = key) [可选] AND del_flag=0
 // 说明：Java 侧按 checkFlag in (咨询/意向/预定/退住) 过滤；Go 端对齐 CheckContract 的咨询口径。
-func (a *active) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.ParticipateElderVO) error {
+func (a *active) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyReq, out *[]dto.ParticipateElderResp) error {
 	// 注：elder 表无 del_flag 字段，此处用恒真条件占位
 	query := ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Gte(types.BigInt(0)))
 	if in.Name != nil {
@@ -232,9 +232,9 @@ func (a *active) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchEld
 	if e != nil {
 		return e
 	}
-	*out = make([]dto.ParticipateElderVO, 0, len(list))
+	*out = make([]dto.ParticipateElderResp, 0, len(list))
 	for _, elder := range list {
-		*out = append(*out, dto.ParticipateElderVO{
+		*out = append(*out, dto.ParticipateElderResp{
 			ID:    int64(elder.Id),
 			Name:  elder.Name.String(),
 			Phone: elder.Phone.String(),

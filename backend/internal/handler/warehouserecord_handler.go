@@ -31,7 +31,7 @@ func (w *warehouserecord) RegisterRoute(group ack.Party) {
 // @Tags 入库记录
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageWarehouseRecordByKeyQuery true "PageWarehouseRecordByKeyQuery"
+// @Param data query dto.PageWarehouseRecordByKeyReq true "PageWarehouseRecordByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /warehouseRecord/pageWarehouseRecordByKey [get]
 func (w *warehouserecord) pageWarehouseRecordByKey(ctx ack.Context) {
@@ -67,7 +67,7 @@ func (w *warehouserecord) listWarehouseStaff(ctx ack.Context) {
 // @Tags 入库记录
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageMaterialByKeyQuery true "PageMaterialByKeyQuery"
+// @Param data query dto.PageMaterialByKeyReq true "PageMaterialByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /warehouseRecord/pageMaterialByKey [get]
 func (w *warehouserecord) pageMaterialByKey(ctx ack.Context) {
@@ -79,7 +79,7 @@ func (w *warehouserecord) pageMaterialByKey(ctx ack.Context) {
 // @Tags 入库记录
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddWarehouseRecordQuery true "AddWarehouseRecordQuery"
+// @Param data body dto.AddWarehouseRecordReq true "AddWarehouseRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /warehouseRecord/addWarehouseRecord [post]
 func (w *warehouserecord) addWarehouseRecord(ctx ack.Context) {
@@ -103,7 +103,7 @@ func (w *warehouserecord) getWarehouseRecordById(ctx ack.Context) {
 // @Tags 入库记录
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AuditWarehouseRecordQuery true "AuditWarehouseRecordQuery"
+// @Param data body dto.AuditWarehouseRecordReq true "AuditWarehouseRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /warehouseRecord/auditWarehouseRecord [post]
 func (w *warehouserecord) auditWarehouseRecord(ctx ack.Context) {

@@ -7,9 +7,9 @@ import (
 
 // ============ NurseReserveController 请求 ============
 
+// PageNurseReserveByKeyReq 分页查询护理预定请求
 // @request
-// PageNurseReserveByKeyQuery 分页查询护理预定请求
-type PageNurseReserveByKeyQuery struct {
+type PageNurseReserveByKeyReq struct {
 	PageNum     *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize    *int    `json:"page_size" valid:"required"` // 条数
 	ElderName   *string `json:"elder_name"`                 // 老人姓名
@@ -17,9 +17,9 @@ type PageNurseReserveByKeyQuery struct {
 	BedName     *string `json:"bed_name"`                   // 床位名称
 }
 
+// AddNurseReserveReq 新增护理预定请求
 // @request
-// AddNurseReserveQuery 新增护理预定请求
-type AddNurseReserveQuery struct {
+type AddNurseReserveReq struct {
 	ElderID      *int64       `json:"elder_id" valid:"required"`      // 老人编号
 	ServiceName  *string      `json:"service_name" valid:"required"`  // 项目名称
 	NeedDate     *int         `json:"need_date" valid:"required"`     // 所需时间
@@ -29,9 +29,9 @@ type AddNurseReserveQuery struct {
 	PayAmount    *types.Money `json:"pay_amount" valid:"required"`    // 支付总额
 }
 
+// ExecuteNurseReserveReq 执行护理预定请求
 // @request
-// ExecuteNurseReserveQuery 执行护理预定请求
-type ExecuteNurseReserveQuery struct {
+type ExecuteNurseReserveReq struct {
 	ID        *int64     `json:"id"`                          // id
 	StaffID   *int64     `json:"staff_id" valid:"required"`   // 服务员工编号
 	NurseDate *time.Time `json:"nurse_date" valid:"required"` // 护理时间
@@ -39,9 +39,9 @@ type ExecuteNurseReserveQuery struct {
 
 // ============ NurseReserveController 响应 ============
 
+// PageNurseReserveByKeyResp 分页查询护理预定响应
 // @response
-// PageNurseReserveByKeyVO 分页查询护理预定响应
-type PageNurseReserveByKeyVO struct {
+type PageNurseReserveByKeyResp struct {
 	ID           int64       `json:"id"`            // id
 	ElderName    string      `json:"elder_name"`    // 老人姓名
 	BedName      string      `json:"bed_name"`      // 床位名称
@@ -55,16 +55,16 @@ type PageNurseReserveByKeyVO struct {
 	OrderFlag    string      `json:"order_flag"`    // 订单状态
 }
 
+// GetNurseReserveByReserveIdAndElderIdReq 按护理预定/老人编号获取护理预定请求
 // @request
-// GetNurseReserveByReserveIdAndElderIdQuery 按护理预定/老人编号获取护理预定请求
-type GetNurseReserveByReserveIdAndElderIdQuery struct {
+type GetNurseReserveByReserveIdAndElderIdReq struct {
 	ReserveID *int64 `json:"reserve_id" valid:"required"` // 护理预定编号
 	ElderID   *int64 `json:"elder_id" valid:"required"`   // 老人编号
 }
 
+// EditNurseReserveReq 编辑护理预定请求
 // @request
-// EditNurseReserveQuery 编辑护理预定请求
-type EditNurseReserveQuery struct {
+type EditNurseReserveReq struct {
 	ID           *int64       `json:"id"`                             // id
 	ElderID      *int64       `json:"elder_id" valid:"required"`      // 老人编号
 	ReserveDate  *time.Time   `json:"reserve_date" valid:"required"`  // 预定时间
@@ -76,9 +76,9 @@ type EditNurseReserveQuery struct {
 	PayAmount    *types.Money `json:"pay_amount" valid:"required"`    // 支付总额
 }
 
+// GetNurseReserveByReserveIdAndElderIdResp 按护理预定/老人编号获取护理预定响应
 // @response
-// GetNurseReserveByReserveIdAndElderIdVO 按护理预定/老人编号获取护理预定响应
-type GetNurseReserveByReserveIdAndElderIdVO struct {
+type GetNurseReserveByReserveIdAndElderIdResp struct {
 	ID           int64       `json:"id"`            // 护理预定编号
 	ElderName    string      `json:"elder_name"`    // 老人姓名
 	BedName      string      `json:"bed_name"`      // 床位名称

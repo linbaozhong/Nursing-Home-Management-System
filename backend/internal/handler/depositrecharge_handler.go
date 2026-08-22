@@ -32,7 +32,7 @@ func (d *depositrecharge) RegisterRoute(group ack.Party) {
 // @Tags 押金充值
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageDepositRechargeByKeyQuery true "PageDepositRechargeByKeyQuery"
+// @Param data query dto.PageDepositRechargeByKeyReq true "PageDepositRechargeByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /depositRecharge/pageDepositRechargeByKey [get]
 func (d *depositrecharge) pageDepositRechargeByKey(ctx ack.Context) {
@@ -56,7 +56,7 @@ func (d *depositrecharge) getDepositRechargeById(ctx ack.Context) {
 // @Tags 押金充值
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddDepositRechargeQuery true "AddDepositRechargeQuery"
+// @Param data body dto.AddDepositRechargeReq true "AddDepositRechargeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /depositRecharge/addDepositRecharge [post]
 func (d *depositrecharge) addDepositRecharge(ctx ack.Context) {
@@ -68,7 +68,7 @@ func (d *depositrecharge) addDepositRecharge(ctx ack.Context) {
 // @Tags 押金充值
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditDepositRechargeQuery true "EditDepositRechargeQuery"
+// @Param data body dto.EditDepositRechargeReq true "EditDepositRechargeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /depositRecharge/editDepositRecharge [post]
 func (d *depositrecharge) editDepositRecharge(ctx ack.Context) {
@@ -92,7 +92,7 @@ func (d *depositrecharge) deleteDepositRecharge(ctx ack.Context) {
 // @Tags 押金充值
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /depositRecharge/pageSearchElderByKey [get]
 func (d *depositrecharge) pageSearchElderByKey(ctx ack.Context) {
@@ -104,7 +104,7 @@ func (d *depositrecharge) pageSearchElderByKey(ctx ack.Context) {
 // @Tags 押金充值
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchStaffByKeyQuery true "PageSearchStaffByKeyQuery"
+// @Param data query dto.PageSearchStaffByKeyReq true "PageSearchStaffByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /depositRecharge/pageSearchStaffByKey [get]
 func (d *depositrecharge) pageSearchStaffByKey(ctx ack.Context) {
@@ -128,7 +128,7 @@ func (d *depositrecharge) getElderFeeById(ctx ack.Context) {
 // @Tags 押金充值
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AuditElderFeeQuery true "AuditElderFeeQuery"
+// @Param data body dto.AuditElderFeeReq true "AuditElderFeeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /depositRecharge/auditElderFee [post]
 func (d *depositrecharge) auditElderFee(ctx ack.Context) {

@@ -24,7 +24,7 @@ var Warehouse = &warehouse{}
 // PageWarehouseByKey 分页查询仓库
 // 对应 Java: WarehouseServiceImpl.pageWarehouseByKey -> WarehouseMapper.listWarehouseByKey
 // 注: staff_name 需联表 user 表(仓库管理员名), 因 user 表尚未在 Go 侧生成, 暂未联表, staff_name 留空。
-func (w *warehouse) PageWarehouseByKey(ctx context.Context, in *dto.PageWarehouseByKeyQuery, out *[]dto.PageWarehouseByKeyVO) error {
+func (w *warehouse) PageWarehouseByKey(ctx context.Context, in *dto.PageWarehouseByKeyReq, out *[]dto.PageWarehouseByKeyResp) error {
 	q := db.Table(tblwarehouse.TableName).
 		Where(tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouse.DelFlag.Eq(constant.YesNoNo))
 	if in.WarehouseName != nil && *in.WarehouseName != "" {
@@ -50,7 +50,7 @@ func (w *warehouse) ListWarehouseStaff(ctx context.Context, in *dto.EmptyReq, ou
 
 // AddWarehouse 新增仓库（校验名称不重复）
 // 对应 Java: WarehouseServiceImpl.addWarehouse -> WarehouseFunc.getWarehouseByName
-func (w *warehouse) AddWarehouse(ctx context.Context, in *dto.OperateWarehouseQuery, out *dto.EmptyResp) error {
+func (w *warehouse) AddWarehouse(ctx context.Context, in *dto.OperateWarehouseReq, out *dto.EmptyResp) error {
 	repeat, e := dao.Warehouse(db).Exists(ctx,
 		tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblwarehouse.Name.Eq(*in.Name),
@@ -73,7 +73,7 @@ func (w *warehouse) AddWarehouse(ctx context.Context, in *dto.OperateWarehouseQu
 
 // GetWarehouseById 根据编号获取仓库（编辑回显）
 // 对应 Java: WarehouseServiceImpl.getWarehouseById
-func (w *warehouse) GetWarehouseById(ctx context.Context, in *dto.IDReq, out *dto.OperateWarehouseVO) error {
+func (w *warehouse) GetWarehouseById(ctx context.Context, in *dto.IDReq, out *dto.OperateWarehouseResp) error {
 	obj, has, e := dao.Warehouse(db).Get(ctx, ace.Where(tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouse.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
@@ -89,7 +89,7 @@ func (w *warehouse) GetWarehouseById(ctx context.Context, in *dto.IDReq, out *dt
 
 // EditWarehouse 编辑仓库（校验名称不重复排除自身）
 // 对应 Java: WarehouseServiceImpl.editWarehouse
-func (w *warehouse) EditWarehouse(ctx context.Context, in *dto.OperateWarehouseQuery, out *dto.EmptyResp) error {
+func (w *warehouse) EditWarehouse(ctx context.Context, in *dto.OperateWarehouseReq, out *dto.EmptyResp) error {
 	repeat, e := dao.Warehouse(db).Exists(ctx,
 		tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblwarehouse.Name.Eq(*in.Name),

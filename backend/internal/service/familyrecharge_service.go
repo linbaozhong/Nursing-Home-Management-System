@@ -31,7 +31,7 @@ const (
 )
 
 // RechargeUnifiedOrder 家属充值统一下单
-func (s *familyRecharge) RechargeUnifiedOrder(ctx context.Context, in *dto.RechargeUnifiedOrderQuery, out *dto.RechargeUnifiedOrderVO) error {
+func (s *familyRecharge) RechargeUnifiedOrder(ctx context.Context, in *dto.RechargeUnifiedOrderReq, out *dto.RechargeUnifiedOrderResp) error {
 	if in.Phone == nil || in.ElderID == nil || in.Amount == nil {
 		return constant.ErrParamError
 	}
@@ -101,7 +101,7 @@ func (s *familyRecharge) RechargeUnifiedOrder(ctx context.Context, in *dto.Recha
 }
 
 // PayNotify 微信支付结果回调
-func (s *familyRecharge) PayNotify(ctx context.Context, in *dto.WechatPayNotifyQuery, out *dto.EmptyResp) error {
+func (s *familyRecharge) PayNotify(ctx context.Context, in *dto.WechatPayNotifyReq, out *dto.EmptyResp) error {
 	// 解密回调（B 方案：用 APIv3 密钥解密 resource）
 	plain, e := decryptWxNotify(wxAPIv3KeyPlaceholder, in.Resource)
 	if e != nil {

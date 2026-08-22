@@ -35,7 +35,7 @@ type orderJoin struct {
 }
 
 // PageOrderByKey 分页查询点餐
-func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKeyQuery, out *[]dto.PageOrderByKeyVO) error {
+func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKeyReq, out *[]dto.PageOrderByKeyResp) error {
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblorder.TableName).
 		LeftJoin(tblorder.ElderId, tblelder.Id).
@@ -66,9 +66,9 @@ func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKe
 		return e
 	}
 
-	res := make([]dto.PageOrderByKeyVO, 0, len(joins))
+	res := make([]dto.PageOrderByKeyResp, 0, len(joins))
 	for _, j := range joins {
-		res = append(res, dto.PageOrderByKeyVO{
+		res = append(res, dto.PageOrderByKeyResp{
 			ID:                int64(j.ID),
 			ElderName:         j.ElderName.String(),
 			ElderPhone:        j.ElderPhone.String(),
@@ -85,7 +85,7 @@ func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKe
 }
 
 // GetOrderById 查询点餐详情（含菜品）
-func (s *orderService) GetOrderById(ctx context.Context, in *dto.IDReq, out *dto.GetOrderByIDVO) error {
+func (s *orderService) GetOrderById(ctx context.Context, in *dto.IDReq, out *dto.GetOrderByIDResp) error {
 	order, has, e := dao.Order(db).Get(ctx, ace.Where(tblorder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblorder.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
@@ -109,7 +109,7 @@ func (s *orderService) GetOrderById(ctx context.Context, in *dto.IDReq, out *dto
 	dishes, _, de := dao.OrderDishes(db).List(ctx, ace.Where(tblorderdishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblorderdishes.OrderId.Eq(order.Id)))
 	if de == nil {
 		for _, d := range dishes {
-			out.OrderDishesVOList = append(out.OrderDishesVOList, dto.OrderDishesVO{
+			out.OrderDishesRespList = append(out.OrderDishesRespList, dto.OrderDishesResp{
 				DishesName:   d.DishesName.String(),
 				DishesPrice:  d.DishesPrice,
 				OrderNum:     int(d.OrderNum),
@@ -123,7 +123,7 @@ func (s *orderService) GetOrderById(ctx context.Context, in *dto.IDReq, out *dto
 }
 
 // AddOrder 新增点餐（含菜品明细与金额计算）
-func (s *orderService) AddOrder(ctx context.Context, in *dto.AddOrderQuery, out *dto.EmptyResp) error {
+func (s *orderService) AddOrder(ctx context.Context, in *dto.AddOrderReq, out *dto.EmptyResp) error {
 	if in.ElderID == nil || len(in.OrderDishesList) == 0 {
 		return constant.ErrParamInvalid
 	}
@@ -174,7 +174,7 @@ func (s *orderService) AddOrder(ctx context.Context, in *dto.AddOrderQuery, out 
 }
 
 // SendOrder 送餐（标记完成并扣费）
-func (s *orderService) SendOrder(ctx context.Context, in *dto.SendOrderQuery, out *dto.EmptyResp) error {
+func (s *orderService) SendOrder(ctx context.Context, in *dto.SendOrderReq, out *dto.EmptyResp) error {
 	if in.ID == nil || in.StaffID == nil {
 		return constant.ErrParamInvalid
 	}

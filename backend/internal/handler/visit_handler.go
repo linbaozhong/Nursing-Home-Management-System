@@ -30,7 +30,7 @@ func (v *visit) RegisterRoute(group ack.Party) {
 // @Tags 回访
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageVisitByKeyQuery true "PageVisitByKeyQuery"
+// @Param data query dto.PageVisitByKeyReq true "PageVisitByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /visit/pageVisitByKey [get]
 func (v *visit) pageVisitByKey(ctx ack.Context) {
@@ -42,7 +42,7 @@ func (v *visit) pageVisitByKey(ctx ack.Context) {
 // @Tags 回访
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /visit/pageSearchElderByKey [get]
 func (v *visit) pageSearchElderByKey(ctx ack.Context) {
@@ -54,7 +54,7 @@ func (v *visit) pageSearchElderByKey(ctx ack.Context) {
 // @Tags 回访
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddVisitQuery true "AddVisitQuery"
+// @Param data body dto.AddVisitReq true "AddVisitReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /visit/addVisit [post]
 func (v *visit) addVisit(ctx ack.Context) {
@@ -78,7 +78,7 @@ func (v *visit) getVisitById(ctx ack.Context) {
 // @Tags 回访
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditVisitQuery true "EditVisitQuery"
+// @Param data body dto.EditVisitReq true "EditVisitReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /visit/editVisit [post]
 func (v *visit) editVisit(ctx ack.Context) {
@@ -90,7 +90,7 @@ func (v *visit) editVisit(ctx ack.Context) {
 // @Tags 回访
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.RecordLeaveQuery true "RecordLeaveQuery"
+// @Param data body dto.RecordLeaveReq true "RecordLeaveReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /visit/recordLeave [post]
 func (v *visit) recordLeave(ctx ack.Context) {

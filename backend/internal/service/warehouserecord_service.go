@@ -35,7 +35,7 @@ type warehouseRecordJoin struct {
 }
 
 // PageWarehouseRecordByKey 分页查询入库记录
-func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, in *dto.PageWarehouseRecordByKeyQuery, out *[]dto.PageWarehouseRecordByKeyVO) error {
+func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, in *dto.PageWarehouseRecordByKeyReq, out *[]dto.PageWarehouseRecordByKeyResp) error {
 	q := db.Table(tblwarehouserecord.TableName).
 		InnerJoin(tblwarehouserecord.WarehouseId, tblwarehouse.Id).
 		InnerJoin(tblwarehouserecord.StaffId, tblstaff.Id).
@@ -100,13 +100,13 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 			matMap[int64(wm.WarehouseRecordId)] = append(matMap[int64(wm.WarehouseRecordId)], n)
 		}
 	}
-	res := make([]dto.PageWarehouseRecordByKeyVO, 0, len(records))
+	res := make([]dto.PageWarehouseRecordByKeyResp, 0, len(records))
 	for _, r := range records {
 		names := matMap[int64(r.ID)]
 		if in.MaterialName != nil && !strings.Contains(strings.Join(names, ","), *in.MaterialName) {
 			continue
 		}
-		res = append(res, dto.PageWarehouseRecordByKeyVO{
+		res = append(res, dto.PageWarehouseRecordByKeyResp{
 			ID:            int64(r.ID),
 			WarehouseName: r.WarehouseName.String(), // 来自 As
 			MaterialName:  strings.Join(names, ","),
@@ -135,7 +135,7 @@ func (s *warehouseRecordService) ListWarehouse(ctx context.Context, in *dto.Empt
 }
 
 // PageMaterialByKey 分页查询仓库物资
-func (s *warehouseRecordService) PageMaterialByKey(ctx context.Context, in *dto.PageWarehouseMaterialByKeyQuery, out *[]dto.PageWarehouseMaterialByKeyVO) error {
+func (s *warehouseRecordService) PageMaterialByKey(ctx context.Context, in *dto.PageWarehouseMaterialByKeyReq, out *[]dto.PageWarehouseMaterialByKeyResp) error {
 	q := db.Table(tblwarehousematerial.TableName).
 		InnerJoin(tblwarehousematerial.MaterialId, tblmaterial.Id).
 		Where(tblwarehousematerial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehousematerial.WarehouseRecordId.Gt(0))
@@ -160,7 +160,7 @@ func (s *warehouseRecordService) PageMaterialByKey(ctx context.Context, in *dto.
 }
 
 // AddWarehouseRecord 新增入库记录
-func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto.AddWarehouseRecordQuery, out *dto.EmptyResp) error {
+func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto.AddWarehouseRecordReq, out *dto.EmptyResp) error {
 	record := new(do.WarehouseRecord)
 	record.TenantId = types.BigInt(lib.TenantID(ctx))
 	record.WarehouseId = types.BigInt(*in.WarehouseID)
@@ -176,7 +176,7 @@ func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto
 		return e
 	}
 	// 按物资编号分组汇总数量
-	group := make(map[int64]*dto.AddWarehouseMaterialQuery)
+	group := make(map[int64]*dto.AddWarehouseMaterialReq)
 	for i := range in.WarehouseMaterialQueryList {
 		m := &in.WarehouseMaterialQueryList[i]
 		if g, ok := group[*m.MaterialID]; ok {
@@ -207,7 +207,7 @@ func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto
 }
 
 // GetWarehouseRecordById 查询入库记录详情
-func (s *warehouseRecordService) GetWarehouseRecordById(ctx context.Context, in *dto.IDReq, out *dto.GetWarehouseRecordByIDVO) error {
+func (s *warehouseRecordService) GetWarehouseRecordById(ctx context.Context, in *dto.IDReq, out *dto.GetWarehouseRecordByIDResp) error {
 	e := db.Table(tblwarehouserecord.TableName).
 		InnerJoin(tblwarehouserecord.WarehouseId, tblwarehouse.Id).
 		InnerJoin(tblwarehouserecord.StaffId, tblstaff.Id).
@@ -252,7 +252,7 @@ func (s *warehouseRecordService) GetWarehouseRecordById(ctx context.Context, in 
 }
 
 // AuditWarehouseRecord 审核入库记录
-func (s *warehouseRecordService) AuditWarehouseRecord(ctx context.Context, in *dto.AuditWarehouseRecordQuery, out *dto.EmptyResp) error {
+func (s *warehouseRecordService) AuditWarehouseRecord(ctx context.Context, in *dto.AuditWarehouseRecordReq, out *dto.EmptyResp) error {
 	record, has, e := dao.WarehouseRecord(db).
 		Get(ctx,
 			ace.Where(

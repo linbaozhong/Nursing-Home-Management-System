@@ -33,7 +33,7 @@ func (m *material) RegisterRoute(group ack.Party) {
 // @Tags 物料
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageMaterialByKeyQuery true "PageMaterialByKeyQuery"
+// @Param data query dto.PageMaterialByKeyReq true "PageMaterialByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /material/pageMaterialByKey [get]
 func (m *material) pageMaterialByKey(ctx ack.Context) {
@@ -57,7 +57,7 @@ func (m *material) getMaterialById(ctx ack.Context) {
 // @Tags 物料
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddMaterialQuery true "AddMaterialQuery"
+// @Param data body dto.AddMaterialReq true "AddMaterialReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /material/addMaterial [post]
 func (m *material) addMaterial(ctx ack.Context) {
@@ -69,7 +69,7 @@ func (m *material) addMaterial(ctx ack.Context) {
 // @Tags 物料
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditMaterialQuery true "EditMaterialQuery"
+// @Param data body dto.EditMaterialReq true "EditMaterialReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /material/editMaterial [post]
 func (m *material) editMaterial(ctx ack.Context) {
@@ -93,7 +93,7 @@ func (m *material) deleteMaterial(ctx ack.Context) {
 // @Tags 物料
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageMaterialTypeByKeyQuery true "PageMaterialTypeByKeyQuery"
+// @Param data query dto.PageMaterialTypeByKeyReq true "PageMaterialTypeByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /material/pageMaterialTypeByKey [get]
 func (m *material) pageMaterialTypeByKey(ctx ack.Context) {
@@ -117,7 +117,7 @@ func (m *material) getMaterialTypeById(ctx ack.Context) {
 // @Tags 物料
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddMaterialTypeQuery true "AddMaterialTypeQuery"
+// @Param data body dto.AddMaterialTypeReq true "AddMaterialTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /material/addMaterialType [post]
 func (m *material) addMaterialType(ctx ack.Context) {
@@ -129,7 +129,7 @@ func (m *material) addMaterialType(ctx ack.Context) {
 // @Tags 物料
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditMaterialTypeQuery true "EditMaterialTypeQuery"
+// @Param data body dto.EditMaterialTypeReq true "EditMaterialTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /material/editMaterialType [post]
 func (m *material) editMaterialType(ctx ack.Context) {

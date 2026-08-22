@@ -4,9 +4,9 @@ import "time"
 
 // ============ ConsultController 请求 ============
 
+// PageConsultByKeyReq 分页查询咨询请求
 // @request
-// PageConsultByKeyQuery 分页查询咨询请求
-type PageConsultByKeyQuery struct {
+type PageConsultByKeyReq struct {
 	PageNum      *int       `json:"page_num" valid:"required"`  // 页码
 	PageSize     *int       `json:"page_size" valid:"required"` // 条数
 	ConsultName  *string    `json:"consult_name"`               // 咨询人姓名
@@ -19,9 +19,9 @@ type PageConsultByKeyQuery struct {
 	StaffID      *int64     `json:"staff_id"`                   // 接待人编号
 }
 
+// OperateConsultReq 操作咨询请求
 // @request
-// OperateConsultQuery 操作咨询请求
-type OperateConsultQuery struct {
+type OperateConsultReq struct {
 	ConsultID      *int64     `json:"consult_id"`                       // 咨询人编号
 	ElderID        *int64     `json:"elder_id"`                         // 老人编号
 	SourceID       *int64     `json:"source_id" valid:"required"`       // 来源渠道编号
@@ -39,44 +39,44 @@ type OperateConsultQuery struct {
 	Address        *string    `json:"address" valid:"required"`         // 地址
 }
 
+// AddCommunicationRecordReq 新增沟通记录请求
 // @request
-// AddCommunicationRecordQuery 新增沟通记录请求
-type AddCommunicationRecordQuery struct {
+type AddCommunicationRecordReq struct {
 	ElderID             *int64     `json:"elder_id" valid:"required"`             // 老人编号
 	CommunicationRecord *string    `json:"communication_record" valid:"required"` // 沟通记录
 	RecordDate          *time.Time `json:"record_date" valid:"required"`          // 记录时间
 }
 
+// EditCommunicationRecordReq 编辑沟通记录请求
 // @request
-// EditCommunicationRecordQuery 编辑沟通记录请求
-type EditCommunicationRecordQuery struct {
+type EditCommunicationRecordReq struct {
 	ID                  *int64     `json:"id" valid:"required"`                   // 沟通记录编号
 	CommunicationRecord *string    `json:"communication_record" valid:"required"` // 沟通记录
 	RecordDate          *time.Time `json:"record_date" valid:"required"`          // 记录时间
 }
 
+// PageCommunicationRecordReq 分页查询沟通记录请求
 // @request
-// PageCommunicationRecordQuery 分页查询沟通记录请求
-type PageCommunicationRecordQuery struct {
+type PageCommunicationRecordReq struct {
 	PageNum  *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize *int    `json:"page_size" valid:"required"` // 条数
 	ElderID  *int64  `json:"elder_id" valid:"required"`  // 老人编号
 	Key      *string `json:"key"`                        // 关键词(沟通内容), 可选
 }
 
+// GetConsultByConsultIDAndElderIDReq 按咨询人/老人编号获取咨询信息请求
 // @request
-// GetConsultByConsultIDAndElderIDQuery 按咨询人/老人编号获取咨询信息请求
-type GetConsultByConsultIDAndElderIDQuery struct {
+type GetConsultByConsultIDAndElderIDReq struct {
 	ConsultID *int64 `json:"consult_id" valid:"required"` // 咨询人编号
 	ElderID   *int64 `json:"elder_id" valid:"required"`   // 老人编号
 }
 
 // GetConsultByConsultIdAndElderIdQuery 按咨询人/老人编号获取咨询信息请求（别名）
-type GetConsultByConsultIdAndElderIdQuery = GetConsultByConsultIDAndElderIDQuery
+type GetConsultByConsultIdAndElderIdQuery = GetConsultByConsultIDAndElderIDReq
 
+// AddConsultReq 新增咨询请求
 // @request
-// AddConsultQuery 新增咨询请求
-type AddConsultQuery struct {
+type AddConsultReq struct {
 	ConsultID      *int64     `json:"consult_id"`                       // 咨询人编号
 	ElderID        *int64     `json:"elder_id"`                         // 老人编号
 	SourceID       *int64     `json:"source_id" valid:"required"`       // 来源渠道编号
@@ -94,9 +94,9 @@ type AddConsultQuery struct {
 	Address        *string    `json:"address" valid:"required"`         // 地址
 }
 
+// PageIntentByKeyReq 分页查询意向客户请求
 // @request
-// PageIntentByKeyQuery 分页查询意向客户请求
-type PageIntentByKeyQuery struct {
+type PageIntentByKeyReq struct {
 	PageNum  *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize *int    `json:"page_size" valid:"required"` // 条数
 	Key      *string `json:"key"`                        // 关键字(姓名/电话), 可选
@@ -104,9 +104,9 @@ type PageIntentByKeyQuery struct {
 
 // ============ ConsultController 响应 ============
 
+// PageConsultByKeyResp 分页查询咨询响应
 // @response
-// PageConsultByKeyVO 分页查询咨询响应
-type PageConsultByKeyVO struct {
+type PageConsultByKeyResp struct {
 	ConsultID    int64     `json:"consult_id"`    // 咨询人编号
 	ElderID      int64     `json:"elder_id"`      // 老人编号
 	ConsultName  string    `json:"consult_name"`  // 咨询人姓名
@@ -120,16 +120,16 @@ type PageConsultByKeyVO struct {
 	StaffName    string    `json:"staff_name"`    // 接待人姓名
 }
 
+// PageCommunicationRecordResp 分页查询沟通记录响应
 // @response
-// PageCommunicationRecordVO 分页查询沟通记录响应
-type PageCommunicationRecordVO struct {
+type PageCommunicationRecordResp struct {
 	ID                  int64     `json:"id"`                   // id
 	RecordDate          time.Time `json:"record_date"`          // 记录时间
 	CommunicationRecord string    `json:"communication_record"` // 沟通记录
 }
 
+// GetConsultByConsultIDAndElderIDResp 按咨询人/老人编号获取咨询信息响应（继承 OperateConsultReq）
 // @response
-// GetConsultByConsultIDAndElderIDVO 按咨询人/老人编号获取咨询信息响应（继承 OperateConsultQuery）
-type GetConsultByConsultIDAndElderIDVO struct {
-	OperateConsultQuery
+type GetConsultByConsultIDAndElderIDResp struct {
+	OperateConsultReq
 }

@@ -35,7 +35,7 @@ func (e *elderrecord) RegisterRoute(group ack.Party) {
 // @Tags 老人档案
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageElderRecordByKeyQuery true "PageElderRecordByKeyQuery"
+// @Param data query dto.PageElderRecordByKeyReq true "PageElderRecordByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /elderRecord/pageElderRecordByKey [get]
 func (e *elderrecord) pageElderRecordByKey(ctx ack.Context) {
@@ -59,7 +59,7 @@ func (e *elderrecord) getElderRecordById(ctx ack.Context) {
 // @Tags 老人档案
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddElderRecordQuery true "AddElderRecordQuery"
+// @Param data body dto.AddElderRecordReq true "AddElderRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /elderRecord/addElderRecord [post]
 func (e *elderrecord) addElderRecord(ctx ack.Context) {
@@ -71,7 +71,7 @@ func (e *elderrecord) addElderRecord(ctx ack.Context) {
 // @Tags 老人档案
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditElderRecordQuery true "EditElderRecordQuery"
+// @Param data body dto.EditElderRecordReq true "EditElderRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /elderRecord/editElderRecord [post]
 func (e *elderrecord) editElderRecord(ctx ack.Context) {
@@ -95,7 +95,7 @@ func (e *elderrecord) deleteElderRecord(ctx ack.Context) {
 // @Tags 老人档案
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /elderRecord/pageSearchElderByKey [get]
 func (e *elderrecord) pageSearchElderByKey(ctx ack.Context) {
@@ -107,7 +107,7 @@ func (e *elderrecord) pageSearchElderByKey(ctx ack.Context) {
 // @Tags 老人档案
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchEmergencyContactByKeyQuery true "PageSearchEmergencyContactByKeyQuery"
+// @Param data query dto.PageSearchEmergencyContactByKeyReq true "PageSearchEmergencyContactByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /elderRecord/pageSearchEmergencyContactByKey [get]
 func (e *elderrecord) pageSearchEmergencyContactByKey(ctx ack.Context) {
@@ -119,7 +119,7 @@ func (e *elderrecord) pageSearchEmergencyContactByKey(ctx ack.Context) {
 // @Tags 老人档案
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageLabelByKeyQuery true "PageLabelByKeyQuery"
+// @Param data query dto.PageLabelByKeyReq true "PageLabelByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /elderRecord/pageLabelByKey [get]
 func (e *elderrecord) pageLabelByKey(ctx ack.Context) {
@@ -131,7 +131,7 @@ func (e *elderrecord) pageLabelByKey(ctx ack.Context) {
 // @Tags 老人档案
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditElderLabelQuery true "EditElderLabelQuery"
+// @Param data body dto.EditElderLabelReq true "EditElderLabelReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /elderRecord/editElderLabel [post]
 func (e *elderrecord) editElderLabel(ctx ack.Context) {

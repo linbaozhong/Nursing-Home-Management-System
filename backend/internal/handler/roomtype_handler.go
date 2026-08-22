@@ -28,7 +28,7 @@ func (r *roomtype) RegisterRoute(group ack.Party) {
 // @Tags 房型
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageRoomTypeByKeyQuery true "PageRoomTypeByKeyQuery"
+// @Param data query dto.PageRoomTypeByKeyReq true "PageRoomTypeByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /roomType/pageRoomTypeByKey [get]
 func (r *roomtype) pageRoomTypeByKey(ctx ack.Context) {
@@ -52,7 +52,7 @@ func (r *roomtype) getRoomTypeById(ctx ack.Context) {
 // @Tags 房型
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateRoomTypeQuery true "OperateRoomTypeQuery"
+// @Param data body dto.OperateRoomTypeReq true "OperateRoomTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /roomType/addRoomType [post]
 func (r *roomtype) addRoomType(ctx ack.Context) {
@@ -64,7 +64,7 @@ func (r *roomtype) addRoomType(ctx ack.Context) {
 // @Tags 房型
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateRoomTypeQuery true "OperateRoomTypeQuery"
+// @Param data body dto.OperateRoomTypeReq true "OperateRoomTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /roomType/editRoomType [post]
 func (r *roomtype) editRoomType(ctx ack.Context) {

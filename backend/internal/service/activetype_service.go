@@ -21,7 +21,7 @@ var ActiveType = &activetype{}
 
 // PageActiveTypeByKey 分页查询活动类型
 // 对应 Java: ActiveTypeServiceImpl.pageActiveTypeByKey -> ActiveTypeFunc.listNotDelActiveType
-func (a *activetype) PageActiveTypeByKey(ctx context.Context, in *dto.PageActiveTypeByKeyQuery, out *[]dto.PageActiveTypeByKeyVO) error {
+func (a *activetype) PageActiveTypeByKey(ctx context.Context, in *dto.PageActiveTypeByKeyReq, out *[]dto.PageActiveTypeByKeyResp) error {
 	q := db.Table(tblactivetype.TableName).Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.DelFlag.Eq(constant.YesNoNo))
 	if in.ActiveTypeName != nil {
 		q.And(tblactivetype.Name.Like(*in.ActiveTypeName))
@@ -39,7 +39,7 @@ func (a *activetype) PageActiveTypeByKey(ctx context.Context, in *dto.PageActive
 
 // GetActiveTypeById 根据编号获取活动类型
 // 对应 Java: ActiveTypeServiceImpl.getActiveTypeById -> activeTypeMapper.selectById
-func (a *activetype) GetActiveTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateActiveTypeVO) error {
+func (a *activetype) GetActiveTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateActiveTypeResp) error {
 	obj, has, e := dao.ActiveType(db).Get(ctx, ace.Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
@@ -54,7 +54,7 @@ func (a *activetype) GetActiveTypeById(ctx context.Context, in *dto.IDReq, out *
 
 // AddActiveType 新增活动类型
 // 对应 Java: ActiveTypeServiceImpl.addActiveType -> activeTypeMapper.insert
-func (a *activetype) AddActiveType(ctx context.Context, in *dto.AddActiveTypeQuery, out *dto.EmptyResp) error {
+func (a *activetype) AddActiveType(ctx context.Context, in *dto.AddActiveTypeReq, out *dto.EmptyResp) error {
 	// 判断活动分类是否已存在
 	exist, e := a.getActiveTypeByName(ctx, *in.Name)
 	if e != nil {
@@ -73,7 +73,7 @@ func (a *activetype) AddActiveType(ctx context.Context, in *dto.AddActiveTypeQue
 
 // EditActiveType 编辑活动类型
 // 对应 Java: ActiveTypeServiceImpl.editActiveType -> activeTypeMapper.updateById
-func (a *activetype) EditActiveType(ctx context.Context, in *dto.OperateActiveTypeQuery, out *dto.EmptyResp) error {
+func (a *activetype) EditActiveType(ctx context.Context, in *dto.OperateActiveTypeReq, out *dto.EmptyResp) error {
 	// 判断活动分类是否已存在（排除自身）
 	exist, e := a.getActiveTypeByNameExclude(ctx, *in.Name, *in.ID)
 	if e != nil {

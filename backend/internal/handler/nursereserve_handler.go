@@ -30,7 +30,7 @@ func (n *nursereserve) RegisterRoute(group ack.Party) {
 // @Tags 护理预约
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageNurseReserveByKeyQuery true "PageNurseReserveByKeyQuery"
+// @Param data query dto.PageNurseReserveByKeyReq true "PageNurseReserveByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /nurseReserve/pageNurseReserveByKey [get]
 func (n *nursereserve) pageNurseReserveByKey(ctx ack.Context) {
@@ -42,7 +42,7 @@ func (n *nursereserve) pageNurseReserveByKey(ctx ack.Context) {
 // @Tags 护理预约
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.GetNurseReserveByReserveIdAndElderIdQuery true "GetNurseReserveByReserveIdAndElderIdQuery"
+// @Param data query dto.GetNurseReserveByReserveIdAndElderIdReq true "GetNurseReserveByReserveIdAndElderIdReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /nurseReserve/getNurseReserveByReserveIdAndElderId [get]
 func (n *nursereserve) getNurseReserveByReserveIdAndElderId(ctx ack.Context) {
@@ -54,7 +54,7 @@ func (n *nursereserve) getNurseReserveByReserveIdAndElderId(ctx ack.Context) {
 // @Tags 护理预约
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddNurseReserveQuery true "AddNurseReserveQuery"
+// @Param data body dto.AddNurseReserveReq true "AddNurseReserveReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /nurseReserve/addNurseReserve [post]
 func (n *nursereserve) addNurseReserve(ctx ack.Context) {
@@ -66,7 +66,7 @@ func (n *nursereserve) addNurseReserve(ctx ack.Context) {
 // @Tags 护理预约
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditNurseReserveQuery true "EditNurseReserveQuery"
+// @Param data body dto.EditNurseReserveReq true "EditNurseReserveReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /nurseReserve/editNurseReserve [post]
 func (n *nursereserve) editNurseReserve(ctx ack.Context) {
@@ -90,7 +90,7 @@ func (n *nursereserve) deleteNurseReserve(ctx ack.Context) {
 // @Tags 护理预约
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /nurseReserve/pageSearchElderByKey [get]
 func (n *nursereserve) pageSearchElderByKey(ctx ack.Context) {

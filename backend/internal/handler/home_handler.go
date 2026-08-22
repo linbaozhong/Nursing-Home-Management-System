@@ -30,7 +30,7 @@ func (h *home) RegisterRoute(group ack.Party) {
 // @Accept application/json
 // @Produce application/json
 // @Param data query dto.EmptyReq true "EmptyReq"
-// @Success 200 {object} dto.TodayOverviewVO
+// @Success 200 {object} dto.TodayOverviewResp
 // @Router /home/todayOverview [get]
 func (h *home) todayOverview(ctx ack.Context) {
 	ack.Get(ctx, service.Home.TodayOverview)
@@ -42,7 +42,7 @@ func (h *home) todayOverview(ctx ack.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param data query dto.EmptyReq true "EmptyReq"
-// @Success 200 {object} dto.AvailableBedVO
+// @Success 200 {object} dto.AvailableBedResp
 // @Router /home/availableBed [get]
 func (h *home) availableBed(ctx ack.Context) {
 	ack.Get(ctx, service.Home.AvailableBed)
@@ -54,7 +54,7 @@ func (h *home) availableBed(ctx ack.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param data query dto.EmptyReq true "EmptyReq"
-// @Success 200 {object} dto.TodaySaleFollowVO
+// @Success 200 {object} dto.TodaySaleFollowResp
 // @Router /home/todaySaleFollow [get]
 func (h *home) todaySaleFollow(ctx ack.Context) {
 	ack.Get(ctx, service.Home.TodaySaleFollow)
@@ -66,7 +66,7 @@ func (h *home) todaySaleFollow(ctx ack.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param data query dto.EmptyReq true "EmptyReq"
-// @Success 200 {object} dto.MonthPerformanceRankVO
+// @Success 200 {object} dto.MonthPerformanceRankResp
 // @Router /home/monthPerformanceRank [get]
 func (h *home) monthPerformanceRank(ctx ack.Context) {
 	ack.Get(ctx, service.Home.MonthPerformanceRank)
@@ -77,8 +77,8 @@ func (h *home) monthPerformanceRank(ctx ack.Context) {
 // @Tags 首页
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.ClientSourceQuery true "ClientSourceQuery"
-// @Success 200 {object} []dto.ClientSourceVO
+// @Param data query dto.ClientSourceReq true "ClientSourceReq"
+// @Success 200 {object} []dto.ClientSourceResp
 // @Router /home/clientSource [get]
 func (h *home) clientSource(ctx ack.Context) {
 	ack.Get(ctx, service.Home.ClientSource)
@@ -90,7 +90,7 @@ func (h *home) clientSource(ctx ack.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Param data query dto.EmptyReq true "EmptyReq"
-// @Success 200 {object} []dto.BusinessTrendVO
+// @Success 200 {object} []dto.BusinessTrendResp
 // @Router /home/businessTrend [get]
 func (h *home) businessTrend(ctx ack.Context) {
 	ack.Get(ctx, service.Home.BusinessTrend)

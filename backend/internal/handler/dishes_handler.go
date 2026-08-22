@@ -33,7 +33,7 @@ func (d *dishes) RegisterRoute(group ack.Party) {
 // @Tags 菜品
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageDishesByKeyQuery true "PageDishesByKeyQuery"
+// @Param data query dto.PageDishesByKeyReq true "PageDishesByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /dishes/pageDishesByKey [get]
 func (d *dishes) pageDishesByKey(ctx ack.Context) {
@@ -57,7 +57,7 @@ func (d *dishes) getDishesById(ctx ack.Context) {
 // @Tags 菜品
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddDishesQuery true "AddDishesQuery"
+// @Param data body dto.AddDishesReq true "AddDishesReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /dishes/addDishes [post]
 func (d *dishes) addDishes(ctx ack.Context) {
@@ -69,7 +69,7 @@ func (d *dishes) addDishes(ctx ack.Context) {
 // @Tags 菜品
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditDishesQuery true "EditDishesQuery"
+// @Param data body dto.EditDishesReq true "EditDishesReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /dishes/editDishes [post]
 func (d *dishes) editDishes(ctx ack.Context) {
@@ -93,7 +93,7 @@ func (d *dishes) deleteDishes(ctx ack.Context) {
 // @Tags 菜品
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageDishesTypeByKeyQuery true "PageDishesTypeByKeyQuery"
+// @Param data query dto.PageDishesTypeByKeyReq true "PageDishesTypeByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /dishes/pageDishesTypeByKey [get]
 func (d *dishes) pageDishesTypeByKey(ctx ack.Context) {
@@ -117,7 +117,7 @@ func (d *dishes) getDishesTypeById(ctx ack.Context) {
 // @Tags 菜品
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddDishesTypeQuery true "AddDishesTypeQuery"
+// @Param data body dto.AddDishesTypeReq true "AddDishesTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /dishes/addDishesType [post]
 func (d *dishes) addDishesType(ctx ack.Context) {
@@ -129,7 +129,7 @@ func (d *dishes) addDishesType(ctx ack.Context) {
 // @Tags 菜品
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditDishesTypeQuery true "EditDishesTypeQuery"
+// @Param data body dto.EditDishesTypeReq true "EditDishesTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /dishes/editDishesType [post]
 func (d *dishes) editDishesType(ctx ack.Context) {

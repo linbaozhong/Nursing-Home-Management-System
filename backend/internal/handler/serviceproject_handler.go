@@ -45,7 +45,7 @@ func (s *serviceproject) getServiceType(ctx ack.Context) {
 // @Tags 服务项目
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageServiceByKeyQuery true "PageServiceByKeyQuery"
+// @Param data query dto.PageServiceByKeyReq true "PageServiceByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /service/pageServiceByKey [get]
 func (s *serviceproject) pageServiceByKey(ctx ack.Context) {
@@ -57,7 +57,7 @@ func (s *serviceproject) pageServiceByKey(ctx ack.Context) {
 // @Tags 服务项目
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateServiceTypeQuery true "OperateServiceTypeQuery"
+// @Param data body dto.OperateServiceTypeReq true "OperateServiceTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /service/addServiceType [post]
 func (s *serviceproject) addServiceType(ctx ack.Context) {
@@ -81,7 +81,7 @@ func (s *serviceproject) getServiceTypeById(ctx ack.Context) {
 // @Tags 服务项目
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateServiceTypeQuery true "OperateServiceTypeQuery"
+// @Param data body dto.OperateServiceTypeReq true "OperateServiceTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /service/editServiceType [post]
 func (s *serviceproject) editServiceType(ctx ack.Context) {
@@ -105,7 +105,7 @@ func (s *serviceproject) deleteServiceType(ctx ack.Context) {
 // @Tags 服务项目
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateServiceQuery true "OperateServiceQuery"
+// @Param data body dto.OperateServiceReq true "OperateServiceReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /service/addService [post]
 func (s *serviceproject) addService(ctx ack.Context) {
@@ -129,7 +129,7 @@ func (s *serviceproject) getServiceById(ctx ack.Context) {
 // @Tags 服务项目
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateServiceQuery true "OperateServiceQuery"
+// @Param data body dto.OperateServiceReq true "OperateServiceReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /service/editService [post]
 func (s *serviceproject) editService(ctx ack.Context) {

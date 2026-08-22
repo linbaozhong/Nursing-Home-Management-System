@@ -4,17 +4,17 @@ import "github.com/linbaozhong/gentity/pkg/types"
 
 // ============ RoomTypeController 请求 ============
 
+// PageRoomTypeByKeyReq 分页查询房间类型请求
 // @request
-// PageRoomTypeByKeyQuery 分页查询房间类型请求
-type PageRoomTypeByKeyQuery struct {
+type PageRoomTypeByKeyReq struct {
 	PageNum      *int    `json:"page_num"`
 	PageSize     *int    `json:"page_size"`
 	RoomTypeName *string `json:"room_type_name"`
 }
 
+// OperateRoomTypeReq 操作房间类型请求（新增/编辑）
 // @request
-// OperateRoomTypeQuery 操作房间类型请求（新增/编辑）
-type OperateRoomTypeQuery struct {
+type OperateRoomTypeReq struct {
 	ID         *int64       `json:"id"`
 	Name       *string      `json:"name"`
 	MonthPrice *types.Money `json:"month_price"`
@@ -22,16 +22,16 @@ type OperateRoomTypeQuery struct {
 
 // ============ RoomTypeController 响应 ============
 
+// PageRoomTypeByKeyResp 分页查询房间类型响应
 // @response
-// PageRoomTypeByKeyVO 分页查询房间类型响应
-type PageRoomTypeByKeyVO struct {
+type PageRoomTypeByKeyResp struct {
 	ID         int64       `json:"id"`
 	Name       string      `json:"name"`
 	MonthPrice types.Money `json:"month_price"`
 }
 
+// OperateRoomTypeResp 操作房间类型响应（继承 OperateRoomTypeReq）
 // @response
-// OperateRoomTypeVo 操作房间类型响应（继承 OperateRoomTypeQuery）
-type OperateRoomTypeVo struct {
-	OperateRoomTypeQuery
+type OperateRoomTypeResp struct {
+	OperateRoomTypeReq
 }

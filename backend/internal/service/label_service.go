@@ -26,7 +26,7 @@ var Label = &label{}
 
 // PageLabelByKey 分页查询标签（关联标签类型名称）
 // 对应 Java: LabelServiceImpl.pageLabelByKey -> LabelFunc.listLabelByKey
-func (l *label) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyQuery, out *[]dto.PageLabelByKeyVO) error {
+func (l *label) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyReq, out *[]dto.PageLabelByKeyResp) error {
 	q := db.Table(tbllabel.TableName).
 		LeftJoin(tbllabel.TypeId, tbllabeltype.Id).
 		Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.DelFlag.Eq(constant.YesNoNo))
@@ -49,7 +49,7 @@ func (l *label) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyQuery,
 
 // GetLabelById 根据编号获取标签（编辑回显）
 // 对应 Java: LabelServiceImpl.getLabelById
-func (l *label) GetLabelById(ctx context.Context, in *dto.IDReq, out *dto.OperateLabelVO) error {
+func (l *label) GetLabelById(ctx context.Context, in *dto.IDReq, out *dto.OperateLabelResp) error {
 	obj, has, e := dao.Label(db).Get(ctx, ace.Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
@@ -66,7 +66,7 @@ func (l *label) GetLabelById(ctx context.Context, in *dto.IDReq, out *dto.Operat
 
 // AddLabel 新增标签（校验类型存在、名称不重复、总数不超上限）
 // 对应 Java: LabelServiceImpl.addLabel -> LabelFunc.checkLabelLimit / checkLabelType
-func (l *label) AddLabel(ctx context.Context, in *dto.AddLabelQuery, out *dto.EmptyResp) error {
+func (l *label) AddLabel(ctx context.Context, in *dto.AddLabelReq, out *dto.EmptyResp) error {
 	// 校验标签类型存在
 	_, has, e := dao.LabelType(db).Get(ctx, ace.Where(tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabeltype.Id.Eq(types.BigInt(*in.TypeID))))
 	if e != nil {
@@ -107,7 +107,7 @@ func (l *label) AddLabel(ctx context.Context, in *dto.AddLabelQuery, out *dto.Em
 
 // EditLabel 修改标签（校验类型存在、名称不重复排除自身、总数不超上限）
 // 对应 Java: LabelServiceImpl.updateLabel
-func (l *label) EditLabel(ctx context.Context, in *dto.EditLabelQuery, out *dto.EmptyResp) error {
+func (l *label) EditLabel(ctx context.Context, in *dto.EditLabelReq, out *dto.EmptyResp) error {
 	_, has, e := dao.LabelType(db).Get(ctx, ace.Where(tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabeltype.Id.Eq(types.BigInt(*in.TypeID))))
 	if e != nil {
 		return e
@@ -153,7 +153,7 @@ func (l *label) DeleteLabel(ctx context.Context, in *dto.IDReq, out *dto.EmptyRe
 
 // PageLabelType 分页查询标签类型
 // 对应 Java: LabelServiceImpl.pageLabelTypeByKey -> LabelTypeFunc.listLabelTypeByKey
-func (l *label) PageLabelType(ctx context.Context, in *dto.PageLabelTypeByKeyQuery, out *[]dto.PageLabelTypeVO) error {
+func (l *label) PageLabelType(ctx context.Context, in *dto.PageLabelTypeByKeyReq, out *[]dto.PageLabelTypeResp) error {
 	q := db.Table(tbllabeltype.TableName).
 		Where(tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabeltype.DelFlag.Eq(constant.YesNoNo))
 	if in.Name != nil && *in.Name != "" {
@@ -173,7 +173,7 @@ func (l *label) PageLabelType(ctx context.Context, in *dto.PageLabelTypeByKeyQue
 
 // GetLabelTypeById 根据编号获取标签类型（编辑回显）
 // 对应 Java: LabelServiceImpl.getLabelTypeById
-func (l *label) GetLabelTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateLabelTypeVO) error {
+func (l *label) GetLabelTypeById(ctx context.Context, in *dto.IDReq, out *dto.OperateLabelTypeResp) error {
 	obj, has, e := dao.LabelType(db).Get(ctx, ace.Where(tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabeltype.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
@@ -188,7 +188,7 @@ func (l *label) GetLabelTypeById(ctx context.Context, in *dto.IDReq, out *dto.Op
 
 // AddLabelType 新增标签类型（校验名称不重复、类型总数不超上限）
 // 对应 Java: LabelServiceImpl.addLabelType -> LabelTypeFunc.checkLabelTypeLimit
-func (l *label) AddLabelType(ctx context.Context, in *dto.AddLabelTypeQuery, out *dto.EmptyResp) error {
+func (l *label) AddLabelType(ctx context.Context, in *dto.AddLabelTypeReq, out *dto.EmptyResp) error {
 	repeat, e := dao.LabelType(db).Exists(ctx,
 		tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbllabeltype.Name.Eq(*in.Name),
@@ -216,7 +216,7 @@ func (l *label) AddLabelType(ctx context.Context, in *dto.AddLabelTypeQuery, out
 
 // EditLabelType 修改标签类型（校验名称不重复排除自身、类型总数不超上限）
 // 对应 Java: LabelServiceImpl.updateLabelType
-func (l *label) EditLabelType(ctx context.Context, in *dto.EditLabelTypeQuery, out *dto.EmptyResp) error {
+func (l *label) EditLabelType(ctx context.Context, in *dto.EditLabelTypeReq, out *dto.EmptyResp) error {
 	repeat, e := dao.LabelType(db).Exists(ctx,
 		tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbllabeltype.Name.Eq(*in.Name),

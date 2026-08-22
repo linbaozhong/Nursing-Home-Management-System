@@ -23,7 +23,7 @@ var _ = (*nurseGradeService)(nil)
 type nurseGradeService struct{}
 
 // PageNurseGradeByKey 分页查询护理等级
-func (s *nurseGradeService) PageNurseGradeByKey(ctx context.Context, in *dto.PageNurseGradeByKeyQuery, out *[]dto.PageNurseGradeByKeyVO) error {
+func (s *nurseGradeService) PageNurseGradeByKey(ctx context.Context, in *dto.PageNurseGradeByKeyReq, out *[]dto.PageNurseGradeByKeyResp) error {
 	q := db.Table(tblnursegrade.TableName)
 	q = q.Where(tblnursegrade.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblnursegrade.DelFlag.Eq(types.Int8(constant.YesNoNo)))
 	if in.GradeName != nil {
@@ -44,7 +44,7 @@ func (s *nurseGradeService) PageNurseGradeByKey(ctx context.Context, in *dto.Pag
 }
 
 // GetNurseGradeById 查询护理等级详情（含护理服务列表）
-func (s *nurseGradeService) GetNurseGradeById(ctx context.Context, in *dto.IDReq, out *dto.GetNurseGradeByIDVO) error {
+func (s *nurseGradeService) GetNurseGradeById(ctx context.Context, in *dto.IDReq, out *dto.GetNurseGradeByIDResp) error {
 	bean, has, e := dao.NurseGrade(db).GetByID(ctx, types.BigInt(*in.ID), tblnursegrade.Id, tblnursegrade.Name, tblnursegrade.Type, tblnursegrade.MonthPrice, tblnursegrade.DelFlag)
 	if e != nil {
 		return e
@@ -74,9 +74,9 @@ func (s *nurseGradeService) GetNurseGradeById(ctx context.Context, in *dto.IDReq
 	if e != nil {
 		return e
 	}
-	list := make([]dto.NurseGradeServiceVO, 0, len(services))
+	list := make([]dto.NurseGradeServiceResp, 0, len(services))
 	for _, sv := range services {
-		vo := dto.NurseGradeServiceVO{}
+		vo := dto.NurseGradeServiceResp{}
 		*vo.ID = int64(sv.Id)
 		*vo.TypeID = int64(sv.TypeId)
 		*vo.Name = sv.Name.String()
@@ -85,12 +85,12 @@ func (s *nurseGradeService) GetNurseGradeById(ctx context.Context, in *dto.IDReq
 		*vo.NeedDate = int(sv.NeedDate)
 		list = append(list, vo)
 	}
-	out.NurseGradeServiceVOList = list
+	out.NurseGradeServiceRespList = list
 	return nil
 }
 
 // AddNurseGrade 新增护理等级
-func (s *nurseGradeService) AddNurseGrade(ctx context.Context, in *dto.AddNurseGradeQuery, out *dto.EmptyResp) error {
+func (s *nurseGradeService) AddNurseGrade(ctx context.Context, in *dto.AddNurseGradeReq, out *dto.EmptyResp) error {
 	has, e := dao.NurseGrade(db).Exists(ctx,
 		tblnursegrade.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblnursegrade.Name.Eq(types.String(*in.Name)),
@@ -134,7 +134,7 @@ func (s *nurseGradeService) AddNurseGrade(ctx context.Context, in *dto.AddNurseG
 }
 
 // EditNurseGrade 编辑护理等级
-func (s *nurseGradeService) EditNurseGrade(ctx context.Context, in *dto.EditNurseGradeQuery, out *dto.EmptyResp) error {
+func (s *nurseGradeService) EditNurseGrade(ctx context.Context, in *dto.EditNurseGradeReq, out *dto.EmptyResp) error {
 	has, e := dao.NurseGrade(db).Exists(ctx,
 		tblnursegrade.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblnursegrade.Name.Eq(types.String(*in.Name)),
@@ -193,7 +193,7 @@ func (s *nurseGradeService) DeleteNurseGrade(ctx context.Context, in *dto.IDReq,
 }
 
 // PageNurseByKey 分页查询护理员（staff 表中 role=护理员）
-func (s *nurseGradeService) PageNurseByKey(ctx context.Context, in *dto.PageNurseByKeyQuery, out *[]dto.PageNurseByKeyVO) error {
+func (s *nurseGradeService) PageNurseByKey(ctx context.Context, in *dto.PageNurseByKeyReq, out *[]dto.PageNurseByKeyResp) error {
 	q := db.Table(tblstaff.TableName).
 		Where(ace.Where(tblstaff.TenantId.Eq(types.BigInt(lib.TenantID(ctx)))).
 			And(tblstaff.RoleId.Eq(types.BigInt(nurseRoleID))).
@@ -215,7 +215,7 @@ func (s *nurseGradeService) PageNurseByKey(ctx context.Context, in *dto.PageNurs
 }
 
 // GetNurseById 查询护理员详情
-func (s *nurseGradeService) GetNurseById(ctx context.Context, in *dto.IDReq, out *dto.GetNurseByIdVO) error {
+func (s *nurseGradeService) GetNurseById(ctx context.Context, in *dto.IDReq, out *dto.GetNurseByIdResp) error {
 	bean, has, e := dao.Staff(db).GetByID(ctx, types.BigInt(*in.ID), tblstaff.Id, tblstaff.Name, tblstaff.Phone)
 	if e != nil {
 		return e
@@ -230,7 +230,7 @@ func (s *nurseGradeService) GetNurseById(ctx context.Context, in *dto.IDReq, out
 }
 
 // AddNurse 新增护理员
-func (s *nurseGradeService) AddNurse(ctx context.Context, in *dto.AddNurseQuery, out *dto.EmptyResp) error {
+func (s *nurseGradeService) AddNurse(ctx context.Context, in *dto.AddNurseReq, out *dto.EmptyResp) error {
 	bean := new(do.Staff)
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.NurseName)
@@ -245,7 +245,7 @@ func (s *nurseGradeService) AddNurse(ctx context.Context, in *dto.AddNurseQuery,
 }
 
 // EditNurse 编辑护理员
-func (s *nurseGradeService) EditNurse(ctx context.Context, in *dto.EditNurseQuery, out *dto.EmptyResp) error {
+func (s *nurseGradeService) EditNurse(ctx context.Context, in *dto.EditNurseReq, out *dto.EmptyResp) error {
 	_, e := dao.Staff(db).UpdateById(ctx, types.BigInt(*in.ID),
 		tblstaff.Name.Set(types.String(*in.NurseName)),
 		tblstaff.Phone.Set(types.String(*in.Phone)),

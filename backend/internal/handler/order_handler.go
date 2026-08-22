@@ -27,7 +27,7 @@ func (o *order) RegisterRoute(group ack.Party) {
 // @Tags 订单
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageOrderByKeyQuery true "PageOrderByKeyQuery"
+// @Param data query dto.PageOrderByKeyReq true "PageOrderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /order/pageOrderByKey [get]
 func (o *order) pageOrderByKey(ctx ack.Context) {
@@ -39,7 +39,7 @@ func (o *order) pageOrderByKey(ctx ack.Context) {
 // @Tags 订单
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddOrderQuery true "AddOrderQuery"
+// @Param data body dto.AddOrderReq true "AddOrderReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /order/addOrder [post]
 func (o *order) addOrder(ctx ack.Context) {
@@ -63,7 +63,7 @@ func (o *order) getOrderById(ctx ack.Context) {
 // @Tags 订单
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.SendOrderQuery true "SendOrderQuery"
+// @Param data body dto.SendOrderReq true "SendOrderReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /order/sendOrder [post]
 func (o *order) sendOrder(ctx ack.Context) {

@@ -154,30 +154,6 @@
 		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#F5F6FA"
 	},
-	"tabBar": {
-		"color": "#999999",
-		"selectedColor": "#007AFF",
-		"backgroundColor": "#FFFFFF",
-		"borderStyle": "black",
-		"list": [
-			{
-				"pagePath": "pages/elder/list",
-				"text": "档案"
-			},
-			{
-				"pagePath": "pages/leave/list",
-				"text": "外出"
-			},
-			{
-				"pagePath": "pages/order/list",
-				"text": "点餐"
-			},
-			{
-				"pagePath": "pages/mine/index",
-				"text": "我的"
-			}
-		]
-	},
 	"easycom": {
 		"autoscan": true,
 		"custom": {

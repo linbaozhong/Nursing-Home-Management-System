@@ -26,7 +26,7 @@ var Inventory = &inventory{}
 // 注: warehouse_material 表无 outbound_num/price 列, outbound_num 暂为 0, price 取自 material.price;
 //
 //	Java 的 total(按 material_id 跨记录求和 inventory) 由 sumInventoryByMaterial 计算填充。
-func (i *inventory) PageInventoryByKey(ctx context.Context, in *dto.PageInventoryByKeyQuery, out *[]dto.PageInventoryByKeyVO) error {
+func (i *inventory) PageInventoryByKey(ctx context.Context, in *dto.PageInventoryByKeyReq, out *[]dto.PageInventoryByKeyResp) error {
 	q := db.Table(tblwarehousematerial.TableName).
 		LeftJoin(tblwarehousematerial.MaterialId, tblmaterial.Id).
 		LeftJoin(tblmaterial.TypeId, tblmaterialtype.Id).
@@ -101,7 +101,7 @@ func (i *inventory) AuditInventory(ctx context.Context, in *dto.OperateInventory
 }
 
 // PageInventoryRecordByKey Java InventoryServiceImpl 未实现, 保留占位
-func (i *inventory) PageInventoryRecordByKey(ctx context.Context, in *dto.PageInventoryRecordByKeyQuery, out *[]dto.PageInventoryRecordByKeyVO) error {
+func (i *inventory) PageInventoryRecordByKey(ctx context.Context, in *dto.PageInventoryRecordByKeyReq, out *[]dto.PageInventoryRecordByKeyVO) error {
 	return nil
 }
 

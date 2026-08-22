@@ -34,7 +34,7 @@ func (r *reserve) RegisterRoute(group ack.Party) {
 // @Tags 预约
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageReserveByKeyQuery true "PageReserveByKeyQuery"
+// @Param data query dto.PageReserveByKeyReq true "PageReserveByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /reserve/pageReserveByKey [get]
 func (r *reserve) pageReserveByKey(ctx ack.Context) {
@@ -58,7 +58,7 @@ func (r *reserve) getReserveById(ctx ack.Context) {
 // @Tags 预约
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddReserveQuery true "AddReserveQuery"
+// @Param data body dto.AddReserveReq true "AddReserveReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /reserve/addReserve [post]
 func (r *reserve) addReserve(ctx ack.Context) {
@@ -70,7 +70,7 @@ func (r *reserve) addReserve(ctx ack.Context) {
 // @Tags 预约
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditReserveQuery true "EditReserveQuery"
+// @Param data body dto.EditReserveReq true "EditReserveReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /reserve/editReserve [post]
 func (r *reserve) editReserve(ctx ack.Context) {
@@ -94,7 +94,7 @@ func (r *reserve) deleteReserve(ctx ack.Context) {
 // @Tags 预约
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /reserve/pageSearchElderByKey [get]
 func (r *reserve) pageSearchElderByKey(ctx ack.Context) {
@@ -106,7 +106,7 @@ func (r *reserve) pageSearchElderByKey(ctx ack.Context) {
 // @Tags 预约
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchStaffByKeyQuery true "PageSearchStaffByKeyQuery"
+// @Param data query dto.PageSearchStaffByKeyReq true "PageSearchStaffByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /reserve/pageSearchStaffByKey [get]
 func (r *reserve) pageSearchStaffByKey(ctx ack.Context) {

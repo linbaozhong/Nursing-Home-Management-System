@@ -56,7 +56,7 @@ func (c *checkContract) pageCheckContractByKey(ctx ack.Context) {
 // @Tags 入住办理
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /checkContract/pageSearchElderByKey [get]
 func (c *checkContract) pageSearchElderByKey(ctx ack.Context) {
@@ -164,7 +164,7 @@ func (c *checkContract) deleteCheckContract(ctx ack.Context) {
 // @Tags 入住办理
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageVisitPlanQuery true "PageVisitPlanQuery"
+// @Param data query dto.PageVisitPlanReq true "PageVisitPlanReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /checkContract/pageVisitPlan [get]
 func (c *checkContract) pageVisitPlan(ctx ack.Context) {
@@ -176,7 +176,7 @@ func (c *checkContract) pageVisitPlan(ctx ack.Context) {
 // @Tags 入住办理
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddVisitPlanQuery true "AddVisitPlanQuery"
+// @Param data body dto.AddVisitPlanReq true "AddVisitPlanReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /checkContract/addVisitPlan [post]
 func (c *checkContract) addVisitPlan(ctx ack.Context) {
@@ -212,7 +212,7 @@ func (c *checkContract) deleteVisitPlan(ctx ack.Context) {
 // @Tags 入住办理
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageCommunicationRecordQuery true "PageCommunicationRecordQuery"
+// @Param data query dto.PageCommunicationRecordReq true "PageCommunicationRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /checkContract/pageCommunicationRecord [get]
 func (c *checkContract) pageCommunicationRecord(ctx ack.Context) {
@@ -224,7 +224,7 @@ func (c *checkContract) pageCommunicationRecord(ctx ack.Context) {
 // @Tags 入住办理
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddCommunicationRecordQuery true "AddCommunicationRecordQuery"
+// @Param data body dto.AddCommunicationRecordReq true "AddCommunicationRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /checkContract/addCommunicationRecord [post]
 func (c *checkContract) addCommunicationRecord(ctx ack.Context) {
@@ -236,7 +236,7 @@ func (c *checkContract) addCommunicationRecord(ctx ack.Context) {
 // @Tags 入住办理
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditCommunicationRecordQuery true "EditCommunicationRecordQuery"
+// @Param data body dto.EditCommunicationRecordReq true "EditCommunicationRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /checkContract/editCommunicationRecord [post]
 func (c *checkContract) editCommunicationRecord(ctx ack.Context) {
@@ -248,7 +248,7 @@ func (c *checkContract) editCommunicationRecord(ctx ack.Context) {
 // @Tags 入住办理
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.DeleteCommunicationRecordQuery true "DeleteCommunicationRecordQuery"
+// @Param data body dto.DeleteCommunicationRecordReq true "DeleteCommunicationRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /checkContract/deleteCommunicationRecord [post]
 func (c *checkContract) deleteCommunicationRecord(ctx ack.Context) {

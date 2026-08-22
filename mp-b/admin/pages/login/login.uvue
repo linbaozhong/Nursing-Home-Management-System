@@ -1,29 +1,28 @@
 <template>
 	<view class="page">
-		<view class="brand">
-			<image class="brand__logo" src="/static/logo.png" />
-			<text class="brand__title">敬老院员工端</text>
-			<text class="brand__sub">养老机构数字化管理平台</text>
-		</view>
+		<scroll-view class="body" scroll-y :show-scrollbar="false">
+			<view class="brand">
+				<image class="brand__logo" src="/static/logo.png" />
+				<text class="brand__title">敬老院员工端</text>
+				<text class="brand__sub">养老机构数字化管理平台</text>
+			</view>
 
-		<!-- 微信一键登录（主入口） -->
-		<view class="wx-entry">
-			<button class="btn-wx" :loading="wxLoading" :disabled="wxLoading" @click="doWxLogin">
-				微信一键登录
-			</button>
-			<text class="wx-tip">使用微信授权快速登录，自动匹配您的企业身份</text>
-		</view>
+			<!-- 微信一键登录（主入口） -->
+			<view class="wx-entry">
+				<button class="btn-wx" :loading="wxLoading" :disabled="wxLoading" @click="doWxLogin">
+					微信一键登录
+				</button>
+				<text class="wx-tip">使用微信授权快速登录，自动匹配您的企业身份</text>
+			</view>
 
-		<view class="divider">
-			<view class="divider__line" />
-			<text class="divider__text">或使用账号密码登录</text>
-			<view class="divider__line" />
-		</view>
+			<view class="divider">
+				<view class="divider__line" />
+				<text class="divider__text">或使用账号密码登录</text>
+				<view class="divider__line" />
+			</view>
 
-		<!-- 账号密码登录（备用入口） -->
-		<view class="form">
-			<view class="field">
-				<text class="field__label">手机号</text>
+			<!-- 账号密码登录（备用入口） -->
+			<view class="form">
 				<input
 					class="field__input"
 					v-model="phone"
@@ -31,24 +30,21 @@
 					:maxlength="11"
 					placeholder="请输入手机号"
 				/>
-			</view>
-			<view class="field">
-				<text class="field__label">密码</text>
 				<input
-					class="field__input"
+					class="field__input field__input--gap"
 					v-model="pass"
 					type="password"
 					placeholder="请输入密码"
 					confirm-type="done"
 					@confirm="doLogin"
 				/>
-			</view>
 
-			<button class="btn-pass" :loading="loading" :disabled="loading" @click="doLogin">
-				登 录
-			</button>
-			<text class="form__register" @click="goRegister">没有企业？立即创建企业</text>
-		</view>
+				<button class="btn-pass" :loading="loading" :disabled="loading" @click="doLogin">
+					登 录
+				</button>
+				<text class="form__register" @click="goRegister">没有企业？立即创建企业</text>
+			</view>
+		</scroll-view>
 	</view>
 </template>
 
@@ -183,14 +179,19 @@
 	.page {
 		flex: 1;
 		background-color: #FFFFFF;
+	}
+
+	.body {
+		flex: 1;
+		height: 100%;
 		padding-left: 32px;
 		padding-right: 32px;
 	}
 
 	.brand {
 		align-items: center;
-		margin-top: 120px;
-		margin-bottom: 50px;
+		margin-top: 46px;
+		margin-bottom: 30px;
 	}
 
 	.brand__logo {
@@ -256,23 +257,16 @@
 		flex-direction: column;
 	}
 
-	.field {
-		flex-direction: column;
-		margin-bottom: 20px;
-	}
-
-	.field__label {
-		font-size: 14px;
-		color: #666666;
-		margin-bottom: 8px;
-	}
-
 	.field__input {
 		height: 48px;
 		background-color: #F5F6FA;
 		border-radius: 8px;
 		padding-left: 14px;
 		font-size: 15px;
+	}
+
+	.field__input--gap {
+		margin-top: 12px;
 	}
 
 	.btn-pass {

@@ -33,7 +33,7 @@ type reserveJoin struct {
 }
 
 // PageReserveByKey 分页查询预定
-func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReserveByKeyQuery, out *[]dto.PageReserveByKeyVO) error {
+func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReserveByKeyReq, out *[]dto.PageReserveByKeyResp) error {
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
@@ -63,9 +63,9 @@ func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReser
 	if !has {
 		return nil
 	}
-	res := make([]dto.PageReserveByKeyVO, 0, len(joins))
+	res := make([]dto.PageReserveByKeyResp, 0, len(joins))
 	for _, j := range joins {
-		res = append(res, dto.PageReserveByKeyVO{
+		res = append(res, dto.PageReserveByKeyResp{
 			ID:          int64(j.ID),
 			ElderName:   j.ElderName.String(),
 			StaffName:   j.StaffName.String(),
@@ -79,7 +79,7 @@ func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReser
 }
 
 // GetReserveById 查询预定详情
-func (s *reserveService) GetReserveById(ctx context.Context, in *dto.IDReq, out *dto.GetReserveByReserveIDAndElderIDVO) error {
+func (s *reserveService) GetReserveById(ctx context.Context, in *dto.IDReq, out *dto.GetReserveByReserveIDAndElderIDResp) error {
 	rec := new(do.Reserve)
 	has, e := dao.Reserve(db).Get(ctx, ace.Where(tblreserve.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblreserve.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
@@ -99,7 +99,7 @@ func (s *reserveService) GetReserveById(ctx context.Context, in *dto.IDReq, out 
 }
 
 // AddReserve 新增预定（含老人与床位初始化）
-func (s *reserveService) AddReserve(ctx context.Context, in *dto.AddReserveQuery, out *dto.EmptyResp) error {
+func (s *reserveService) AddReserve(ctx context.Context, in *dto.AddReserveReq, out *dto.EmptyResp) error {
 	if in.StaffID == nil {
 		return constant.ErrParamInvalid
 	}
@@ -150,7 +150,7 @@ func (s *reserveService) AddReserve(ctx context.Context, in *dto.AddReserveQuery
 }
 
 // EditReserve 编辑预定
-func (s *reserveService) EditReserve(ctx context.Context, in *dto.EditReserveQuery, out *dto.EmptyResp) error {
+func (s *reserveService) EditReserve(ctx context.Context, in *dto.EditReserveReq, out *dto.EmptyResp) error {
 	if in.ReserveID == nil {
 		return constant.ErrParamInvalid
 	}
@@ -179,7 +179,7 @@ func (s *reserveService) DeleteReserve(ctx context.Context, in *dto.IDReq, out *
 }
 
 // PageSearchElderByKey 分页查询老人（供预定选择）
-func (s *reserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+func (s *reserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyReq, out *[]dto.PageSearchElderByKeyResp) error {
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
@@ -202,9 +202,9 @@ func (s *reserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageS
 	if !has {
 		return nil
 	}
-	res := make([]dto.PageSearchElderByKeyVO, 0, len(elders))
+	res := make([]dto.PageSearchElderByKeyResp, 0, len(elders))
 	for _, el := range elders {
-		res = append(res, dto.PageSearchElderByKeyVO{
+		res = append(res, dto.PageSearchElderByKeyResp{
 			ID:        int64(el.Id),
 			Name:      el.Name.String(),
 			IDNum:     el.IdNum.String(),
@@ -219,7 +219,7 @@ func (s *reserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageS
 }
 
 // PageSearchStaffByKey 分页查询员工（供预定选择经办人）
-func (s *reserveService) PageSearchStaffByKey(ctx context.Context, in *dto.PageSearchStaffByKeyQuery, out *[]dto.PageSearchStaffByKeyVO) error {
+func (s *reserveService) PageSearchStaffByKey(ctx context.Context, in *dto.PageSearchStaffByKeyReq, out *[]dto.PageSearchStaffByKeyResp) error {
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
@@ -242,9 +242,9 @@ func (s *reserveService) PageSearchStaffByKey(ctx context.Context, in *dto.PageS
 	if !has {
 		return nil
 	}
-	res := make([]dto.PageSearchStaffByKeyVO, 0, len(staffs))
+	res := make([]dto.PageSearchStaffByKeyResp, 0, len(staffs))
 	for _, st := range staffs {
-		res = append(res, dto.PageSearchStaffByKeyVO{
+		res = append(res, dto.PageSearchStaffByKeyResp{
 			ID:    int64(st.Id),
 			Name:  st.Name.String(),
 			Phone: st.Phone.String(),
@@ -255,7 +255,7 @@ func (s *reserveService) PageSearchStaffByKey(ctx context.Context, in *dto.PageS
 }
 
 // GetBuildTree 查询楼栋-房间-床位树（供预定选择床位）
-func (s *reserveService) GetBuildTree(ctx context.Context, in *dto.IDReq, out *[]dto.BuildingVO) error {
+func (s *reserveService) GetBuildTree(ctx context.Context, in *dto.IDReq, out *[]dto.BuildingResp) error {
 	buildings := make([]do.Building, 0)
 	has, e := dao.Building(db).List(ctx, ace.Where(tblbuilding.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblbuilding.DelFlag.Eq(types.Int8(constant.YesNoNo))))
 	if e != nil {
@@ -264,9 +264,9 @@ func (s *reserveService) GetBuildTree(ctx context.Context, in *dto.IDReq, out *[
 	if !has {
 		return nil
 	}
-	res := make([]dto.BuildingVO, 0, len(buildings))
+	res := make([]dto.BuildingResp, 0, len(buildings))
 	for _, b := range buildings {
-		res = append(res, dto.BuildingVO{
+		res = append(res, dto.BuildingResp{
 			ID:   int64(b.Id),
 			Name: b.Name.String(),
 		})
@@ -276,7 +276,7 @@ func (s *reserveService) GetBuildTree(ctx context.Context, in *dto.IDReq, out *[
 }
 
 // GetReserveByReserveIdAndElderId 按预定编号与老人编号查询预定
-func (s *reserveService) GetReserveByReserveIdAndElderId(ctx context.Context, in *dto.GetReserveByReserveIDAndElderIDQuery, out *dto.GetReserveByReserveIDAndElderIDVO) error {
+func (s *reserveService) GetReserveByReserveIdAndElderId(ctx context.Context, in *dto.GetReserveByReserveIDAndElderIDReq, out *dto.GetReserveByReserveIDAndElderIDResp) error {
 	if in.ReserveID == nil || in.ElderID == nil {
 		return constant.ErrParamInvalid
 	}

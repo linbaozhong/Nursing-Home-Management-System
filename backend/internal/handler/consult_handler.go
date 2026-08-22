@@ -28,7 +28,7 @@ func (c *consult) RegisterRoute(group ack.Party) {
 // @Tags 咨询
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageConsultByKeyQuery true "PageConsultByKeyQuery"
+// @Param data query dto.PageConsultByKeyReq true "PageConsultByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /consult/pageConsultByKey [get]
 func (c *consult) pageConsultByKey(ctx ack.Context) {
@@ -52,7 +52,7 @@ func (c *consult) getConsultByConsultIdAndElderId(ctx ack.Context) {
 // @Tags 咨询
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddConsultQuery true "AddConsultQuery"
+// @Param data body dto.AddConsultReq true "AddConsultReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /consult/addConsult [post]
 func (c *consult) addConsult(ctx ack.Context) {
@@ -64,7 +64,7 @@ func (c *consult) addConsult(ctx ack.Context) {
 // @Tags 咨询
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /consult/pageSearchElderByKey [get]
 func (c *consult) pageSearchElderByKey(ctx ack.Context) {
@@ -76,7 +76,7 @@ func (c *consult) pageSearchElderByKey(ctx ack.Context) {
 // @Tags 咨询
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageIntentionByKeyQuery true "PageIntentionByKeyQuery"
+// @Param data query dto.PageIntentionByKeyReq true "PageIntentionByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /consult/pageIntentByKey [get]
 func (c *consult) pageIntentByKey(ctx ack.Context) {

@@ -36,8 +36,8 @@ func (a *family) RegisterRoute(group ack.Party) {
 // @Tags 家属
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.FamilySendCodeQuery true "FamilySendCodeQuery"
-// @Success 200 {object} dto.LoginUserVO
+// @Param data body dto.FamilySendCodeReq true "FamilySendCodeReq"
+// @Success 200 {object} dto.LoginUserResp
 // @Router /family/sendCode [post]
 func (a *family) sendCode(ctx ack.Context) {
 	ack.Post(ctx, service.Family.SendCode)
@@ -48,7 +48,7 @@ func (a *family) sendCode(ctx ack.Context) {
 // @Tags 家属
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.RegisterBindQuery true "RegisterBindQuery"
+// @Param data body dto.RegisterBindReq true "RegisterBindReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /family/registerBind [post]
 func (a *family) registerBind(ctx ack.Context) {
@@ -60,8 +60,8 @@ func (a *family) registerBind(ctx ack.Context) {
 // @Tags 家属
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.FamilyLoginQuery true "FamilyLoginQuery"
-// @Success 200 {object} dto.FamilyLoginVO
+// @Param data body dto.FamilyLoginReq true "FamilyLoginReq"
+// @Success 200 {object} dto.FamilyLoginResp
 // @Router /family/login [post]
 func (a *family) login(ctx ack.Context) {
 	ack.Post(ctx, service.Family.Login)
@@ -72,7 +72,7 @@ func (a *family) login(ctx ack.Context) {
 // @Tags 家属
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.BindElderQuery true "BindElderQuery"
+// @Param data body dto.BindElderReq true "BindElderReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /family/bindElder [post]
 func (a *family) bindElder(ctx ack.Context) {
@@ -84,8 +84,8 @@ func (a *family) bindElder(ctx ack.Context) {
 // @Tags 家属
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.FamilyMyEldersQuery true "FamilyMyEldersQuery"
-// @Success 200 {object} dto.FamilyMyEldersVO
+// @Param data query dto.FamilyMyEldersReq true "FamilyMyEldersReq"
+// @Success 200 {object} dto.FamilyMyEldersResp
 // @Router /family/myElders [get]
 func (a *family) myElders(ctx ack.Context) {
 	ack.Get(ctx, service.Family.MyElders)

@@ -29,7 +29,7 @@ func (r *retreatapply) RegisterRoute(group ack.Party) {
 // @Tags 退住申请
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageRetreatApplyByKeyQuery true "PageRetreatApplyByKeyQuery"
+// @Param data query dto.PageRetreatApplyByKeyReq true "PageRetreatApplyByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /retreatApply/pageRetreatApplyByKey [get]
 func (r *retreatapply) pageRetreatApplyByKey(ctx ack.Context) {
@@ -53,7 +53,7 @@ func (r *retreatapply) getRetreatApplyById(ctx ack.Context) {
 // @Tags 退住申请
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddRetreatApplyQuery true "AddRetreatApplyQuery"
+// @Param data body dto.AddRetreatApplyReq true "AddRetreatApplyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /retreatApply/addRetreatApply [post]
 func (r *retreatapply) addRetreatApply(ctx ack.Context) {
@@ -65,7 +65,7 @@ func (r *retreatapply) addRetreatApply(ctx ack.Context) {
 // @Tags 退住申请
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditRetreatApplyQuery true "EditRetreatApplyQuery"
+// @Param data body dto.EditRetreatApplyReq true "EditRetreatApplyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /retreatApply/editRetreatApply [post]
 func (r *retreatapply) editRetreatApply(ctx ack.Context) {
@@ -89,7 +89,7 @@ func (r *retreatapply) deleteRetreatApply(ctx ack.Context) {
 // @Tags 退住申请
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /retreatApply/pageSearchElderByKey [get]
 func (r *retreatapply) pageSearchElderByKey(ctx ack.Context) {

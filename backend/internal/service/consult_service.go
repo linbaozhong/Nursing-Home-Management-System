@@ -27,7 +27,7 @@ var Consult = &consult{}
 
 // PageConsultByKey 分页查询咨询（联表老人、接待人、来源渠道）
 // 对应 Java: ConsultServiceImpl.pageConsultByKey -> ConsultMapper.listConsultByKey
-func (c *consult) PageConsultByKey(ctx context.Context, in *dto.PageConsultByKeyQuery, out *[]dto.PageConsultByKeyVO) error {
+func (c *consult) PageConsultByKey(ctx context.Context, in *dto.PageConsultByKeyReq, out *[]dto.PageConsultByKeyResp) error {
 	q := db.Table(tblconsult.TableName).
 		LeftJoin(tblconsult.ElderId, tblelder.Id).
 		LeftJoin(tblconsult.StaffId, tblstaff.Id).
@@ -82,7 +82,7 @@ func (c *consult) PageConsultByKey(ctx context.Context, in *dto.PageConsultByKey
 
 // GetConsultByConsultIdAndElderId 根据咨询编号与老人编号获取唯一咨询（用于编辑回显）
 // 对应 Java: ConsultServiceImpl.getConsultByConsultIdAndElderId
-func (c *consult) GetConsultByConsultIdAndElderId(ctx context.Context, in *dto.GetConsultByConsultIdAndElderIdQuery, out *dto.GetConsultByConsultIDAndElderIDVO) error {
+func (c *consult) GetConsultByConsultIdAndElderId(ctx context.Context, in *dto.GetConsultByConsultIdAndElderIdQuery, out *dto.GetConsultByConsultIDAndElderIDResp) error {
 	obj, has, e := dao.Consult(db).Get(ctx, ace.Where(
 		tblconsult.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblconsult.Id.Eq(types.BigInt(*in.ConsultID)),
@@ -108,7 +108,7 @@ func (c *consult) GetConsultByConsultIdAndElderId(ctx context.Context, in *dto.G
 
 // AddConsult 新增咨询（先校验身份证号，再新增老人与咨询记录）
 // 对应 Java: ConsultServiceImpl.addConsult
-func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultQuery, out *dto.EmptyResp) error {
+func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultReq, out *dto.EmptyResp) error {
 	// 校验身份证号是否已存在（排除已删除老人）
 	repeat, e := dao.Elder(db).Exists(ctx,
 		tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
@@ -153,7 +153,7 @@ func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultQuery, out *
 
 // PageSearchElderByKey 分页搜索老人（供咨询选择老人）
 // 对应 Java: ConsultServiceImpl.pageSearchElderByKey -> ElderFunc.listElderByKey
-func (c *consult) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+func (c *consult) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyReq, out *[]dto.PageSearchElderByKeyResp) error {
 	q := db.Table(tblelder.TableName).
 		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
 	if in.Name != nil {
@@ -179,7 +179,7 @@ func (c *consult) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchEl
 
 // PageIntentByKey 分页查询意向客户（CheckFlag=INTENTION）
 // 对应 Java: ConsultServiceImpl.pageIntentByKey -> intentionMapper.listIntentByKey
-func (c *consult) PageIntentByKey(ctx context.Context, in *dto.PageIntentByKeyQuery, out *[]dto.PageIntentionByKeyVO) error {
+func (c *consult) PageIntentByKey(ctx context.Context, in *dto.PageIntentByKeyReq, out *[]dto.PageIntentionByKeyResp) error {
 	q := db.Table(tblelder.TableName).
 		Where(
 			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),

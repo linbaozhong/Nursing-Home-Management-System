@@ -28,7 +28,7 @@ func (c *consume) RegisterRoute(group ack.Party) {
 // @Tags 消费
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageConsumeByKeyQuery true "PageConsumeByKeyQuery"
+// @Param data query dto.PageConsumeByKeyReq true "PageConsumeByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /consume/pageConsumeByKey [get]
 func (c *consume) pageConsumeByKey(ctx ack.Context) {
@@ -52,7 +52,7 @@ func (c *consume) getConsumeById(ctx ack.Context) {
 // @Tags 消费
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddConsumeQuery true "AddConsumeQuery"
+// @Param data body dto.AddConsumeReq true "AddConsumeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /consume/addConsume [post]
 func (c *consume) addConsume(ctx ack.Context) {
@@ -64,7 +64,7 @@ func (c *consume) addConsume(ctx ack.Context) {
 // @Tags 消费
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditConsumeQuery true "EditConsumeQuery"
+// @Param data body dto.EditConsumeReq true "EditConsumeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /consume/editConsume [post]
 func (c *consume) editConsume(ctx ack.Context) {

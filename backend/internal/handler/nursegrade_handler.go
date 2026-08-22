@@ -33,7 +33,7 @@ func (n *nursegrade) RegisterRoute(group ack.Party) {
 // @Tags 护理等级
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageNurseGradeByKeyQuery true "PageNurseGradeByKeyQuery"
+// @Param data query dto.PageNurseGradeByKeyReq true "PageNurseGradeByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /nurseGrade/pageNurseGradeByKey [get]
 func (n *nursegrade) pageNurseGradeByKey(ctx ack.Context) {
@@ -57,7 +57,7 @@ func (n *nursegrade) getNurseGradeById(ctx ack.Context) {
 // @Tags 护理等级
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddNurseGradeQuery true "AddNurseGradeQuery"
+// @Param data body dto.AddNurseGradeReq true "AddNurseGradeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /nurseGrade/addNurseGrade [post]
 func (n *nursegrade) addNurseGrade(ctx ack.Context) {
@@ -69,7 +69,7 @@ func (n *nursegrade) addNurseGrade(ctx ack.Context) {
 // @Tags 护理等级
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditNurseGradeQuery true "EditNurseGradeQuery"
+// @Param data body dto.EditNurseGradeReq true "EditNurseGradeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /nurseGrade/editNurseGrade [post]
 func (n *nursegrade) editNurseGrade(ctx ack.Context) {
@@ -93,7 +93,7 @@ func (n *nursegrade) deleteNurseGrade(ctx ack.Context) {
 // @Tags 护理等级
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageNurseByKeyQuery true "PageNurseByKeyQuery"
+// @Param data query dto.PageNurseByKeyReq true "PageNurseByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /nurseGrade/pageNurseByKey [get]
 func (n *nursegrade) pageNurseByKey(ctx ack.Context) {
@@ -117,7 +117,7 @@ func (n *nursegrade) getNurseById(ctx ack.Context) {
 // @Tags 护理等级
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddNurseQuery true "AddNurseQuery"
+// @Param data body dto.AddNurseReq true "AddNurseReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /nurseGrade/addNurse [post]
 func (n *nursegrade) addNurse(ctx ack.Context) {
@@ -129,7 +129,7 @@ func (n *nursegrade) addNurse(ctx ack.Context) {
 // @Tags 护理等级
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditNurseQuery true "EditNurseQuery"
+// @Param data body dto.EditNurseReq true "EditNurseReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /nurseGrade/editNurse [post]
 func (n *nursegrade) editNurse(ctx ack.Context) {

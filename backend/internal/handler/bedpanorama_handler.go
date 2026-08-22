@@ -38,7 +38,7 @@ func (b *bedpanorama) listBuilding(ctx ack.Context) {
 // @Tags 床位全景
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.ListFloorByBuildingIdQuery true "ListFloorByBuildingIdQuery"
+// @Param data query dto.ListFloorByBuildingIdReq true "ListFloorByBuildingIdReq"
 // @Success 200 {object} []dto.DropDown
 // @Router /bedPanorama/listFloorByBuildingId [get]
 func (b *bedpanorama) listFloorByBuildingId(ctx ack.Context) {
@@ -50,8 +50,8 @@ func (b *bedpanorama) listFloorByBuildingId(ctx ack.Context) {
 // @Tags 床位全景
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.ListRoomByKeyQuery true "ListRoomByKeyQuery"
-// @Success 200 {object} []dto.FloorItemVO
+// @Param data query dto.ListRoomByKeyReq true "ListRoomByKeyReq"
+// @Success 200 {object} []dto.FloorItemResp
 // @Router /bedPanorama/listRoomByKey [get]
 func (b *bedpanorama) listRoomByKey(ctx ack.Context) {
 	ack.Get(ctx, service.BedPanorama.ListRoomByKey)

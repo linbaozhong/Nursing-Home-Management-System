@@ -1,6 +1,6 @@
 <template>
 	<view class="page">
-		<uni-nav-bar :title="'工作台'" />
+		<uni-nav-bar :title="currentTenantName != '' ? currentTenantName : '工作台'" />
 
 		<view class="profile" @click="goMine">
 			<view v-if="user && user.avator != ''" class="avatar"><image class="avatar__img" :src="user.avator" /></view>
@@ -9,7 +9,7 @@
 			</view>
 			<view class="profile__info">
 				<text class="profile__name">{{ user ? user.name : '' }}</text>
-				<text class="profile__role">{{ currentTenantName != '' ? currentTenantName : '养老机构员工端' }}</text>
+				<text class="profile__role">{{ user && user.role_name ? user.role_name : '员工' }}</text>
 			</view>
 		</view>
 
@@ -38,15 +38,14 @@
 		icon: string
 		bg: string
 		url: string
-		isTab: boolean
 	}
 
 	const ALL_MODULES: ModuleEntry[] = [
-		{ key: 'elder', name: '长者档案', icon: '档', bg: '#007AFF', url: '/pages/elder/list', isTab: true },
-		{ key: 'leave', name: '外出登记', icon: '出', bg: '#4CD964', url: '/pages/leave/list', isTab: true },
-		{ key: 'visit', name: '来访登记', icon: '访', bg: '#F0AD4E', url: '/pages/visitor/list', isTab: false },
-		{ key: 'accident', name: '事故登记', icon: '故', bg: '#DD524D', url: '/pages/accident/list', isTab: false },
-		{ key: 'order', name: '点餐', icon: '餐', bg: '#8E7CF6', url: '/pages/order/list', isTab: true }
+		{ key: 'elder', name: '长者档案', icon: '档', bg: '#007AFF', url: '/pages/elder/list' },
+		{ key: 'leave', name: '外出登记', icon: '出', bg: '#4CD964', url: '/pages/leave/list' },
+		{ key: 'visit', name: '来访登记', icon: '访', bg: '#F0AD4E', url: '/pages/visitor/list' },
+		{ key: 'accident', name: '事故登记', icon: '故', bg: '#DD524D', url: '/pages/accident/list' },
+		{ key: 'order', name: '点餐', icon: '餐', bg: '#8E7CF6', url: '/pages/order/list' }
 	]
 
 	const user = ref<LoginUser | null>(null)
@@ -54,13 +53,13 @@
 	const currentTenantName = ref('')
 
 	onShow(() => {
-		if (getLoginUser() == null) {
+		const u = getLoginUser()
+		if (u == null) {
 			uni.reLaunch({ url: '/pages/login/login' })
 			return
 		}
-		user.value = getLoginUser()
+		user.value = u
 		// 展示当前企业名称
-		const u = user.value!
 		const tid = u.tenant_id
 		let tName = ''
 		if (u.tenants != null) {
@@ -71,21 +70,17 @@
 			})
 		}
 		currentTenantName.value = tName
-		// 按权限过滤模块
-		const access = accessibleModules()
+		// 按权限过滤模块（复用上面已取到的 u，避免再读一次本地存储）
+		const access = accessibleModules(u)
 		modules.value = ALL_MODULES.filter((m) => access.indexOf(m.key) >= 0)
 	})
 
 	function goModule(m: ModuleEntry) {
-		if (m.isTab) {
-			uni.switchTab({ url: m.url })
-		} else {
-			uni.navigateTo({ url: m.url })
-		}
+		uni.navigateTo({ url: m.url })
 	}
 
 	function goMine() {
-		uni.switchTab({ url: '/pages/mine/index' })
+		uni.navigateTo({ url: '/pages/mine/index' })
 	}
 </script>
 

@@ -37,8 +37,8 @@ func (t *tenant) RegisterRoute(group ack.Party) {
 // 租户自助注册
 // @Summary 租户自助注册
 // @Tags 租户
-// @Param data body dto.RegisterTenantQuery true "RegisterTenantQuery"
-// @Success 200 {object} dto.LoginUserVO
+// @Param data body dto.RegisterTenantReq true "RegisterTenantReq"
+// @Success 200 {object} dto.LoginUserResp
 // @Router /tenant/register [post]
 func (t *tenant) register(ctx ack.Context) {
 	ack.Post(ctx, service.Tenant.Register)
@@ -47,7 +47,7 @@ func (t *tenant) register(ctx ack.Context) {
 // 我的企业列表
 // @Summary 我的企业列表
 // @Tags 租户
-// @Success 200 {object} dto.UserTenantListVO
+// @Success 200 {object} dto.UserTenantListResp
 // @Router /tenant/myTenants [get]
 func (t *tenant) myTenants(ctx ack.Context) {
 	ack.Get(ctx, service.Tenant.MyTenants)
@@ -56,8 +56,8 @@ func (t *tenant) myTenants(ctx ack.Context) {
 // 切换当前租户
 // @Summary 切换当前租户
 // @Tags 租户
-// @Param data body dto.SwitchTenantQuery true "SwitchTenantQuery"
-// @Success 200 {object} dto.LoginUserVO
+// @Param data body dto.SwitchTenantReq true "SwitchTenantReq"
+// @Success 200 {object} dto.LoginUserResp
 // @Router /tenant/switchTenant [post]
 func (t *tenant) switchTenant(ctx ack.Context) {
 	ack.Post(ctx, service.Tenant.SwitchTenant)
@@ -66,7 +66,7 @@ func (t *tenant) switchTenant(ctx ack.Context) {
 // 平台开通/解锁租户
 // @Summary 平台开通/解锁租户
 // @Tags 租户
-// @Param data body dto.OpenTenantQuery true "OpenTenantQuery"
+// @Param data body dto.OpenTenantReq true "OpenTenantReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /tenant/open [post]
 func (t *tenant) open(ctx ack.Context) {
@@ -76,7 +76,7 @@ func (t *tenant) open(ctx ack.Context) {
 // 试用到期锁定
 // @Summary 试用到期锁定
 // @Tags 租户
-// @Param data body dto.OpenTenantQuery true "OpenTenantQuery"
+// @Param data body dto.OpenTenantReq true "OpenTenantReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /tenant/lock [post]
 func (t *tenant) lock(ctx ack.Context) {
@@ -86,8 +86,8 @@ func (t *tenant) lock(ctx ack.Context) {
 // 邀请成员
 // @Summary 邀请成员
 // @Tags 租户
-// @Param data body dto.InviteMemberQuery true "InviteMemberQuery"
-// @Success 200 {object} dto.MemberVO
+// @Param data body dto.InviteMemberReq true "InviteMemberReq"
+// @Success 200 {object} dto.MemberResp
 // @Router /tenant/inviteMember [post]
 func (t *tenant) inviteMember(ctx ack.Context) {
 	ack.Post(ctx, service.Tenant.InviteMember)

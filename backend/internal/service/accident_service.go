@@ -20,7 +20,7 @@ type accident struct{}
 var Accident = &accident{}
 
 // PageAccidentByKey 分页查询事故记录（联表 elder 获取老人姓名）
-func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentByKeyQuery, out *[]dto.PageAccidentByKeyVO) error {
+func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentByKeyReq, out *[]dto.PageAccidentByKeyResp) error {
 	clampPage(in.PageNum, in.PageSize)
 	// 构造查询
 	q := db.Table(tblaccident.TableName).
@@ -55,7 +55,7 @@ func (a *accident) PageAccidentByKey(ctx context.Context, in *dto.PageAccidentBy
 }
 
 // GetAccidentById 根据编号获取事故
-func (a *accident) GetAccidentById(ctx context.Context, in *dto.IDReq, out *dto.GetAccidentByIDVO) error {
+func (a *accident) GetAccidentById(ctx context.Context, in *dto.IDReq, out *dto.GetAccidentByIDResp) error {
 	return db.Table(tblaccident.TableName).
 		LeftJoin(tblaccident.ElderId, tblelder.Id).
 		Where(tblaccident.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblaccident.Id.Eq(*in.ID)).
@@ -72,7 +72,7 @@ func (a *accident) GetAccidentById(ctx context.Context, in *dto.IDReq, out *dto.
 }
 
 // AddAccident 新增事故
-func (a *accident) AddAccident(ctx context.Context, in *dto.AddAccidentQuery, out *dto.EmptyResp) error {
+func (a *accident) AddAccident(ctx context.Context, in *dto.AddAccidentReq, out *dto.EmptyResp) error {
 	// 初始化事故登记
 	bean := do.NewAccident()
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
@@ -98,7 +98,7 @@ func (a *accident) AddAccident(ctx context.Context, in *dto.AddAccidentQuery, ou
 }
 
 // EditAccident 编辑事故
-func (a *accident) EditAccident(ctx context.Context, in *dto.EditAccidentQuery, out *dto.EmptyResp) error {
+func (a *accident) EditAccident(ctx context.Context, in *dto.EditAccidentReq, out *dto.EmptyResp) error {
 	obj, has, e := dao.Accident(db).GetByID(ctx, types.BigInt(*in.ID),
 		tblaccident.StaffId,
 		tblaccident.OccurDate,

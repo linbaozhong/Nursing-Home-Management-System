@@ -4,9 +4,9 @@ import "time"
 
 // ============ RetreatApplyController 请求 ============
 
+// PageRetreatAuditReq 分页查询退住审核请求（RetreatApply 复用）
 // @request
-// PageRetreatAuditQuery 分页查询退住审核请求（RetreatApply 复用）
-type PageRetreatAuditQuery struct {
+type PageRetreatAuditReq struct {
 	PageNum   *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize  *int    `json:"page_size" valid:"required"` // 条数
 	ElderName *string `json:"elder_name"`                 // 老人姓名
@@ -14,18 +14,18 @@ type PageRetreatAuditQuery struct {
 	IDNum     *string `json:"id_num"`                     // 老人身份证号
 }
 
+// PageRetreatApplyReq 分页查询退住申请请求（继承 PageRetreatAuditReq）
 // @request
-// PageRetreatApplyQuery 分页查询退住申请请求（继承 PageRetreatAuditQuery）
-type PageRetreatApplyQuery struct {
-	PageRetreatAuditQuery
+type PageRetreatApplyReq struct {
+	PageRetreatAuditReq
 	BedName *string `json:"bed_name"` // 床位名称
 }
 
-// GetReserveByReserveIDAndElderIDQuery 根据预定/老人编号获取请求（定义见 reserve.go）
+// GetReserveByReserveIDAndElderIDReq 根据预定/老人编号获取请求（定义见 reserve.go）
 
+// PageRetreatApplyByKeyReq 分页查询退住申请请求
 // @request
-// PageRetreatApplyByKeyQuery 分页查询退住申请请求
-type PageRetreatApplyByKeyQuery struct {
+type PageRetreatApplyByKeyReq struct {
 	PageNum   *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize  *int    `json:"page_size" valid:"required"` // 条数
 	ElderName *string `json:"elder_name"`                 // 老人姓名
@@ -33,30 +33,30 @@ type PageRetreatApplyByKeyQuery struct {
 	IDNum     *string `json:"id_num"`                     // 老人身份证号
 }
 
+// AddRetreatApplyReq 新增退住申请请求
 // @request
-// AddRetreatApplyQuery 新增退住申请请求
-type AddRetreatApplyQuery struct {
+type AddRetreatApplyReq struct {
 	ElderID     *int64     `json:"elder_id" valid:"required"`     // 老人编号
 	ApplyReason *string    `json:"apply_reason" valid:"required"` // 退住原因
 	ApplyDate   *time.Time `json:"apply_date" valid:"required"`   // 申请日期
 }
 
+// EditRetreatApplyReq 编辑退住申请请求
 // @request
-// EditRetreatApplyQuery 编辑退住申请请求
-type EditRetreatApplyQuery struct {
+type EditRetreatApplyReq struct {
 	ID          *int64     `json:"id"`                            // id
 	ElderID     *int64     `json:"elder_id" valid:"required"`     // 老人编号
 	ApplyReason *string    `json:"apply_reason" valid:"required"` // 退住原因
 	ApplyDate   *time.Time `json:"apply_date" valid:"required"`   // 申请日期
 }
 
-// PageSearchElderByKeyQuery 分页搜索老人请求（定义见 elderrecord.go）
+// PageSearchElderByKeyReq 分页搜索老人请求（定义见 elderrecord.go）
 
 // ============ RetreatApplyController 响应 ============
 
+// PageRetreatByKeyResp 分页查询退住响应（RetreatApply / RetreatAudit 共用）
 // @response
-// PageRetreatByKeyVO 分页查询退住响应（RetreatApply / RetreatAudit 共用）
-type PageRetreatByKeyVO struct {
+type PageRetreatByKeyResp struct {
 	ApplyID   int64  `json:"apply_id"`   // 申请编号
 	ElderID   int64  `json:"elder_id"`   // 老人编号
 	ElderName string `json:"elder_name"` // 老人姓名

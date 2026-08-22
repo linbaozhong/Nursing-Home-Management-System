@@ -30,7 +30,7 @@ func (i *inventory) RegisterRoute(group ack.Party) {
 // @Tags 库存
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageInventoryByKeyQuery true "PageInventoryByKeyQuery"
+// @Param data query dto.PageInventoryByKeyReq true "PageInventoryByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /inventory/pageInventoryByKey [get]
 func (i *inventory) pageInventoryByKey(ctx ack.Context) {
@@ -54,7 +54,7 @@ func (i *inventory) getInventoryById(ctx ack.Context) {
 // @Tags 库存
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageInventoryRecordByKeyQuery true "PageInventoryRecordByKeyQuery"
+// @Param data query dto.PageInventoryRecordByKeyReq true "PageInventoryRecordByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /inventory/pageInventoryRecordByKey [get]
 func (i *inventory) pageInventoryRecordByKey(ctx ack.Context) {
@@ -78,7 +78,7 @@ func (i *inventory) getInventoryRecordById(ctx ack.Context) {
 // @Tags 库存
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddInventoryQuery true "AddInventoryQuery"
+// @Param data body dto.AddInventoryReq true "AddInventoryReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /inventory/addInventory [post]
 func (i *inventory) addInventory(ctx ack.Context) {
@@ -90,7 +90,7 @@ func (i *inventory) addInventory(ctx ack.Context) {
 // @Tags 库存
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditInventoryQuery true "EditInventoryQuery"
+// @Param data body dto.EditInventoryReq true "EditInventoryReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /inventory/editInventory [post]
 func (i *inventory) editInventory(ctx ack.Context) {
@@ -102,7 +102,7 @@ func (i *inventory) editInventory(ctx ack.Context) {
 // @Tags 库存
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AuditInventoryQuery true "AuditInventoryQuery"
+// @Param data body dto.AuditInventoryReq true "AuditInventoryReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /inventory/auditInventory [post]
 func (i *inventory) auditInventory(ctx ack.Context) {

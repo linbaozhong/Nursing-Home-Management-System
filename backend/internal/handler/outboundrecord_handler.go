@@ -30,7 +30,7 @@ func (o *outboundrecord) RegisterRoute(group ack.Party) {
 // @Tags 出库记录
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageOutboundRecordByKeyQuery true "PageOutboundRecordByKeyQuery"
+// @Param data query dto.PageOutboundRecordByKeyReq true "PageOutboundRecordByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /outboundRecord/pageOutboundRecordByKey [get]
 func (o *outboundrecord) pageOutboundRecordByKey(ctx ack.Context) {
@@ -54,7 +54,7 @@ func (o *outboundrecord) getOutboundRecordById(ctx ack.Context) {
 // @Tags 出库记录
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /outboundRecord/pageSearchElderByKey [get]
 func (o *outboundrecord) pageSearchElderByKey(ctx ack.Context) {
@@ -66,7 +66,7 @@ func (o *outboundrecord) pageSearchElderByKey(ctx ack.Context) {
 // @Tags 出库记录
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageWarehouseMaterialByKeyQuery true "PageWarehouseMaterialByKeyQuery"
+// @Param data query dto.PageWarehouseMaterialByKeyReq true "PageWarehouseMaterialByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /outboundRecord/pageWarehouseMaterialByKey [get]
 func (o *outboundrecord) pageWarehouseMaterialByKey(ctx ack.Context) {
@@ -78,7 +78,7 @@ func (o *outboundrecord) pageWarehouseMaterialByKey(ctx ack.Context) {
 // @Tags 出库记录
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddOutboundRecordQuery true "AddOutboundRecordQuery"
+// @Param data body dto.AddOutboundRecordReq true "AddOutboundRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /outboundRecord/addOutboundRecord [post]
 func (o *outboundrecord) addOutboundRecord(ctx ack.Context) {
@@ -90,7 +90,7 @@ func (o *outboundrecord) addOutboundRecord(ctx ack.Context) {
 // @Tags 出库记录
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AuditOutboundRecordQuery true "AuditOutboundRecordQuery"
+// @Param data body dto.AuditOutboundRecordReq true "AuditOutboundRecordReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /outboundRecord/auditOutboundRecord [post]
 func (o *outboundrecord) auditOutboundRecord(ctx ack.Context) {

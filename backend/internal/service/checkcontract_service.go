@@ -34,7 +34,7 @@ var CheckContract = &checkcontract{}
 
 // PageCheckContractByKey 分页查询入住签约老人（入住中 + 退住审核）
 // 对应 Java: CheckContractFunc.listCheckContract
-func (c *checkcontract) PageCheckContractByKey(ctx context.Context, in *dto.PageCheckContractByKeyQuery, out *[]dto.PageCheckContractByKeyVO) error {
+func (c *checkcontract) PageCheckContractByKey(ctx context.Context, in *dto.PageCheckContractByKeyReq, out *[]dto.PageCheckContractByKeyResp) error {
 	q := db.Table(tblelder.TableName).
 		Where(
 			// tblelder.DelFlag.Eq(constant.YesNoNo),
@@ -68,7 +68,7 @@ func (c *checkcontract) PageCheckContractByKey(ctx context.Context, in *dto.Page
 
 // PageSearchElderByKey 分页查询搜索老人（咨询/意向/预定/退住）
 // 对应 Java: CheckContractFunc.listSearchElder
-func (c *checkcontract) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+func (c *checkcontract) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyReq, out *[]dto.PageSearchElderByKeyResp) error {
 	q := db.Table(tblelder.TableName).
 		Where(
 			// tblelder.DelFlag.Eq(constant.YesNoNo),
@@ -120,7 +120,7 @@ func (c *checkcontract) ListCateringSet(ctx context.Context, in *dto.EmptyReq, o
 }
 
 // GetBuildTree 楼宇三层下拉树（楼栋 -> 楼层 -> 房间）
-func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out *[]dto.BuildingVO) error {
+func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out *[]dto.BuildingResp) error {
 	var buildings []do.Building
 	e := db.Table(tblbuilding.TableName).
 		Cols(tblbuilding.Id, tblbuilding.Name).
@@ -131,7 +131,7 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 		return e
 	}
 	if len(buildings) == 0 {
-		*out = make([]dto.BuildingVO, 0)
+		*out = make([]dto.BuildingResp, 0)
 		return nil
 	}
 	buildingIds := make([]any, 0, len(buildings))
@@ -172,26 +172,26 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 	}
 
 	// 将房间列表转换为 map[楼层编号][]房间
-	roomMap := make(map[int64][]dto.FloorItemVO, len(rooms))
+	roomMap := make(map[int64][]dto.FloorItemResp, len(rooms))
 	for _, f := range rooms {
-		roomMap[int64(f.FloorId)] = append(roomMap[int64(f.FloorId)], dto.FloorItemVO{
+		roomMap[int64(f.FloorId)] = append(roomMap[int64(f.FloorId)], dto.FloorItemResp{
 			ID:   int64(f.Id),
 			Name: f.Name.String(),
 		})
 	}
 	// 将楼层列表转换为 map[楼栋编号][]楼层
-	floorMap := make(map[int64][]dto.BuildingItemVO, len(floors))
+	floorMap := make(map[int64][]dto.BuildingItemResp, len(floors))
 	for _, b := range floors {
-		floorMap[int64(b.BuildingId)] = append(floorMap[int64(b.BuildingId)], dto.BuildingItemVO{
+		floorMap[int64(b.BuildingId)] = append(floorMap[int64(b.BuildingId)], dto.BuildingItemResp{
 			ID:       int64(b.Id),
 			Name:     b.Name.String(),
 			RoomList: roomMap[int64(b.Id)],
 		})
 	}
 	// 将楼栋列表转换为树形结构
-	tree := make([]dto.BuildingVO, 0, len(buildings))
+	tree := make([]dto.BuildingResp, 0, len(buildings))
 	for _, b := range buildings {
-		tree = append(tree, dto.BuildingVO{
+		tree = append(tree, dto.BuildingResp{
 			ID:        int64(b.Id),
 			Name:      b.Name.String(),
 			FloorList: floorMap[int64(b.Id)],
@@ -203,7 +203,7 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 
 // GetBedById 根据编号获取床位（含房间类型信息）
 // 对应 Java: BedFunc.getBedById
-func (c *checkcontract) GetBedById(ctx context.Context, in *dto.IDReq, out *dto.GetBedByIDVO) error {
+func (c *checkcontract) GetBedById(ctx context.Context, in *dto.IDReq, out *dto.GetBedByIDResp) error {
 	return db.Table(tblbed.TableName).
 		LeftJoin(tblbed.RoomId, tblroom.Id).
 		LeftJoin(tblroom.TypeId, tblroomtype.Id).
@@ -233,7 +233,7 @@ func (c *checkcontract) checkNamePhoneExist(ctx context.Context, name, phone str
 
 // AddCheckContract 新增入住签约
 // 对应 Java: CheckContractServiceImpl.addCheckContract
-func (c *checkcontract) AddCheckContract(ctx context.Context, in *dto.OperateCheckContractQuery, out *dto.EmptyResp) error {
+func (c *checkcontract) AddCheckContract(ctx context.Context, in *dto.OperateCheckContractReq, out *dto.EmptyResp) error {
 	// 校验床位存在且为空闲
 	bed, has, e := dao.Bed(db).GetByID(ctx, types.BigInt(*in.BedID),
 		tblbed.Id, tblbed.BedFlag, tblbed.Name,
@@ -306,7 +306,7 @@ func (c *checkcontract) AddCheckContract(ctx context.Context, in *dto.OperateChe
 
 // GetCheckContractById 根据编号获取入住签约（含合同与紧急联系人）
 // 对应 Java: CheckContractServiceImpl.getCheckContractById
-func (c *checkcontract) GetCheckContractById(ctx context.Context, in *dto.IDReq, out *dto.GetCheckContractByIDVO) error {
+func (c *checkcontract) GetCheckContractById(ctx context.Context, in *dto.IDReq, out *dto.GetCheckContractByIDResp) error {
 	elder, has, e := dao.Elder(db).GetByID(ctx, types.BigInt(*in.ID),
 		tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Age,
 		tblelder.Phone, tblelder.Address, tblelder.CheckFlag,
@@ -351,9 +351,9 @@ func (c *checkcontract) GetCheckContractById(ctx context.Context, in *dto.IDReq,
 	if e != nil {
 		return e
 	}
-	out.OperateEmergencyContactQueryList = make([]dto.OperateEmergencyContactQuery, 0, len(contacts))
+	out.OperateEmergencyContactReqList = make([]dto.OperateEmergencyContactReq, 0, len(contacts))
 	for _, ct := range contacts {
-		out.OperateEmergencyContactQueryList = append(out.OperateEmergencyContactQueryList, dto.OperateEmergencyContactQuery{
+		out.OperateEmergencyContactReqList = append(out.OperateEmergencyContactReqList, dto.OperateEmergencyContactReq{
 			Name:        conv.Ptr(ct.Name.String()),
 			Phone:       conv.Ptr(ct.Phone.String()),
 			Relation:    conv.Ptr(ct.Relation.String()),
@@ -365,7 +365,7 @@ func (c *checkcontract) GetCheckContractById(ctx context.Context, in *dto.IDReq,
 
 // EditCheckContract 编辑入住签约
 // 对应 Java: CheckContractServiceImpl.editCheckContract
-func (c *checkcontract) EditCheckContract(ctx context.Context, in *dto.OperateCheckContractQuery, out *dto.EmptyResp) error {
+func (c *checkcontract) EditCheckContract(ctx context.Context, in *dto.OperateCheckContractReq, out *dto.EmptyResp) error {
 	exist, e := c.checkNamePhoneExist(ctx, *in.Name, *in.Phone, conv.Ptr(int64(*in.ID)))
 	if e != nil {
 		return e
@@ -453,7 +453,7 @@ func (c *checkcontract) DeleteCheckContract(ctx context.Context, in *dto.IDReq, 
 }
 
 // PageVisitPlanByKey 分页查询回访计划
-func (c *checkcontract) PageVisitPlanByKey(ctx context.Context, in *dto.PageVisitPlanQuery, out *[]dto.PageVisitPlanVO) error {
+func (c *checkcontract) PageVisitPlanByKey(ctx context.Context, in *dto.PageVisitPlanReq, out *[]dto.PageVisitPlanResp) error {
 	q := db.Table(tblvisitplan.TableName).
 		Where(tblvisitplan.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblvisitplan.DelFlag.Eq(constant.YesNoNo))
 	if in.ElderID != nil {
@@ -481,7 +481,7 @@ func (c *checkcontract) PageVisitPlanByKey(ctx context.Context, in *dto.PageVisi
 }
 
 // AddVisitPlan 新增回访计划
-func (c *checkcontract) AddVisitPlan(ctx context.Context, in *dto.AddVisitPlanQuery, out *dto.EmptyResp) error {
+func (c *checkcontract) AddVisitPlan(ctx context.Context, in *dto.AddVisitPlanReq, out *dto.EmptyResp) error {
 	bean := do.NewVisitPlan()
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.ElderId = types.BigInt(*in.ElderID)
@@ -492,7 +492,7 @@ func (c *checkcontract) AddVisitPlan(ctx context.Context, in *dto.AddVisitPlanQu
 }
 
 // CompleteVisitPlan 完成回访计划
-func (c *checkcontract) CompleteVisitPlan(ctx context.Context, in *dto.CompleteVisitPlanQuery, out *dto.EmptyResp) error {
+func (c *checkcontract) CompleteVisitPlan(ctx context.Context, in *dto.CompleteVisitPlanReq, out *dto.EmptyResp) error {
 	_, e := dao.VisitPlan(db).UpdateById(ctx, types.BigInt(*in.ID),
 		tblvisitplan.Content.Set(*in.Content),
 		tblvisitplan.CompleteDate.Set(*in.CompleteDate),
@@ -501,13 +501,13 @@ func (c *checkcontract) CompleteVisitPlan(ctx context.Context, in *dto.CompleteV
 }
 
 // DeleteVisitPlan 删除回访计划
-func (c *checkcontract) DeleteVisitPlan(ctx context.Context, in *dto.DeleteVisitPlanQuery, out *dto.EmptyResp) error {
+func (c *checkcontract) DeleteVisitPlan(ctx context.Context, in *dto.DeleteVisitPlanReq, out *dto.EmptyResp) error {
 	_, e := dao.VisitPlan(db).DeleteById(ctx, types.BigInt(*in.ID))
 	return e
 }
 
 // PageCommunicationRecordByKey 分页查询沟通记录
-func (c *checkcontract) PageCommunicationRecordByKey(ctx context.Context, in *dto.PageCommunicationRecordQuery, out *[]dto.PageCommunicationRecordVO) error {
+func (c *checkcontract) PageCommunicationRecordByKey(ctx context.Context, in *dto.PageCommunicationRecordReq, out *[]dto.PageCommunicationRecordResp) error {
 	q := db.Table(tblcommunicationrecord.TableName).
 		Where(tblcommunicationrecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblcommunicationrecord.DelFlag.Eq(constant.YesNoNo))
 	if in.ElderID != nil {
@@ -525,7 +525,7 @@ func (c *checkcontract) PageCommunicationRecordByKey(ctx context.Context, in *dt
 }
 
 // AddCommunicationRecord 新增沟通记录
-func (c *checkcontract) AddCommunicationRecord(ctx context.Context, in *dto.AddCommunicationRecordQuery, out *dto.EmptyResp) error {
+func (c *checkcontract) AddCommunicationRecord(ctx context.Context, in *dto.AddCommunicationRecordReq, out *dto.EmptyResp) error {
 	bean := do.NewCommunicationRecord()
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.ElderId = types.BigInt(*in.ElderID)
@@ -536,7 +536,7 @@ func (c *checkcontract) AddCommunicationRecord(ctx context.Context, in *dto.AddC
 }
 
 // EditCommunicationRecord 编辑沟通记录
-func (c *checkcontract) EditCommunicationRecord(ctx context.Context, in *dto.EditCommunicationRecordQuery, out *dto.EmptyResp) error {
+func (c *checkcontract) EditCommunicationRecord(ctx context.Context, in *dto.EditCommunicationRecordReq, out *dto.EmptyResp) error {
 	var sets = make([]dialect.Setter, 0, 2)
 	sets = append(sets, tblcommunicationrecord.RecordDate.Set(*in.RecordDate))
 	sets = append(sets, tblcommunicationrecord.CommunicationRecord.Set(*in.CommunicationRecord))
@@ -545,7 +545,7 @@ func (c *checkcontract) EditCommunicationRecord(ctx context.Context, in *dto.Edi
 }
 
 // DeleteCommunicationRecord 删除沟通记录
-func (c *checkcontract) DeleteCommunicationRecord(ctx context.Context, in *dto.DeleteCommunicationRecordQuery, out *dto.EmptyResp) error {
+func (c *checkcontract) DeleteCommunicationRecord(ctx context.Context, in *dto.DeleteCommunicationRecordReq, out *dto.EmptyResp) error {
 	_, e := dao.CommunicationRecord(db).DeleteById(ctx, types.BigInt(*in.ID))
 	return e
 }

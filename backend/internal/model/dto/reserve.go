@@ -4,18 +4,18 @@ import "time"
 
 // ============ ReserveController 请求 ============
 
+// PageReserveByKeyReq 分页查询预定请求
 // @request
-// PageReserveByKeyQuery 分页查询预定请求
-type PageReserveByKeyQuery struct {
+type PageReserveByKeyReq struct {
 	PageNum    *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize   *int    `json:"page_size" valid:"required"` // 条数
 	ElderName  *string `json:"elder_name"`                 // 老人姓名
 	PayerPhone *string `json:"payer_phone"`                // 交款人电话
 }
 
+// AddReserveReq 新增预定请求
 // @request
-// AddReserveQuery 新增预定请求
-type AddReserveQuery struct {
+type AddReserveReq struct {
 	BedID        *int64     `json:"bed_id" valid:"required"`        // 床位编号
 	StaffID      *int64     `json:"staff_id" valid:"required"`      // 营销人员编号
 	PayerName    *string    `json:"payer_name" valid:"required"`    // 交款人姓名
@@ -30,16 +30,16 @@ type AddReserveQuery struct {
 	ElderAddress *string    `json:"elder_address" valid:"required"` // 老人地址
 }
 
+// GetReserveByReserveIDAndElderIDReq 根据预定编号和老人编号获取预定信息请求
 // @request
-// GetReserveByReserveIDAndElderIDQuery 根据预定编号和老人编号获取预定信息请求
-type GetReserveByReserveIDAndElderIDQuery struct {
+type GetReserveByReserveIDAndElderIDReq struct {
 	ReserveID *int64 `json:"reserve_id" valid:"required"` // 预定编号
 	ElderID   *int64 `json:"elder_id" valid:"required"`   // 老人编号
 }
 
+// EditReserveReq 编辑预定请求
 // @request
-// EditReserveQuery 编辑预定请求
-type EditReserveQuery struct {
+type EditReserveReq struct {
 	ID           *int64     `json:"id"`                             // id
 	BedID        *int64     `json:"bed_id" valid:"required"`        // 床位编号
 	StaffID      *int64     `json:"staff_id" valid:"required"`      // 营销人员编号
@@ -57,9 +57,9 @@ type EditReserveQuery struct {
 
 // ============ ReserveController 响应 ============
 
+// PageReserveByKeyResp 分页查询预定响应
 // @response
-// PageReserveByKeyVO 分页查询预定响应
-type PageReserveByKeyVO struct {
+type PageReserveByKeyResp struct {
 	ReserveID   int64   `json:"reserve_id"`   // 预定编号
 	ElderID     int64   `json:"elder_id"`     // 老人编号
 	StaffName   string  `json:"staff_name"`   // 销售人员姓名
@@ -74,9 +74,9 @@ type PageReserveByKeyVO struct {
 	CheckFlag   string  `json:"check_flag"`   // 入住状态
 }
 
+// GetReserveByReserveIDAndElderIDResp 根据预定编号和老人编号获取预定信息响应
 // @response
-// GetReserveByReserveIDAndElderIDVO 根据预定编号和老人编号获取预定信息响应
-type GetReserveByReserveIDAndElderIDVO struct {
+type GetReserveByReserveIDAndElderIDResp struct {
 	ElderName    string    `json:"elder_name"`    // 老人姓名
 	IDNum        string    `json:"id_num"`        // 身份证号
 	ElderSex     string    `json:"elder_sex"`     // 老人性别

@@ -4,84 +4,84 @@ import "github.com/linbaozhong/gentity/pkg/types"
 
 // ============ DishesController 请求 ============
 
+// PageDishesByKeyReq 分页查询菜品请求
 // @request
-// PageDishesByKeyQuery 分页查询菜品请求
-type PageDishesByKeyQuery struct {
+type PageDishesByKeyReq struct {
 	PageNum    *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize   *int    `json:"page_size" valid:"required"` // 条数
 	TypeID     *int64  `json:"type_id"`                    // 菜品分类编号
 	DishesName *string `json:"dishes_name"`                // 菜品名称
 }
 
+// OperateDishesReq 操作菜品请求
 // @request
-// OperateDishesQuery 操作菜品请求
-type OperateDishesQuery struct {
+type OperateDishesReq struct {
 	ID     *int64       `json:"id"`                       // id
 	TypeID *int64       `json:"type_id" valid:"required"` // 菜品分类编号
 	Name   *string      `json:"name" valid:"required"`    // 菜品名称
 	Price  *types.Money `json:"price" valid:"required"`   // 菜品价格
 }
 
+// OperateDishesTypeReq 操作菜品分类请求
 // @request
-// OperateDishesTypeQuery 操作菜品分类请求
-type OperateDishesTypeQuery struct {
+type OperateDishesTypeReq struct {
 	ID   *int64  `json:"id"`                    // id
 	Name *string `json:"name" valid:"required"` // 菜品分类名称
 }
 
 // ============ DishesController 响应 ============
 
+// PageDishesByKeyResp 分页查询菜品响应
 // @response
-// PageDishesByKeyVO 分页查询菜品响应
-type PageDishesByKeyVO struct {
+type PageDishesByKeyResp struct {
 	ID         int64       `json:"id"`          // id
 	TypeName   string      `json:"type_name"`   // 类别名称
 	DishesName string      `json:"dishes_name"` // 菜品名称
 	Price      types.Money `json:"price"`       // 价格
 }
 
+// OperateDishesResp 操作菜品响应（继承 OperateDishesReq）
 // @response
-// OperateDishesVO 操作菜品响应（继承 OperateDishesQuery）
-type OperateDishesVO struct {
-	OperateDishesQuery
+type OperateDishesResp struct {
+	OperateDishesReq
 }
 
+// AddDishesReq 新增菜品请求
 // @request
-// AddDishesQuery 新增菜品请求
-type AddDishesQuery struct {
+type AddDishesReq struct {
 	ID     *int64       `json:"id"`                       // id
 	TypeID *int64       `json:"type_id" valid:"required"` // 菜品分类编号
 	Name   *string      `json:"name" valid:"required"`    // 菜品名称
 	Price  *types.Money `json:"price" valid:"required"`   // 菜品价格
 }
 
+// EditDishesReq 编辑菜品请求
 // @request
-// EditDishesQuery 编辑菜品请求
-type EditDishesQuery struct {
+type EditDishesReq struct {
 	ID     *int64       `json:"id"`                       // id
 	TypeID *int64       `json:"type_id" valid:"required"` // 菜品分类编号
 	Name   *string      `json:"name" valid:"required"`    // 菜品名称
 	Price  *types.Money `json:"price" valid:"required"`   // 菜品价格
 }
 
+// PageDishesTypeByKeyReq 分页查询菜品分类请求
 // @request
-// PageDishesTypeByKeyQuery 分页查询菜品分类请求
-type PageDishesTypeByKeyQuery struct {
+type PageDishesTypeByKeyReq struct {
 	PageNum  *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize *int    `json:"page_size" valid:"required"` // 条数
 	Name     *string `json:"name"`                       // 菜品分类名称
 }
 
+// AddDishesTypeReq 新增菜品分类请求
 // @request
-// AddDishesTypeQuery 新增菜品分类请求
-type AddDishesTypeQuery struct {
+type AddDishesTypeReq struct {
 	ID   *int64  `json:"id"`                    // id
 	Name *string `json:"name" valid:"required"` // 菜品分类名称
 }
 
+// EditDishesTypeReq 编辑菜品分类请求
 // @request
-// EditDishesTypeQuery 编辑菜品分类请求
-type EditDishesTypeQuery struct {
+type EditDishesTypeReq struct {
 	ID   *int64  `json:"id"`                    // id
 	Name *string `json:"name" valid:"required"` // 菜品分类名称
 }

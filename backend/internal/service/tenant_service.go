@@ -58,7 +58,7 @@ func wxCode2Session(code string) (openID, unionID string, err error) {
 }
 
 // Register 租户自助注册：创建租户 + 创建管理员 User + 创建 Member（租户管理员），立即开通并设试用期
-func (t *tenant) Register(ctx context.Context, in *dto.RegisterTenantQuery, out *dto.LoginUserVO) error {
+func (t *tenant) Register(ctx context.Context, in *dto.RegisterTenantReq, out *dto.LoginUserResp) error {
 	if in.Name == nil || in.ContactName == nil || in.ContactPhone == nil || in.Password == nil {
 		return constant.ErrParamError
 	}
@@ -163,7 +163,7 @@ func (t *tenant) Register(ctx context.Context, in *dto.RegisterTenantQuery, out 
 }
 
 // Open 平台开通/解锁租户（仅平台管理员可调用）
-func (t *tenant) Open(ctx context.Context, in *dto.OpenTenantQuery, out *dto.EmptyResp) error {
+func (t *tenant) Open(ctx context.Context, in *dto.OpenTenantReq, out *dto.EmptyResp) error {
 	if in.ID == nil {
 		return constant.ErrParamError
 	}
@@ -191,7 +191,7 @@ func (t *tenant) Open(ctx context.Context, in *dto.OpenTenantQuery, out *dto.Emp
 }
 
 // Lock 试用到期锁定
-func (t *tenant) Lock(ctx context.Context, in *dto.OpenTenantQuery, out *dto.EmptyResp) error {
+func (t *tenant) Lock(ctx context.Context, in *dto.OpenTenantReq, out *dto.EmptyResp) error {
 	if in.ID == nil {
 		return constant.ErrParamError
 	}
@@ -215,7 +215,7 @@ func (t *tenant) Lock(ctx context.Context, in *dto.OpenTenantQuery, out *dto.Emp
 }
 
 // MyTenants 当前用户已绑定的企业列表（一人多企）
-func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserTenantListVO) error {
+func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserTenantListResp) error {
 	userID := lib.UserID(ctx)
 	memberList, _, e := dao.Member(db).List(ctx, db.Table(tblmember.TableName).
 		Where(tblmember.UserId.Eq(types.BigInt(userID)),
@@ -224,7 +224,7 @@ func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserT
 	if e != nil {
 		return e
 	}
-	tenants := make([]dto.TenantVO, 0, len(memberList))
+	tenants := make([]dto.TenantResp, 0, len(memberList))
 	for _, m := range memberList {
 		tn, has, e2 := dao.Tenant(db).GetByID(ctx, m.TenantId,
 			tbltenant.Id, tbltenant.Name, tbltenant.Logo, tbltenant.ContactName,
@@ -236,7 +236,7 @@ func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserT
 		if !has {
 			continue
 		}
-		tenants = append(tenants, dto.TenantVO{
+		tenants = append(tenants, dto.TenantResp{
 			ID:           tn.Id.Int64(),
 			Name:         tn.Name.String(),
 			Logo:         tn.Logo.String(),
@@ -254,7 +254,7 @@ func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserT
 }
 
 // SwitchTenant 切换当前租户（一人多企时）
-func (t *tenant) SwitchTenant(ctx context.Context, in *dto.SwitchTenantQuery, out *dto.LoginUserVO) error {
+func (t *tenant) SwitchTenant(ctx context.Context, in *dto.SwitchTenantReq, out *dto.LoginUserResp) error {
 	if in.TenantID == nil {
 		return constant.ErrParamError
 	}
@@ -284,7 +284,7 @@ func (t *tenant) SwitchTenant(ctx context.Context, in *dto.SwitchTenantQuery, ou
 }
 
 // InviteMember 租户管理员邀请成员（根据手机号加入）
-func (t *tenant) InviteMember(ctx context.Context, in *dto.InviteMemberQuery, out *dto.MemberVO) error {
+func (t *tenant) InviteMember(ctx context.Context, in *dto.InviteMemberReq, out *dto.MemberResp) error {
 	if in.TenantID == nil || in.Phone == nil || in.RoleID == nil {
 		return constant.ErrParamError
 	}
@@ -344,7 +344,7 @@ func (t *tenant) InviteMember(ctx context.Context, in *dto.InviteMemberQuery, ou
 }
 
 // WxLogin 小程序微信静默登录（智能分流）
-func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginQuery, out *dto.WxLoginVO) error {
+func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginReq, out *dto.WxLoginResp) error {
 	if in.Code == nil || *in.Code == "" {
 		return constant.ErrParamError
 	}
@@ -389,7 +389,7 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginQuery, out *dto.WxL
 	}
 
 	// 构建企业列表
-	tenants := make([]dto.TenantVO, 0, len(memberList))
+	tenants := make([]dto.TenantResp, 0, len(memberList))
 	for _, m := range memberList {
 		tn, hasT, e2 := dao.Tenant(db).GetByID(ctx, m.TenantId,
 			tbltenant.Id, tbltenant.Name, tbltenant.Logo, tbltenant.ContactName,
@@ -404,7 +404,7 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginQuery, out *dto.WxL
 		if e2 = checkTenantUsable(tn); e2 != nil {
 			return e2
 		}
-		tenants = append(tenants, dto.TenantVO{
+		tenants = append(tenants, dto.TenantResp{
 			ID:           tn.Id.Int64(),
 			Name:         tn.Name.String(),
 			Logo:         tn.Logo.String(),
@@ -421,7 +421,7 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginQuery, out *dto.WxL
 	// 唯一企业：直接登录，返回 token
 	if len(tenants) == 1 {
 		m := memberList[0]
-		lu := &dto.LoginUserVO{}
+		lu := &dto.LoginUserResp{}
 		if e = Account.fillUserByMember(ctx, userID, m.TenantId.Int64(), m.Id.Int64(), m.RoleId.Int64(), lu); e != nil {
 			return e
 		}
@@ -438,7 +438,7 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginQuery, out *dto.WxL
 // ============ 辅助方法 ============
 
 // fillUserByMember 根据 user/tenant/member 组装登录信息并生成 token
-func (a *account) fillUserByMember(ctx context.Context, userID, tenantID, memberID, roleID int64, out *dto.LoginUserVO) error {
+func (a *account) fillUserByMember(ctx context.Context, userID, tenantID, memberID, roleID int64, out *dto.LoginUserResp) error {
 	user, has, e := dao.User(db).GetByID(ctx, types.BigInt(userID),
 		tbluser.Id, tbluser.Name, tbluser.Avator, tbluser.Phone, tbluser.Pass)
 	if e != nil {

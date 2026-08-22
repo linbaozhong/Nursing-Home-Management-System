@@ -4,9 +4,9 @@ import "time"
 
 // ============ OutwardController 请求 ============
 
+// PageOutwardByKeyReq 分页查询外出登记请求
 // @request
-// PageOutwardByKeyQuery 分页查询外出登记请求
-type PageOutwardByKeyQuery struct {
+type PageOutwardByKeyReq struct {
 	PageNum       *int       `json:"page_num" valid:"required"`  // 页码
 	PageSize      *int       `json:"page_size" valid:"required"` // 条数
 	ElderName     *string    `json:"elder_name"`                 // 老人姓名
@@ -15,9 +15,9 @@ type PageOutwardByKeyQuery struct {
 	EndTime       *time.Time `json:"end_time"`                   // 结束时间
 }
 
+// AddOutwardReq 新增外出登记请求
 // @request
-// AddOutwardQuery 新增外出登记请求
-type AddOutwardQuery struct {
+type AddOutwardReq struct {
 	ElderID        *int64     `json:"elder_id" valid:"required"`         // 老人编号
 	ChaperoneName  *string    `json:"chaperone_name" valid:"required"`   // 陪同人姓名
 	ChaperonePhone *string    `json:"chaperone_phone" valid:"required"`  // 陪同人电话
@@ -26,23 +26,23 @@ type AddOutwardQuery struct {
 	PlanReturnDate *time.Time `json:"plan_return_date" valid:"required"` // 计划返回时间
 }
 
+// DelayReturnReq 延期返回请求
 // @request
-// DelayReturnQuery 延期返回请求
-type DelayReturnQuery struct {
+type DelayReturnReq struct {
 	ID             *int64     `json:"id" valid:"required"`               // id
 	PlanReturnDate *time.Time `json:"plan_return_date" valid:"required"` // 计划返回时间
 }
 
+// RecordReturnReq 登记返回请求
 // @request
-// RecordReturnQuery 登记返回请求
-type RecordReturnQuery struct {
+type RecordReturnReq struct {
 	ID             *int64     `json:"id" valid:"required"`               // id
 	RealReturnDate *time.Time `json:"real_return_date" valid:"required"` // 实际返回时间
 }
 
+// EditOutwardReq 编辑外出登记请求
 // @request
-// EditOutwardQuery 编辑外出登记请求
-type EditOutwardQuery struct {
+type EditOutwardReq struct {
 	ID             *int64     `json:"id"`                                // id
 	ElderID        *int64     `json:"elder_id" valid:"required"`         // 老人编号
 	ChaperoneName  *string    `json:"chaperone_name" valid:"required"`   // 陪同人姓名
@@ -54,9 +54,9 @@ type EditOutwardQuery struct {
 
 // ============ OutwardController 响应 ============
 
+// PageOutwardByKeyResp 分页查询外出登记响应
 // @response
-// PageOutwardByKeyVO 分页查询外出登记响应
-type PageOutwardByKeyVO struct {
+type PageOutwardByKeyResp struct {
 	ID             int64     `json:"id"`               // 外出登记编号
 	ElderName      string    `json:"elder_name"`       // 老人姓名
 	ChaperoneName  string    `json:"chaperone_name"`   // 陪同人姓名
@@ -67,9 +67,9 @@ type PageOutwardByKeyVO struct {
 	RealReturnDate time.Time `json:"real_return_date"` // 实际返回时间
 }
 
+// GetOutwardByIDResp 根据编号查询外出登记响应
 // @response
-// GetOutwardByIDVO 根据编号查询外出登记响应
-type GetOutwardByIDVO struct {
+type GetOutwardByIDResp struct {
 	ID             int64     `json:"id"`               // id
 	ElderName      string    `json:"elder_name"`       // 老人姓名
 	ChaperoneName  string    `json:"chaperone_name"`   // 陪同人姓名

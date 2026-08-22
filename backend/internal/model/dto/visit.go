@@ -4,9 +4,9 @@ import "time"
 
 // ============ VisitController 请求 ============
 
+// PageVisitByKeyReq 分页查询来访登记请求
 // @request
-// PageVisitByKeyQuery 分页查询来访登记请求
-type PageVisitByKeyQuery struct {
+type PageVisitByKeyReq struct {
 	PageNum    *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize   *int    `json:"page_size" valid:"required"` // 条数
 	ElderName  *string `json:"elder_name"`                 // 老人姓名
@@ -15,9 +15,9 @@ type PageVisitByKeyQuery struct {
 	VisitFlag  *string `json:"visit_flag"`                 // 来访状态
 }
 
+// EditVisitReq 编辑来访登记请求
 // @request
-// EditVisitQuery 编辑来访登记请求
-type EditVisitQuery struct {
+type EditVisitReq struct {
 	ID        *int64     `json:"id"`                          // id
 	Name      *string    `json:"name" valid:"required"`       // 来访者姓名
 	Phone     *string    `json:"phone" valid:"required"`      // 来访者电话
@@ -26,27 +26,27 @@ type EditVisitQuery struct {
 	VisitNum  *int64     `json:"visit_num" valid:"required"`  // 来访者人数
 }
 
+// AddVisitReq 新增来访登记请求（继承 EditVisitReq）
 // @request
-// AddVisitQuery 新增来访登记请求（继承 EditVisitQuery）
-type AddVisitQuery struct {
-	EditVisitQuery
+type AddVisitReq struct {
+	EditVisitReq
 	ElderID *int64 `json:"elder_id" valid:"required"` // 老人编号
 }
 
+// RecordLeaveReq 登记离开请求
 // @request
-// RecordLeaveQuery 登记离开请求
-type RecordLeaveQuery struct {
+type RecordLeaveReq struct {
 	ID        *int64     `json:"id" valid:"required"`         // id
 	LeaveDate *time.Time `json:"leave_date" valid:"required"` // 离开时间
 }
 
-// PageSearchElderByKeyQuery 分页搜索老人请求（定义见 elderrecord.go）
+// PageSearchElderByKeyReq 分页搜索老人请求（定义见 elderrecord.go）
 
 // ============ VisitController 响应 ============
 
+// PageVisitByKeyResp 分页查询来访登记响应
 // @response
-// PageVisitByKeyVO 分页查询来访登记响应
-type PageVisitByKeyVO struct {
+type PageVisitByKeyResp struct {
 	ID         int64     `json:"id"`          // id
 	ElderName  string    `json:"elder_name"`  // 老人姓名
 	VisitName  string    `json:"visit_name"`  // 来访者姓名
@@ -58,9 +58,9 @@ type PageVisitByKeyVO struct {
 	VisitFlag  *int8     `json:"visit_flag"`  // 来访状态（0-在院 1-已离开）
 }
 
+// GetVisitByIDResp 根据编号获取来访登记响应
 // @response
-// GetVisitByIDVO 根据编号获取来访登记响应
-type GetVisitByIDVO struct {
+type GetVisitByIDResp struct {
 	ID         int64     `json:"id"`          // id
 	ElderName  string    `json:"elder_name"`  // 老人姓名
 	VisitName  string    `json:"visit_name"`  // 来访者姓名

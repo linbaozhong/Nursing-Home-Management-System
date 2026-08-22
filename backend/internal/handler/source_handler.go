@@ -28,7 +28,7 @@ func (s *source) RegisterRoute(group ack.Party) {
 // @Tags 来源
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSourceByKeyQuery true "PageSourceByKeyQuery"
+// @Param data query dto.PageSourceByKeyReq true "PageSourceByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /source/pageSourceByKey [get]
 func (s *source) pageSourceByKey(ctx ack.Context) {
@@ -64,7 +64,7 @@ func (s *source) getSourceById(ctx ack.Context) {
 // @Tags 来源
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateSourceQuery true "OperateSourceQuery"
+// @Param data body dto.OperateSourceReq true "OperateSourceReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /source/editSource [post]
 func (s *source) editSource(ctx ack.Context) {

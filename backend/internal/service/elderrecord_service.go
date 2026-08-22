@@ -25,7 +25,7 @@ var ElderRecord = &elderrecord{}
 
 // PageElderRecordByKey 分页查询长者档案（联表 bed 取床位名称）
 // 对应 Java: ElderRecordServiceImpl.pageElderByKey -> ElderMapper.listElderByKey
-func (e *elderrecord) PageElderRecordByKey(ctx context.Context, in *dto.PageElderRecordByKeyQuery, out *[]dto.PageElderByKeyVO) error {
+func (e *elderrecord) PageElderRecordByKey(ctx context.Context, in *dto.PageElderRecordByKeyReq, out *[]dto.PageElderByKeyResp) error {
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblelder.TableName).
 		LeftJoin(tblelder.BedId, tblbed.Id).
@@ -58,7 +58,7 @@ func (e *elderrecord) PageElderRecordByKey(ctx context.Context, in *dto.PageElde
 
 // GetElderRecordById 根据编号获取长者档案（含紧急联系人）
 // 对应 Java: ElderRecordServiceImpl.getElderRecordById
-func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out *dto.GetElderRecordByIDVO) error {
+func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out *dto.GetElderRecordByIDResp) error {
 	elder, has, e2 := dao.Elder(db).GetByID(ctx, types.BigInt(*in.ID),
 		tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Age, tblelder.Sex,
 		tblelder.Phone, tblelder.Address,
@@ -93,9 +93,9 @@ func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out
 	if e2 != nil {
 		return e2
 	}
-	out.ElderEmergencyContactByIDVOList = make([]dto.OperateEmergencyContactQuery, 0, len(contacts))
+	out.ElderEmergencyContactByIDVOList = make([]dto.OperateEmergencyContactReq, 0, len(contacts))
 	for _, ct := range contacts {
-		out.ElderEmergencyContactByIDVOList = append(out.ElderEmergencyContactByIDVOList, dto.OperateEmergencyContactQuery{
+		out.ElderEmergencyContactByIDVOList = append(out.ElderEmergencyContactByIDVOList, dto.OperateEmergencyContactReq{
 			Name:        conv.Ptr(ct.Name.String()),
 			Phone:       conv.Ptr(ct.Phone.String()),
 			Email:       conv.Ptr(ct.Email.String()),
@@ -108,7 +108,7 @@ func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out
 
 // AddElderRecord 新增长者档案（含紧急联系人）
 // 对应 Java 不存在, Go handler 注册, 实现基础 elder 插入 + 紧急联系人
-func (e *elderrecord) AddElderRecord(ctx context.Context, in *dto.AddElderRecordQuery, out *dto.EmptyResp) error {
+func (e *elderrecord) AddElderRecord(ctx context.Context, in *dto.AddElderRecordReq, out *dto.EmptyResp) error {
 	bean := do.NewElder()
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
@@ -127,7 +127,7 @@ func (e *elderrecord) AddElderRecord(ctx context.Context, in *dto.AddElderRecord
 }
 
 // EditElderRecord 编辑长者档案
-func (e *elderrecord) EditElderRecord(ctx context.Context, in *dto.EditElderRecordQuery, out *dto.EmptyResp) error {
+func (e *elderrecord) EditElderRecord(ctx context.Context, in *dto.EditElderRecordReq, out *dto.EmptyResp) error {
 	var sets = make([]dialect.Setter, 0, 7)
 	sets = append(sets, tblelder.Name.Set(*in.Name))
 	sets = append(sets, tblelder.IdNum.Set(*in.IDNum))
@@ -146,7 +146,7 @@ func (e *elderrecord) EditElderRecord(ctx context.Context, in *dto.EditElderReco
 }
 
 // AddEmergencyContact 新增紧急联系人
-func (e *elderrecord) AddEmergencyContact(ctx context.Context, in *dto.AddEmergencyContactQuery, out *dto.EmptyResp) error {
+func (e *elderrecord) AddEmergencyContact(ctx context.Context, in *dto.AddEmergencyContactReq, out *dto.EmptyResp) error {
 	bean := do.NewEmergencyContact()
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.ElderId = types.BigInt(*in.ElderID)
@@ -162,7 +162,7 @@ func (e *elderrecord) AddEmergencyContact(ctx context.Context, in *dto.AddEmerge
 }
 
 // EditEmergencyContact 编辑紧急联系人
-func (e *elderrecord) EditEmergencyContact(ctx context.Context, in *dto.EditEmergencyContactQuery, out *dto.EmptyResp) error {
+func (e *elderrecord) EditEmergencyContact(ctx context.Context, in *dto.EditEmergencyContactReq, out *dto.EmptyResp) error {
 	id := types.BigInt(*in.ID)
 	sets := make([]dialect.Field, 0, 3)
 	if in.Name != nil {
@@ -193,7 +193,7 @@ func (e *elderrecord) EditEmergencyContact(ctx context.Context, in *dto.EditEmer
 }
 
 // DeleteEmergencyContact 删除紧急联系人
-func (e *elderrecord) DeleteEmergencyContact(ctx context.Context, in *dto.DeleteEmergencyContactQuery, out *dto.EmptyResp) error {
+func (e *elderrecord) DeleteEmergencyContact(ctx context.Context, in *dto.DeleteEmergencyContactReq, out *dto.EmptyResp) error {
 	_, e2 := dao.EmergencyContact(db).DeleteById(ctx, types.BigInt(*in.ID))
 	return e2
 }
@@ -218,7 +218,7 @@ func (e *elderrecord) DeleteElderRecord(ctx context.Context, in *dto.IDReq, out 
 
 // PageSearchElderByKey 分页搜索老人
 // 对应 Java: ElderRecordServiceImpl.pageSearchElderByKey -> ElderMapper.listElderByKey
-func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyReq, out *[]dto.PageSearchElderByKeyResp) error {
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblelder.TableName).
 		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Gt(types.BigInt(0)))
@@ -244,7 +244,7 @@ func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSear
 }
 
 // PageSearchEmergencyContactByKey 分页搜索紧急联系人
-func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *dto.PageSearchEmergencyContactByKeyQuery, out *[]dto.PageSearchEmergencyContactByKeyVO) error {
+func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *dto.PageSearchEmergencyContactByKeyReq, out *[]dto.PageSearchEmergencyContactByKeyResp) error {
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblemergencycontact.TableName).
 		Where(tblemergencycontact.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblemergencycontact.ElderId.Eq(types.BigInt(*in.ElderID)))
@@ -266,7 +266,7 @@ func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *d
 }
 
 // PageLabelByKey 分页查询客户标签
-func (e *elderrecord) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyQuery, out *[]dto.ListLabelVO) error {
+func (e *elderrecord) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyReq, out *[]dto.ListLabelResp) error {
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tbllabel.TableName).
 		Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)))
@@ -282,9 +282,9 @@ func (e *elderrecord) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKey
 	if e2 != nil {
 		return e2
 	}
-	*out = make([]dto.ListLabelVO, 0, len(labels))
+	*out = make([]dto.ListLabelResp, 0, len(labels))
 	for _, l := range labels {
-		*out = append(*out, dto.ListLabelVO{
+		*out = append(*out, dto.ListLabelResp{
 			ID:   int64(l.Id),
 			Name: l.Name.String(),
 		})
@@ -294,7 +294,7 @@ func (e *elderrecord) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKey
 
 // EditElderLabel 编辑老人标签
 // 说明: Go 端 elder 表无 label_id 字段, 该方法保留以便后续扩展
-func (e *elderrecord) EditElderLabel(ctx context.Context, in *dto.EditElderLabelQuery, out *dto.EmptyResp) error {
+func (e *elderrecord) EditElderLabel(ctx context.Context, in *dto.EditElderLabelReq, out *dto.EmptyResp) error {
 	return errors.New("not implemented: elder 表暂无 label_id 字段")
 }
 

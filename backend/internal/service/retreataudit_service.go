@@ -28,7 +28,7 @@ type retreatAuditJoin struct {
 }
 
 // PageRetreatAuditByKey 分页查询退住审核
-func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto.PageRetreatAuditByKeyQuery, out *[]dto.PageRetreatAuditByKeyVO) error {
+func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto.PageRetreatAuditByKeyReq, out *[]dto.PageRetreatAuditByKeyVO) error {
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
@@ -90,7 +90,7 @@ func (s *retreatAuditService) GetRetreatAuditById(ctx context.Context, in *dto.I
 }
 
 // AuditRetreat 审核退住申请（通过/不通过）
-func (s *retreatAuditService) AuditRetreat(ctx context.Context, in *dto.AuditRetreatQuery) error {
+func (s *retreatAuditService) AuditRetreat(ctx context.Context, in *dto.AuditRetreatReq) error {
 	if in.ID == nil || in.AuditResult == nil {
 		return constant.ErrParamInvalid
 	}

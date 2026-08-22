@@ -4,9 +4,9 @@ import "github.com/linbaozhong/gentity/pkg/types"
 
 // ============ InventoryController 请求 ============
 
+// PageInventoryByKeyReq 分页查询库存请求
 // @request
-// PageInventoryByKeyQuery 分页查询库存请求
-type PageInventoryByKeyQuery struct {
+type PageInventoryByKeyReq struct {
 	PageNum      *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize     *int    `json:"page_size" valid:"required"` // 条数
 	WarehouseID  *int64  `json:"warehouse_id"`               // 仓库编号
@@ -15,9 +15,9 @@ type PageInventoryByKeyQuery struct {
 
 // ============ InventoryController 响应 ============
 
+// PageInventoryByKeyResp 分页查询库存响应
 // @response
-// PageInventoryByKeyVO 分页查询库存响应
-type PageInventoryByKeyVO struct {
+type PageInventoryByKeyResp struct {
 	WarehouseName string      `json:"warehouse_name"` // 仓库名称
 	MaterialID    int64       `json:"material_id"`    // 物资编号
 	MaterialName  string      `json:"material_name"`  // 物资名称
@@ -28,9 +28,9 @@ type PageInventoryByKeyVO struct {
 	Price         types.Money `json:"price"`          // 物资单价
 }
 
+// PageInventoryRecordByKeyReq 分页查询库存记录请求
 // @request
-// PageInventoryRecordByKeyQuery 分页查询库存记录请求
-type PageInventoryRecordByKeyQuery struct {
+type PageInventoryRecordByKeyReq struct {
 	PageNum    *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize   *int    `json:"page_size" valid:"required"` // 条数
 	Type       *string `json:"type"`                       // 记录类型(in/out)
@@ -38,9 +38,9 @@ type PageInventoryRecordByKeyQuery struct {
 	Key        *string `json:"key"`                        // 关键字
 }
 
+// AddInventoryReq 新增库存请求
 // @request
-// AddInventoryQuery 新增库存请求
-type AddInventoryQuery struct {
+type AddInventoryReq struct {
 	ID          *int64       `json:"id"`                            // id
 	WarehouseID *int64       `json:"warehouse_id" valid:"required"` // 仓库编号
 	MaterialID  *int64       `json:"material_id" valid:"required"`  // 物资编号
@@ -49,9 +49,9 @@ type AddInventoryQuery struct {
 	Remark      *string      `json:"remark"`                        // 备注
 }
 
+// EditInventoryReq 编辑库存请求
 // @request
-// EditInventoryQuery 编辑库存请求
-type EditInventoryQuery struct {
+type EditInventoryReq struct {
 	ID          *int64       `json:"id"`                            // id
 	WarehouseID *int64       `json:"warehouse_id" valid:"required"` // 仓库编号
 	MaterialID  *int64       `json:"material_id" valid:"required"`  // 物资编号
@@ -60,9 +60,9 @@ type EditInventoryQuery struct {
 	Remark      *string      `json:"remark"`                        // 备注
 }
 
+// AuditInventoryReq 审核库存请求
 // @request
-// AuditInventoryQuery 审核库存请求
-type AuditInventoryQuery struct {
+type AuditInventoryReq struct {
 	ID          *int64  `json:"id" valid:"required"`           // 库存记录编号
 	AuditResult *string `json:"audit_result" valid:"required"` // 审核结果
 }

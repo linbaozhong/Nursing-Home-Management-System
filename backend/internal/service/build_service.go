@@ -127,7 +127,7 @@ func (b *build) hasOccupiedBed(ctx context.Context, scope string, id int64) (boo
 }
 
 // buildTree 组装 楼栋→楼层→房间→床位 树（对应 Java generateBuildingSimpleTree）
-func (b *build) buildTree(buildings []*do.Building, floors []*do.Floor, rooms []*do.Room, beds []*do.Bed) []dto.BuildingVO {
+func (b *build) buildTree(buildings []*do.Building, floors []*do.Floor, rooms []*do.Room, beds []*do.Bed) []dto.BuildingResp {
 	roomMap := make(map[uint64][]*do.Bed)
 	for _, bed := range beds {
 		rid := uint64(bed.RoomId)
@@ -144,27 +144,27 @@ func (b *build) buildTree(buildings []*do.Building, floors []*do.Floor, rooms []
 		buildingMap[bid] = append(buildingMap[bid], floor)
 	}
 
-	tree := make([]dto.BuildingVO, 0, len(buildings))
+	tree := make([]dto.BuildingResp, 0, len(buildings))
 	for _, bd := range buildings {
-		vo := dto.BuildingVO{
+		vo := dto.BuildingResp{
 			ID:       int64(bd.Id),
 			Name:     string(bd.Name),
 			FloorNum: int(bd.FloorNum),
 		}
 		for _, fl := range buildingMap[uint64(bd.Id)] {
-			fi := dto.BuildingItemVO{
+			fi := dto.BuildingItemResp{
 				ID:      int64(fl.Id),
 				Name:    string(fl.Name),
 				RoomNum: int(fl.RoomNum),
 			}
 			for _, rm := range floorMap[uint64(fl.Id)] {
-				ri := dto.FloorItemVO{
+				ri := dto.FloorItemResp{
 					ID:     int64(rm.Id),
 					Name:   string(rm.Name),
 					BedNum: int(rm.BedNum),
 				}
 				for _, bd2 := range roomMap[uint64(rm.Id)] {
-					ri.BedList = append(ri.BedList, dto.RoomItemVO{
+					ri.BedList = append(ri.BedList, dto.RoomItemResp{
 						ID:      int64(bd2.Id),
 						Name:    string(bd2.Name),
 						BedFlag: constant.YesNo(bd2.BedFlag).String(),
@@ -183,7 +183,7 @@ func (b *build) buildTree(buildings []*do.Building, floors []*do.Floor, rooms []
 
 // PageBuildingByKey 分页查询楼宇
 // 对应 Java: BuildServiceImpl.pageBuildingByKey -> BuildingMapper.listBuildingByKey
-func (b *build) PageBuildingByKey(ctx context.Context, in *dto.PageBuildingByKeyQuery, out *[]dto.PageBuildingByKeyVO) error {
+func (b *build) PageBuildingByKey(ctx context.Context, in *dto.PageBuildingByKeyReq, out *[]dto.PageBuildingByKeyResp) error {
 	q := db.Table(tblbuilding.TableName).
 		Where(tblbuilding.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblbuilding.DelFlag.Eq(constant.YesNoNo)).
 		Desc(tblbuilding.Id)
@@ -203,7 +203,7 @@ func (b *build) PageBuildingByKey(ctx context.Context, in *dto.PageBuildingByKey
 
 // GetBuildingById 根据编号获取楼宇
 // 对应 Java: BuildServiceImpl.getBuildingById -> buildingMapper.selectByPrimaryKey
-func (b *build) GetBuildingById(ctx context.Context, in *dto.IDReq, out *dto.OperateBuildingVO) error {
+func (b *build) GetBuildingById(ctx context.Context, in *dto.IDReq, out *dto.OperateBuildingResp) error {
 	obj, has, e := dao.Building(db).GetByID(ctx, types.BigInt(*in.ID))
 	if e != nil {
 		return e
@@ -219,7 +219,7 @@ func (b *build) GetBuildingById(ctx context.Context, in *dto.IDReq, out *dto.Ope
 
 // AddBuilding 新增楼宇
 // 对应 Java: BuildServiceImpl.addBuilding -> 防重名 + insertSelective
-func (b *build) AddBuilding(ctx context.Context, in *dto.AddBuildingQuery, out *dto.EmptyResp) error {
+func (b *build) AddBuilding(ctx context.Context, in *dto.AddBuildingReq, out *dto.EmptyResp) error {
 	if in.Name != nil {
 		if exist, _, e := b.getBuildingByName(ctx, *in.Name); e != nil {
 			return e
@@ -242,7 +242,7 @@ func (b *build) AddBuilding(ctx context.Context, in *dto.AddBuildingQuery, out *
 
 // EditBuilding 编辑楼宇
 // 对应 Java: BuildServiceImpl.editBuilding -> 防重名 + updateByPrimaryKeySelective
-func (b *build) EditBuilding(ctx context.Context, in *dto.EditBuildingQuery, out *dto.EmptyResp) error {
+func (b *build) EditBuilding(ctx context.Context, in *dto.EditBuildingReq, out *dto.EmptyResp) error {
 	if in.Name != nil {
 		if exist, _, e := b.getBuildingByName(ctx, *in.Name); e != nil {
 			return e
@@ -281,7 +281,7 @@ func (b *build) DeleteBuilding(ctx context.Context, in *dto.IDReq, out *dto.Empt
 
 // PageFloorByKey 分页查询楼层
 // 对应 Java: BuildServiceImpl.pageFloorByKey -> FloorMapper.listFloorByKey
-func (b *build) PageFloorByKey(ctx context.Context, in *dto.PageFloorByKeyQuery, out *[]dto.PageFloorByKeyVO) error {
+func (b *build) PageFloorByKey(ctx context.Context, in *dto.PageFloorByKeyReq, out *[]dto.PageFloorByKeyVO) error {
 	q := db.Table(tblfloor.TableName).Where(tblfloor.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblfloor.DelFlag.Eq(constant.YesNoNo))
 	if in.BuildID != nil {
 		q.And(tblfloor.BuildingId.Eq(types.BigInt(*in.BuildID)))
@@ -304,7 +304,7 @@ func (b *build) PageFloorByKey(ctx context.Context, in *dto.PageFloorByKeyQuery,
 
 // GetFloorByBuildingId 根据楼宇编号获取楼层
 // 对应 Java: BuildServiceImpl.getFloorByBuildingId -> floorMapper.selectByBuildingId
-func (b *build) GetFloorByBuildingId(ctx context.Context, in *dto.GetFloorByBuildingIdQuery, out *[]dto.DropDown) error {
+func (b *build) GetFloorByBuildingId(ctx context.Context, in *dto.GetFloorByBuildingIdReq, out *[]dto.DropDown) error {
 	q := ace.Where(tblfloor.BuildingId.Eq(types.BigInt(*in.BuildingID)), tblfloor.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblfloor.DelFlag.Eq(constant.YesNoNo))
 	if in.Name != nil {
 		q = q.And(tblfloor.Name.Like(*in.Name))
@@ -342,7 +342,7 @@ func (b *build) GetFloorById(ctx context.Context, in *dto.IDReq, out *dto.Operat
 
 // AddFloor 新增楼层
 // 对应 Java: BuildServiceImpl.addFloor -> 防重名 + insertSelective
-func (b *build) AddFloor(ctx context.Context, in *dto.AddFloorQuery, out *dto.EmptyResp) error {
+func (b *build) AddFloor(ctx context.Context, in *dto.AddFloorReq, out *dto.EmptyResp) error {
 	if in.Name != nil {
 		if exist, _, e := b.getFloorByName(ctx, *in.BuildingID, *in.Name); e != nil {
 			return e
@@ -366,7 +366,7 @@ func (b *build) AddFloor(ctx context.Context, in *dto.AddFloorQuery, out *dto.Em
 
 // EditFloor 编辑楼层
 // 对应 Java: BuildServiceImpl.editFloor -> 防重名 + updateByPrimaryKeySelective
-func (b *build) EditFloor(ctx context.Context, in *dto.EditFloorQuery, out *dto.EmptyResp) error {
+func (b *build) EditFloor(ctx context.Context, in *dto.EditFloorReq, out *dto.EmptyResp) error {
 	if in.Name != nil {
 		if exist, _, e := b.getFloorByName(ctx, *in.BuildingID, *in.Name); e != nil {
 			return e
@@ -403,7 +403,7 @@ func (b *build) DeleteFloor(ctx context.Context, in *dto.IDReq, out *dto.EmptyRe
 
 // PageRoomByKey 分页查询房间
 // 对应 Java: BuildServiceImpl.pageRoomByKey -> RoomMapper.listRoomByKey
-func (b *build) PageRoomByKey(ctx context.Context, in *dto.PageRoomByKeyQuery, out *[]dto.PageRoomByKeyVO) error {
+func (b *build) PageRoomByKey(ctx context.Context, in *dto.PageRoomByKeyReq, out *[]dto.PageRoomByKeyVO) error {
 	q := db.Table(tblroom.TableName).Where(tblroom.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblroom.DelFlag.Eq(constant.YesNoNo))
 	if in.BuildID != nil {
 		floors, _, e := dao.Floor(db).List(ctx, ace.Where(tblfloor.BuildingId.Eq(types.BigInt(*in.BuildID)), tblfloor.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblfloor.DelFlag.Eq(constant.YesNoNo)))
@@ -442,7 +442,7 @@ func (b *build) PageRoomByKey(ctx context.Context, in *dto.PageRoomByKeyQuery, o
 
 // GetRoomByFloorId 根据楼层编号获取房间
 // 对应 Java: BuildServiceImpl.getRoomByFloorId -> roomMapper.selectByFloorId
-func (b *build) GetRoomByFloorId(ctx context.Context, in *dto.GetRoomByFloorIdQuery, out *[]dto.RoomByFloorIdVO) error {
+func (b *build) GetRoomByFloorId(ctx context.Context, in *dto.GetRoomByFloorIdReq, out *[]dto.RoomByFloorIdVO) error {
 	q := ace.Where(tblroom.FloorId.Eq(types.BigInt(*in.FloorID)), tblroom.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblroom.DelFlag.Eq(constant.YesNoNo))
 	if in.Name != nil {
 		q = q.And(tblroom.Name.Like(*in.Name))
@@ -482,7 +482,7 @@ func (b *build) GetRoomById(ctx context.Context, in *dto.IDReq, out *dto.Operate
 
 // AddRoom 新增房间
 // 对应 Java: BuildServiceImpl.addRoom -> 防重名 + insertSelective
-func (b *build) AddRoom(ctx context.Context, in *dto.AddRoomQuery, out *dto.EmptyResp) error {
+func (b *build) AddRoom(ctx context.Context, in *dto.AddRoomReq, out *dto.EmptyResp) error {
 	if in.Name != nil {
 		if exist, _, e := b.getRoomByName(ctx, *in.FloorID, *in.Name); e != nil {
 			return e
@@ -507,7 +507,7 @@ func (b *build) AddRoom(ctx context.Context, in *dto.AddRoomQuery, out *dto.Empt
 
 // EditRoom 编辑房间
 // 对应 Java: BuildServiceImpl.editRoom -> 防重名 + updateByPrimaryKeySelective
-func (b *build) EditRoom(ctx context.Context, in *dto.EditRoomQuery, out *dto.EmptyResp) error {
+func (b *build) EditRoom(ctx context.Context, in *dto.EditRoomReq, out *dto.EmptyResp) error {
 	if in.Name != nil {
 		if exist, _, e := b.getRoomByName(ctx, *in.FloorID, *in.Name); e != nil {
 			return e
@@ -549,7 +549,7 @@ func (b *build) DeleteRoom(ctx context.Context, in *dto.IDReq, out *dto.EmptyRes
 
 // PageBedByKey 分页查询床位（按关键词/楼栋/楼层/房间/状态）
 // 对应 Java: BuildServiceImpl.pageBedByKey -> bedFunc.filterBedByKey + PageUtil 内存分页
-func (b *build) PageBedByKey(ctx context.Context, in *dto.PageBedByKeyQuery, out *[]dto.PageBedByKeyVO) error {
+func (b *build) PageBedByKey(ctx context.Context, in *dto.PageBedByKeyReq, out *[]dto.PageBedByKeyVO) error {
 	beds, _, e := dao.Bed(db).List(ctx, ace.Where(tblbed.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblbed.DelFlag.Eq(constant.YesNoNo)))
 	if e != nil {
 		return e
@@ -620,7 +620,7 @@ func (b *build) PageBedByKey(ctx context.Context, in *dto.PageBedByKeyQuery, out
 
 // AddBed 新增床位
 // 对应 Java: BuildServiceImpl.addBed -> 防重名 + insertSelective（bed_flag=IDLE, del_flag=N）
-func (b *build) AddBed(ctx context.Context, in *dto.OperateBedQuery, out *dto.EmptyResp) error {
+func (b *build) AddBed(ctx context.Context, in *dto.OperateBedReq, out *dto.EmptyResp) error {
 	if in.Name != nil {
 		if exist, _, e := b.getBedByName(ctx, *in.RoomID, *in.Name); e != nil {
 			return e
@@ -658,7 +658,7 @@ func (b *build) GetBedById(ctx context.Context, in *dto.IDReq, out *dto.OperateB
 
 // EditBed 编辑床位
 // 对应 Java: BuildServiceImpl.editBed -> 防重名 + updateByPrimaryKeySelective
-func (b *build) EditBed(ctx context.Context, in *dto.OperateBedQuery, out *dto.EmptyResp) error {
+func (b *build) EditBed(ctx context.Context, in *dto.OperateBedReq, out *dto.EmptyResp) error {
 	if in.Name != nil {
 		if exist, _, e := b.getBedByName(ctx, *in.RoomID, *in.Name); e != nil {
 			return e
@@ -695,7 +695,7 @@ func (b *build) DeleteBed(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp
 
 // GetNoBedTreeAndPageBedByKey 查询空闲床位树 + 分页床位
 // 对应 Java: BuildServiceImpl.getNoBedTreeAndPageBedByKey -> generateBuildingSimpleTree
-func (b *build) GetNoBedTreeAndPageBedByKey(ctx context.Context, in *dto.PageBedByKeyQuery, out *[]dto.BuildingVO) error {
+func (b *build) GetNoBedTreeAndPageBedByKey(ctx context.Context, in *dto.PageBedByKeyReq, out *[]dto.BuildingResp) error {
 	buildings, _, e := dao.Building(db).List(ctx, ace.Where(tblbuilding.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblbuilding.DelFlag.Eq(constant.YesNoNo)))
 	if e != nil {
 		return e
@@ -719,7 +719,7 @@ func (b *build) GetNoBedTreeAndPageBedByKey(ctx context.Context, in *dto.PageBed
 
 // DeleteNode 删除楼栋/楼层/房间节点（按 mark 级联删除）
 // 对应 Java: BuildServiceImpl.deleteNode -> 按 mark 调用 building/floor/room func 逻辑删除
-func (b *build) DeleteNode(ctx context.Context, in *dto.DeleteNodeQuery, out *dto.EmptyResp) error {
+func (b *build) DeleteNode(ctx context.Context, in *dto.DeleteNodeReq, out *dto.EmptyResp) error {
 	if in.Mark == nil {
 		return errors.New("节点标记不能为空")
 	}

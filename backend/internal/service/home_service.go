@@ -86,7 +86,7 @@ func round2(f float64) float64 {
 // TodayOverview 今日概览
 // 对应 Java: HomeServiceImpl.todayOverview
 // 返回: 今日新增咨询、今日新增预定、今日新增合同、今日到期合同
-func (h *home) TodayOverview(ctx context.Context, in *dto.EmptyReq, out *dto.TodayOverviewVO) error {
+func (h *home) TodayOverview(ctx context.Context, in *dto.EmptyReq, out *dto.TodayOverviewResp) error {
 	start, end := dayRange(time.Now())
 
 	// 今日新增咨询
@@ -132,7 +132,7 @@ func (h *home) TodayOverview(ctx context.Context, in *dto.EmptyReq, out *dto.Tod
 // AvailableBed 可售床位
 // 对应 Java: HomeServiceImpl.availableBed
 // 返回: 空闲房间数（房间内有床位且全部空闲）、空闲床位数、已登记退床数
-func (h *home) AvailableBed(ctx context.Context, in *dto.EmptyReq, out *dto.AvailableBedVO) error {
+func (h *home) AvailableBed(ctx context.Context, in *dto.EmptyReq, out *dto.AvailableBedResp) error {
 	// 获取所有未被删除床位
 	bedList, _, e := dao.Bed(db).List(ctx, ace.Where(tblbed.DelFlag.Eq(constant.YesNoNo)))
 	if e != nil {
@@ -183,7 +183,7 @@ func (h *home) AvailableBed(ctx context.Context, in *dto.EmptyReq, out *dto.Avai
 // TodaySaleFollow 今日销售跟进
 // 对应 Java: HomeServiceImpl.todaySaleFollow
 // 返回: 今日应回访数、今日已回访数、待回访数
-func (h *home) TodaySaleFollow(ctx context.Context, in *dto.EmptyReq, out *dto.TodaySaleFollowVO) error {
+func (h *home) TodaySaleFollow(ctx context.Context, in *dto.EmptyReq, out *dto.TodaySaleFollowResp) error {
 	start, end := dayRange(time.Now())
 
 	// 获取所有未被删除回访计划
@@ -219,7 +219,7 @@ func (h *home) TodaySaleFollow(ctx context.Context, in *dto.EmptyReq, out *dto.T
 // MonthPerformanceRank 本月业绩排行
 // 对应 Java: HomeServiceImpl.monthPerformanceRank
 // 返回: 本月咨询客户数/浮动率、签约合同数/浮动率、咨询转化率/浮动率、销售排行列表
-func (h *home) MonthPerformanceRank(ctx context.Context, in *dto.EmptyReq, out *dto.MonthPerformanceRankVO) error {
+func (h *home) MonthPerformanceRank(ctx context.Context, in *dto.EmptyReq, out *dto.MonthPerformanceRankResp) error {
 	now := time.Now()
 	lastMonthStart, lastMonthEnd := monthRange(now.AddDate(0, -1, 0))
 	thisMonthStart, thisMonthEnd := monthRange(now)
@@ -324,7 +324,7 @@ func (h *home) listSaleRank(ctx context.Context, consultList []*do.Consult, cont
 // ClientSource 客户来源渠道统计
 // 对应 Java: HomeServiceImpl.clientSource
 // 返回: 各来源渠道的咨询人数
-func (h *home) ClientSource(ctx context.Context, in *dto.ClientSourceQuery, out *[]dto.ClientSourceVO) error {
+func (h *home) ClientSource(ctx context.Context, in *dto.ClientSourceReq, out *[]dto.ClientSourceResp) error {
 	// 获取开始/结束时间
 	// 未传时默认取今天
 	start, end := dayRange(time.Now())
@@ -355,9 +355,9 @@ func (h *home) ClientSource(ctx context.Context, in *dto.ClientSourceQuery, out 
 		consultNumBySource[consult.SourceId]++
 	}
 
-	list := make([]dto.ClientSourceVO, 0, len(sourceList))
+	list := make([]dto.ClientSourceResp, 0, len(sourceList))
 	for _, source := range sourceList {
-		list = append(list, dto.ClientSourceVO{
+		list = append(list, dto.ClientSourceResp{
 			SourceName: string(source.Name),
 			ConsultNum: consultNumBySource[source.Id],
 		})
@@ -369,7 +369,7 @@ func (h *home) ClientSource(ctx context.Context, in *dto.ClientSourceQuery, out 
 // BusinessTrend 今年业务趋势
 // 对应 Java: HomeServiceImpl.businessTrend
 // 返回: 今年 12 个月每月的咨询数与合同数
-func (h *home) BusinessTrend(ctx context.Context, in *dto.EmptyReq, out *[]dto.BusinessTrendVO) error {
+func (h *home) BusinessTrend(ctx context.Context, in *dto.EmptyReq, out *[]dto.BusinessTrendResp) error {
 	yearStart, yearEnd := yearRange(time.Now())
 
 	// 获取今年所有咨询客户记录
@@ -399,10 +399,10 @@ func (h *home) BusinessTrend(ctx context.Context, in *dto.EmptyReq, out *[]dto.B
 		contractNumByMonth[contract.CreateTime.Format("2006-01")]++
 	}
 
-	list := make([]dto.BusinessTrendVO, 0, 12)
+	list := make([]dto.BusinessTrendResp, 0, 12)
 	for i := 0; i < 12; i++ {
 		month := yearStart.AddDate(0, i, 0).Format("2006-01")
-		list = append(list, dto.BusinessTrendVO{
+		list = append(list, dto.BusinessTrendResp{
 			Month:       month,
 			ConsultNum:  consultNumByMonth[month],
 			ContractNum: contractNumByMonth[month],

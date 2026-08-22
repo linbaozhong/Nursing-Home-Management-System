@@ -9,15 +9,15 @@ var _ = validator.IsMobile
 
 // ============ FamilyController 请求 ============
 
+// FamilySendCodeReq 发送家属注册/绑定验证码请求
 // @request
-// FamilySendCodeQuery 发送家属注册/绑定验证码请求
-type FamilySendCodeQuery struct {
+type FamilySendCodeReq struct {
 	Phone *string `json:"phone" valid:"required"` // 家属手机号
 }
 
+// RegisterBindReq 家属注册并绑定老人请求
 // @request
-// RegisterBindQuery 家属注册并绑定老人请求
-type RegisterBindQuery struct {
+type RegisterBindReq struct {
 	Phone     *string `json:"phone" valid:"required"`       // 家属手机号
 	Code      *string `json:"code" valid:"required"`        // 短信验证码
 	Password  *string `json:"password" valid:"required"`    // 登录密码
@@ -26,16 +26,16 @@ type RegisterBindQuery struct {
 	Relation  *string `json:"relation"`                     // 与老人关系
 }
 
+// FamilyLoginReq 家属登录请求
 // @request
-// FamilyLoginQuery 家属登录请求
-type FamilyLoginQuery struct {
+type FamilyLoginReq struct {
 	Phone    *string `json:"phone" valid:"required"`    // 家属手机号
 	Password *string `json:"password" valid:"required"` // 登录密码
 }
 
+// BindElderReq 已注册家属绑定更多老人请求
 // @request
-// BindElderQuery 已注册家属绑定更多老人请求
-type BindElderQuery struct {
+type BindElderReq struct {
 	Phone     *string `json:"phone" valid:"required"`       // 当前家属手机号
 	Code      *string `json:"code" valid:"required"`        // 短信验证码
 	ElderName *string `json:"elder_name" valid:"required"`  // 老人姓名
@@ -43,57 +43,57 @@ type BindElderQuery struct {
 	Relation  *string `json:"relation"`                     // 与老人关系
 }
 
+// FamilyMyEldersReq 我的老人请求
 // @request
-// FamilyMyEldersQuery 我的老人请求
-type FamilyMyEldersQuery struct {
+type FamilyMyEldersReq struct {
 	Phone *string `json:"phone" valid:"required"` // 当前家属手机号
 }
 
 // ============ FamilyController 响应 ============
 
+// FamilyElderResp 家属绑定老人响应
 // @response
-// FamilyElderVO 家属绑定老人响应
-type FamilyElderVO struct {
+type FamilyElderResp struct {
 	ElderID  int64  `json:"elder_id"` // 老人编号
 	Name     string `json:"name"`     // 老人姓名
 	Relation string `json:"relation"` // 与老人关系
 }
 
+// FamilyLoginResp 家属登录响应
 // @response
-// FamilyLoginVO 家属登录响应
-type FamilyLoginVO struct {
-	Token     string           `json:"token"`      // 登录令牌
-	ElderList []*FamilyElderVO `json:"elder_list"` // 绑定老人列表
+type FamilyLoginResp struct {
+	Token     string             `json:"token"`      // 登录令牌
+	ElderList []*FamilyElderResp `json:"elder_list"` // 绑定老人列表
 }
 
+// FamilyMyEldersResp 我的老人列表响应
 // @response
-// FamilyMyEldersVO 我的老人列表响应
-type FamilyMyEldersVO struct {
-	List []*FamilyElderVO `json:"list"` // 绑定老人列表
+type FamilyMyEldersResp struct {
+	List []*FamilyElderResp `json:"list"` // 绑定老人列表
 }
 
 // ============ FamilyRechargeController 请求 ============
 
+// RechargeUnifiedOrderReq 家属充值统一下单请求
 // @request
-// RechargeUnifiedOrderQuery 家属充值统一下单请求
-type RechargeUnifiedOrderQuery struct {
+type RechargeUnifiedOrderReq struct {
 	Phone   *string `json:"phone" valid:"required"`         // 当前家属手机号
 	ElderID *int64  `json:"elder_id" valid:"required"`      // 充值到哪位老人账户
 	Amount  *int64  `json:"amount" valid:"required,min(0)"` // 金额（元）
 }
 
+// BindOpenidReq 家属绑定微信openid请求
 // @request
-// BindOpenidQuery 家属绑定微信openid请求
-type BindOpenidQuery struct {
+type BindOpenidReq struct {
 	Phone *string `json:"phone" valid:"required"` // 当前家属手机号
 	Code  *string `json:"code" valid:"required"`  // wx.login 返回的 code
 }
 
 // ============ FamilyRechargeController 响应 ============
 
+// RechargeUnifiedOrderResp 家属充值统一下单响应
 // @response
-// RechargeUnifiedOrderVO 家属充值统一下单响应
-type RechargeUnifiedOrderVO struct {
+type RechargeUnifiedOrderResp struct {
 	AppId     string `json:"app_id"`     // 微信 AppID
 	TimeStamp string `json:"time_stamp"` // 时间戳
 	NonceStr  string `json:"nonce_str"`  // 随机串
@@ -103,16 +103,16 @@ type RechargeUnifiedOrderVO struct {
 	OrderNo   string `json:"order_no"`   // 商户订单号
 }
 
+// BindOpenidResp 绑定微信openid响应
 // @response
-// BindOpenidVO 绑定微信openid响应
-type BindOpenidVO struct {
+type BindOpenidResp struct {
 	Openid string `json:"openid"` // 微信 openid
 }
 
 // ============ 微信支付回调（struct 由本文件定义，方法由 gentity_dto.gen.go 生成） ============
 
-// @request
 // WechatPayResource 微信支付回调加密报文
+// @request
 type WechatPayResource struct {
 	Algorithm      *string `json:"algorithm"`       // 加密算法
 	Ciphertext     *string `json:"ciphertext"`      // 密文
@@ -121,9 +121,9 @@ type WechatPayResource struct {
 	OriginalType   *string `json:"original_type"`   // 原始类型
 }
 
+// WechatPayNotifyReq 微信支付结果通知
 // @request
-// WechatPayNotifyQuery 微信支付结果通知
-type WechatPayNotifyQuery struct {
+type WechatPayNotifyReq struct {
 	Id           *string            `json:"id"`            // 通知 id
 	CreateTime   *string            `json:"create_time"`   // 通知创建时间
 	ResourceType *string            `json:"resource_type"` // 资源类型

@@ -31,8 +31,8 @@ func (a *familyrecharge) RegisterRoute(group ack.Party) {
 // @Tags 家属充值
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.BindOpenidQuery true "BindOpenidQuery"
-// @Success 200 {object} dto.BindOpenidVO
+// @Param data body dto.BindOpenidReq true "BindOpenidReq"
+// @Success 200 {object} dto.BindOpenidResp
 // @Router /family/recharge/bindOpenid [post]
 func (a *familyrecharge) bindOpenid(ctx ack.Context) {
 	ack.Post(ctx, service.Family.BindOpenid)
@@ -43,8 +43,8 @@ func (a *familyrecharge) bindOpenid(ctx ack.Context) {
 // @Tags 家属充值
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.RechargeUnifiedOrderQuery true "RechargeUnifiedOrderQuery"
-// @Success 200 {object} dto.RechargeUnifiedOrderVO
+// @Param data body dto.RechargeUnifiedOrderReq true "RechargeUnifiedOrderReq"
+// @Success 200 {object} dto.RechargeUnifiedOrderResp
 // @Router /family/recharge/unifiedOrder [post]
 func (a *familyrecharge) unifiedOrder(ctx ack.Context) {
 	ack.Post(ctx, service.FamilyRechargeSvc.RechargeUnifiedOrder)
@@ -55,7 +55,7 @@ func (a *familyrecharge) unifiedOrder(ctx ack.Context) {
 // @Tags 家属充值
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.WechatPayNotifyQuery true "WechatPayNotifyQuery"
+// @Param data body dto.WechatPayNotifyReq true "WechatPayNotifyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /family/recharge/notify [post]
 func (a *familyrecharge) notify(ctx ack.Context) {

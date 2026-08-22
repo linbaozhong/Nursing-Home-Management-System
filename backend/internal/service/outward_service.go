@@ -22,7 +22,7 @@ var Outward = &outward{}
 
 // PageOutwardByKey 分页查询外出登记（关联老人姓名）
 // 对应 Java: OutwardServiceImpl.pageOutwardByKey -> OutwardMapper.listOutwardByKey
-func (o *outward) PageOutwardByKey(ctx context.Context, in *dto.PageOutwardByKeyQuery, out *[]dto.PageOutwardByKeyVO) error {
+func (o *outward) PageOutwardByKey(ctx context.Context, in *dto.PageOutwardByKeyReq, out *[]dto.PageOutwardByKeyResp) error {
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tbloutward.TableName).
 		RightJoin(tbloutward.ElderId, tblelder.Id).
@@ -54,7 +54,7 @@ func (o *outward) PageOutwardByKey(ctx context.Context, in *dto.PageOutwardByKey
 
 // GetOutwardById 根据编号获取外出登记（含老人姓名）
 // 对应 Java: OutwardServiceImpl.getOutwardById -> outwardMapper.getOutwardById
-func (o *outward) GetOutwardById(ctx context.Context, in *dto.IDReq, out *dto.GetOutwardByIDVO) error {
+func (o *outward) GetOutwardById(ctx context.Context, in *dto.IDReq, out *dto.GetOutwardByIDResp) error {
 	obj, has, e := dao.Outward(db).Get(ctx, ace.Where(tbloutward.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutward.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
@@ -80,7 +80,7 @@ func (o *outward) GetOutwardById(ctx context.Context, in *dto.IDReq, out *dto.Ge
 
 // AddOutward 新增外出登记（校验老人无未删除的外出登记）
 // 对应 Java: OutwardServiceImpl.addOutward
-func (o *outward) AddOutward(ctx context.Context, in *dto.AddOutwardQuery, out *dto.EmptyResp) error {
+func (o *outward) AddOutward(ctx context.Context, in *dto.AddOutwardReq, out *dto.EmptyResp) error {
 	_, exist, e := dao.Outward(db).Get(ctx,
 		ace.Where(
 			tbloutward.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
@@ -108,7 +108,7 @@ func (o *outward) AddOutward(ctx context.Context, in *dto.AddOutwardQuery, out *
 
 // EditOutward 编辑外出登记
 // 对应 Java: OutwardServiceImpl.editOutward
-func (o *outward) EditOutward(ctx context.Context, in *dto.EditOutwardQuery, out *dto.EmptyResp) error {
+func (o *outward) EditOutward(ctx context.Context, in *dto.EditOutwardReq, out *dto.EmptyResp) error {
 	_, has, e := dao.Outward(db).Get(ctx, ace.Where(tbloutward.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutward.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
@@ -146,7 +146,7 @@ func (o *outward) DeleteOutward(ctx context.Context, in *dto.IDReq, out *dto.Emp
 
 // PageSearchElderByKey 分页搜索老人（入住中或退住审核、且当前无未删除外出登记）
 // 对应 Java: OutwardServiceImpl.pageSearchElderByKey -> commonFunc.listPageElderByKey + 过滤
-func (o *outward) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+func (o *outward) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyReq, out *[]dto.PageSearchElderByKeyResp) error {
 	// 排除已有未删除外出登记的老人
 	outwardElderIds := make([]any, 0)
 	records, _, e := dao.Outward(db).List(ctx,
@@ -188,7 +188,7 @@ func (o *outward) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchEl
 
 // DelayReturn 延期返回（更新计划返回时间）
 // 对应 Java: OutwardServiceImpl.delayReturn
-func (o *outward) DelayReturn(ctx context.Context, in *dto.DelayReturnQuery, out *dto.EmptyResp) error {
+func (o *outward) DelayReturn(ctx context.Context, in *dto.DelayReturnReq, out *dto.EmptyResp) error {
 	_, has, e := dao.Outward(db).Get(ctx, ace.Where(tbloutward.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutward.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
@@ -204,7 +204,7 @@ func (o *outward) DelayReturn(ctx context.Context, in *dto.DelayReturnQuery, out
 
 // RecordReturn 登记返回（更新实际返回时间）
 // 对应 Java: OutwardServiceImpl.recordReturn
-func (o *outward) RecordReturn(ctx context.Context, in *dto.RecordReturnQuery, out *dto.EmptyResp) error {
+func (o *outward) RecordReturn(ctx context.Context, in *dto.RecordReturnReq, out *dto.EmptyResp) error {
 	obj, has, e := dao.Outward(db).Get(ctx, ace.Where(tbloutward.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutward.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e

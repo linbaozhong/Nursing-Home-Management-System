@@ -28,7 +28,7 @@ func (c *cateringset) RegisterRoute(group ack.Party) {
 // @Tags 餐饮套餐
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageCateringSetByKeyQuery true "PageCateringSetByKeyQuery"
+// @Param data query dto.PageCateringSetByKeyReq true "PageCateringSetByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /cateringSet/pageCateringSetByKey [get]
 func (c *cateringset) pageCateringSetByKey(ctx ack.Context) {
@@ -52,7 +52,7 @@ func (c *cateringset) getCateringSetById(ctx ack.Context) {
 // @Tags 餐饮套餐
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateCateringSetQuery true "OperateCateringSetQuery"
+// @Param data body dto.OperateCateringSetReq true "OperateCateringSetReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /cateringSet/addCateringSet [post]
 func (c *cateringset) addCateringSet(ctx ack.Context) {
@@ -64,7 +64,7 @@ func (c *cateringset) addCateringSet(ctx ack.Context) {
 // @Tags 餐饮套餐
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateCateringSetQuery true "OperateCateringSetQuery"
+// @Param data body dto.OperateCateringSetReq true "OperateCateringSetReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /cateringSet/editCateringSet [post]
 func (c *cateringset) editCateringSet(ctx ack.Context) {

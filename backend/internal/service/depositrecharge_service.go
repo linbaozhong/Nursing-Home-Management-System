@@ -30,7 +30,7 @@ var DepositRecharge = &depositrecharge{}
 
 // PageDepositRechargeByKey 分页查询预存充值（入住/退住审核老人，联表床位）
 // 对应 Java: DepositRechargeServiceImpl.pageDepositRechargeByKey -> ElderMapper.listDepositRechargeByKey
-func (d *depositrecharge) PageDepositRechargeByKey(ctx context.Context, in *dto.PageDepositRechargeByKeyQuery, out *[]dto.PageDepositRechargeByKeyVO) error {
+func (d *depositrecharge) PageDepositRechargeByKey(ctx context.Context, in *dto.PageDepositRechargeByKeyReq, out *[]dto.PageDepositRechargeByKeyResp) error {
 	q := db.Table(tblelder.TableName).
 		LeftJoin(tblelder.BedId, tblbed.Id).
 		Where(
@@ -65,9 +65,9 @@ func (d *depositrecharge) PageDepositRechargeByKey(ctx context.Context, in *dto.
 	if e != nil {
 		return e
 	}
-	*out = make([]dto.PageDepositRechargeByKeyVO, 0, len(rows))
+	*out = make([]dto.PageDepositRechargeByKeyResp, 0, len(rows))
 	for _, r := range rows {
-		*out = append(*out, dto.PageDepositRechargeByKeyVO{
+		*out = append(*out, dto.PageDepositRechargeByKeyResp{
 			ElderID:    strconv.FormatInt(r.ElderID, 10),
 			ElderName:  r.ElderName,
 			ElderPhone: r.ElderPhone,
@@ -81,7 +81,7 @@ func (d *depositrecharge) PageDepositRechargeByKey(ctx context.Context, in *dto.
 
 // PageSearchElderByKey 分页搜索老人（入住/退住审核老人，供选择）
 // 对应 Java: DepositRechargeServiceImpl.pageSearchElderByKey -> CommonFunc.pageSearchElderByKeyResult
-func (d *depositrecharge) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+func (d *depositrecharge) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyReq, out *[]dto.PageSearchElderByKeyResp) error {
 	q := db.Table(tblelder.TableName).
 		Where(
 			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
@@ -113,21 +113,21 @@ func (d *depositrecharge) PageSearchElderByKey(ctx context.Context, in *dto.Page
 func (d *depositrecharge) GetDepositRechargeById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	return errors.New("not implemented")
 }
-func (d *depositrecharge) AddDepositRecharge(ctx context.Context, in *dto.AddDepositRechargeQuery, out *dto.EmptyResp) error {
+func (d *depositrecharge) AddDepositRecharge(ctx context.Context, in *dto.AddDepositRechargeReq, out *dto.EmptyResp) error {
 	return errors.New("not implemented")
 }
-func (d *depositrecharge) EditDepositRecharge(ctx context.Context, in *dto.EditDepositRechargeQuery, out *dto.EmptyResp) error {
+func (d *depositrecharge) EditDepositRecharge(ctx context.Context, in *dto.EditDepositRechargeReq, out *dto.EmptyResp) error {
 	return errors.New("not implemented")
 }
 func (d *depositrecharge) DeleteDepositRecharge(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	return errors.New("not implemented")
 }
-func (d *depositrecharge) PageSearchStaffByKey(ctx context.Context, in *dto.PageSearchStaffByKeyQuery, out *dto.EmptyResp) error {
+func (d *depositrecharge) PageSearchStaffByKey(ctx context.Context, in *dto.PageSearchStaffByKeyReq, out *dto.EmptyResp) error {
 	return errors.New("not implemented")
 }
 func (d *depositrecharge) GetElderFeeById(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	return errors.New("not implemented")
 }
-func (d *depositrecharge) AuditElderFee(ctx context.Context, in *dto.AuditElderFeeQuery, out *dto.EmptyResp) error {
+func (d *depositrecharge) AuditElderFee(ctx context.Context, in *dto.AuditElderFeeReq, out *dto.EmptyResp) error {
 	return errors.New("not implemented")
 }

@@ -36,7 +36,7 @@ type outboundRecordJoin struct {
 }
 
 // PageOutboundRecordByKey 分页查询出库记录
-func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in *dto.PageOutboundRecordByKeyQuery, out *[]dto.PageOutboundRecordByKeyVO) error {
+func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in *dto.PageOutboundRecordByKeyReq, out *[]dto.PageOutboundRecordByKeyResp) error {
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
@@ -73,9 +73,9 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 	if e != nil {
 		return e
 	}
-	res := make([]dto.PageOutboundRecordByKeyVO, 0, len(joins))
+	res := make([]dto.PageOutboundRecordByKeyResp, 0, len(joins))
 	for _, j := range joins {
-		res = append(res, dto.PageOutboundRecordByKeyVO{
+		res = append(res, dto.PageOutboundRecordByKeyResp{
 			ID:            int64(j.ID),
 			WarehouseName: j.WarehouseName.String(),
 			OutboundDate:  j.OutboundDate.Time(),
@@ -89,7 +89,7 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 }
 
 // GetOutboundRecordById 查询出库记录详情
-func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *dto.IDReq, out *dto.GetOutboundRecordByIDVO) error {
+func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *dto.IDReq, out *dto.GetOutboundRecordByIDResp) error {
 	rec, has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutboundrecord.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
@@ -117,7 +117,7 @@ func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *d
 			if mm, mh, merr := dao.Material(db).Get(ctx, ace.Where(tblmaterial.Id.Eq(m.MaterialId))); merr == nil && mh {
 				mn = mm.Name.String()
 			}
-			out.OutboundMaterialByIDVOList = append(out.OutboundMaterialByIDVOList, dto.GetOutboundMaterialByIDVO{
+			out.OutboundMaterialByIDVOList = append(out.OutboundMaterialByIDVOList, dto.GetOutboundMaterialByIDResp{
 				MaterialName: mn,
 				OutboundNum:  int(m.OutboundNum),
 			})
@@ -127,7 +127,7 @@ func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *d
 }
 
 // PageSearchElderByKey 分页查询老人（供出库选择领用人）
-func (s *outboundRecordService) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyQuery, out *[]dto.PageSearchElderByKeyVO) error {
+func (s *outboundRecordService) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyReq, out *[]dto.PageSearchElderByKeyResp) error {
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
@@ -155,9 +155,9 @@ func (s *outboundRecordService) PageSearchElderByKey(ctx context.Context, in *dt
 	if e != nil {
 		return e
 	}
-	res := make([]dto.PageSearchElderByKeyVO, 0, len(elders))
+	res := make([]dto.PageSearchElderByKeyResp, 0, len(elders))
 	for _, el := range elders {
-		res = append(res, dto.PageSearchElderByKeyVO{
+		res = append(res, dto.PageSearchElderByKeyResp{
 			ElderID:   int64(el.Id),
 			ElderName: el.Name.String(),
 			IDNum:     el.IdNum.String(),
@@ -170,7 +170,7 @@ func (s *outboundRecordService) PageSearchElderByKey(ctx context.Context, in *dt
 }
 
 // PageWarehouseMaterialByKey 分页查询仓库物资（供出库选择）
-func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, in *dto.PageWarehouseMaterialByKeyQuery, out *[]dto.PageWarehouseMaterialByKeyVO) error {
+func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, in *dto.PageWarehouseMaterialByKeyReq, out *[]dto.PageWarehouseMaterialByKeyResp) error {
 	if in.PageNum == nil || in.PageSize == nil || in.WarehouseID == nil {
 		return constant.ErrParamInvalid
 	}
@@ -202,9 +202,9 @@ func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, 
 	if e != nil {
 		return e
 	}
-	res := make([]dto.PageWarehouseMaterialByKeyVO, 0, len(list))
+	res := make([]dto.PageWarehouseMaterialByKeyResp, 0, len(list))
 	for _, m := range list {
-		res = append(res, dto.PageWarehouseMaterialByKeyVO{
+		res = append(res, dto.PageWarehouseMaterialByKeyResp{
 			ID:           int64(m.ID),
 			MaterialName: m.MaterialName.String(),
 			Price:        m.Price,
@@ -218,7 +218,7 @@ func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, 
 }
 
 // AddOutboundRecord 新增出库记录并扣减库存
-func (s *outboundRecordService) AddOutboundRecord(ctx context.Context, in *dto.AddOutboundRecordQuery, out *dto.EmptyResp) error {
+func (s *outboundRecordService) AddOutboundRecord(ctx context.Context, in *dto.AddOutboundRecordReq, out *dto.EmptyResp) error {
 	if in.WarehouseID == nil || in.StaffID == nil || len(in.OutboundMaterialQueryList) == 0 {
 		return constant.ErrParamInvalid
 	}
@@ -262,7 +262,7 @@ func (s *outboundRecordService) AddOutboundRecord(ctx context.Context, in *dto.A
 }
 
 // AuditOutboundRecord 审核出库记录（通过/不通过）
-func (s *outboundRecordService) AuditOutboundRecord(ctx context.Context, in *dto.AuditOutboundRecordQuery, out *dto.EmptyResp) error {
+func (s *outboundRecordService) AuditOutboundRecord(ctx context.Context, in *dto.AuditOutboundRecordReq, out *dto.EmptyResp) error {
 	if in.OutboundRecordID == nil || in.AuditResult == nil {
 		return constant.ErrParamInvalid
 	}

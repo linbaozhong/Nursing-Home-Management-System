@@ -32,7 +32,7 @@ type codeItem struct {
 var codeCache sync.Map
 
 // SendCode 发送验证码
-func (a *account) SendCode(ctx context.Context, in *dto.SendCodeQuery, out *dto.LoginUserVO) error {
+func (a *account) SendCode(ctx context.Context, in *dto.SendCodeReq, out *dto.LoginUserResp) error {
 	if in.Phone == nil || !isValidPhone(*in.Phone) {
 		return constant.ErrPhoneError
 	}
@@ -46,7 +46,7 @@ func (a *account) SendCode(ctx context.Context, in *dto.SendCodeQuery, out *dto.
 }
 
 // Login 登录（账号密码，备用登录）
-func (a *account) Login(ctx context.Context, in *dto.LoginQuery, out *dto.LoginUserVO) error {
+func (a *account) Login(ctx context.Context, in *dto.LoginReq, out *dto.LoginUserResp) error {
 	if in.Phone == nil || !isValidPhone(*in.Phone) {
 		return constant.ErrPhoneError
 	}
@@ -67,7 +67,7 @@ func (a *account) Login(ctx context.Context, in *dto.LoginQuery, out *dto.LoginU
 }
 
 // loginWithUser 根据全局用户完成登录分流（单企业直接登录，多企业返回列表）
-func (a *account) loginWithUser(ctx context.Context, user *do.User, out *dto.LoginUserVO) error {
+func (a *account) loginWithUser(ctx context.Context, user *do.User, out *dto.LoginUserResp) error {
 	userID := user.Id.Int64()
 	memberList, _, e := dao.Member(db).List(ctx, db.Table(tblmember.TableName).
 		Where(tblmember.UserId.Eq(types.BigInt(userID)),
@@ -80,7 +80,7 @@ func (a *account) loginWithUser(ctx context.Context, user *do.User, out *dto.Log
 		out.NeedBind = true
 		return nil
 	}
-	tenants := make([]dto.TenantVO, 0, len(memberList))
+	tenants := make([]dto.TenantResp, 0, len(memberList))
 	for _, m := range memberList {
 		tn, hasT, e2 := dao.Tenant(db).GetByID(ctx, m.TenantId,
 			tbltenant.Id, tbltenant.Name, tbltenant.Logo, tbltenant.ContactName,
@@ -92,7 +92,7 @@ func (a *account) loginWithUser(ctx context.Context, user *do.User, out *dto.Log
 		if !hasT {
 			continue
 		}
-		tenants = append(tenants, dto.TenantVO{
+		tenants = append(tenants, dto.TenantResp{
 			ID:           tn.Id.Int64(),
 			Name:         tn.Name.String(),
 			Logo:         tn.Logo.String(),
@@ -118,7 +118,7 @@ func (a *account) loginWithUser(ctx context.Context, user *do.User, out *dto.Log
 }
 
 // Forget 忘记密码
-func (a *account) Forget(ctx context.Context, in *dto.ForgetQuery, out *dto.LoginUserVO) error {
+func (a *account) Forget(ctx context.Context, in *dto.ForgetReq, out *dto.LoginUserResp) error {
 	if in.Account == nil || !isValidPhone(*in.Account) {
 		return constant.ErrPhoneError
 	}
@@ -144,7 +144,7 @@ func (a *account) Forget(ctx context.Context, in *dto.ForgetQuery, out *dto.Logi
 }
 
 // Edit 修改密码
-func (a *account) Edit(ctx context.Context, in *dto.EditQuery, out *dto.LoginUserVO) error {
+func (a *account) Edit(ctx context.Context, in *dto.EditReq, out *dto.LoginUserResp) error {
 	if in.ID == nil {
 		return constant.ErrDataNotExist
 	}
@@ -168,7 +168,7 @@ func (a *account) Edit(ctx context.Context, in *dto.EditQuery, out *dto.LoginUse
 }
 
 // Logout 退出登录
-func (a *account) Logout(ctx context.Context, in *dto.LoginQuery, out *dto.EmptyResp) error {
+func (a *account) Logout(ctx context.Context, in *dto.LoginReq, out *dto.EmptyResp) error {
 	// 无状态 token，直接返回成功
 	return nil
 }

@@ -4,9 +4,9 @@ import "time"
 
 // ============ Tenant 请求 ============
 
+// RegisterTenantReq 租户自助注册请求
 // @request
-// RegisterTenantQuery 租户自助注册请求
-type RegisterTenantQuery struct {
+type RegisterTenantReq struct {
 	Name         *string `json:"name" valid:"required"`          // 企业名称
 	Logo         *string `json:"logo"`                           // 企业logo
 	ContactName  *string `json:"contact_name" valid:"required"`  // 联系人姓名
@@ -15,37 +15,37 @@ type RegisterTenantQuery struct {
 	WxCode       *string `json:"wx_code"`                        // 微信登录code（可选，绑定微信）
 }
 
+// OpenTenantReq 平台开通/解锁租户请求
 // @request
-// OpenTenantQuery 平台开通/解锁租户请求
-type OpenTenantQuery struct {
+type OpenTenantReq struct {
 	ID *int64 `json:"id" valid:"required"` // 租户编号
 }
 
+// SwitchTenantReq 切换当前租户请求
 // @request
-// SwitchTenantQuery 切换当前租户请求
-type SwitchTenantQuery struct {
+type SwitchTenantReq struct {
 	TenantID *int64 `json:"tenant_id" valid:"required"` // 目标租户编号
 }
 
+// InviteMemberReq 邀请成员请求
 // @request
-// InviteMemberQuery 邀请成员请求
-type InviteMemberQuery struct {
+type InviteMemberReq struct {
 	TenantID *int64  `json:"tenant_id" valid:"required"` // 租户编号
 	Phone    *string `json:"phone" valid:"required"`     // 被邀请人手机号
 	RoleID   *int64  `json:"role_id" valid:"required"`   // 角色编号
 }
 
+// JoinMemberReq 加入已有企业（邀请码）请求
 // @request
-// JoinMemberQuery 加入已有企业（邀请码）请求
-type JoinMemberQuery struct {
+type JoinMemberReq struct {
 	InviteCode *string `json:"invite_code" valid:"required"` // 邀请码
 }
 
 // ============ Tenant 响应 ============
 
+// TenantResp 租户信息
 // @response
-// TenantVO 租户信息
-type TenantVO struct {
+type TenantResp struct {
 	ID           int64     `json:"id"`            // 租户编号
 	Name         string    `json:"name"`          // 企业名称
 	Logo         string    `json:"logo"`          // 企业logo
@@ -57,16 +57,16 @@ type TenantVO struct {
 	TrialEnd     time.Time `json:"trial_end"`     // 试用结束
 }
 
+// UserTenantListResp 用户已绑定企业列表
 // @response
-// UserTenantListVO 用户已绑定企业列表
-type UserTenantListVO struct {
-	Tenants []TenantVO `json:"tenants"` // 企业列表
-	Current int64      `json:"current"` // 当前企业编号（0表示未选择）
+type UserTenantListResp struct {
+	Tenants []TenantResp `json:"tenants"` // 企业列表
+	Current int64        `json:"current"` // 当前企业编号（0表示未选择）
 }
 
+// MemberResp 成员信息
 // @response
-// MemberVO 成员信息
-type MemberVO struct {
+type MemberResp struct {
 	ID       int64    `json:"id"`        // 成员编号
 	UserID   int64    `json:"user_id"`   // 全局用户编号
 	Name     string   `json:"name"`      // 姓名

@@ -6,7 +6,7 @@
     <!-- #endif -->
     " class="uni-left-class-builtin" :class="leftClass">
 			<!-- 旋转边框的view实现返回箭头。因需要扩大点击区域，外面多套了一层 -->
-			<view v-if="!hideDefaultBack && slots['left']==null" style="width: 44px;height: 44px;justify-content: center;align-items: center;" @click="back">
+			<view v-if="showDefaultBack && !hideDefaultBack && slots['left']==null" style="width: 44px;height: 44px;justify-content: center;align-items: center;" @click="back">
 				<view style="width: 12px;height: 12px;transform: rotate(45deg);
         border-left: 2px solid; border-bottom: 2px solid;" :style="{borderLeftColor:props.navigationBarTextStyle,borderBottomColor:props.navigationBarTextStyle}"></view>
 			</view>
@@ -290,11 +290,18 @@
 	}) */
 
   // let statusBarHeight = ref(0)
+  // 只有存在上一个页面（通过 navigateTo 压入页面栈）时才显示返回箭头。
+  // 由 reLaunch / switchTab 打开的入口页和 tabBar 页面栈中没有上一页，navigateBack 无效，
+  // 此时隐藏返回箭头，避免出现点了没反应的“假按钮”。
+  const showDefaultBack = ref(false)
+
   onMounted(() => {
     // #ifdef MP-WEIXIN
     // TODO 部分小程序平台不支持getWindowInfo
     // statusBarHeight.value = uni.getWindowInfo().statusBarHeight
     // #endif
+
+    showDefaultBack.value = getCurrentPages().length > 1
 
     /* if (props.stat && props.title != '') {
       uni.report({
@@ -305,7 +312,9 @@
   })
 
   const back = () => {
-    uni.navigateBack({});
+    if (getCurrentPages().length > 1) {
+      uni.navigateBack({})
+    }
   }
 </script>
 

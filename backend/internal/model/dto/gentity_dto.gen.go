@@ -18,10 +18,10 @@ var _ = conv.Any2String("")
 var _ = bytes.NewBuffer(nil)
 
 /*
-	--- PageAccidentByKeyQuery ---
+	--- PageAccidentByKeyReq ---
 */
 // Init
-func (p *PageAccidentByKeyQuery) Init() error {
+func (p *PageAccidentByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -31,7 +31,7 @@ func (p *PageAccidentByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageAccidentByKeyQuery) Check() error {
+func (p *PageAccidentByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -42,7 +42,7 @@ func (p *PageAccidentByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageAccidentByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageAccidentByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -105,7 +105,7 @@ func (p *PageAccidentByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageAccidentByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageAccidentByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -164,17 +164,17 @@ func (p *PageAccidentByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditAccidentQuery ---
+	--- EditAccidentReq ---
 */
 // Init
-func (p *EditAccidentQuery) Init() error {
+func (p *EditAccidentReq) Init() error {
 	p.ID = nil
 
 	return nil
 }
 
 // Check
-func (p *EditAccidentQuery) Check() error {
+func (p *EditAccidentReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -182,7 +182,7 @@ func (p *EditAccidentQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditAccidentQuery) UnmarshalJSON(data []byte) error {
+func (p *EditAccidentReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -218,7 +218,7 @@ func (p *EditAccidentQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditAccidentQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditAccidentReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -250,17 +250,17 @@ func (p *EditAccidentQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddAccidentQuery ---
+	--- AddAccidentReq ---
 */
 // Init
-func (p *AddAccidentQuery) Init() error {
+func (p *AddAccidentReq) Init() error {
 	p.ElderID = nil
 
 	return nil
 }
 
 // Check
-func (p *AddAccidentQuery) Check() error {
+func (p *AddAccidentReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -268,7 +268,7 @@ func (p *AddAccidentQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddAccidentQuery) UnmarshalJSON(data []byte) error {
+func (p *AddAccidentReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -304,7 +304,7 @@ func (p *AddAccidentQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddAccidentQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddAccidentReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -336,10 +336,10 @@ func (p *AddAccidentQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageAccidentByKeyVO ---
+	--- PageAccidentByKeyResp ---
 */
 // MarshalJSON
-func (p *PageAccidentByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageAccidentByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -349,10 +349,10 @@ func (p *PageAccidentByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetAccidentByIDVO ---
+	--- GetAccidentByIDResp ---
 */
 // MarshalJSON
-func (p *GetAccidentByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetAccidentByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(6 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -364,10 +364,10 @@ func (p *GetAccidentByIDVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- LoginQuery ---
+	--- LoginReq ---
 */
 // Init
-func (p *LoginQuery) Init() error {
+func (p *LoginReq) Init() error {
 	p.Phone = nil
 	p.Pass = nil
 	p.Code = nil
@@ -376,7 +376,7 @@ func (p *LoginQuery) Init() error {
 }
 
 // Check
-func (p *LoginQuery) Check() error {
+func (p *LoginReq) Check() error {
 	if p.Phone == nil {
 		return types.NewError(http.StatusBadRequest, "phone is required")
 	}
@@ -387,7 +387,7 @@ func (p *LoginQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *LoginQuery) UnmarshalJSON(data []byte) error {
+func (p *LoginReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -441,7 +441,7 @@ func (p *LoginQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *LoginQuery) UnmarshalValues(m map[string][]string) error {
+func (p *LoginReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -491,17 +491,17 @@ func (p *LoginQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- SendCodeQuery ---
+	--- SendCodeReq ---
 */
 // Init
-func (p *SendCodeQuery) Init() error {
+func (p *SendCodeReq) Init() error {
 	p.Phone = nil
 
 	return nil
 }
 
 // Check
-func (p *SendCodeQuery) Check() error {
+func (p *SendCodeReq) Check() error {
 	if p.Phone == nil {
 		return types.NewError(http.StatusBadRequest, "phone is required")
 	}
@@ -509,7 +509,7 @@ func (p *SendCodeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *SendCodeQuery) UnmarshalJSON(data []byte) error {
+func (p *SendCodeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -545,7 +545,7 @@ func (p *SendCodeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *SendCodeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *SendCodeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -577,10 +577,20 @@ func (p *SendCodeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- ForgetQuery ---
+	--- SendCodeResp ---
+*/
+// MarshalJSON
+func (p *SendCodeResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(1 * 50)
+	write.WriteRaw("code", types.Marshal(p.Code))
+	return write.Bytes(), nil
+}
+
+/*
+	--- ForgetReq ---
 */
 // Init
-func (p *ForgetQuery) Init() error {
+func (p *ForgetReq) Init() error {
 	p.Account = nil
 	p.Pass = nil
 	p.Code = nil
@@ -589,7 +599,7 @@ func (p *ForgetQuery) Init() error {
 }
 
 // Check
-func (p *ForgetQuery) Check() error {
+func (p *ForgetReq) Check() error {
 	if p.Account == nil {
 		return types.NewError(http.StatusBadRequest, "account is required")
 	}
@@ -603,7 +613,7 @@ func (p *ForgetQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *ForgetQuery) UnmarshalJSON(data []byte) error {
+func (p *ForgetReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -657,7 +667,7 @@ func (p *ForgetQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *ForgetQuery) UnmarshalValues(m map[string][]string) error {
+func (p *ForgetReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -707,10 +717,10 @@ func (p *ForgetQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditQuery ---
+	--- EditReq ---
 */
 // Init
-func (p *EditQuery) Init() error {
+func (p *EditReq) Init() error {
 	p.ID = nil
 	p.OldPass = nil
 	p.NewPass = nil
@@ -719,7 +729,7 @@ func (p *EditQuery) Init() error {
 }
 
 // Check
-func (p *EditQuery) Check() error {
+func (p *EditReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -733,7 +743,7 @@ func (p *EditQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditQuery) UnmarshalJSON(data []byte) error {
+func (p *EditReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -787,7 +797,7 @@ func (p *EditQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -837,16 +847,15 @@ func (p *EditQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- LoginUserVO ---
+	--- LoginUserResp ---
 */
 // MarshalJSON
-func (p *LoginUserVO) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(13 * 50)
+func (p *LoginUserResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(12 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
 	write.WriteRaw("avator", types.Marshal(p.Avator))
 	write.WriteRaw("phone", types.Marshal(p.Phone))
-	write.WriteRaw("pass", types.Marshal(p.Pass))
 	write.WriteRaw("tenant_id", types.Marshal(p.TenantID))
 	write.WriteRaw("member_id", types.Marshal(p.MemberID))
 	write.WriteRaw("role_id", types.Marshal(p.RoleID))
@@ -859,10 +868,10 @@ func (p *LoginUserVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageActiveByKeyQuery ---
+	--- PageActiveByKeyReq ---
 */
 // Init
-func (p *PageActiveByKeyQuery) Init() error {
+func (p *PageActiveByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.TypeID = nil
@@ -874,7 +883,7 @@ func (p *PageActiveByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageActiveByKeyQuery) Check() error {
+func (p *PageActiveByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -885,7 +894,7 @@ func (p *PageActiveByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageActiveByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageActiveByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -966,7 +975,7 @@ func (p *PageActiveByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageActiveByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageActiveByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1043,10 +1052,10 @@ func (p *PageActiveByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateActiveQuery ---
+	--- OperateActiveReq ---
 */
 // Init
-func (p *OperateActiveQuery) Init() error {
+func (p *OperateActiveReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.Theme = nil
@@ -1063,7 +1072,7 @@ func (p *OperateActiveQuery) Init() error {
 }
 
 // Check
-func (p *OperateActiveQuery) Check() error {
+func (p *OperateActiveReq) Check() error {
 	if p.TypeID == nil {
 		return types.NewError(http.StatusBadRequest, "type_id is required")
 	}
@@ -1098,7 +1107,7 @@ func (p *OperateActiveQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateActiveQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateActiveReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1224,7 +1233,7 @@ func (p *OperateActiveQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateActiveQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateActiveReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1346,10 +1355,10 @@ func (p *OperateActiveQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageActiveByKeyVO ---
+	--- PageActiveByKeyResp ---
 */
 // MarshalJSON
-func (p *PageActiveByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageActiveByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(10 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("type_name", types.Marshal(p.TypeName))
@@ -1365,20 +1374,20 @@ func (p *PageActiveByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetActiveByIDVO ---
+	--- GetActiveByIDResp ---
 */
 // MarshalJSON
-func (p *GetActiveByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetActiveByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(1 * 50)
-	write.WriteRaw("participate_elder_vo_list", types.Marshal(p.ParticipateElderVOList))
+	write.WriteRaw("participate_elder_vo_list", types.Marshal(p.ParticipateElderRespList))
 	return write.Bytes(), nil
 }
 
 /*
-	--- ParticipateElderVO ---
+	--- ParticipateElderResp ---
 */
 // MarshalJSON
-func (p *ParticipateElderVO) MarshalJSON() ([]byte, error) {
+func (p *ParticipateElderResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -1387,10 +1396,10 @@ func (p *ParticipateElderVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageActiveTypeByKeyQuery ---
+	--- PageActiveTypeByKeyReq ---
 */
 // Init
-func (p *PageActiveTypeByKeyQuery) Init() error {
+func (p *PageActiveTypeByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ActiveTypeName = nil
@@ -1399,7 +1408,7 @@ func (p *PageActiveTypeByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageActiveTypeByKeyQuery) Check() error {
+func (p *PageActiveTypeByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -1410,7 +1419,7 @@ func (p *PageActiveTypeByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageActiveTypeByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageActiveTypeByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1464,7 +1473,7 @@ func (p *PageActiveTypeByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageActiveTypeByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageActiveTypeByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1514,10 +1523,10 @@ func (p *PageActiveTypeByKeyQuery) UnmarshalValues(m map[string][]string) error 
 }
 
 /*
-	--- OperateActiveTypeQuery ---
+	--- OperateActiveTypeReq ---
 */
 // Init
-func (p *OperateActiveTypeQuery) Init() error {
+func (p *OperateActiveTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -1525,7 +1534,7 @@ func (p *OperateActiveTypeQuery) Init() error {
 }
 
 // Check
-func (p *OperateActiveTypeQuery) Check() error {
+func (p *OperateActiveTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -1533,7 +1542,7 @@ func (p *OperateActiveTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateActiveTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateActiveTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1578,7 +1587,7 @@ func (p *OperateActiveTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateActiveTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateActiveTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1619,10 +1628,10 @@ func (p *OperateActiveTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddActiveTypeQuery ---
+	--- AddActiveTypeReq ---
 */
 // Init
-func (p *AddActiveTypeQuery) Init() error {
+func (p *AddActiveTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -1630,7 +1639,7 @@ func (p *AddActiveTypeQuery) Init() error {
 }
 
 // Check
-func (p *AddActiveTypeQuery) Check() error {
+func (p *AddActiveTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -1638,7 +1647,7 @@ func (p *AddActiveTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddActiveTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *AddActiveTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1683,7 +1692,7 @@ func (p *AddActiveTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddActiveTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddActiveTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1724,10 +1733,10 @@ func (p *AddActiveTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageActiveTypeByKeyVO ---
+	--- PageActiveTypeByKeyResp ---
 */
 // MarshalJSON
-func (p *PageActiveTypeByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageActiveTypeByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(2 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -1735,31 +1744,31 @@ func (p *PageActiveTypeByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- OperateActiveTypeVO ---
+	--- OperateActiveTypeResp ---
 */
 // MarshalJSON
-func (p *OperateActiveTypeVO) MarshalJSON() ([]byte, error) {
+func (p *OperateActiveTypeResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 
 /*
-	--- ListFloorByBuildingIdQuery ---
+	--- ListFloorByBuildingIdReq ---
 */
 // Init
-func (p *ListFloorByBuildingIdQuery) Init() error {
+func (p *ListFloorByBuildingIdReq) Init() error {
 	p.BuildingID = nil
 
 	return nil
 }
 
 // Check
-func (p *ListFloorByBuildingIdQuery) Check() error {
+func (p *ListFloorByBuildingIdReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *ListFloorByBuildingIdQuery) UnmarshalJSON(data []byte) error {
+func (p *ListFloorByBuildingIdReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1795,7 +1804,7 @@ func (p *ListFloorByBuildingIdQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *ListFloorByBuildingIdQuery) UnmarshalValues(m map[string][]string) error {
+func (p *ListFloorByBuildingIdReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1827,10 +1836,10 @@ func (p *ListFloorByBuildingIdQuery) UnmarshalValues(m map[string][]string) erro
 }
 
 /*
-	--- PageBedByKeyQuery ---
+	--- PageBedByKeyReq ---
 */
 // Init
-func (p *PageBedByKeyQuery) Init() error {
+func (p *PageBedByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.BuildID = nil
@@ -1842,7 +1851,7 @@ func (p *PageBedByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageBedByKeyQuery) Check() error {
+func (p *PageBedByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -1853,7 +1862,7 @@ func (p *PageBedByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageBedByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageBedByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -1934,7 +1943,7 @@ func (p *PageBedByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageBedByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageBedByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2011,10 +2020,10 @@ func (p *PageBedByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateFloorQuery ---
+	--- OperateFloorReq ---
 */
 // Init
-func (p *OperateFloorQuery) Init() error {
+func (p *OperateFloorReq) Init() error {
 	p.ID = nil
 	p.BuildingID = nil
 	p.Name = nil
@@ -2025,7 +2034,7 @@ func (p *OperateFloorQuery) Init() error {
 }
 
 // Check
-func (p *OperateFloorQuery) Check() error {
+func (p *OperateFloorReq) Check() error {
 	if p.BuildingID == nil {
 		return types.NewError(http.StatusBadRequest, "building_id is required")
 	}
@@ -2042,7 +2051,7 @@ func (p *OperateFloorQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateFloorQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateFloorReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2114,7 +2123,7 @@ func (p *OperateFloorQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateFloorQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateFloorReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2182,10 +2191,10 @@ func (p *OperateFloorQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateRoomQuery ---
+	--- OperateRoomReq ---
 */
 // Init
-func (p *OperateRoomQuery) Init() error {
+func (p *OperateRoomReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.FloorID = nil
@@ -2197,7 +2206,7 @@ func (p *OperateRoomQuery) Init() error {
 }
 
 // Check
-func (p *OperateRoomQuery) Check() error {
+func (p *OperateRoomReq) Check() error {
 	if p.TypeID == nil {
 		return types.NewError(http.StatusBadRequest, "type_id is required")
 	}
@@ -2217,7 +2226,7 @@ func (p *OperateRoomQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateRoomQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateRoomReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2298,7 +2307,7 @@ func (p *OperateRoomQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateRoomQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateRoomReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2375,10 +2384,10 @@ func (p *OperateRoomQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateBedQuery ---
+	--- OperateBedReq ---
 */
 // Init
-func (p *OperateBedQuery) Init() error {
+func (p *OperateBedReq) Init() error {
 	p.ID = nil
 	p.RoomID = nil
 	p.Name = nil
@@ -2388,7 +2397,7 @@ func (p *OperateBedQuery) Init() error {
 }
 
 // Check
-func (p *OperateBedQuery) Check() error {
+func (p *OperateBedReq) Check() error {
 	if p.RoomID == nil {
 		return types.NewError(http.StatusBadRequest, "room_id is required")
 	}
@@ -2402,7 +2411,7 @@ func (p *OperateBedQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateBedQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateBedReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2465,7 +2474,7 @@ func (p *OperateBedQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateBedQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateBedReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2524,10 +2533,10 @@ func (p *OperateBedQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- DeleteNodeQuery ---
+	--- DeleteNodeReq ---
 */
 // Init
-func (p *DeleteNodeQuery) Init() error {
+func (p *DeleteNodeReq) Init() error {
 	p.ID = nil
 	p.Mark = nil
 
@@ -2535,7 +2544,7 @@ func (p *DeleteNodeQuery) Init() error {
 }
 
 // Check
-func (p *DeleteNodeQuery) Check() error {
+func (p *DeleteNodeReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -2546,7 +2555,7 @@ func (p *DeleteNodeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *DeleteNodeQuery) UnmarshalJSON(data []byte) error {
+func (p *DeleteNodeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2591,7 +2600,7 @@ func (p *DeleteNodeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *DeleteNodeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *DeleteNodeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2632,10 +2641,10 @@ func (p *DeleteNodeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- ListRoomByKeyQuery ---
+	--- ListRoomByKeyReq ---
 */
 // Init
-func (p *ListRoomByKeyQuery) Init() error {
+func (p *ListRoomByKeyReq) Init() error {
 	p.BuildingID = nil
 	p.FloorID = nil
 	p.ElderName = nil
@@ -2644,12 +2653,12 @@ func (p *ListRoomByKeyQuery) Init() error {
 }
 
 // Check
-func (p *ListRoomByKeyQuery) Check() error {
+func (p *ListRoomByKeyReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *ListRoomByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *ListRoomByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2703,7 +2712,7 @@ func (p *ListRoomByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *ListRoomByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *ListRoomByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2753,10 +2762,10 @@ func (p *ListRoomByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageBuildingByKeyVO ---
+	--- PageBuildingByKeyResp ---
 */
 // MarshalJSON
-func (p *PageBuildingByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageBuildingByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -2765,10 +2774,10 @@ func (p *PageBuildingByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageBuildingByKeyQuery ---
+	--- PageBuildingByKeyReq ---
 */
 // Init
-func (p *PageBuildingByKeyQuery) Init() error {
+func (p *PageBuildingByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Key = nil
@@ -2777,7 +2786,7 @@ func (p *PageBuildingByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageBuildingByKeyQuery) Check() error {
+func (p *PageBuildingByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -2788,7 +2797,7 @@ func (p *PageBuildingByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageBuildingByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageBuildingByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2842,7 +2851,7 @@ func (p *PageBuildingByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageBuildingByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageBuildingByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2892,10 +2901,10 @@ func (p *PageBuildingByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddBuildingQuery ---
+	--- AddBuildingReq ---
 */
 // Init
-func (p *AddBuildingQuery) Init() error {
+func (p *AddBuildingReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.Remark = nil
@@ -2906,7 +2915,7 @@ func (p *AddBuildingQuery) Init() error {
 }
 
 // Check
-func (p *AddBuildingQuery) Check() error {
+func (p *AddBuildingReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -2914,7 +2923,7 @@ func (p *AddBuildingQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddBuildingQuery) UnmarshalJSON(data []byte) error {
+func (p *AddBuildingReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -2986,7 +2995,7 @@ func (p *AddBuildingQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddBuildingQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddBuildingReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3054,10 +3063,10 @@ func (p *AddBuildingQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditBuildingQuery ---
+	--- EditBuildingReq ---
 */
 // Init
-func (p *EditBuildingQuery) Init() error {
+func (p *EditBuildingReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.Remark = nil
@@ -3068,7 +3077,7 @@ func (p *EditBuildingQuery) Init() error {
 }
 
 // Check
-func (p *EditBuildingQuery) Check() error {
+func (p *EditBuildingReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -3076,7 +3085,7 @@ func (p *EditBuildingQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditBuildingQuery) UnmarshalJSON(data []byte) error {
+func (p *EditBuildingReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3148,7 +3157,7 @@ func (p *EditBuildingQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditBuildingQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditBuildingReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3216,22 +3225,22 @@ func (p *EditBuildingQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- ListBuildingQuery ---
+	--- ListBuildingReq ---
 */
 // Init
-func (p *ListBuildingQuery) Init() error {
+func (p *ListBuildingReq) Init() error {
 	p.Name = nil
 
 	return nil
 }
 
 // Check
-func (p *ListBuildingQuery) Check() error {
+func (p *ListBuildingReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *ListBuildingQuery) UnmarshalJSON(data []byte) error {
+func (p *ListBuildingReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3267,7 +3276,7 @@ func (p *ListBuildingQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *ListBuildingQuery) UnmarshalValues(m map[string][]string) error {
+func (p *ListBuildingReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3299,10 +3308,10 @@ func (p *ListBuildingQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageFloorByKeyQuery ---
+	--- PageFloorByKeyReq ---
 */
 // Init
-func (p *PageFloorByKeyQuery) Init() error {
+func (p *PageFloorByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.BuildID = nil
@@ -3312,7 +3321,7 @@ func (p *PageFloorByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageFloorByKeyQuery) Check() error {
+func (p *PageFloorByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -3323,7 +3332,7 @@ func (p *PageFloorByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageFloorByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageFloorByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3386,7 +3395,7 @@ func (p *PageFloorByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageFloorByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageFloorByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3445,10 +3454,10 @@ func (p *PageFloorByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddFloorQuery ---
+	--- AddFloorReq ---
 */
 // Init
-func (p *AddFloorQuery) Init() error {
+func (p *AddFloorReq) Init() error {
 	p.ID = nil
 	p.BuildingID = nil
 	p.Name = nil
@@ -3459,7 +3468,7 @@ func (p *AddFloorQuery) Init() error {
 }
 
 // Check
-func (p *AddFloorQuery) Check() error {
+func (p *AddFloorReq) Check() error {
 	if p.BuildingID == nil {
 		return types.NewError(http.StatusBadRequest, "building_id is required")
 	}
@@ -3476,7 +3485,7 @@ func (p *AddFloorQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddFloorQuery) UnmarshalJSON(data []byte) error {
+func (p *AddFloorReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3548,7 +3557,7 @@ func (p *AddFloorQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddFloorQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddFloorReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3616,10 +3625,10 @@ func (p *AddFloorQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditFloorQuery ---
+	--- EditFloorReq ---
 */
 // Init
-func (p *EditFloorQuery) Init() error {
+func (p *EditFloorReq) Init() error {
 	p.ID = nil
 	p.BuildingID = nil
 	p.Name = nil
@@ -3630,7 +3639,7 @@ func (p *EditFloorQuery) Init() error {
 }
 
 // Check
-func (p *EditFloorQuery) Check() error {
+func (p *EditFloorReq) Check() error {
 	if p.BuildingID == nil {
 		return types.NewError(http.StatusBadRequest, "building_id is required")
 	}
@@ -3647,7 +3656,7 @@ func (p *EditFloorQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditFloorQuery) UnmarshalJSON(data []byte) error {
+func (p *EditFloorReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3719,7 +3728,7 @@ func (p *EditFloorQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditFloorQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditFloorReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3787,10 +3796,10 @@ func (p *EditFloorQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageRoomByKeyQuery ---
+	--- PageRoomByKeyReq ---
 */
 // Init
-func (p *PageRoomByKeyQuery) Init() error {
+func (p *PageRoomByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.BuildID = nil
@@ -3802,7 +3811,7 @@ func (p *PageRoomByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageRoomByKeyQuery) Check() error {
+func (p *PageRoomByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -3813,7 +3822,7 @@ func (p *PageRoomByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageRoomByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageRoomByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3894,7 +3903,7 @@ func (p *PageRoomByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageRoomByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageRoomByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -3971,10 +3980,10 @@ func (p *PageRoomByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddRoomQuery ---
+	--- AddRoomReq ---
 */
 // Init
-func (p *AddRoomQuery) Init() error {
+func (p *AddRoomReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.FloorID = nil
@@ -3986,7 +3995,7 @@ func (p *AddRoomQuery) Init() error {
 }
 
 // Check
-func (p *AddRoomQuery) Check() error {
+func (p *AddRoomReq) Check() error {
 	if p.TypeID == nil {
 		return types.NewError(http.StatusBadRequest, "type_id is required")
 	}
@@ -4006,7 +4015,7 @@ func (p *AddRoomQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddRoomQuery) UnmarshalJSON(data []byte) error {
+func (p *AddRoomReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4087,7 +4096,7 @@ func (p *AddRoomQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddRoomQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddRoomReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4164,10 +4173,10 @@ func (p *AddRoomQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditRoomQuery ---
+	--- EditRoomReq ---
 */
 // Init
-func (p *EditRoomQuery) Init() error {
+func (p *EditRoomReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.FloorID = nil
@@ -4179,7 +4188,7 @@ func (p *EditRoomQuery) Init() error {
 }
 
 // Check
-func (p *EditRoomQuery) Check() error {
+func (p *EditRoomReq) Check() error {
 	if p.TypeID == nil {
 		return types.NewError(http.StatusBadRequest, "type_id is required")
 	}
@@ -4199,7 +4208,7 @@ func (p *EditRoomQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditRoomQuery) UnmarshalJSON(data []byte) error {
+func (p *EditRoomReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4280,7 +4289,7 @@ func (p *EditRoomQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditRoomQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditRoomReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4357,10 +4366,10 @@ func (p *EditRoomQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- GetFloorByBuildingIdQuery ---
+	--- GetFloorByBuildingIdReq ---
 */
 // Init
-func (p *GetFloorByBuildingIdQuery) Init() error {
+func (p *GetFloorByBuildingIdReq) Init() error {
 	p.BuildingID = nil
 	p.Name = nil
 
@@ -4368,7 +4377,7 @@ func (p *GetFloorByBuildingIdQuery) Init() error {
 }
 
 // Check
-func (p *GetFloorByBuildingIdQuery) Check() error {
+func (p *GetFloorByBuildingIdReq) Check() error {
 	if p.BuildingID == nil {
 		return types.NewError(http.StatusBadRequest, "building_id is required")
 	}
@@ -4376,7 +4385,7 @@ func (p *GetFloorByBuildingIdQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *GetFloorByBuildingIdQuery) UnmarshalJSON(data []byte) error {
+func (p *GetFloorByBuildingIdReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4421,7 +4430,7 @@ func (p *GetFloorByBuildingIdQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *GetFloorByBuildingIdQuery) UnmarshalValues(m map[string][]string) error {
+func (p *GetFloorByBuildingIdReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4462,10 +4471,10 @@ func (p *GetFloorByBuildingIdQuery) UnmarshalValues(m map[string][]string) error
 }
 
 /*
-	--- GetRoomByFloorIdQuery ---
+	--- GetRoomByFloorIdReq ---
 */
 // Init
-func (p *GetRoomByFloorIdQuery) Init() error {
+func (p *GetRoomByFloorIdReq) Init() error {
 	p.FloorID = nil
 	p.Name = nil
 
@@ -4473,7 +4482,7 @@ func (p *GetRoomByFloorIdQuery) Init() error {
 }
 
 // Check
-func (p *GetRoomByFloorIdQuery) Check() error {
+func (p *GetRoomByFloorIdReq) Check() error {
 	if p.FloorID == nil {
 		return types.NewError(http.StatusBadRequest, "floor_id is required")
 	}
@@ -4481,7 +4490,7 @@ func (p *GetRoomByFloorIdQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *GetRoomByFloorIdQuery) UnmarshalJSON(data []byte) error {
+func (p *GetRoomByFloorIdReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4526,7 +4535,7 @@ func (p *GetRoomByFloorIdQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *GetRoomByFloorIdQuery) UnmarshalValues(m map[string][]string) error {
+func (p *GetRoomByFloorIdReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4567,10 +4576,112 @@ func (p *GetRoomByFloorIdQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageCateringSetByKeyQuery ---
+	--- OperateBuildingResp ---
+*/
+// MarshalJSON
+func (p *OperateBuildingResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(3 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("floor_num", types.Marshal(p.FloorNum))
+	return write.Bytes(), nil
+}
+
+/*
+	--- PageFloorByKeyResp ---
+*/
+// MarshalJSON
+func (p *PageFloorByKeyResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(4 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("building_id", types.Marshal(p.BuildingID))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("room_num", types.Marshal(p.RoomNum))
+	return write.Bytes(), nil
+}
+
+/*
+	--- OperateFloorResp ---
+*/
+// MarshalJSON
+func (p *OperateFloorResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(4 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("building_id", types.Marshal(p.BuildingID))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("room_num", types.Marshal(p.RoomNum))
+	return write.Bytes(), nil
+}
+
+/*
+	--- PageRoomByKeyResp ---
+*/
+// MarshalJSON
+func (p *PageRoomByKeyResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(5 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("type_id", types.Marshal(p.TypeId))
+	write.WriteRaw("floor_id", types.Marshal(p.FloorId))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("bed_num", types.Marshal(p.BedNum))
+	return write.Bytes(), nil
+}
+
+/*
+	--- OperateRoomResp ---
+*/
+// MarshalJSON
+func (p *OperateRoomResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(5 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("type_id", types.Marshal(p.TypeId))
+	write.WriteRaw("floor_id", types.Marshal(p.FloorId))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("bed_num", types.Marshal(p.BedNum))
+	return write.Bytes(), nil
+}
+
+/*
+	--- RoomByFloorIdResp ---
+*/
+// MarshalJSON
+func (p *RoomByFloorIdResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(3 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("bed_num", types.Marshal(p.BedNum))
+	return write.Bytes(), nil
+}
+
+/*
+	--- PageBedByKeyResp ---
+*/
+// MarshalJSON
+func (p *PageBedByKeyResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(3 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("bed_flag", types.Marshal(p.BedFlag))
+	return write.Bytes(), nil
+}
+
+/*
+	--- OperateBedResp ---
+*/
+// MarshalJSON
+func (p *OperateBedResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(3 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("room_id", types.Marshal(p.RoomId))
+	write.WriteRaw("name", types.Marshal(p.Name))
+	return write.Bytes(), nil
+}
+
+/*
+	--- PageCateringSetByKeyReq ---
 */
 // Init
-func (p *PageCateringSetByKeyQuery) Init() error {
+func (p *PageCateringSetByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.SetName = nil
@@ -4580,7 +4691,7 @@ func (p *PageCateringSetByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageCateringSetByKeyQuery) Check() error {
+func (p *PageCateringSetByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -4591,7 +4702,7 @@ func (p *PageCateringSetByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageCateringSetByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageCateringSetByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4654,7 +4765,7 @@ func (p *PageCateringSetByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageCateringSetByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageCateringSetByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4713,10 +4824,10 @@ func (p *PageCateringSetByKeyQuery) UnmarshalValues(m map[string][]string) error
 }
 
 /*
-	--- OperateCateringSetQuery ---
+	--- OperateCateringSetReq ---
 */
 // Init
-func (p *OperateCateringSetQuery) Init() error {
+func (p *OperateCateringSetReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.MonthPrice = nil
@@ -4726,7 +4837,7 @@ func (p *OperateCateringSetQuery) Init() error {
 }
 
 // Check
-func (p *OperateCateringSetQuery) Check() error {
+func (p *OperateCateringSetReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -4740,7 +4851,7 @@ func (p *OperateCateringSetQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateCateringSetQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateCateringSetReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4803,7 +4914,7 @@ func (p *OperateCateringSetQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateCateringSetQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateCateringSetReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4862,10 +4973,10 @@ func (p *OperateCateringSetQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageCateringSetByKeyVO ---
+	--- PageCateringSetByKeyResp ---
 */
 // MarshalJSON
-func (p *PageCateringSetByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageCateringSetByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -4874,10 +4985,10 @@ func (p *PageCateringSetByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- SetDishesVO ---
+	--- SetDishesResp ---
 */
 // MarshalJSON
-func (p *SetDishesVO) MarshalJSON() ([]byte, error) {
+func (p *SetDishesResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -4886,10 +4997,10 @@ func (p *SetDishesVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetCateringSetByIDVO ---
+	--- GetCateringSetByIDResp ---
 */
 // MarshalJSON
-func (p *GetCateringSetByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetCateringSetByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -4899,10 +5010,10 @@ func (p *GetCateringSetByIDVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageCheckContractByKeyQuery ---
+	--- PageCheckContractByKeyReq ---
 */
 // Init
-func (p *PageCheckContractByKeyQuery) Init() error {
+func (p *PageCheckContractByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Name = nil
@@ -4913,7 +5024,7 @@ func (p *PageCheckContractByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageCheckContractByKeyQuery) Check() error {
+func (p *PageCheckContractByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -4924,7 +5035,7 @@ func (p *PageCheckContractByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageCheckContractByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageCheckContractByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -4996,7 +5107,7 @@ func (p *PageCheckContractByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageCheckContractByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageCheckContractByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -5064,10 +5175,10 @@ func (p *PageCheckContractByKeyQuery) UnmarshalValues(m map[string][]string) err
 }
 
 /*
-	--- OperateCheckContractQuery ---
+	--- OperateCheckContractReq ---
 */
 // Init
-func (p *OperateCheckContractQuery) Init() error {
+func (p *OperateCheckContractReq) Init() error {
 	p.ID = nil
 	p.NursingGradeID = nil
 	p.CateringSetID = nil
@@ -5088,7 +5199,7 @@ func (p *OperateCheckContractQuery) Init() error {
 }
 
 // Check
-func (p *OperateCheckContractQuery) Check() error {
+func (p *OperateCheckContractReq) Check() error {
 	if p.NursingGradeID == nil {
 		return types.NewError(http.StatusBadRequest, "nursing_grade_id is required")
 	}
@@ -5135,7 +5246,7 @@ func (p *OperateCheckContractQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateCheckContractQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateCheckContractReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -5278,8 +5389,8 @@ func (p *OperateCheckContractQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "operate_emergency_contact_query_list":
-			e = types.Unmarshal(value, &p.EmergencyContactQueryList, func(value gjson.Result) []OperateEmergencyContactQuery {
-				var obj []OperateEmergencyContactQuery
+			e = types.Unmarshal(value, &p.EmergencyContactQueryList, func(value gjson.Result) []OperateEmergencyContactReq {
+				var obj []OperateEmergencyContactReq
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5297,7 +5408,7 @@ func (p *OperateCheckContractQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateCheckContractQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateCheckContractReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -5436,8 +5547,8 @@ func (p *OperateCheckContractQuery) UnmarshalValues(m map[string][]string) error
 				return obj
 			}(value))
 		case "operate_emergency_contact_query_list":
-			e = types.Unmarshal(value, &p.EmergencyContactQueryList, func(value gjson.Result) []OperateEmergencyContactQuery {
-				var obj []OperateEmergencyContactQuery
+			e = types.Unmarshal(value, &p.EmergencyContactQueryList, func(value gjson.Result) []OperateEmergencyContactReq {
+				var obj []OperateEmergencyContactReq
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -5455,10 +5566,10 @@ func (p *OperateCheckContractQuery) UnmarshalValues(m map[string][]string) error
 }
 
 /*
-	--- PageSearchElderByKeyQuery ---
+	--- PageSearchElderByKeyReq ---
 */
 // Init
-func (p *PageSearchElderByKeyQuery) Init() error {
+func (p *PageSearchElderByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Name = nil
@@ -5468,7 +5579,7 @@ func (p *PageSearchElderByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageSearchElderByKeyQuery) Check() error {
+func (p *PageSearchElderByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -5479,7 +5590,7 @@ func (p *PageSearchElderByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageSearchElderByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageSearchElderByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -5542,7 +5653,7 @@ func (p *PageSearchElderByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageSearchElderByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageSearchElderByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -5601,10 +5712,10 @@ func (p *PageSearchElderByKeyQuery) UnmarshalValues(m map[string][]string) error
 }
 
 /*
-	--- PageCheckContractByKeyVO ---
+	--- PageCheckContractByKeyResp ---
 */
 // MarshalJSON
-func (p *PageCheckContractByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageCheckContractByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(8 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -5618,10 +5729,10 @@ func (p *PageCheckContractByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageSearchElderByKeyVO ---
+	--- PageSearchElderByKeyResp ---
 */
 // MarshalJSON
-func (p *PageSearchElderByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageSearchElderByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -5634,16 +5745,16 @@ func (p *PageSearchElderByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetCheckContractByIDVO ---
+	--- GetCheckContractByIDResp ---
 */
 // MarshalJSON
-func (p *GetCheckContractByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetCheckContractByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(5 * 50)
 	write.WriteRaw("staff_id", types.Marshal(p.StaffID))
 	write.WriteRaw("sign_date", types.Marshal(p.SignDate))
 	write.WriteRaw("start_date", types.Marshal(p.StartDate))
 	write.WriteRaw("end_date", types.Marshal(p.EndDate))
-	write.WriteRaw("operate_emergency_contact_query_list", types.Marshal(p.OperateEmergencyContactQueryList))
+	write.WriteRaw("operate_emergency_contact_query_list", types.Marshal(p.OperateEmergencyContactReqList))
 	return write.Bytes(), nil
 }
 
@@ -5686,10 +5797,10 @@ func (p *DropDown) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- BuildingVO ---
+	--- BuildingResp ---
 */
 // MarshalJSON
-func (p *BuildingVO) MarshalJSON() ([]byte, error) {
+func (p *BuildingResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -5699,10 +5810,10 @@ func (p *BuildingVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- BuildingItemVO ---
+	--- BuildingItemResp ---
 */
 // MarshalJSON
-func (p *BuildingItemVO) MarshalJSON() ([]byte, error) {
+func (p *BuildingItemResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -5712,10 +5823,10 @@ func (p *BuildingItemVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- FloorItemVO ---
+	--- FloorItemResp ---
 */
 // MarshalJSON
-func (p *FloorItemVO) MarshalJSON() ([]byte, error) {
+func (p *FloorItemResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -5725,10 +5836,10 @@ func (p *FloorItemVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- RoomItemVO ---
+	--- RoomItemResp ---
 */
 // MarshalJSON
-func (p *RoomItemVO) MarshalJSON() ([]byte, error) {
+func (p *RoomItemResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(6 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -5740,10 +5851,10 @@ func (p *RoomItemVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- OperateEmergencyContactQuery ---
+	--- OperateEmergencyContactReq ---
 */
 // Init
-func (p *OperateEmergencyContactQuery) Init() error {
+func (p *OperateEmergencyContactReq) Init() error {
 	p.Name = nil
 	p.Phone = nil
 	p.Email = nil
@@ -5754,7 +5865,7 @@ func (p *OperateEmergencyContactQuery) Init() error {
 }
 
 // Check
-func (p *OperateEmergencyContactQuery) Check() error {
+func (p *OperateEmergencyContactReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -5774,7 +5885,7 @@ func (p *OperateEmergencyContactQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateEmergencyContactQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateEmergencyContactReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -5846,7 +5957,7 @@ func (p *OperateEmergencyContactQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateEmergencyContactQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateEmergencyContactReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -5914,10 +6025,10 @@ func (p *OperateEmergencyContactQuery) UnmarshalValues(m map[string][]string) er
 }
 
 /*
-	--- OperateNurseGradeQuery ---
+	--- OperateNurseGradeReq ---
 */
 // Init
-func (p *OperateNurseGradeQuery) Init() error {
+func (p *OperateNurseGradeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.Type = nil
@@ -5928,7 +6039,7 @@ func (p *OperateNurseGradeQuery) Init() error {
 }
 
 // Check
-func (p *OperateNurseGradeQuery) Check() error {
+func (p *OperateNurseGradeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -5945,7 +6056,7 @@ func (p *OperateNurseGradeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateNurseGradeQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateNurseGradeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -6017,7 +6128,7 @@ func (p *OperateNurseGradeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateNurseGradeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateNurseGradeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -6085,10 +6196,10 @@ func (p *OperateNurseGradeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateServiceQuery ---
+	--- OperateServiceReq ---
 */
 // Init
-func (p *OperateServiceQuery) Init() error {
+func (p *OperateServiceReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.Name = nil
@@ -6100,7 +6211,7 @@ func (p *OperateServiceQuery) Init() error {
 }
 
 // Check
-func (p *OperateServiceQuery) Check() error {
+func (p *OperateServiceReq) Check() error {
 	if p.TypeID == nil {
 		return types.NewError(http.StatusBadRequest, "type_id is required")
 	}
@@ -6120,7 +6231,7 @@ func (p *OperateServiceQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateServiceQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateServiceReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -6201,7 +6312,7 @@ func (p *OperateServiceQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateServiceQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateServiceReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -6278,29 +6389,29 @@ func (p *OperateServiceQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- GetNurseGradeByIDVO ---
+	--- GetNurseGradeByIDResp ---
 */
 // MarshalJSON
-func (p *GetNurseGradeByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetNurseGradeByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(1 * 50)
-	write.WriteRaw("nurse_grade_service_vo_list", types.Marshal(p.NurseGradeServiceVOList))
+	write.WriteRaw("nurse_grade_service_vo_list", types.Marshal(p.NurseGradeServiceRespList))
 	return write.Bytes(), nil
 }
 
 /*
-	--- NurseGradeServiceVO ---
+	--- NurseGradeServiceResp ---
 */
 // MarshalJSON
-func (p *NurseGradeServiceVO) MarshalJSON() ([]byte, error) {
+func (p *NurseGradeServiceResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 
 /*
-	--- GetBedByIDVO ---
+	--- GetBedByIDResp ---
 */
 // MarshalJSON
-func (p *GetBedByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetBedByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("bed_id", types.Marshal(p.BedID))
 	write.WriteRaw("bed_name", types.Marshal(p.BedName))
@@ -6310,10 +6421,10 @@ func (p *GetBedByIDVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetElderRecordByIDVO ---
+	--- GetElderRecordByIDResp ---
 */
 // MarshalJSON
-func (p *GetElderRecordByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetElderRecordByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(10 * 50)
 	write.WriteRaw("name", types.Marshal(p.Name))
 	write.WriteRaw("id_num", types.Marshal(p.IDNum))
@@ -6321,18 +6432,18 @@ func (p *GetElderRecordByIDVO) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("sex", types.Marshal(p.Sex))
 	write.WriteRaw("phone", types.Marshal(p.Phone))
 	write.WriteRaw("address", types.Marshal(p.Address))
-	write.WriteRaw("elder_emergency_contact_by_id_vo_list", types.Marshal(p.ElderEmergencyContactByIDVOList))
-	write.WriteRaw("elder_nurse_grade_by_id_vo", types.Marshal(p.ElderNurseGradeByIDVO))
-	write.WriteRaw("elder_catering_set_by_id_vo", types.Marshal(p.ElderCateringSetByIDVO))
-	write.WriteRaw("elder_bed_by_id_vo", types.Marshal(p.ElderBedByIDVO))
+	write.WriteRaw("elder_emergency_contact_by_id_vo_list", types.Marshal(p.ElderEmergencyContactByIDRespList))
+	write.WriteRaw("elder_nurse_grade_by_id_vo", types.Marshal(p.ElderNurseGradeByIDResp))
+	write.WriteRaw("elder_catering_set_by_id_vo", types.Marshal(p.ElderCateringSetByIDResp))
+	write.WriteRaw("elder_bed_by_id_vo", types.Marshal(p.ElderBedByIDResp))
 	return write.Bytes(), nil
 }
 
 /*
-	--- GetElderLabelByIDLabelVO ---
+	--- GetElderLabelByIDLabelResp ---
 */
 // MarshalJSON
-func (p *GetElderLabelByIDLabelVO) MarshalJSON() ([]byte, error) {
+func (p *GetElderLabelByIDLabelResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -6341,10 +6452,10 @@ func (p *GetElderLabelByIDLabelVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- ListLabelVO ---
+	--- ListLabelResp ---
 */
 // MarshalJSON
-func (p *ListLabelVO) MarshalJSON() ([]byte, error) {
+func (p *ListLabelResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -6353,10 +6464,10 @@ func (p *ListLabelVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- LabelItemVO ---
+	--- LabelItemResp ---
 */
 // MarshalJSON
-func (p *LabelItemVO) MarshalJSON() ([]byte, error) {
+func (p *LabelItemResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("type_id", types.Marshal(p.TypeID))
@@ -6366,10 +6477,10 @@ func (p *LabelItemVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetElderFeeByIDVO ---
+	--- GetElderFeeByIDResp ---
 */
 // MarshalJSON
-func (p *GetElderFeeByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetElderFeeByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
 	write.WriteRaw("contract_start_time", types.Marshal(p.ContractStartTime))
@@ -6651,10 +6762,10 @@ func (p *StringReq) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageConsultByKeyQuery ---
+	--- PageConsultByKeyReq ---
 */
 // Init
-func (p *PageConsultByKeyQuery) Init() error {
+func (p *PageConsultByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ConsultName = nil
@@ -6670,7 +6781,7 @@ func (p *PageConsultByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageConsultByKeyQuery) Check() error {
+func (p *PageConsultByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -6681,7 +6792,7 @@ func (p *PageConsultByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageConsultByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageConsultByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -6798,7 +6909,7 @@ func (p *PageConsultByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageConsultByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageConsultByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -6911,10 +7022,10 @@ func (p *PageConsultByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateConsultQuery ---
+	--- OperateConsultReq ---
 */
 // Init
-func (p *OperateConsultQuery) Init() error {
+func (p *OperateConsultReq) Init() error {
 	p.ConsultID = nil
 	p.ElderID = nil
 	p.SourceID = nil
@@ -6935,7 +7046,7 @@ func (p *OperateConsultQuery) Init() error {
 }
 
 // Check
-func (p *OperateConsultQuery) Check() error {
+func (p *OperateConsultReq) Check() error {
 	if p.SourceID == nil {
 		return types.NewError(http.StatusBadRequest, "source_id is required")
 	}
@@ -6979,7 +7090,7 @@ func (p *OperateConsultQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateConsultQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateConsultReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -7141,7 +7252,7 @@ func (p *OperateConsultQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateConsultQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateConsultReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -7299,10 +7410,10 @@ func (p *OperateConsultQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddCommunicationRecordQuery ---
+	--- AddCommunicationRecordReq ---
 */
 // Init
-func (p *AddCommunicationRecordQuery) Init() error {
+func (p *AddCommunicationRecordReq) Init() error {
 	p.ElderID = nil
 	p.CommunicationRecord = nil
 	p.RecordDate = nil
@@ -7311,7 +7422,7 @@ func (p *AddCommunicationRecordQuery) Init() error {
 }
 
 // Check
-func (p *AddCommunicationRecordQuery) Check() error {
+func (p *AddCommunicationRecordReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -7325,7 +7436,7 @@ func (p *AddCommunicationRecordQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddCommunicationRecordQuery) UnmarshalJSON(data []byte) error {
+func (p *AddCommunicationRecordReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -7379,7 +7490,7 @@ func (p *AddCommunicationRecordQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddCommunicationRecordQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddCommunicationRecordReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -7429,10 +7540,10 @@ func (p *AddCommunicationRecordQuery) UnmarshalValues(m map[string][]string) err
 }
 
 /*
-	--- EditCommunicationRecordQuery ---
+	--- EditCommunicationRecordReq ---
 */
 // Init
-func (p *EditCommunicationRecordQuery) Init() error {
+func (p *EditCommunicationRecordReq) Init() error {
 	p.ID = nil
 	p.CommunicationRecord = nil
 	p.RecordDate = nil
@@ -7441,7 +7552,7 @@ func (p *EditCommunicationRecordQuery) Init() error {
 }
 
 // Check
-func (p *EditCommunicationRecordQuery) Check() error {
+func (p *EditCommunicationRecordReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -7455,7 +7566,7 @@ func (p *EditCommunicationRecordQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditCommunicationRecordQuery) UnmarshalJSON(data []byte) error {
+func (p *EditCommunicationRecordReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -7509,7 +7620,7 @@ func (p *EditCommunicationRecordQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditCommunicationRecordQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditCommunicationRecordReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -7559,10 +7670,10 @@ func (p *EditCommunicationRecordQuery) UnmarshalValues(m map[string][]string) er
 }
 
 /*
-	--- PageCommunicationRecordQuery ---
+	--- PageCommunicationRecordReq ---
 */
 // Init
-func (p *PageCommunicationRecordQuery) Init() error {
+func (p *PageCommunicationRecordReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderID = nil
@@ -7572,7 +7683,7 @@ func (p *PageCommunicationRecordQuery) Init() error {
 }
 
 // Check
-func (p *PageCommunicationRecordQuery) Check() error {
+func (p *PageCommunicationRecordReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -7586,7 +7697,7 @@ func (p *PageCommunicationRecordQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageCommunicationRecordQuery) UnmarshalJSON(data []byte) error {
+func (p *PageCommunicationRecordReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -7649,7 +7760,7 @@ func (p *PageCommunicationRecordQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageCommunicationRecordQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageCommunicationRecordReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -7708,10 +7819,10 @@ func (p *PageCommunicationRecordQuery) UnmarshalValues(m map[string][]string) er
 }
 
 /*
-	--- GetConsultByConsultIDAndElderIDQuery ---
+	--- GetConsultByConsultIDAndElderIDReq ---
 */
 // Init
-func (p *GetConsultByConsultIDAndElderIDQuery) Init() error {
+func (p *GetConsultByConsultIDAndElderIDReq) Init() error {
 	p.ConsultID = nil
 	p.ElderID = nil
 
@@ -7719,7 +7830,7 @@ func (p *GetConsultByConsultIDAndElderIDQuery) Init() error {
 }
 
 // Check
-func (p *GetConsultByConsultIDAndElderIDQuery) Check() error {
+func (p *GetConsultByConsultIDAndElderIDReq) Check() error {
 	if p.ConsultID == nil {
 		return types.NewError(http.StatusBadRequest, "consult_id is required")
 	}
@@ -7730,7 +7841,7 @@ func (p *GetConsultByConsultIDAndElderIDQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *GetConsultByConsultIDAndElderIDQuery) UnmarshalJSON(data []byte) error {
+func (p *GetConsultByConsultIDAndElderIDReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -7775,7 +7886,7 @@ func (p *GetConsultByConsultIDAndElderIDQuery) UnmarshalJSON(data []byte) error 
 }
 
 // UnmarshalValues
-func (p *GetConsultByConsultIDAndElderIDQuery) UnmarshalValues(m map[string][]string) error {
+func (p *GetConsultByConsultIDAndElderIDReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -7816,10 +7927,10 @@ func (p *GetConsultByConsultIDAndElderIDQuery) UnmarshalValues(m map[string][]st
 }
 
 /*
-	--- AddConsultQuery ---
+	--- AddConsultReq ---
 */
 // Init
-func (p *AddConsultQuery) Init() error {
+func (p *AddConsultReq) Init() error {
 	p.ConsultID = nil
 	p.ElderID = nil
 	p.SourceID = nil
@@ -7840,7 +7951,7 @@ func (p *AddConsultQuery) Init() error {
 }
 
 // Check
-func (p *AddConsultQuery) Check() error {
+func (p *AddConsultReq) Check() error {
 	if p.SourceID == nil {
 		return types.NewError(http.StatusBadRequest, "source_id is required")
 	}
@@ -7884,7 +7995,7 @@ func (p *AddConsultQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddConsultQuery) UnmarshalJSON(data []byte) error {
+func (p *AddConsultReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -8046,7 +8157,7 @@ func (p *AddConsultQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddConsultQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddConsultReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -8204,10 +8315,10 @@ func (p *AddConsultQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageIntentByKeyQuery ---
+	--- PageIntentByKeyReq ---
 */
 // Init
-func (p *PageIntentByKeyQuery) Init() error {
+func (p *PageIntentByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Key = nil
@@ -8216,7 +8327,7 @@ func (p *PageIntentByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageIntentByKeyQuery) Check() error {
+func (p *PageIntentByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -8227,7 +8338,7 @@ func (p *PageIntentByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageIntentByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageIntentByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -8281,7 +8392,7 @@ func (p *PageIntentByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageIntentByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageIntentByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -8331,10 +8442,10 @@ func (p *PageIntentByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageConsultByKeyVO ---
+	--- PageConsultByKeyResp ---
 */
 // MarshalJSON
-func (p *PageConsultByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageConsultByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(11 * 50)
 	write.WriteRaw("consult_id", types.Marshal(p.ConsultID))
 	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
@@ -8351,10 +8462,10 @@ func (p *PageConsultByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageCommunicationRecordVO ---
+	--- PageCommunicationRecordResp ---
 */
 // MarshalJSON
-func (p *PageCommunicationRecordVO) MarshalJSON() ([]byte, error) {
+func (p *PageCommunicationRecordResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("record_date", types.Marshal(p.RecordDate))
@@ -8363,19 +8474,19 @@ func (p *PageCommunicationRecordVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetConsultByConsultIDAndElderIDVO ---
+	--- GetConsultByConsultIDAndElderIDResp ---
 */
 // MarshalJSON
-func (p *GetConsultByConsultIDAndElderIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetConsultByConsultIDAndElderIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 
 /*
-	--- PageConsumeByKeyQuery ---
+	--- PageConsumeByKeyReq ---
 */
 // Init
-func (p *PageConsumeByKeyQuery) Init() error {
+func (p *PageConsumeByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -8386,7 +8497,7 @@ func (p *PageConsumeByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageConsumeByKeyQuery) Check() error {
+func (p *PageConsumeByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -8397,7 +8508,7 @@ func (p *PageConsumeByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageConsumeByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageConsumeByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -8469,7 +8580,7 @@ func (p *PageConsumeByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageConsumeByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageConsumeByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -8537,10 +8648,10 @@ func (p *PageConsumeByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddConsumeQuery ---
+	--- AddConsumeReq ---
 */
 // Init
-func (p *AddConsumeQuery) Init() error {
+func (p *AddConsumeReq) Init() error {
 	p.ID = nil
 	p.ElderID = nil
 	p.ConsumeType = nil
@@ -8552,7 +8663,7 @@ func (p *AddConsumeQuery) Init() error {
 }
 
 // Check
-func (p *AddConsumeQuery) Check() error {
+func (p *AddConsumeReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -8569,7 +8680,7 @@ func (p *AddConsumeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddConsumeQuery) UnmarshalJSON(data []byte) error {
+func (p *AddConsumeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -8650,7 +8761,7 @@ func (p *AddConsumeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddConsumeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddConsumeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -8727,10 +8838,10 @@ func (p *AddConsumeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditConsumeQuery ---
+	--- EditConsumeReq ---
 */
 // Init
-func (p *EditConsumeQuery) Init() error {
+func (p *EditConsumeReq) Init() error {
 	p.ID = nil
 	p.ElderID = nil
 	p.ConsumeType = nil
@@ -8742,7 +8853,7 @@ func (p *EditConsumeQuery) Init() error {
 }
 
 // Check
-func (p *EditConsumeQuery) Check() error {
+func (p *EditConsumeReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -8759,7 +8870,7 @@ func (p *EditConsumeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditConsumeQuery) UnmarshalJSON(data []byte) error {
+func (p *EditConsumeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -8840,7 +8951,7 @@ func (p *EditConsumeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditConsumeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditConsumeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -8917,10 +9028,10 @@ func (p *EditConsumeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageConsumeByKeyVO ---
+	--- PageConsumeByKeyResp ---
 */
 // MarshalJSON
-func (p *PageConsumeByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageConsumeByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(6 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -8932,10 +9043,10 @@ func (p *PageConsumeByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetConsumeByIdVO ---
+	--- GetConsumeByIdResp ---
 */
 // MarshalJSON
-func (p *GetConsumeByIdVO) MarshalJSON() ([]byte, error) {
+func (p *GetConsumeByIdResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
@@ -8948,10 +9059,10 @@ func (p *GetConsumeByIdVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageDepositRechargeByKeyQuery ---
+	--- PageDepositRechargeByKeyReq ---
 */
 // Init
-func (p *PageDepositRechargeByKeyQuery) Init() error {
+func (p *PageDepositRechargeByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Name = nil
@@ -8962,7 +9073,7 @@ func (p *PageDepositRechargeByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageDepositRechargeByKeyQuery) Check() error {
+func (p *PageDepositRechargeByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -8973,7 +9084,7 @@ func (p *PageDepositRechargeByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageDepositRechargeByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageDepositRechargeByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9045,7 +9156,7 @@ func (p *PageDepositRechargeByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageDepositRechargeByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageDepositRechargeByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9113,10 +9224,10 @@ func (p *PageDepositRechargeByKeyQuery) UnmarshalValues(m map[string][]string) e
 }
 
 /*
-	--- RechargeQuery ---
+	--- RechargeReq ---
 */
 // Init
-func (p *RechargeQuery) Init() error {
+func (p *RechargeReq) Init() error {
 	p.ElderID = nil
 	p.Amount = nil
 
@@ -9124,7 +9235,7 @@ func (p *RechargeQuery) Init() error {
 }
 
 // Check
-func (p *RechargeQuery) Check() error {
+func (p *RechargeReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -9135,7 +9246,7 @@ func (p *RechargeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *RechargeQuery) UnmarshalJSON(data []byte) error {
+func (p *RechargeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9180,7 +9291,7 @@ func (p *RechargeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *RechargeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *RechargeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9221,10 +9332,10 @@ func (p *RechargeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddDepositRechargeQuery ---
+	--- AddDepositRechargeReq ---
 */
 // Init
-func (p *AddDepositRechargeQuery) Init() error {
+func (p *AddDepositRechargeReq) Init() error {
 	p.ID = nil
 	p.ElderID = nil
 	p.Amount = nil
@@ -9235,7 +9346,7 @@ func (p *AddDepositRechargeQuery) Init() error {
 }
 
 // Check
-func (p *AddDepositRechargeQuery) Check() error {
+func (p *AddDepositRechargeReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -9249,7 +9360,7 @@ func (p *AddDepositRechargeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddDepositRechargeQuery) UnmarshalJSON(data []byte) error {
+func (p *AddDepositRechargeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9321,7 +9432,7 @@ func (p *AddDepositRechargeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddDepositRechargeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddDepositRechargeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9389,10 +9500,10 @@ func (p *AddDepositRechargeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditDepositRechargeQuery ---
+	--- EditDepositRechargeReq ---
 */
 // Init
-func (p *EditDepositRechargeQuery) Init() error {
+func (p *EditDepositRechargeReq) Init() error {
 	p.ID = nil
 	p.ElderID = nil
 	p.Amount = nil
@@ -9403,7 +9514,7 @@ func (p *EditDepositRechargeQuery) Init() error {
 }
 
 // Check
-func (p *EditDepositRechargeQuery) Check() error {
+func (p *EditDepositRechargeReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -9417,7 +9528,7 @@ func (p *EditDepositRechargeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditDepositRechargeQuery) UnmarshalJSON(data []byte) error {
+func (p *EditDepositRechargeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9489,7 +9600,7 @@ func (p *EditDepositRechargeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditDepositRechargeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditDepositRechargeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9557,10 +9668,10 @@ func (p *EditDepositRechargeQuery) UnmarshalValues(m map[string][]string) error 
 }
 
 /*
-	--- PageDepositRechargeByKeyVO ---
+	--- PageDepositRechargeByKeyResp ---
 */
 // MarshalJSON
-func (p *PageDepositRechargeByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageDepositRechargeByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(6 * 50)
 	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -9572,10 +9683,10 @@ func (p *PageDepositRechargeByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageDishesByKeyQuery ---
+	--- PageDishesByKeyReq ---
 */
 // Init
-func (p *PageDishesByKeyQuery) Init() error {
+func (p *PageDishesByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.TypeID = nil
@@ -9585,7 +9696,7 @@ func (p *PageDishesByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageDishesByKeyQuery) Check() error {
+func (p *PageDishesByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -9596,7 +9707,7 @@ func (p *PageDishesByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageDishesByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageDishesByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9659,7 +9770,7 @@ func (p *PageDishesByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageDishesByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageDishesByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9718,10 +9829,10 @@ func (p *PageDishesByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateDishesQuery ---
+	--- OperateDishesReq ---
 */
 // Init
-func (p *OperateDishesQuery) Init() error {
+func (p *OperateDishesReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.Name = nil
@@ -9731,7 +9842,7 @@ func (p *OperateDishesQuery) Init() error {
 }
 
 // Check
-func (p *OperateDishesQuery) Check() error {
+func (p *OperateDishesReq) Check() error {
 	if p.TypeID == nil {
 		return types.NewError(http.StatusBadRequest, "type_id is required")
 	}
@@ -9745,7 +9856,7 @@ func (p *OperateDishesQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateDishesQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateDishesReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9808,7 +9919,7 @@ func (p *OperateDishesQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateDishesQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateDishesReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9867,10 +9978,10 @@ func (p *OperateDishesQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateDishesTypeQuery ---
+	--- OperateDishesTypeReq ---
 */
 // Init
-func (p *OperateDishesTypeQuery) Init() error {
+func (p *OperateDishesTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -9878,7 +9989,7 @@ func (p *OperateDishesTypeQuery) Init() error {
 }
 
 // Check
-func (p *OperateDishesTypeQuery) Check() error {
+func (p *OperateDishesTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -9886,7 +9997,7 @@ func (p *OperateDishesTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateDishesTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateDishesTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9931,7 +10042,7 @@ func (p *OperateDishesTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateDishesTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateDishesTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -9972,10 +10083,10 @@ func (p *OperateDishesTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageDishesByKeyVO ---
+	--- PageDishesByKeyResp ---
 */
 // MarshalJSON
-func (p *PageDishesByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageDishesByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("type_name", types.Marshal(p.TypeName))
@@ -9985,19 +10096,19 @@ func (p *PageDishesByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- OperateDishesVO ---
+	--- OperateDishesResp ---
 */
 // MarshalJSON
-func (p *OperateDishesVO) MarshalJSON() ([]byte, error) {
+func (p *OperateDishesResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 
 /*
-	--- AddDishesQuery ---
+	--- AddDishesReq ---
 */
 // Init
-func (p *AddDishesQuery) Init() error {
+func (p *AddDishesReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.Name = nil
@@ -10007,7 +10118,7 @@ func (p *AddDishesQuery) Init() error {
 }
 
 // Check
-func (p *AddDishesQuery) Check() error {
+func (p *AddDishesReq) Check() error {
 	if p.TypeID == nil {
 		return types.NewError(http.StatusBadRequest, "type_id is required")
 	}
@@ -10021,7 +10132,7 @@ func (p *AddDishesQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddDishesQuery) UnmarshalJSON(data []byte) error {
+func (p *AddDishesReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10084,7 +10195,7 @@ func (p *AddDishesQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddDishesQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddDishesReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10143,10 +10254,10 @@ func (p *AddDishesQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditDishesQuery ---
+	--- EditDishesReq ---
 */
 // Init
-func (p *EditDishesQuery) Init() error {
+func (p *EditDishesReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.Name = nil
@@ -10156,7 +10267,7 @@ func (p *EditDishesQuery) Init() error {
 }
 
 // Check
-func (p *EditDishesQuery) Check() error {
+func (p *EditDishesReq) Check() error {
 	if p.TypeID == nil {
 		return types.NewError(http.StatusBadRequest, "type_id is required")
 	}
@@ -10170,7 +10281,7 @@ func (p *EditDishesQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditDishesQuery) UnmarshalJSON(data []byte) error {
+func (p *EditDishesReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10233,7 +10344,7 @@ func (p *EditDishesQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditDishesQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditDishesReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10292,10 +10403,10 @@ func (p *EditDishesQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageDishesTypeByKeyQuery ---
+	--- PageDishesTypeByKeyReq ---
 */
 // Init
-func (p *PageDishesTypeByKeyQuery) Init() error {
+func (p *PageDishesTypeByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Name = nil
@@ -10304,7 +10415,7 @@ func (p *PageDishesTypeByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageDishesTypeByKeyQuery) Check() error {
+func (p *PageDishesTypeByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -10315,7 +10426,7 @@ func (p *PageDishesTypeByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageDishesTypeByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageDishesTypeByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10369,7 +10480,7 @@ func (p *PageDishesTypeByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageDishesTypeByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageDishesTypeByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10419,10 +10530,10 @@ func (p *PageDishesTypeByKeyQuery) UnmarshalValues(m map[string][]string) error 
 }
 
 /*
-	--- AddDishesTypeQuery ---
+	--- AddDishesTypeReq ---
 */
 // Init
-func (p *AddDishesTypeQuery) Init() error {
+func (p *AddDishesTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -10430,7 +10541,7 @@ func (p *AddDishesTypeQuery) Init() error {
 }
 
 // Check
-func (p *AddDishesTypeQuery) Check() error {
+func (p *AddDishesTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -10438,7 +10549,7 @@ func (p *AddDishesTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddDishesTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *AddDishesTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10483,7 +10594,7 @@ func (p *AddDishesTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddDishesTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddDishesTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10524,10 +10635,10 @@ func (p *AddDishesTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditDishesTypeQuery ---
+	--- EditDishesTypeReq ---
 */
 // Init
-func (p *EditDishesTypeQuery) Init() error {
+func (p *EditDishesTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -10535,7 +10646,7 @@ func (p *EditDishesTypeQuery) Init() error {
 }
 
 // Check
-func (p *EditDishesTypeQuery) Check() error {
+func (p *EditDishesTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -10543,7 +10654,7 @@ func (p *EditDishesTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditDishesTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *EditDishesTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10588,7 +10699,7 @@ func (p *EditDishesTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditDishesTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditDishesTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10629,10 +10740,10 @@ func (p *EditDishesTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageElderByKeyQuery ---
+	--- PageElderByKeyReq ---
 */
 // Init
-func (p *PageElderByKeyQuery) Init() error {
+func (p *PageElderByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -10643,7 +10754,7 @@ func (p *PageElderByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageElderByKeyQuery) Check() error {
+func (p *PageElderByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -10654,7 +10765,7 @@ func (p *PageElderByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageElderByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageElderByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10726,7 +10837,7 @@ func (p *PageElderByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageElderByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageElderByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10794,10 +10905,10 @@ func (p *PageElderByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditElderLabelQuery ---
+	--- EditElderLabelReq ---
 */
 // Init
-func (p *EditElderLabelQuery) Init() error {
+func (p *EditElderLabelReq) Init() error {
 	p.ElderID = nil
 	p.LabelIDList = nil
 
@@ -10805,7 +10916,7 @@ func (p *EditElderLabelQuery) Init() error {
 }
 
 // Check
-func (p *EditElderLabelQuery) Check() error {
+func (p *EditElderLabelReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -10816,7 +10927,7 @@ func (p *EditElderLabelQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditElderLabelQuery) UnmarshalJSON(data []byte) error {
+func (p *EditElderLabelReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10861,7 +10972,7 @@ func (p *EditElderLabelQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditElderLabelQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditElderLabelReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10902,10 +11013,10 @@ func (p *EditElderLabelQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AuditElderFeeQuery ---
+	--- AuditElderFeeReq ---
 */
 // Init
-func (p *AuditElderFeeQuery) Init() error {
+func (p *AuditElderFeeReq) Init() error {
 	p.ApplyID = nil
 	p.ElderID = nil
 	p.AuditResult = nil
@@ -10914,7 +11025,7 @@ func (p *AuditElderFeeQuery) Init() error {
 }
 
 // Check
-func (p *AuditElderFeeQuery) Check() error {
+func (p *AuditElderFeeReq) Check() error {
 	if p.ApplyID == nil {
 		return types.NewError(http.StatusBadRequest, "apply_id is required")
 	}
@@ -10928,7 +11039,7 @@ func (p *AuditElderFeeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AuditElderFeeQuery) UnmarshalJSON(data []byte) error {
+func (p *AuditElderFeeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -10982,7 +11093,7 @@ func (p *AuditElderFeeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AuditElderFeeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AuditElderFeeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -11032,10 +11143,10 @@ func (p *AuditElderFeeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageElderByKeyVO ---
+	--- PageElderByKeyResp ---
 */
 // MarshalJSON
-func (p *PageElderByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageElderByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(9 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("bed_name", types.Marshal(p.BedName))
@@ -11050,10 +11161,10 @@ func (p *PageElderByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageElderRecordByKeyQuery ---
+	--- PageElderRecordByKeyReq ---
 */
 // Init
-func (p *PageElderRecordByKeyQuery) Init() error {
+func (p *PageElderRecordByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -11064,7 +11175,7 @@ func (p *PageElderRecordByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageElderRecordByKeyQuery) Check() error {
+func (p *PageElderRecordByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -11075,7 +11186,7 @@ func (p *PageElderRecordByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageElderRecordByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageElderRecordByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -11147,7 +11258,7 @@ func (p *PageElderRecordByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageElderRecordByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageElderRecordByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -11215,10 +11326,10 @@ func (p *PageElderRecordByKeyQuery) UnmarshalValues(m map[string][]string) error
 }
 
 /*
-	--- AddElderRecordQuery ---
+	--- AddElderRecordReq ---
 */
 // Init
-func (p *AddElderRecordQuery) Init() error {
+func (p *AddElderRecordReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.IDNum = nil
@@ -11233,7 +11344,7 @@ func (p *AddElderRecordQuery) Init() error {
 }
 
 // Check
-func (p *AddElderRecordQuery) Check() error {
+func (p *AddElderRecordReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -11256,7 +11367,7 @@ func (p *AddElderRecordQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddElderRecordQuery) UnmarshalJSON(data []byte) error {
+func (p *AddElderRecordReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -11364,7 +11475,7 @@ func (p *AddElderRecordQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddElderRecordQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddElderRecordReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -11468,10 +11579,10 @@ func (p *AddElderRecordQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditElderRecordQuery ---
+	--- EditElderRecordReq ---
 */
 // Init
-func (p *EditElderRecordQuery) Init() error {
+func (p *EditElderRecordReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.IDNum = nil
@@ -11486,7 +11597,7 @@ func (p *EditElderRecordQuery) Init() error {
 }
 
 // Check
-func (p *EditElderRecordQuery) Check() error {
+func (p *EditElderRecordReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -11509,7 +11620,7 @@ func (p *EditElderRecordQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditElderRecordQuery) UnmarshalJSON(data []byte) error {
+func (p *EditElderRecordReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -11617,7 +11728,7 @@ func (p *EditElderRecordQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditElderRecordQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditElderRecordReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -11721,10 +11832,10 @@ func (p *EditElderRecordQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageSearchEmergencyContactByKeyQuery ---
+	--- PageSearchEmergencyContactByKeyReq ---
 */
 // Init
-func (p *PageSearchEmergencyContactByKeyQuery) Init() error {
+func (p *PageSearchEmergencyContactByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderID = nil
@@ -11734,7 +11845,7 @@ func (p *PageSearchEmergencyContactByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageSearchEmergencyContactByKeyQuery) Check() error {
+func (p *PageSearchEmergencyContactByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -11748,7 +11859,7 @@ func (p *PageSearchEmergencyContactByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageSearchEmergencyContactByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageSearchEmergencyContactByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -11811,7 +11922,7 @@ func (p *PageSearchEmergencyContactByKeyQuery) UnmarshalJSON(data []byte) error 
 }
 
 // UnmarshalValues
-func (p *PageSearchEmergencyContactByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageSearchEmergencyContactByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -11870,10 +11981,10 @@ func (p *PageSearchEmergencyContactByKeyQuery) UnmarshalValues(m map[string][]st
 }
 
 /*
-	--- PageLabelByKeyQuery ---
+	--- PageLabelByKeyReq ---
 */
 // Init
-func (p *PageLabelByKeyQuery) Init() error {
+func (p *PageLabelByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Key = nil
@@ -11882,7 +11993,7 @@ func (p *PageLabelByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageLabelByKeyQuery) Check() error {
+func (p *PageLabelByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -11893,7 +12004,7 @@ func (p *PageLabelByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageLabelByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageLabelByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -11947,7 +12058,7 @@ func (p *PageLabelByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageLabelByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageLabelByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -11997,10 +12108,10 @@ func (p *PageLabelByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddEmergencyContactQuery ---
+	--- AddEmergencyContactReq ---
 */
 // Init
-func (p *AddEmergencyContactQuery) Init() error {
+func (p *AddEmergencyContactReq) Init() error {
 	p.ElderID = nil
 	p.Name = nil
 	p.Phone = nil
@@ -12010,7 +12121,7 @@ func (p *AddEmergencyContactQuery) Init() error {
 }
 
 // Check
-func (p *AddEmergencyContactQuery) Check() error {
+func (p *AddEmergencyContactReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -12024,7 +12135,7 @@ func (p *AddEmergencyContactQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddEmergencyContactQuery) UnmarshalJSON(data []byte) error {
+func (p *AddEmergencyContactReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12087,7 +12198,7 @@ func (p *AddEmergencyContactQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddEmergencyContactQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddEmergencyContactReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12146,10 +12257,10 @@ func (p *AddEmergencyContactQuery) UnmarshalValues(m map[string][]string) error 
 }
 
 /*
-	--- EditEmergencyContactQuery ---
+	--- EditEmergencyContactReq ---
 */
 // Init
-func (p *EditEmergencyContactQuery) Init() error {
+func (p *EditEmergencyContactReq) Init() error {
 	p.ID = nil
 	p.ElderID = nil
 	p.Name = nil
@@ -12160,7 +12271,7 @@ func (p *EditEmergencyContactQuery) Init() error {
 }
 
 // Check
-func (p *EditEmergencyContactQuery) Check() error {
+func (p *EditEmergencyContactReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -12168,7 +12279,7 @@ func (p *EditEmergencyContactQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditEmergencyContactQuery) UnmarshalJSON(data []byte) error {
+func (p *EditEmergencyContactReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12240,7 +12351,7 @@ func (p *EditEmergencyContactQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditEmergencyContactQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditEmergencyContactReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12308,10 +12419,10 @@ func (p *EditEmergencyContactQuery) UnmarshalValues(m map[string][]string) error
 }
 
 /*
-	--- DeleteEmergencyContactQuery ---
+	--- DeleteEmergencyContactReq ---
 */
 // Init
-func (p *DeleteEmergencyContactQuery) Init() error {
+func (p *DeleteEmergencyContactReq) Init() error {
 	p.ID = nil
 	p.ElderID = nil
 
@@ -12319,7 +12430,7 @@ func (p *DeleteEmergencyContactQuery) Init() error {
 }
 
 // Check
-func (p *DeleteEmergencyContactQuery) Check() error {
+func (p *DeleteEmergencyContactReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -12327,7 +12438,7 @@ func (p *DeleteEmergencyContactQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *DeleteEmergencyContactQuery) UnmarshalJSON(data []byte) error {
+func (p *DeleteEmergencyContactReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12372,7 +12483,7 @@ func (p *DeleteEmergencyContactQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *DeleteEmergencyContactQuery) UnmarshalValues(m map[string][]string) error {
+func (p *DeleteEmergencyContactReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12413,10 +12524,10 @@ func (p *DeleteEmergencyContactQuery) UnmarshalValues(m map[string][]string) err
 }
 
 /*
-	--- PageSearchEmergencyContactByKeyVO ---
+	--- PageSearchEmergencyContactByKeyResp ---
 */
 // MarshalJSON
-func (p *PageSearchEmergencyContactByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageSearchEmergencyContactByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(6 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_id", types.Marshal(p.ElderId))
@@ -12428,17 +12539,17 @@ func (p *PageSearchEmergencyContactByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- FamilySendCodeQuery ---
+	--- FamilySendCodeReq ---
 */
 // Init
-func (p *FamilySendCodeQuery) Init() error {
+func (p *FamilySendCodeReq) Init() error {
 	p.Phone = nil
 
 	return nil
 }
 
 // Check
-func (p *FamilySendCodeQuery) Check() error {
+func (p *FamilySendCodeReq) Check() error {
 	if p.Phone == nil {
 		return types.NewError(http.StatusBadRequest, "phone is required")
 	}
@@ -12446,7 +12557,7 @@ func (p *FamilySendCodeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *FamilySendCodeQuery) UnmarshalJSON(data []byte) error {
+func (p *FamilySendCodeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12482,7 +12593,7 @@ func (p *FamilySendCodeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *FamilySendCodeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *FamilySendCodeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12514,10 +12625,10 @@ func (p *FamilySendCodeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- RegisterBindQuery ---
+	--- RegisterBindReq ---
 */
 // Init
-func (p *RegisterBindQuery) Init() error {
+func (p *RegisterBindReq) Init() error {
 	p.Phone = nil
 	p.Code = nil
 	p.Password = nil
@@ -12529,7 +12640,7 @@ func (p *RegisterBindQuery) Init() error {
 }
 
 // Check
-func (p *RegisterBindQuery) Check() error {
+func (p *RegisterBindReq) Check() error {
 	if p.Phone == nil {
 		return types.NewError(http.StatusBadRequest, "phone is required")
 	}
@@ -12549,7 +12660,7 @@ func (p *RegisterBindQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *RegisterBindQuery) UnmarshalJSON(data []byte) error {
+func (p *RegisterBindReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12630,7 +12741,7 @@ func (p *RegisterBindQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *RegisterBindQuery) UnmarshalValues(m map[string][]string) error {
+func (p *RegisterBindReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12707,10 +12818,10 @@ func (p *RegisterBindQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- FamilyLoginQuery ---
+	--- FamilyLoginReq ---
 */
 // Init
-func (p *FamilyLoginQuery) Init() error {
+func (p *FamilyLoginReq) Init() error {
 	p.Phone = nil
 	p.Password = nil
 
@@ -12718,7 +12829,7 @@ func (p *FamilyLoginQuery) Init() error {
 }
 
 // Check
-func (p *FamilyLoginQuery) Check() error {
+func (p *FamilyLoginReq) Check() error {
 	if p.Phone == nil {
 		return types.NewError(http.StatusBadRequest, "phone is required")
 	}
@@ -12729,7 +12840,7 @@ func (p *FamilyLoginQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *FamilyLoginQuery) UnmarshalJSON(data []byte) error {
+func (p *FamilyLoginReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12774,7 +12885,7 @@ func (p *FamilyLoginQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *FamilyLoginQuery) UnmarshalValues(m map[string][]string) error {
+func (p *FamilyLoginReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12815,10 +12926,10 @@ func (p *FamilyLoginQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- BindElderQuery ---
+	--- BindElderReq ---
 */
 // Init
-func (p *BindElderQuery) Init() error {
+func (p *BindElderReq) Init() error {
 	p.Phone = nil
 	p.Code = nil
 	p.ElderName = nil
@@ -12829,7 +12940,7 @@ func (p *BindElderQuery) Init() error {
 }
 
 // Check
-func (p *BindElderQuery) Check() error {
+func (p *BindElderReq) Check() error {
 	if p.Phone == nil {
 		return types.NewError(http.StatusBadRequest, "phone is required")
 	}
@@ -12846,7 +12957,7 @@ func (p *BindElderQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *BindElderQuery) UnmarshalJSON(data []byte) error {
+func (p *BindElderReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12918,7 +13029,7 @@ func (p *BindElderQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *BindElderQuery) UnmarshalValues(m map[string][]string) error {
+func (p *BindElderReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -12986,17 +13097,17 @@ func (p *BindElderQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- FamilyMyEldersQuery ---
+	--- FamilyMyEldersReq ---
 */
 // Init
-func (p *FamilyMyEldersQuery) Init() error {
+func (p *FamilyMyEldersReq) Init() error {
 	p.Phone = nil
 
 	return nil
 }
 
 // Check
-func (p *FamilyMyEldersQuery) Check() error {
+func (p *FamilyMyEldersReq) Check() error {
 	if p.Phone == nil {
 		return types.NewError(http.StatusBadRequest, "phone is required")
 	}
@@ -13004,7 +13115,7 @@ func (p *FamilyMyEldersQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *FamilyMyEldersQuery) UnmarshalJSON(data []byte) error {
+func (p *FamilyMyEldersReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13040,7 +13151,7 @@ func (p *FamilyMyEldersQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *FamilyMyEldersQuery) UnmarshalValues(m map[string][]string) error {
+func (p *FamilyMyEldersReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13072,10 +13183,10 @@ func (p *FamilyMyEldersQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- FamilyElderVO ---
+	--- FamilyElderResp ---
 */
 // MarshalJSON
-func (p *FamilyElderVO) MarshalJSON() ([]byte, error) {
+func (p *FamilyElderResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -13084,10 +13195,10 @@ func (p *FamilyElderVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- FamilyLoginVO ---
+	--- FamilyLoginResp ---
 */
 // MarshalJSON
-func (p *FamilyLoginVO) MarshalJSON() ([]byte, error) {
+func (p *FamilyLoginResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(2 * 50)
 	write.WriteRaw("token", types.Marshal(p.Token))
 	write.WriteRaw("elder_list", types.Marshal(p.ElderList))
@@ -13095,20 +13206,20 @@ func (p *FamilyLoginVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- FamilyMyEldersVO ---
+	--- FamilyMyEldersResp ---
 */
 // MarshalJSON
-func (p *FamilyMyEldersVO) MarshalJSON() ([]byte, error) {
+func (p *FamilyMyEldersResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(1 * 50)
 	write.WriteRaw("list", types.Marshal(p.List))
 	return write.Bytes(), nil
 }
 
 /*
-	--- RechargeUnifiedOrderQuery ---
+	--- RechargeUnifiedOrderReq ---
 */
 // Init
-func (p *RechargeUnifiedOrderQuery) Init() error {
+func (p *RechargeUnifiedOrderReq) Init() error {
 	p.Phone = nil
 	p.ElderID = nil
 	p.Amount = nil
@@ -13117,7 +13228,7 @@ func (p *RechargeUnifiedOrderQuery) Init() error {
 }
 
 // Check
-func (p *RechargeUnifiedOrderQuery) Check() error {
+func (p *RechargeUnifiedOrderReq) Check() error {
 	if p.Phone == nil {
 		return types.NewError(http.StatusBadRequest, "phone is required")
 	}
@@ -13134,7 +13245,7 @@ func (p *RechargeUnifiedOrderQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *RechargeUnifiedOrderQuery) UnmarshalJSON(data []byte) error {
+func (p *RechargeUnifiedOrderReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13188,7 +13299,7 @@ func (p *RechargeUnifiedOrderQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *RechargeUnifiedOrderQuery) UnmarshalValues(m map[string][]string) error {
+func (p *RechargeUnifiedOrderReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13238,10 +13349,10 @@ func (p *RechargeUnifiedOrderQuery) UnmarshalValues(m map[string][]string) error
 }
 
 /*
-	--- BindOpenidQuery ---
+	--- BindOpenidReq ---
 */
 // Init
-func (p *BindOpenidQuery) Init() error {
+func (p *BindOpenidReq) Init() error {
 	p.Phone = nil
 	p.Code = nil
 
@@ -13249,7 +13360,7 @@ func (p *BindOpenidQuery) Init() error {
 }
 
 // Check
-func (p *BindOpenidQuery) Check() error {
+func (p *BindOpenidReq) Check() error {
 	if p.Phone == nil {
 		return types.NewError(http.StatusBadRequest, "phone is required")
 	}
@@ -13260,7 +13371,7 @@ func (p *BindOpenidQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *BindOpenidQuery) UnmarshalJSON(data []byte) error {
+func (p *BindOpenidReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13305,7 +13416,7 @@ func (p *BindOpenidQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *BindOpenidQuery) UnmarshalValues(m map[string][]string) error {
+func (p *BindOpenidReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13346,10 +13457,10 @@ func (p *BindOpenidQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- RechargeUnifiedOrderVO ---
+	--- RechargeUnifiedOrderResp ---
 */
 // MarshalJSON
-func (p *RechargeUnifiedOrderVO) MarshalJSON() ([]byte, error) {
+func (p *RechargeUnifiedOrderResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
 	write.WriteRaw("app_id", types.Marshal(p.AppId))
 	write.WriteRaw("time_stamp", types.Marshal(p.TimeStamp))
@@ -13362,10 +13473,10 @@ func (p *RechargeUnifiedOrderVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- BindOpenidVO ---
+	--- BindOpenidResp ---
 */
 // MarshalJSON
-func (p *BindOpenidVO) MarshalJSON() ([]byte, error) {
+func (p *BindOpenidResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(1 * 50)
 	write.WriteRaw("openid", types.Marshal(p.Openid))
 	return write.Bytes(), nil
@@ -13531,10 +13642,10 @@ func (p *WechatPayResource) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- WechatPayNotifyQuery ---
+	--- WechatPayNotifyReq ---
 */
 // Init
-func (p *WechatPayNotifyQuery) Init() error {
+func (p *WechatPayNotifyReq) Init() error {
 	p.Id = nil
 	p.CreateTime = nil
 	p.ResourceType = nil
@@ -13546,12 +13657,12 @@ func (p *WechatPayNotifyQuery) Init() error {
 }
 
 // Check
-func (p *WechatPayNotifyQuery) Check() error {
+func (p *WechatPayNotifyReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *WechatPayNotifyQuery) UnmarshalJSON(data []byte) error {
+func (p *WechatPayNotifyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13632,7 +13743,7 @@ func (p *WechatPayNotifyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *WechatPayNotifyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *WechatPayNotifyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13709,10 +13820,10 @@ func (p *WechatPayNotifyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- FileInfoVO ---
+	--- FileInfoResp ---
 */
 // MarshalJSON
-func (p *FileInfoVO) MarshalJSON() ([]byte, error) {
+func (p *FileInfoResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(2 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("url", types.Marshal(p.URL))
@@ -13720,10 +13831,10 @@ func (p *FileInfoVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- UploadImageQuery ---
+	--- UploadImageReq ---
 */
 // Init
-func (p *UploadImageQuery) Init() error {
+func (p *UploadImageReq) Init() error {
 	p.Module = nil
 	p.File = nil
 
@@ -13731,7 +13842,7 @@ func (p *UploadImageQuery) Init() error {
 }
 
 // Check
-func (p *UploadImageQuery) Check() error {
+func (p *UploadImageReq) Check() error {
 	if p.Module == nil {
 		return types.NewError(http.StatusBadRequest, "module is required")
 	}
@@ -13742,7 +13853,7 @@ func (p *UploadImageQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *UploadImageQuery) UnmarshalJSON(data []byte) error {
+func (p *UploadImageReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13787,7 +13898,7 @@ func (p *UploadImageQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *UploadImageQuery) UnmarshalValues(m map[string][]string) error {
+func (p *UploadImageReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13828,10 +13939,10 @@ func (p *UploadImageQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- UploadFileQuery ---
+	--- UploadFileReq ---
 */
 // Init
-func (p *UploadFileQuery) Init() error {
+func (p *UploadFileReq) Init() error {
 	p.Module = nil
 	p.File = nil
 
@@ -13839,7 +13950,7 @@ func (p *UploadFileQuery) Init() error {
 }
 
 // Check
-func (p *UploadFileQuery) Check() error {
+func (p *UploadFileReq) Check() error {
 	if p.Module == nil {
 		return types.NewError(http.StatusBadRequest, "module is required")
 	}
@@ -13850,7 +13961,7 @@ func (p *UploadFileQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *UploadFileQuery) UnmarshalJSON(data []byte) error {
+func (p *UploadFileReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13895,7 +14006,7 @@ func (p *UploadFileQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *UploadFileQuery) UnmarshalValues(m map[string][]string) error {
+func (p *UploadFileReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -13936,10 +14047,10 @@ func (p *UploadFileQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- DownloadFileQuery ---
+	--- DownloadFileReq ---
 */
 // Init
-func (p *DownloadFileQuery) Init() error {
+func (p *DownloadFileReq) Init() error {
 	p.ID = nil
 	p.Module = nil
 	p.FileName = nil
@@ -13948,7 +14059,7 @@ func (p *DownloadFileQuery) Init() error {
 }
 
 // Check
-func (p *DownloadFileQuery) Check() error {
+func (p *DownloadFileReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -13956,7 +14067,7 @@ func (p *DownloadFileQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *DownloadFileQuery) UnmarshalJSON(data []byte) error {
+func (p *DownloadFileReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -14010,7 +14121,7 @@ func (p *DownloadFileQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *DownloadFileQuery) UnmarshalValues(m map[string][]string) error {
+func (p *DownloadFileReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -14060,10 +14171,10 @@ func (p *DownloadFileQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- ClientSourceQuery ---
+	--- ClientSourceReq ---
 */
 // Init
-func (p *ClientSourceQuery) Init() error {
+func (p *ClientSourceReq) Init() error {
 	p.StartTime = nil
 	p.EndTime = nil
 
@@ -14071,12 +14182,12 @@ func (p *ClientSourceQuery) Init() error {
 }
 
 // Check
-func (p *ClientSourceQuery) Check() error {
+func (p *ClientSourceReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *ClientSourceQuery) UnmarshalJSON(data []byte) error {
+func (p *ClientSourceReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -14121,7 +14232,7 @@ func (p *ClientSourceQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *ClientSourceQuery) UnmarshalValues(m map[string][]string) error {
+func (p *ClientSourceReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -14162,10 +14273,10 @@ func (p *ClientSourceQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- TodayOverviewVO ---
+	--- TodayOverviewResp ---
 */
 // MarshalJSON
-func (p *TodayOverviewVO) MarshalJSON() ([]byte, error) {
+func (p *TodayOverviewResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("today_add_consult_num", types.Marshal(p.TodayAddConsultNum))
 	write.WriteRaw("today_add_reserve_num", types.Marshal(p.TodayAddReserveNum))
@@ -14175,10 +14286,10 @@ func (p *TodayOverviewVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- AvailableBedVO ---
+	--- AvailableBedResp ---
 */
 // MarshalJSON
-func (p *AvailableBedVO) MarshalJSON() ([]byte, error) {
+func (p *AvailableBedResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("idle_room_num", types.Marshal(p.IdleRoomNum))
 	write.WriteRaw("idle_bed_num", types.Marshal(p.IdleBedNum))
@@ -14187,10 +14298,10 @@ func (p *AvailableBedVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- TodaySaleFollowVO ---
+	--- TodaySaleFollowResp ---
 */
 // MarshalJSON
-func (p *TodaySaleFollowVO) MarshalJSON() ([]byte, error) {
+func (p *TodaySaleFollowResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("today_return_visit_num", types.Marshal(p.TodayReturnVisitNum))
 	write.WriteRaw("today_returned_visit_num", types.Marshal(p.TodayReturnedVisitNum))
@@ -14199,10 +14310,10 @@ func (p *TodaySaleFollowVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- MonthPerformanceRankVO ---
+	--- MonthPerformanceRankResp ---
 */
 // MarshalJSON
-func (p *MonthPerformanceRankVO) MarshalJSON() ([]byte, error) {
+func (p *MonthPerformanceRankResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
 	write.WriteRaw("consult_client_num", types.Marshal(p.ConsultClientNum))
 	write.WriteRaw("consult_client_float_rate", types.Marshal(p.ConsultClientFloatRate))
@@ -14228,10 +14339,10 @@ func (p *SaleRank) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- ClientSourceVO ---
+	--- ClientSourceResp ---
 */
 // MarshalJSON
-func (p *ClientSourceVO) MarshalJSON() ([]byte, error) {
+func (p *ClientSourceResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(2 * 50)
 	write.WriteRaw("source_name", types.Marshal(p.SourceName))
 	write.WriteRaw("consult_num", types.Marshal(p.ConsultNum))
@@ -14239,10 +14350,10 @@ func (p *ClientSourceVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- BusinessTrendVO ---
+	--- BusinessTrendResp ---
 */
 // MarshalJSON
-func (p *BusinessTrendVO) MarshalJSON() ([]byte, error) {
+func (p *BusinessTrendResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("month", types.Marshal(p.Month))
 	write.WriteRaw("consult_num", types.Marshal(p.ConsultNum))
@@ -14251,10 +14362,10 @@ func (p *BusinessTrendVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageIntentionByKeyQuery ---
+	--- PageIntentionByKeyReq ---
 */
 // Init
-func (p *PageIntentionByKeyQuery) Init() error {
+func (p *PageIntentionByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -14265,7 +14376,7 @@ func (p *PageIntentionByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageIntentionByKeyQuery) Check() error {
+func (p *PageIntentionByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -14276,7 +14387,7 @@ func (p *PageIntentionByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageIntentionByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageIntentionByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -14348,7 +14459,7 @@ func (p *PageIntentionByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageIntentionByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageIntentionByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -14416,10 +14527,10 @@ func (p *PageIntentionByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateIntentionQuery ---
+	--- OperateIntentionReq ---
 */
 // Init
-func (p *OperateIntentionQuery) Init() error {
+func (p *OperateIntentionReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.IDNum = nil
@@ -14432,7 +14543,7 @@ func (p *OperateIntentionQuery) Init() error {
 }
 
 // Check
-func (p *OperateIntentionQuery) Check() error {
+func (p *OperateIntentionReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -14455,7 +14566,7 @@ func (p *OperateIntentionQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateIntentionQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateIntentionReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -14545,7 +14656,7 @@ func (p *OperateIntentionQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateIntentionQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateIntentionReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -14631,25 +14742,25 @@ func (p *OperateIntentionQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageIntentionByKeyVO ---
+	--- PageIntentionByKeyResp ---
 */
 // MarshalJSON
-func (p *PageIntentionByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageIntentionByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(6 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
 	write.WriteRaw("phone", types.Marshal(p.Phone))
 	write.WriteRaw("sex", types.Marshal(p.Sex))
 	write.WriteRaw("age", types.Marshal(p.Age))
-	write.WriteRaw("label_vo_list", types.Marshal(p.LabelVOList))
+	write.WriteRaw("label_vo_list", types.Marshal(p.LabelRespList))
 	return write.Bytes(), nil
 }
 
 /*
-	--- IntentionLabelVO ---
+	--- IntentionLabelResp ---
 */
 // MarshalJSON
-func (p *IntentionLabelVO) MarshalJSON() ([]byte, error) {
+func (p *IntentionLabelResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(2 * 50)
 	write.WriteRaw("name", types.Marshal(p.Name))
 	write.WriteRaw("color", types.Marshal(p.Color))
@@ -14657,20 +14768,20 @@ func (p *IntentionLabelVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- OperateIntentionVO ---
+	--- OperateIntentionResp ---
 */
 // MarshalJSON
-func (p *OperateIntentionVO) MarshalJSON() ([]byte, error) {
+func (p *OperateIntentionResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(1 * 50)
-	write.WriteRaw("intention_label_vo_list", types.Marshal(p.IntentionLabelVOList))
+	write.WriteRaw("intention_label_vo_list", types.Marshal(p.IntentionLabelRespList))
 	return write.Bytes(), nil
 }
 
 /*
-	--- AddIntentQuery ---
+	--- AddIntentReq ---
 */
 // Init
-func (p *AddIntentQuery) Init() error {
+func (p *AddIntentReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.IDNum = nil
@@ -14683,7 +14794,7 @@ func (p *AddIntentQuery) Init() error {
 }
 
 // Check
-func (p *AddIntentQuery) Check() error {
+func (p *AddIntentReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -14706,7 +14817,7 @@ func (p *AddIntentQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddIntentQuery) UnmarshalJSON(data []byte) error {
+func (p *AddIntentReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -14796,7 +14907,7 @@ func (p *AddIntentQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddIntentQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddIntentReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -14882,10 +14993,10 @@ func (p *AddIntentQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditIntentQuery ---
+	--- EditIntentReq ---
 */
 // Init
-func (p *EditIntentQuery) Init() error {
+func (p *EditIntentReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.IDNum = nil
@@ -14898,7 +15009,7 @@ func (p *EditIntentQuery) Init() error {
 }
 
 // Check
-func (p *EditIntentQuery) Check() error {
+func (p *EditIntentReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -14921,7 +15032,7 @@ func (p *EditIntentQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditIntentQuery) UnmarshalJSON(data []byte) error {
+func (p *EditIntentReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15011,7 +15122,7 @@ func (p *EditIntentQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditIntentQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditIntentReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15097,10 +15208,10 @@ func (p *EditIntentQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageInventoryByKeyQuery ---
+	--- PageInventoryByKeyReq ---
 */
 // Init
-func (p *PageInventoryByKeyQuery) Init() error {
+func (p *PageInventoryByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.WarehouseID = nil
@@ -15110,7 +15221,7 @@ func (p *PageInventoryByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageInventoryByKeyQuery) Check() error {
+func (p *PageInventoryByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -15121,7 +15232,7 @@ func (p *PageInventoryByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageInventoryByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageInventoryByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15184,7 +15295,7 @@ func (p *PageInventoryByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageInventoryByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageInventoryByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15243,10 +15354,10 @@ func (p *PageInventoryByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageInventoryByKeyVO ---
+	--- PageInventoryByKeyResp ---
 */
 // MarshalJSON
-func (p *PageInventoryByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageInventoryByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(8 * 50)
 	write.WriteRaw("warehouse_name", types.Marshal(p.WarehouseName))
 	write.WriteRaw("material_id", types.Marshal(p.MaterialID))
@@ -15260,10 +15371,10 @@ func (p *PageInventoryByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageInventoryRecordByKeyQuery ---
+	--- PageInventoryRecordByKeyReq ---
 */
 // Init
-func (p *PageInventoryRecordByKeyQuery) Init() error {
+func (p *PageInventoryRecordByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Type = nil
@@ -15274,7 +15385,7 @@ func (p *PageInventoryRecordByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageInventoryRecordByKeyQuery) Check() error {
+func (p *PageInventoryRecordByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -15285,7 +15396,7 @@ func (p *PageInventoryRecordByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageInventoryRecordByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageInventoryRecordByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15357,7 +15468,7 @@ func (p *PageInventoryRecordByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageInventoryRecordByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageInventoryRecordByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15425,10 +15536,10 @@ func (p *PageInventoryRecordByKeyQuery) UnmarshalValues(m map[string][]string) e
 }
 
 /*
-	--- AddInventoryQuery ---
+	--- AddInventoryReq ---
 */
 // Init
-func (p *AddInventoryQuery) Init() error {
+func (p *AddInventoryReq) Init() error {
 	p.ID = nil
 	p.WarehouseID = nil
 	p.MaterialID = nil
@@ -15440,7 +15551,7 @@ func (p *AddInventoryQuery) Init() error {
 }
 
 // Check
-func (p *AddInventoryQuery) Check() error {
+func (p *AddInventoryReq) Check() error {
 	if p.WarehouseID == nil {
 		return types.NewError(http.StatusBadRequest, "warehouse_id is required")
 	}
@@ -15457,7 +15568,7 @@ func (p *AddInventoryQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddInventoryQuery) UnmarshalJSON(data []byte) error {
+func (p *AddInventoryReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15538,7 +15649,7 @@ func (p *AddInventoryQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddInventoryQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddInventoryReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15615,10 +15726,10 @@ func (p *AddInventoryQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditInventoryQuery ---
+	--- EditInventoryReq ---
 */
 // Init
-func (p *EditInventoryQuery) Init() error {
+func (p *EditInventoryReq) Init() error {
 	p.ID = nil
 	p.WarehouseID = nil
 	p.MaterialID = nil
@@ -15630,7 +15741,7 @@ func (p *EditInventoryQuery) Init() error {
 }
 
 // Check
-func (p *EditInventoryQuery) Check() error {
+func (p *EditInventoryReq) Check() error {
 	if p.WarehouseID == nil {
 		return types.NewError(http.StatusBadRequest, "warehouse_id is required")
 	}
@@ -15647,7 +15758,7 @@ func (p *EditInventoryQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditInventoryQuery) UnmarshalJSON(data []byte) error {
+func (p *EditInventoryReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15728,7 +15839,7 @@ func (p *EditInventoryQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditInventoryQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditInventoryReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15805,10 +15916,10 @@ func (p *EditInventoryQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AuditInventoryQuery ---
+	--- AuditInventoryReq ---
 */
 // Init
-func (p *AuditInventoryQuery) Init() error {
+func (p *AuditInventoryReq) Init() error {
 	p.ID = nil
 	p.AuditResult = nil
 
@@ -15816,7 +15927,7 @@ func (p *AuditInventoryQuery) Init() error {
 }
 
 // Check
-func (p *AuditInventoryQuery) Check() error {
+func (p *AuditInventoryReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -15827,7 +15938,7 @@ func (p *AuditInventoryQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AuditInventoryQuery) UnmarshalJSON(data []byte) error {
+func (p *AuditInventoryReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15872,7 +15983,7 @@ func (p *AuditInventoryQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AuditInventoryQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AuditInventoryReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -15913,10 +16024,10 @@ func (p *AuditInventoryQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateLabelQuery ---
+	--- OperateLabelReq ---
 */
 // Init
-func (p *OperateLabelQuery) Init() error {
+func (p *OperateLabelReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.Name = nil
@@ -15926,7 +16037,7 @@ func (p *OperateLabelQuery) Init() error {
 }
 
 // Check
-func (p *OperateLabelQuery) Check() error {
+func (p *OperateLabelReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -15937,7 +16048,7 @@ func (p *OperateLabelQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateLabelQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateLabelReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16000,7 +16111,7 @@ func (p *OperateLabelQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateLabelQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateLabelReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16059,10 +16170,10 @@ func (p *OperateLabelQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateLabelTypeQuery ---
+	--- OperateLabelTypeReq ---
 */
 // Init
-func (p *OperateLabelTypeQuery) Init() error {
+func (p *OperateLabelTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -16070,7 +16181,7 @@ func (p *OperateLabelTypeQuery) Init() error {
 }
 
 // Check
-func (p *OperateLabelTypeQuery) Check() error {
+func (p *OperateLabelTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -16078,7 +16189,7 @@ func (p *OperateLabelTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateLabelTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateLabelTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16123,7 +16234,7 @@ func (p *OperateLabelTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateLabelTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateLabelTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16164,28 +16275,28 @@ func (p *OperateLabelTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateLabelVO ---
+	--- OperateLabelResp ---
 */
 // MarshalJSON
-func (p *OperateLabelVO) MarshalJSON() ([]byte, error) {
+func (p *OperateLabelResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 
 /*
-	--- OperateLabelTypeVO ---
+	--- OperateLabelTypeResp ---
 */
 // MarshalJSON
-func (p *OperateLabelTypeVO) MarshalJSON() ([]byte, error) {
+func (p *OperateLabelTypeResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 
 /*
-	--- AddLabelQuery ---
+	--- AddLabelReq ---
 */
 // Init
-func (p *AddLabelQuery) Init() error {
+func (p *AddLabelReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.Name = nil
@@ -16195,7 +16306,7 @@ func (p *AddLabelQuery) Init() error {
 }
 
 // Check
-func (p *AddLabelQuery) Check() error {
+func (p *AddLabelReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -16206,7 +16317,7 @@ func (p *AddLabelQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddLabelQuery) UnmarshalJSON(data []byte) error {
+func (p *AddLabelReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16269,7 +16380,7 @@ func (p *AddLabelQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddLabelQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddLabelReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16328,10 +16439,10 @@ func (p *AddLabelQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditLabelQuery ---
+	--- EditLabelReq ---
 */
 // Init
-func (p *EditLabelQuery) Init() error {
+func (p *EditLabelReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.Name = nil
@@ -16341,7 +16452,7 @@ func (p *EditLabelQuery) Init() error {
 }
 
 // Check
-func (p *EditLabelQuery) Check() error {
+func (p *EditLabelReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -16352,7 +16463,7 @@ func (p *EditLabelQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditLabelQuery) UnmarshalJSON(data []byte) error {
+func (p *EditLabelReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16415,7 +16526,7 @@ func (p *EditLabelQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditLabelQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditLabelReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16474,10 +16585,10 @@ func (p *EditLabelQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageLabelTypeByKeyQuery ---
+	--- PageLabelTypeByKeyReq ---
 */
 // Init
-func (p *PageLabelTypeByKeyQuery) Init() error {
+func (p *PageLabelTypeByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Name = nil
@@ -16486,7 +16597,7 @@ func (p *PageLabelTypeByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageLabelTypeByKeyQuery) Check() error {
+func (p *PageLabelTypeByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -16497,7 +16608,7 @@ func (p *PageLabelTypeByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageLabelTypeByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageLabelTypeByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16551,7 +16662,7 @@ func (p *PageLabelTypeByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageLabelTypeByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageLabelTypeByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16601,10 +16712,10 @@ func (p *PageLabelTypeByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddLabelTypeQuery ---
+	--- AddLabelTypeReq ---
 */
 // Init
-func (p *AddLabelTypeQuery) Init() error {
+func (p *AddLabelTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -16612,7 +16723,7 @@ func (p *AddLabelTypeQuery) Init() error {
 }
 
 // Check
-func (p *AddLabelTypeQuery) Check() error {
+func (p *AddLabelTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -16620,7 +16731,7 @@ func (p *AddLabelTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddLabelTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *AddLabelTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16665,7 +16776,7 @@ func (p *AddLabelTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddLabelTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddLabelTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16706,10 +16817,10 @@ func (p *AddLabelTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditLabelTypeQuery ---
+	--- EditLabelTypeReq ---
 */
 // Init
-func (p *EditLabelTypeQuery) Init() error {
+func (p *EditLabelTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -16717,7 +16828,7 @@ func (p *EditLabelTypeQuery) Init() error {
 }
 
 // Check
-func (p *EditLabelTypeQuery) Check() error {
+func (p *EditLabelTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -16725,7 +16836,7 @@ func (p *EditLabelTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditLabelTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *EditLabelTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16770,7 +16881,7 @@ func (p *EditLabelTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditLabelTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditLabelTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16811,10 +16922,10 @@ func (p *EditLabelTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageLabelByKeyVO ---
+	--- PageLabelByKeyResp ---
 */
 // MarshalJSON
-func (p *PageLabelByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageLabelByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(5 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -16825,10 +16936,10 @@ func (p *PageLabelByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageLabelTypeVO ---
+	--- PageLabelTypeResp ---
 */
 // MarshalJSON
-func (p *PageLabelTypeVO) MarshalJSON() ([]byte, error) {
+func (p *PageLabelTypeResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -16838,10 +16949,10 @@ func (p *PageLabelTypeVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageMaterialByKeyQuery ---
+	--- PageMaterialByKeyReq ---
 */
 // Init
-func (p *PageMaterialByKeyQuery) Init() error {
+func (p *PageMaterialByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.MaterialTypeID = nil
@@ -16851,7 +16962,7 @@ func (p *PageMaterialByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageMaterialByKeyQuery) Check() error {
+func (p *PageMaterialByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -16862,7 +16973,7 @@ func (p *PageMaterialByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageMaterialByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageMaterialByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16925,7 +17036,7 @@ func (p *PageMaterialByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageMaterialByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageMaterialByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -16984,10 +17095,10 @@ func (p *PageMaterialByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateMaterialQuery ---
+	--- OperateMaterialReq ---
 */
 // Init
-func (p *OperateMaterialQuery) Init() error {
+func (p *OperateMaterialReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.Name = nil
@@ -16997,7 +17108,7 @@ func (p *OperateMaterialQuery) Init() error {
 }
 
 // Check
-func (p *OperateMaterialQuery) Check() error {
+func (p *OperateMaterialReq) Check() error {
 	if p.TypeID == nil {
 		return types.NewError(http.StatusBadRequest, "type_id is required")
 	}
@@ -17011,7 +17122,7 @@ func (p *OperateMaterialQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateMaterialQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateMaterialReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17074,7 +17185,7 @@ func (p *OperateMaterialQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateMaterialQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateMaterialReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17133,10 +17244,10 @@ func (p *OperateMaterialQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateMaterialTypeQuery ---
+	--- OperateMaterialTypeReq ---
 */
 // Init
-func (p *OperateMaterialTypeQuery) Init() error {
+func (p *OperateMaterialTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -17144,7 +17255,7 @@ func (p *OperateMaterialTypeQuery) Init() error {
 }
 
 // Check
-func (p *OperateMaterialTypeQuery) Check() error {
+func (p *OperateMaterialTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -17152,7 +17263,7 @@ func (p *OperateMaterialTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateMaterialTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateMaterialTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17197,7 +17308,7 @@ func (p *OperateMaterialTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateMaterialTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateMaterialTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17238,10 +17349,10 @@ func (p *OperateMaterialTypeQuery) UnmarshalValues(m map[string][]string) error 
 }
 
 /*
-	--- AddMaterialQuery ---
+	--- AddMaterialReq ---
 */
 // Init
-func (p *AddMaterialQuery) Init() error {
+func (p *AddMaterialReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.Name = nil
@@ -17252,7 +17363,7 @@ func (p *AddMaterialQuery) Init() error {
 }
 
 // Check
-func (p *AddMaterialQuery) Check() error {
+func (p *AddMaterialReq) Check() error {
 	if p.TypeID == nil {
 		return types.NewError(http.StatusBadRequest, "type_id is required")
 	}
@@ -17269,7 +17380,7 @@ func (p *AddMaterialQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddMaterialQuery) UnmarshalJSON(data []byte) error {
+func (p *AddMaterialReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17341,7 +17452,7 @@ func (p *AddMaterialQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddMaterialQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddMaterialReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17409,10 +17520,10 @@ func (p *AddMaterialQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditMaterialQuery ---
+	--- EditMaterialReq ---
 */
 // Init
-func (p *EditMaterialQuery) Init() error {
+func (p *EditMaterialReq) Init() error {
 	p.ID = nil
 	p.TypeID = nil
 	p.Name = nil
@@ -17423,7 +17534,7 @@ func (p *EditMaterialQuery) Init() error {
 }
 
 // Check
-func (p *EditMaterialQuery) Check() error {
+func (p *EditMaterialReq) Check() error {
 	if p.TypeID == nil {
 		return types.NewError(http.StatusBadRequest, "type_id is required")
 	}
@@ -17440,7 +17551,7 @@ func (p *EditMaterialQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditMaterialQuery) UnmarshalJSON(data []byte) error {
+func (p *EditMaterialReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17512,7 +17623,7 @@ func (p *EditMaterialQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditMaterialQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditMaterialReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17580,10 +17691,10 @@ func (p *EditMaterialQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddMaterialTypeQuery ---
+	--- AddMaterialTypeReq ---
 */
 // Init
-func (p *AddMaterialTypeQuery) Init() error {
+func (p *AddMaterialTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -17591,7 +17702,7 @@ func (p *AddMaterialTypeQuery) Init() error {
 }
 
 // Check
-func (p *AddMaterialTypeQuery) Check() error {
+func (p *AddMaterialTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -17599,7 +17710,7 @@ func (p *AddMaterialTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddMaterialTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *AddMaterialTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17644,7 +17755,7 @@ func (p *AddMaterialTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddMaterialTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddMaterialTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17685,10 +17796,10 @@ func (p *AddMaterialTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditMaterialTypeQuery ---
+	--- EditMaterialTypeReq ---
 */
 // Init
-func (p *EditMaterialTypeQuery) Init() error {
+func (p *EditMaterialTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -17696,7 +17807,7 @@ func (p *EditMaterialTypeQuery) Init() error {
 }
 
 // Check
-func (p *EditMaterialTypeQuery) Check() error {
+func (p *EditMaterialTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -17704,7 +17815,7 @@ func (p *EditMaterialTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditMaterialTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *EditMaterialTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17749,7 +17860,7 @@ func (p *EditMaterialTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditMaterialTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditMaterialTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17790,10 +17901,10 @@ func (p *EditMaterialTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageMaterialTypeByKeyQuery ---
+	--- PageMaterialTypeByKeyReq ---
 */
 // Init
-func (p *PageMaterialTypeByKeyQuery) Init() error {
+func (p *PageMaterialTypeByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Name = nil
@@ -17802,7 +17913,7 @@ func (p *PageMaterialTypeByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageMaterialTypeByKeyQuery) Check() error {
+func (p *PageMaterialTypeByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -17813,7 +17924,7 @@ func (p *PageMaterialTypeByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageMaterialTypeByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageMaterialTypeByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17867,7 +17978,7 @@ func (p *PageMaterialTypeByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageMaterialTypeByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageMaterialTypeByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -17917,10 +18028,10 @@ func (p *PageMaterialTypeByKeyQuery) UnmarshalValues(m map[string][]string) erro
 }
 
 /*
-	--- PageMaterialByKeyVO ---
+	--- PageMaterialByKeyResp ---
 */
 // MarshalJSON
-func (p *PageMaterialByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageMaterialByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -17930,19 +18041,19 @@ func (p *PageMaterialByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- OperateMaterialVO ---
+	--- OperateMaterialResp ---
 */
 // MarshalJSON
-func (p *OperateMaterialVO) MarshalJSON() ([]byte, error) {
+func (p *OperateMaterialResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 
 /*
-	--- PageMaterialTypeVO ---
+	--- PageMaterialTypeResp ---
 */
 // MarshalJSON
-func (p *PageMaterialTypeVO) MarshalJSON() ([]byte, error) {
+func (p *PageMaterialTypeResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(2 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -17950,10 +18061,10 @@ func (p *PageMaterialTypeVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageNurseGradeByKeyQuery ---
+	--- PageNurseGradeByKeyReq ---
 */
 // Init
-func (p *PageNurseGradeByKeyQuery) Init() error {
+func (p *PageNurseGradeByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.GradeName = nil
@@ -17963,7 +18074,7 @@ func (p *PageNurseGradeByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageNurseGradeByKeyQuery) Check() error {
+func (p *PageNurseGradeByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -17974,7 +18085,7 @@ func (p *PageNurseGradeByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageNurseGradeByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageNurseGradeByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18037,7 +18148,7 @@ func (p *PageNurseGradeByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageNurseGradeByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageNurseGradeByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18096,10 +18207,10 @@ func (p *PageNurseGradeByKeyQuery) UnmarshalValues(m map[string][]string) error 
 }
 
 /*
-	--- PageNurseGradeByKeyVO ---
+	--- PageNurseGradeByKeyResp ---
 */
 // MarshalJSON
-func (p *PageNurseGradeByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageNurseGradeByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -18109,10 +18220,10 @@ func (p *PageNurseGradeByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- AddNurseGradeQuery ---
+	--- AddNurseGradeReq ---
 */
 // Init
-func (p *AddNurseGradeQuery) Init() error {
+func (p *AddNurseGradeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.Type = nil
@@ -18122,7 +18233,7 @@ func (p *AddNurseGradeQuery) Init() error {
 }
 
 // Check
-func (p *AddNurseGradeQuery) Check() error {
+func (p *AddNurseGradeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -18136,7 +18247,7 @@ func (p *AddNurseGradeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddNurseGradeQuery) UnmarshalJSON(data []byte) error {
+func (p *AddNurseGradeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18199,7 +18310,7 @@ func (p *AddNurseGradeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddNurseGradeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddNurseGradeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18258,10 +18369,10 @@ func (p *AddNurseGradeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditNurseGradeQuery ---
+	--- EditNurseGradeReq ---
 */
 // Init
-func (p *EditNurseGradeQuery) Init() error {
+func (p *EditNurseGradeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.Type = nil
@@ -18271,7 +18382,7 @@ func (p *EditNurseGradeQuery) Init() error {
 }
 
 // Check
-func (p *EditNurseGradeQuery) Check() error {
+func (p *EditNurseGradeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -18285,7 +18396,7 @@ func (p *EditNurseGradeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditNurseGradeQuery) UnmarshalJSON(data []byte) error {
+func (p *EditNurseGradeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18348,7 +18459,7 @@ func (p *EditNurseGradeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditNurseGradeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditNurseGradeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18407,10 +18518,10 @@ func (p *EditNurseGradeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageNurseByKeyQuery ---
+	--- PageNurseByKeyReq ---
 */
 // Init
-func (p *PageNurseByKeyQuery) Init() error {
+func (p *PageNurseByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.NurseName = nil
@@ -18420,7 +18531,7 @@ func (p *PageNurseByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageNurseByKeyQuery) Check() error {
+func (p *PageNurseByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -18431,7 +18542,7 @@ func (p *PageNurseByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageNurseByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageNurseByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18494,7 +18605,7 @@ func (p *PageNurseByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageNurseByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageNurseByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18553,10 +18664,10 @@ func (p *PageNurseByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageNurseByKeyVO ---
+	--- PageNurseByKeyResp ---
 */
 // MarshalJSON
-func (p *PageNurseByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageNurseByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -18565,10 +18676,10 @@ func (p *PageNurseByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetNurseByIdVO ---
+	--- GetNurseByIdResp ---
 */
 // MarshalJSON
-func (p *GetNurseByIdVO) MarshalJSON() ([]byte, error) {
+func (p *GetNurseByIdResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -18577,10 +18688,10 @@ func (p *GetNurseByIdVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- AddNurseQuery ---
+	--- AddNurseReq ---
 */
 // Init
-func (p *AddNurseQuery) Init() error {
+func (p *AddNurseReq) Init() error {
 	p.ID = nil
 	p.NurseName = nil
 	p.Phone = nil
@@ -18590,7 +18701,7 @@ func (p *AddNurseQuery) Init() error {
 }
 
 // Check
-func (p *AddNurseQuery) Check() error {
+func (p *AddNurseReq) Check() error {
 	if p.NurseName == nil {
 		return types.NewError(http.StatusBadRequest, "nurse_name is required")
 	}
@@ -18604,7 +18715,7 @@ func (p *AddNurseQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddNurseQuery) UnmarshalJSON(data []byte) error {
+func (p *AddNurseReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18667,7 +18778,7 @@ func (p *AddNurseQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddNurseQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddNurseReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18726,10 +18837,10 @@ func (p *AddNurseQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditNurseQuery ---
+	--- EditNurseReq ---
 */
 // Init
-func (p *EditNurseQuery) Init() error {
+func (p *EditNurseReq) Init() error {
 	p.ID = nil
 	p.NurseName = nil
 	p.Phone = nil
@@ -18739,7 +18850,7 @@ func (p *EditNurseQuery) Init() error {
 }
 
 // Check
-func (p *EditNurseQuery) Check() error {
+func (p *EditNurseReq) Check() error {
 	if p.NurseName == nil {
 		return types.NewError(http.StatusBadRequest, "nurse_name is required")
 	}
@@ -18753,7 +18864,7 @@ func (p *EditNurseQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditNurseQuery) UnmarshalJSON(data []byte) error {
+func (p *EditNurseReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18816,7 +18927,7 @@ func (p *EditNurseQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditNurseQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditNurseReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18875,10 +18986,10 @@ func (p *EditNurseQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageNurseReserveByKeyQuery ---
+	--- PageNurseReserveByKeyReq ---
 */
 // Init
-func (p *PageNurseReserveByKeyQuery) Init() error {
+func (p *PageNurseReserveByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -18889,7 +19000,7 @@ func (p *PageNurseReserveByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageNurseReserveByKeyQuery) Check() error {
+func (p *PageNurseReserveByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -18900,7 +19011,7 @@ func (p *PageNurseReserveByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageNurseReserveByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageNurseReserveByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -18972,7 +19083,7 @@ func (p *PageNurseReserveByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageNurseReserveByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageNurseReserveByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -19040,10 +19151,10 @@ func (p *PageNurseReserveByKeyQuery) UnmarshalValues(m map[string][]string) erro
 }
 
 /*
-	--- AddNurseReserveQuery ---
+	--- AddNurseReserveReq ---
 */
 // Init
-func (p *AddNurseReserveQuery) Init() error {
+func (p *AddNurseReserveReq) Init() error {
 	p.ElderID = nil
 	p.ServiceName = nil
 	p.NeedDate = nil
@@ -19056,7 +19167,7 @@ func (p *AddNurseReserveQuery) Init() error {
 }
 
 // Check
-func (p *AddNurseReserveQuery) Check() error {
+func (p *AddNurseReserveReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -19082,7 +19193,7 @@ func (p *AddNurseReserveQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddNurseReserveQuery) UnmarshalJSON(data []byte) error {
+func (p *AddNurseReserveReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -19172,7 +19283,7 @@ func (p *AddNurseReserveQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddNurseReserveQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddNurseReserveReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -19258,10 +19369,10 @@ func (p *AddNurseReserveQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- ExecuteNurseReserveQuery ---
+	--- ExecuteNurseReserveReq ---
 */
 // Init
-func (p *ExecuteNurseReserveQuery) Init() error {
+func (p *ExecuteNurseReserveReq) Init() error {
 	p.ID = nil
 	p.StaffID = nil
 	p.NurseDate = nil
@@ -19270,7 +19381,7 @@ func (p *ExecuteNurseReserveQuery) Init() error {
 }
 
 // Check
-func (p *ExecuteNurseReserveQuery) Check() error {
+func (p *ExecuteNurseReserveReq) Check() error {
 	if p.StaffID == nil {
 		return types.NewError(http.StatusBadRequest, "staff_id is required")
 	}
@@ -19281,7 +19392,7 @@ func (p *ExecuteNurseReserveQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *ExecuteNurseReserveQuery) UnmarshalJSON(data []byte) error {
+func (p *ExecuteNurseReserveReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -19335,7 +19446,7 @@ func (p *ExecuteNurseReserveQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *ExecuteNurseReserveQuery) UnmarshalValues(m map[string][]string) error {
+func (p *ExecuteNurseReserveReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -19385,10 +19496,10 @@ func (p *ExecuteNurseReserveQuery) UnmarshalValues(m map[string][]string) error 
 }
 
 /*
-	--- PageNurseReserveByKeyVO ---
+	--- PageNurseReserveByKeyResp ---
 */
 // MarshalJSON
-func (p *PageNurseReserveByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageNurseReserveByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(11 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -19405,10 +19516,10 @@ func (p *PageNurseReserveByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetNurseReserveByReserveIdAndElderIdQuery ---
+	--- GetNurseReserveByReserveIdAndElderIdReq ---
 */
 // Init
-func (p *GetNurseReserveByReserveIdAndElderIdQuery) Init() error {
+func (p *GetNurseReserveByReserveIdAndElderIdReq) Init() error {
 	p.ReserveID = nil
 	p.ElderID = nil
 
@@ -19416,7 +19527,7 @@ func (p *GetNurseReserveByReserveIdAndElderIdQuery) Init() error {
 }
 
 // Check
-func (p *GetNurseReserveByReserveIdAndElderIdQuery) Check() error {
+func (p *GetNurseReserveByReserveIdAndElderIdReq) Check() error {
 	if p.ReserveID == nil {
 		return types.NewError(http.StatusBadRequest, "reserve_id is required")
 	}
@@ -19427,7 +19538,7 @@ func (p *GetNurseReserveByReserveIdAndElderIdQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *GetNurseReserveByReserveIdAndElderIdQuery) UnmarshalJSON(data []byte) error {
+func (p *GetNurseReserveByReserveIdAndElderIdReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -19472,7 +19583,7 @@ func (p *GetNurseReserveByReserveIdAndElderIdQuery) UnmarshalJSON(data []byte) e
 }
 
 // UnmarshalValues
-func (p *GetNurseReserveByReserveIdAndElderIdQuery) UnmarshalValues(m map[string][]string) error {
+func (p *GetNurseReserveByReserveIdAndElderIdReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -19513,10 +19624,10 @@ func (p *GetNurseReserveByReserveIdAndElderIdQuery) UnmarshalValues(m map[string
 }
 
 /*
-	--- EditNurseReserveQuery ---
+	--- EditNurseReserveReq ---
 */
 // Init
-func (p *EditNurseReserveQuery) Init() error {
+func (p *EditNurseReserveReq) Init() error {
 	p.ID = nil
 	p.ElderID = nil
 	p.ReserveDate = nil
@@ -19531,7 +19642,7 @@ func (p *EditNurseReserveQuery) Init() error {
 }
 
 // Check
-func (p *EditNurseReserveQuery) Check() error {
+func (p *EditNurseReserveReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -19560,7 +19671,7 @@ func (p *EditNurseReserveQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditNurseReserveQuery) UnmarshalJSON(data []byte) error {
+func (p *EditNurseReserveReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -19668,7 +19779,7 @@ func (p *EditNurseReserveQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditNurseReserveQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditNurseReserveReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -19772,10 +19883,10 @@ func (p *EditNurseReserveQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- GetNurseReserveByReserveIdAndElderIdVO ---
+	--- GetNurseReserveByReserveIdAndElderIdResp ---
 */
 // MarshalJSON
-func (p *GetNurseReserveByReserveIdAndElderIdVO) MarshalJSON() ([]byte, error) {
+func (p *GetNurseReserveByReserveIdAndElderIdResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(11 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -19792,10 +19903,10 @@ func (p *GetNurseReserveByReserveIdAndElderIdVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageOrderByKeyQuery ---
+	--- PageOrderByKeyReq ---
 */
 // Init
-func (p *PageOrderByKeyQuery) Init() error {
+func (p *PageOrderByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -19805,7 +19916,7 @@ func (p *PageOrderByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageOrderByKeyQuery) Check() error {
+func (p *PageOrderByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -19816,7 +19927,7 @@ func (p *PageOrderByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageOrderByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageOrderByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -19879,7 +19990,7 @@ func (p *PageOrderByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageOrderByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageOrderByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -19938,10 +20049,10 @@ func (p *PageOrderByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddOrderQuery ---
+	--- AddOrderReq ---
 */
 // Init
-func (p *AddOrderQuery) Init() error {
+func (p *AddOrderReq) Init() error {
 	p.ElderID = nil
 	p.DineDate = nil
 	p.DineType = nil
@@ -19951,7 +20062,7 @@ func (p *AddOrderQuery) Init() error {
 }
 
 // Check
-func (p *AddOrderQuery) Check() error {
+func (p *AddOrderReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -19968,7 +20079,7 @@ func (p *AddOrderQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddOrderQuery) UnmarshalJSON(data []byte) error {
+func (p *AddOrderReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20012,8 +20123,8 @@ func (p *AddOrderQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "order_dishes_list":
-			e = types.Unmarshal(value, &p.OrderDishesList, func(value gjson.Result) []AddOrderDishesQuery {
-				var obj []AddOrderDishesQuery
+			e = types.Unmarshal(value, &p.OrderDishesList, func(value gjson.Result) []AddOrderDishesReq {
+				var obj []AddOrderDishesReq
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -20031,7 +20142,7 @@ func (p *AddOrderQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddOrderQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddOrderReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20071,8 +20182,8 @@ func (p *AddOrderQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "order_dishes_list":
-			e = types.Unmarshal(value, &p.OrderDishesList, func(value gjson.Result) []AddOrderDishesQuery {
-				var obj []AddOrderDishesQuery
+			e = types.Unmarshal(value, &p.OrderDishesList, func(value gjson.Result) []AddOrderDishesReq {
+				var obj []AddOrderDishesReq
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -20090,10 +20201,10 @@ func (p *AddOrderQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddOrderDishesQuery ---
+	--- AddOrderDishesReq ---
 */
 // Init
-func (p *AddOrderDishesQuery) Init() error {
+func (p *AddOrderDishesReq) Init() error {
 	p.DishesID = nil
 	p.OrderNum = nil
 
@@ -20101,7 +20212,7 @@ func (p *AddOrderDishesQuery) Init() error {
 }
 
 // Check
-func (p *AddOrderDishesQuery) Check() error {
+func (p *AddOrderDishesReq) Check() error {
 	if p.DishesID == nil {
 		return types.NewError(http.StatusBadRequest, "dishes_id is required")
 	}
@@ -20112,7 +20223,7 @@ func (p *AddOrderDishesQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddOrderDishesQuery) UnmarshalJSON(data []byte) error {
+func (p *AddOrderDishesReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20157,7 +20268,7 @@ func (p *AddOrderDishesQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddOrderDishesQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddOrderDishesReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20198,10 +20309,10 @@ func (p *AddOrderDishesQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- SendOrderQuery ---
+	--- SendOrderReq ---
 */
 // Init
-func (p *SendOrderQuery) Init() error {
+func (p *SendOrderReq) Init() error {
 	p.ID = nil
 	p.StaffID = nil
 	p.DeliverDishesDate = nil
@@ -20210,7 +20321,7 @@ func (p *SendOrderQuery) Init() error {
 }
 
 // Check
-func (p *SendOrderQuery) Check() error {
+func (p *SendOrderReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -20224,7 +20335,7 @@ func (p *SendOrderQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *SendOrderQuery) UnmarshalJSON(data []byte) error {
+func (p *SendOrderReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20278,7 +20389,7 @@ func (p *SendOrderQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *SendOrderQuery) UnmarshalValues(m map[string][]string) error {
+func (p *SendOrderReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20328,10 +20439,10 @@ func (p *SendOrderQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageOrderByKeyVO ---
+	--- PageOrderByKeyResp ---
 */
 // MarshalJSON
-func (p *PageOrderByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageOrderByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(9 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -20346,10 +20457,10 @@ func (p *PageOrderByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetOrderByIDVO ---
+	--- GetOrderByIDResp ---
 */
 // MarshalJSON
-func (p *GetOrderByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetOrderByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
 	write.WriteRaw("elder_phone", types.Marshal(p.ElderPhone))
@@ -20357,15 +20468,15 @@ func (p *GetOrderByIDVO) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("dine_type", types.Marshal(p.DineType))
 	write.WriteRaw("staff_name", types.Marshal(p.StaffName))
 	write.WriteRaw("deliver_dishes_date", types.Marshal(p.DeliverDishesDate))
-	write.WriteRaw("order_dishes_vo_list", types.Marshal(p.OrderDishesVOList))
+	write.WriteRaw("order_dishes_vo_list", types.Marshal(p.OrderDishesRespList))
 	return write.Bytes(), nil
 }
 
 /*
-	--- OrderDishesVO ---
+	--- OrderDishesResp ---
 */
 // MarshalJSON
-func (p *OrderDishesVO) MarshalJSON() ([]byte, error) {
+func (p *OrderDishesResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(6 * 50)
 	write.WriteRaw("dishes_name", types.Marshal(p.DishesName))
 	write.WriteRaw("dishes_price", types.Marshal(p.DishesPrice))
@@ -20377,10 +20488,10 @@ func (p *OrderDishesVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageOutboundRecordByKeyQuery ---
+	--- PageOutboundRecordByKeyReq ---
 */
 // Init
-func (p *PageOutboundRecordByKeyQuery) Init() error {
+func (p *PageOutboundRecordByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.WarehouseName = nil
@@ -20393,7 +20504,7 @@ func (p *PageOutboundRecordByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageOutboundRecordByKeyQuery) Check() error {
+func (p *PageOutboundRecordByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -20404,7 +20515,7 @@ func (p *PageOutboundRecordByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageOutboundRecordByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageOutboundRecordByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20494,7 +20605,7 @@ func (p *PageOutboundRecordByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageOutboundRecordByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageOutboundRecordByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20580,10 +20691,10 @@ func (p *PageOutboundRecordByKeyQuery) UnmarshalValues(m map[string][]string) er
 }
 
 /*
-	--- AddOutboundRecordQuery ---
+	--- AddOutboundRecordReq ---
 */
 // Init
-func (p *AddOutboundRecordQuery) Init() error {
+func (p *AddOutboundRecordReq) Init() error {
 	p.RecipientType = nil
 	p.RecipientID = nil
 	p.WarehouseID = nil
@@ -20596,7 +20707,7 @@ func (p *AddOutboundRecordQuery) Init() error {
 }
 
 // Check
-func (p *AddOutboundRecordQuery) Check() error {
+func (p *AddOutboundRecordReq) Check() error {
 	if p.RecipientType == nil {
 		return types.NewError(http.StatusBadRequest, "recipient_type is required")
 	}
@@ -20622,7 +20733,7 @@ func (p *AddOutboundRecordQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddOutboundRecordQuery) UnmarshalJSON(data []byte) error {
+func (p *AddOutboundRecordReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20693,8 +20804,8 @@ func (p *AddOutboundRecordQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "outbound_material_query_list":
-			e = types.Unmarshal(value, &p.OutboundMaterialQueryList, func(value gjson.Result) []AddOutboundMaterialQuery {
-				var obj []AddOutboundMaterialQuery
+			e = types.Unmarshal(value, &p.OutboundMaterialQueryList, func(value gjson.Result) []AddOutboundMaterialReq {
+				var obj []AddOutboundMaterialReq
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -20712,7 +20823,7 @@ func (p *AddOutboundRecordQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddOutboundRecordQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddOutboundRecordReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20779,8 +20890,8 @@ func (p *AddOutboundRecordQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "outbound_material_query_list":
-			e = types.Unmarshal(value, &p.OutboundMaterialQueryList, func(value gjson.Result) []AddOutboundMaterialQuery {
-				var obj []AddOutboundMaterialQuery
+			e = types.Unmarshal(value, &p.OutboundMaterialQueryList, func(value gjson.Result) []AddOutboundMaterialReq {
+				var obj []AddOutboundMaterialReq
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -20798,10 +20909,10 @@ func (p *AddOutboundRecordQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddOutboundMaterialQuery ---
+	--- AddOutboundMaterialReq ---
 */
 // Init
-func (p *AddOutboundMaterialQuery) Init() error {
+func (p *AddOutboundMaterialReq) Init() error {
 	p.WarehouseMaterialID = nil
 	p.OutboundNum = nil
 
@@ -20809,7 +20920,7 @@ func (p *AddOutboundMaterialQuery) Init() error {
 }
 
 // Check
-func (p *AddOutboundMaterialQuery) Check() error {
+func (p *AddOutboundMaterialReq) Check() error {
 	if p.WarehouseMaterialID == nil {
 		return types.NewError(http.StatusBadRequest, "warehouse_material_id is required")
 	}
@@ -20820,7 +20931,7 @@ func (p *AddOutboundMaterialQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddOutboundMaterialQuery) UnmarshalJSON(data []byte) error {
+func (p *AddOutboundMaterialReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20865,7 +20976,7 @@ func (p *AddOutboundMaterialQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddOutboundMaterialQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddOutboundMaterialReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20906,10 +21017,10 @@ func (p *AddOutboundMaterialQuery) UnmarshalValues(m map[string][]string) error 
 }
 
 /*
-	--- AuditOutboundRecordQuery ---
+	--- AuditOutboundRecordReq ---
 */
 // Init
-func (p *AuditOutboundRecordQuery) Init() error {
+func (p *AuditOutboundRecordReq) Init() error {
 	p.OutboundRecordID = nil
 	p.AuditResult = nil
 
@@ -20917,7 +21028,7 @@ func (p *AuditOutboundRecordQuery) Init() error {
 }
 
 // Check
-func (p *AuditOutboundRecordQuery) Check() error {
+func (p *AuditOutboundRecordReq) Check() error {
 	if p.OutboundRecordID == nil {
 		return types.NewError(http.StatusBadRequest, "outbound_record_id is required")
 	}
@@ -20928,7 +21039,7 @@ func (p *AuditOutboundRecordQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AuditOutboundRecordQuery) UnmarshalJSON(data []byte) error {
+func (p *AuditOutboundRecordReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -20973,7 +21084,7 @@ func (p *AuditOutboundRecordQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AuditOutboundRecordQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AuditOutboundRecordReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21014,10 +21125,10 @@ func (p *AuditOutboundRecordQuery) UnmarshalValues(m map[string][]string) error 
 }
 
 /*
-	--- PageOutboundRecordByKeyVO ---
+	--- PageOutboundRecordByKeyResp ---
 */
 // MarshalJSON
-func (p *PageOutboundRecordByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageOutboundRecordByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(8 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("warehouse_name", types.Marshal(p.WarehouseName))
@@ -21031,10 +21142,10 @@ func (p *PageOutboundRecordByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetOutboundRecordByIDVO ---
+	--- GetOutboundRecordByIDResp ---
 */
 // MarshalJSON
-func (p *GetOutboundRecordByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetOutboundRecordByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(8 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("recipient_type", types.Marshal(p.RecipientType))
@@ -21043,15 +21154,15 @@ func (p *GetOutboundRecordByIDVO) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("outbound_date", types.Marshal(p.OutboundDate))
 	write.WriteRaw("material_use", types.Marshal(p.MaterialUse))
 	write.WriteRaw("staff_name", types.Marshal(p.StaffName))
-	write.WriteRaw("outbound_material_by_id_vo_list", types.Marshal(p.OutboundMaterialByIDVOList))
+	write.WriteRaw("outbound_material_by_id_vo_list", types.Marshal(p.OutboundMaterialByIDRespList))
 	return write.Bytes(), nil
 }
 
 /*
-	--- GetOutboundMaterialByIDVO ---
+	--- GetOutboundMaterialByIDResp ---
 */
 // MarshalJSON
-func (p *GetOutboundMaterialByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetOutboundMaterialByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(2 * 50)
 	write.WriteRaw("material_name", types.Marshal(p.MaterialName))
 	write.WriteRaw("outbound_num", types.Marshal(p.OutboundNum))
@@ -21059,10 +21170,10 @@ func (p *GetOutboundMaterialByIDVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageOutwardByKeyQuery ---
+	--- PageOutwardByKeyReq ---
 */
 // Init
-func (p *PageOutwardByKeyQuery) Init() error {
+func (p *PageOutwardByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -21074,7 +21185,7 @@ func (p *PageOutwardByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageOutwardByKeyQuery) Check() error {
+func (p *PageOutwardByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -21085,7 +21196,7 @@ func (p *PageOutwardByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageOutwardByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageOutwardByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21166,7 +21277,7 @@ func (p *PageOutwardByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageOutwardByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageOutwardByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21243,10 +21354,10 @@ func (p *PageOutwardByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddOutwardQuery ---
+	--- AddOutwardReq ---
 */
 // Init
-func (p *AddOutwardQuery) Init() error {
+func (p *AddOutwardReq) Init() error {
 	p.ElderID = nil
 	p.ChaperoneName = nil
 	p.ChaperonePhone = nil
@@ -21258,7 +21369,7 @@ func (p *AddOutwardQuery) Init() error {
 }
 
 // Check
-func (p *AddOutwardQuery) Check() error {
+func (p *AddOutwardReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -21281,7 +21392,7 @@ func (p *AddOutwardQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddOutwardQuery) UnmarshalJSON(data []byte) error {
+func (p *AddOutwardReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21362,7 +21473,7 @@ func (p *AddOutwardQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddOutwardQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddOutwardReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21439,10 +21550,10 @@ func (p *AddOutwardQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- DelayReturnQuery ---
+	--- DelayReturnReq ---
 */
 // Init
-func (p *DelayReturnQuery) Init() error {
+func (p *DelayReturnReq) Init() error {
 	p.ID = nil
 	p.PlanReturnDate = nil
 
@@ -21450,7 +21561,7 @@ func (p *DelayReturnQuery) Init() error {
 }
 
 // Check
-func (p *DelayReturnQuery) Check() error {
+func (p *DelayReturnReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -21461,7 +21572,7 @@ func (p *DelayReturnQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *DelayReturnQuery) UnmarshalJSON(data []byte) error {
+func (p *DelayReturnReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21506,7 +21617,7 @@ func (p *DelayReturnQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *DelayReturnQuery) UnmarshalValues(m map[string][]string) error {
+func (p *DelayReturnReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21547,10 +21658,10 @@ func (p *DelayReturnQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- RecordReturnQuery ---
+	--- RecordReturnReq ---
 */
 // Init
-func (p *RecordReturnQuery) Init() error {
+func (p *RecordReturnReq) Init() error {
 	p.ID = nil
 	p.RealReturnDate = nil
 
@@ -21558,7 +21669,7 @@ func (p *RecordReturnQuery) Init() error {
 }
 
 // Check
-func (p *RecordReturnQuery) Check() error {
+func (p *RecordReturnReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -21569,7 +21680,7 @@ func (p *RecordReturnQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *RecordReturnQuery) UnmarshalJSON(data []byte) error {
+func (p *RecordReturnReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21614,7 +21725,7 @@ func (p *RecordReturnQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *RecordReturnQuery) UnmarshalValues(m map[string][]string) error {
+func (p *RecordReturnReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21655,10 +21766,10 @@ func (p *RecordReturnQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditOutwardQuery ---
+	--- EditOutwardReq ---
 */
 // Init
-func (p *EditOutwardQuery) Init() error {
+func (p *EditOutwardReq) Init() error {
 	p.ID = nil
 	p.ElderID = nil
 	p.ChaperoneName = nil
@@ -21671,7 +21782,7 @@ func (p *EditOutwardQuery) Init() error {
 }
 
 // Check
-func (p *EditOutwardQuery) Check() error {
+func (p *EditOutwardReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -21694,7 +21805,7 @@ func (p *EditOutwardQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditOutwardQuery) UnmarshalJSON(data []byte) error {
+func (p *EditOutwardReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21784,7 +21895,7 @@ func (p *EditOutwardQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditOutwardQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditOutwardReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21870,10 +21981,10 @@ func (p *EditOutwardQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageOutwardByKeyVO ---
+	--- PageOutwardByKeyResp ---
 */
 // MarshalJSON
-func (p *PageOutwardByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageOutwardByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(8 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -21887,10 +21998,10 @@ func (p *PageOutwardByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetOutwardByIDVO ---
+	--- GetOutwardByIDResp ---
 */
 // MarshalJSON
-func (p *GetOutwardByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetOutwardByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -21903,10 +22014,10 @@ func (p *GetOutwardByIDVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageReserveByKeyQuery ---
+	--- PageReserveByKeyReq ---
 */
 // Init
-func (p *PageReserveByKeyQuery) Init() error {
+func (p *PageReserveByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -21916,7 +22027,7 @@ func (p *PageReserveByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageReserveByKeyQuery) Check() error {
+func (p *PageReserveByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -21927,7 +22038,7 @@ func (p *PageReserveByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageReserveByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageReserveByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -21990,7 +22101,7 @@ func (p *PageReserveByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageReserveByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageReserveByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -22049,10 +22160,10 @@ func (p *PageReserveByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddReserveQuery ---
+	--- AddReserveReq ---
 */
 // Init
-func (p *AddReserveQuery) Init() error {
+func (p *AddReserveReq) Init() error {
 	p.BedID = nil
 	p.StaffID = nil
 	p.PayerName = nil
@@ -22070,7 +22181,7 @@ func (p *AddReserveQuery) Init() error {
 }
 
 // Check
-func (p *AddReserveQuery) Check() error {
+func (p *AddReserveReq) Check() error {
 	if p.BedID == nil {
 		return types.NewError(http.StatusBadRequest, "bed_id is required")
 	}
@@ -22111,7 +22222,7 @@ func (p *AddReserveQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddReserveQuery) UnmarshalJSON(data []byte) error {
+func (p *AddReserveReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -22246,7 +22357,7 @@ func (p *AddReserveQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddReserveQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddReserveReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -22377,10 +22488,10 @@ func (p *AddReserveQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- GetReserveByReserveIDAndElderIDQuery ---
+	--- GetReserveByReserveIDAndElderIDReq ---
 */
 // Init
-func (p *GetReserveByReserveIDAndElderIDQuery) Init() error {
+func (p *GetReserveByReserveIDAndElderIDReq) Init() error {
 	p.ReserveID = nil
 	p.ElderID = nil
 
@@ -22388,7 +22499,7 @@ func (p *GetReserveByReserveIDAndElderIDQuery) Init() error {
 }
 
 // Check
-func (p *GetReserveByReserveIDAndElderIDQuery) Check() error {
+func (p *GetReserveByReserveIDAndElderIDReq) Check() error {
 	if p.ReserveID == nil {
 		return types.NewError(http.StatusBadRequest, "reserve_id is required")
 	}
@@ -22399,7 +22510,7 @@ func (p *GetReserveByReserveIDAndElderIDQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *GetReserveByReserveIDAndElderIDQuery) UnmarshalJSON(data []byte) error {
+func (p *GetReserveByReserveIDAndElderIDReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -22444,7 +22555,7 @@ func (p *GetReserveByReserveIDAndElderIDQuery) UnmarshalJSON(data []byte) error 
 }
 
 // UnmarshalValues
-func (p *GetReserveByReserveIDAndElderIDQuery) UnmarshalValues(m map[string][]string) error {
+func (p *GetReserveByReserveIDAndElderIDReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -22485,10 +22596,10 @@ func (p *GetReserveByReserveIDAndElderIDQuery) UnmarshalValues(m map[string][]st
 }
 
 /*
-	--- EditReserveQuery ---
+	--- EditReserveReq ---
 */
 // Init
-func (p *EditReserveQuery) Init() error {
+func (p *EditReserveReq) Init() error {
 	p.ID = nil
 	p.BedID = nil
 	p.StaffID = nil
@@ -22507,7 +22618,7 @@ func (p *EditReserveQuery) Init() error {
 }
 
 // Check
-func (p *EditReserveQuery) Check() error {
+func (p *EditReserveReq) Check() error {
 	if p.BedID == nil {
 		return types.NewError(http.StatusBadRequest, "bed_id is required")
 	}
@@ -22548,7 +22659,7 @@ func (p *EditReserveQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditReserveQuery) UnmarshalJSON(data []byte) error {
+func (p *EditReserveReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -22692,7 +22803,7 @@ func (p *EditReserveQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditReserveQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditReserveReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -22832,10 +22943,10 @@ func (p *EditReserveQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageReserveByKeyVO ---
+	--- PageReserveByKeyResp ---
 */
 // MarshalJSON
-func (p *PageReserveByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageReserveByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(12 * 50)
 	write.WriteRaw("reserve_id", types.Marshal(p.ReserveID))
 	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
@@ -22853,10 +22964,10 @@ func (p *PageReserveByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetReserveByReserveIDAndElderIDVO ---
+	--- GetReserveByReserveIDAndElderIDResp ---
 */
 // MarshalJSON
-func (p *GetReserveByReserveIDAndElderIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetReserveByReserveIDAndElderIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(12 * 50)
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
 	write.WriteRaw("id_num", types.Marshal(p.IDNum))
@@ -22874,10 +22985,10 @@ func (p *GetReserveByReserveIDAndElderIDVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageRetreatAuditQuery ---
+	--- PageRetreatAuditReq ---
 */
 // Init
-func (p *PageRetreatAuditQuery) Init() error {
+func (p *PageRetreatAuditReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -22888,7 +22999,7 @@ func (p *PageRetreatAuditQuery) Init() error {
 }
 
 // Check
-func (p *PageRetreatAuditQuery) Check() error {
+func (p *PageRetreatAuditReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -22899,7 +23010,7 @@ func (p *PageRetreatAuditQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageRetreatAuditQuery) UnmarshalJSON(data []byte) error {
+func (p *PageRetreatAuditReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -22971,7 +23082,7 @@ func (p *PageRetreatAuditQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageRetreatAuditQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageRetreatAuditReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23039,22 +23150,22 @@ func (p *PageRetreatAuditQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageRetreatApplyQuery ---
+	--- PageRetreatApplyReq ---
 */
 // Init
-func (p *PageRetreatApplyQuery) Init() error {
+func (p *PageRetreatApplyReq) Init() error {
 	p.BedName = nil
 
 	return nil
 }
 
 // Check
-func (p *PageRetreatApplyQuery) Check() error {
+func (p *PageRetreatApplyReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *PageRetreatApplyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageRetreatApplyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23090,7 +23201,7 @@ func (p *PageRetreatApplyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageRetreatApplyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageRetreatApplyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23122,10 +23233,10 @@ func (p *PageRetreatApplyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageRetreatApplyByKeyQuery ---
+	--- PageRetreatApplyByKeyReq ---
 */
 // Init
-func (p *PageRetreatApplyByKeyQuery) Init() error {
+func (p *PageRetreatApplyByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -23136,7 +23247,7 @@ func (p *PageRetreatApplyByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageRetreatApplyByKeyQuery) Check() error {
+func (p *PageRetreatApplyByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -23147,7 +23258,7 @@ func (p *PageRetreatApplyByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageRetreatApplyByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageRetreatApplyByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23219,7 +23330,7 @@ func (p *PageRetreatApplyByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageRetreatApplyByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageRetreatApplyByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23287,10 +23398,10 @@ func (p *PageRetreatApplyByKeyQuery) UnmarshalValues(m map[string][]string) erro
 }
 
 /*
-	--- AddRetreatApplyQuery ---
+	--- AddRetreatApplyReq ---
 */
 // Init
-func (p *AddRetreatApplyQuery) Init() error {
+func (p *AddRetreatApplyReq) Init() error {
 	p.ElderID = nil
 	p.ApplyReason = nil
 	p.ApplyDate = nil
@@ -23299,7 +23410,7 @@ func (p *AddRetreatApplyQuery) Init() error {
 }
 
 // Check
-func (p *AddRetreatApplyQuery) Check() error {
+func (p *AddRetreatApplyReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -23313,7 +23424,7 @@ func (p *AddRetreatApplyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddRetreatApplyQuery) UnmarshalJSON(data []byte) error {
+func (p *AddRetreatApplyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23367,7 +23478,7 @@ func (p *AddRetreatApplyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddRetreatApplyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddRetreatApplyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23417,10 +23528,10 @@ func (p *AddRetreatApplyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditRetreatApplyQuery ---
+	--- EditRetreatApplyReq ---
 */
 // Init
-func (p *EditRetreatApplyQuery) Init() error {
+func (p *EditRetreatApplyReq) Init() error {
 	p.ID = nil
 	p.ElderID = nil
 	p.ApplyReason = nil
@@ -23430,7 +23541,7 @@ func (p *EditRetreatApplyQuery) Init() error {
 }
 
 // Check
-func (p *EditRetreatApplyQuery) Check() error {
+func (p *EditRetreatApplyReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -23444,7 +23555,7 @@ func (p *EditRetreatApplyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditRetreatApplyQuery) UnmarshalJSON(data []byte) error {
+func (p *EditRetreatApplyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23507,7 +23618,7 @@ func (p *EditRetreatApplyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditRetreatApplyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditRetreatApplyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23566,10 +23677,10 @@ func (p *EditRetreatApplyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageRetreatByKeyVO ---
+	--- PageRetreatByKeyResp ---
 */
 // MarshalJSON
-func (p *PageRetreatByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageRetreatByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
 	write.WriteRaw("apply_id", types.Marshal(p.ApplyID))
 	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
@@ -23582,10 +23693,10 @@ func (p *PageRetreatByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageRetreatAuditByKeyQuery ---
+	--- PageRetreatAuditByKeyReq ---
 */
 // Init
-func (p *PageRetreatAuditByKeyQuery) Init() error {
+func (p *PageRetreatAuditByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -23596,7 +23707,7 @@ func (p *PageRetreatAuditByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageRetreatAuditByKeyQuery) Check() error {
+func (p *PageRetreatAuditByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -23607,7 +23718,7 @@ func (p *PageRetreatAuditByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageRetreatAuditByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageRetreatAuditByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23679,7 +23790,7 @@ func (p *PageRetreatAuditByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageRetreatAuditByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageRetreatAuditByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23747,10 +23858,10 @@ func (p *PageRetreatAuditByKeyQuery) UnmarshalValues(m map[string][]string) erro
 }
 
 /*
-	--- AuditRetreatQuery ---
+	--- AuditRetreatReq ---
 */
 // Init
-func (p *AuditRetreatQuery) Init() error {
+func (p *AuditRetreatReq) Init() error {
 	p.ID = nil
 	p.AuditResult = nil
 	p.AuditRemark = nil
@@ -23759,7 +23870,7 @@ func (p *AuditRetreatQuery) Init() error {
 }
 
 // Check
-func (p *AuditRetreatQuery) Check() error {
+func (p *AuditRetreatReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -23770,7 +23881,7 @@ func (p *AuditRetreatQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AuditRetreatQuery) UnmarshalJSON(data []byte) error {
+func (p *AuditRetreatReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23824,7 +23935,7 @@ func (p *AuditRetreatQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AuditRetreatQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AuditRetreatReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23874,10 +23985,10 @@ func (p *AuditRetreatQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageRoomTypeByKeyQuery ---
+	--- PageRoomTypeByKeyReq ---
 */
 // Init
-func (p *PageRoomTypeByKeyQuery) Init() error {
+func (p *PageRoomTypeByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.RoomTypeName = nil
@@ -23886,12 +23997,12 @@ func (p *PageRoomTypeByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageRoomTypeByKeyQuery) Check() error {
+func (p *PageRoomTypeByKeyReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *PageRoomTypeByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageRoomTypeByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23945,7 +24056,7 @@ func (p *PageRoomTypeByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageRoomTypeByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageRoomTypeByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -23995,10 +24106,10 @@ func (p *PageRoomTypeByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateRoomTypeQuery ---
+	--- OperateRoomTypeReq ---
 */
 // Init
-func (p *OperateRoomTypeQuery) Init() error {
+func (p *OperateRoomTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.MonthPrice = nil
@@ -24007,12 +24118,12 @@ func (p *OperateRoomTypeQuery) Init() error {
 }
 
 // Check
-func (p *OperateRoomTypeQuery) Check() error {
+func (p *OperateRoomTypeReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *OperateRoomTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateRoomTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24066,7 +24177,7 @@ func (p *OperateRoomTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateRoomTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateRoomTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24116,10 +24227,10 @@ func (p *OperateRoomTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageRoomTypeByKeyVO ---
+	--- PageRoomTypeByKeyResp ---
 */
 // MarshalJSON
-func (p *PageRoomTypeByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageRoomTypeByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -24128,19 +24239,19 @@ func (p *PageRoomTypeByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- OperateRoomTypeVo ---
+	--- OperateRoomTypeResp ---
 */
 // MarshalJSON
-func (p *OperateRoomTypeVo) MarshalJSON() ([]byte, error) {
+func (p *OperateRoomTypeResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 
 /*
-	--- PageServiceByKeyQuery ---
+	--- PageServiceByKeyReq ---
 */
 // Init
-func (p *PageServiceByKeyQuery) Init() error {
+func (p *PageServiceByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ServiceName = nil
@@ -24150,7 +24261,7 @@ func (p *PageServiceByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageServiceByKeyQuery) Check() error {
+func (p *PageServiceByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -24161,7 +24272,7 @@ func (p *PageServiceByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageServiceByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageServiceByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24224,7 +24335,7 @@ func (p *PageServiceByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageServiceByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageServiceByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24283,10 +24394,10 @@ func (p *PageServiceByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateServiceTypeQuery ---
+	--- OperateServiceTypeReq ---
 */
 // Init
-func (p *OperateServiceTypeQuery) Init() error {
+func (p *OperateServiceTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -24294,7 +24405,7 @@ func (p *OperateServiceTypeQuery) Init() error {
 }
 
 // Check
-func (p *OperateServiceTypeQuery) Check() error {
+func (p *OperateServiceTypeReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -24302,7 +24413,7 @@ func (p *OperateServiceTypeQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateServiceTypeQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateServiceTypeReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24347,7 +24458,7 @@ func (p *OperateServiceTypeQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateServiceTypeQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateServiceTypeReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24388,10 +24499,10 @@ func (p *OperateServiceTypeQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageServiceByKeyVO ---
+	--- PageServiceByKeyResp ---
 */
 // MarshalJSON
-func (p *PageServiceByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageServiceByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(6 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("type_name", types.Marshal(p.TypeName))
@@ -24403,10 +24514,10 @@ func (p *PageServiceByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageSourceByKeyQuery ---
+	--- PageSourceByKeyReq ---
 */
 // Init
-func (p *PageSourceByKeyQuery) Init() error {
+func (p *PageSourceByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.SourceName = nil
@@ -24415,7 +24526,7 @@ func (p *PageSourceByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageSourceByKeyQuery) Check() error {
+func (p *PageSourceByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -24426,7 +24537,7 @@ func (p *PageSourceByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageSourceByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageSourceByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24480,7 +24591,7 @@ func (p *PageSourceByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageSourceByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageSourceByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24530,10 +24641,10 @@ func (p *PageSourceByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateSourceQuery ---
+	--- OperateSourceReq ---
 */
 // Init
-func (p *OperateSourceQuery) Init() error {
+func (p *OperateSourceReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 
@@ -24541,7 +24652,7 @@ func (p *OperateSourceQuery) Init() error {
 }
 
 // Check
-func (p *OperateSourceQuery) Check() error {
+func (p *OperateSourceReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -24552,7 +24663,7 @@ func (p *OperateSourceQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateSourceQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateSourceReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24597,7 +24708,7 @@ func (p *OperateSourceQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateSourceQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateSourceReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24638,10 +24749,10 @@ func (p *OperateSourceQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageSourceByKeyVO ---
+	--- PageSourceByKeyResp ---
 */
 // MarshalJSON
-func (p *PageSourceByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageSourceByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(2 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -24649,19 +24760,19 @@ func (p *PageSourceByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- OperateSourceVo ---
+	--- OperateSourceResp ---
 */
 // MarshalJSON
-func (p *OperateSourceVo) MarshalJSON() ([]byte, error) {
+func (p *OperateSourceResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 
 /*
-	--- PageStaffByKeyQuery ---
+	--- PageStaffByKeyReq ---
 */
 // Init
-func (p *PageStaffByKeyQuery) Init() error {
+func (p *PageStaffByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Name = nil
@@ -24672,7 +24783,7 @@ func (p *PageStaffByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageStaffByKeyQuery) Check() error {
+func (p *PageStaffByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -24683,7 +24794,7 @@ func (p *PageStaffByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageStaffByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageStaffByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24755,7 +24866,7 @@ func (p *PageStaffByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageStaffByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageStaffByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24823,10 +24934,10 @@ func (p *PageStaffByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageSearchStaffByKeyQuery ---
+	--- PageSearchStaffByKeyReq ---
 */
 // Init
-func (p *PageSearchStaffByKeyQuery) Init() error {
+func (p *PageSearchStaffByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Name = nil
@@ -24836,7 +24947,7 @@ func (p *PageSearchStaffByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageSearchStaffByKeyQuery) Check() error {
+func (p *PageSearchStaffByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -24847,7 +24958,7 @@ func (p *PageSearchStaffByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageSearchStaffByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageSearchStaffByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24910,7 +25021,7 @@ func (p *PageSearchStaffByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageSearchStaffByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageSearchStaffByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -24969,10 +25080,10 @@ func (p *PageSearchStaffByKeyQuery) UnmarshalValues(m map[string][]string) error
 }
 
 /*
-	--- OperateStaffQuery ---
+	--- OperateStaffReq ---
 */
 // Init
-func (p *OperateStaffQuery) Init() error {
+func (p *OperateStaffReq) Init() error {
 	p.ID = nil
 	p.RoleID = nil
 	p.Name = nil
@@ -24988,7 +25099,7 @@ func (p *OperateStaffQuery) Init() error {
 }
 
 // Check
-func (p *OperateStaffQuery) Check() error {
+func (p *OperateStaffReq) Check() error {
 	if p.RoleID == nil {
 		return types.NewError(http.StatusBadRequest, "role_id is required")
 	}
@@ -25020,7 +25131,7 @@ func (p *OperateStaffQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateStaffQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateStaffReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25137,7 +25248,7 @@ func (p *OperateStaffQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateStaffQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateStaffReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25250,10 +25361,10 @@ func (p *OperateStaffQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageStaffByKeyVO ---
+	--- PageStaffByKeyResp ---
 */
 // MarshalJSON
-func (p *PageStaffByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageStaffByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(8 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -25267,19 +25378,19 @@ func (p *PageStaffByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- OperateStaffVO ---
+	--- OperateStaffResp ---
 */
 // MarshalJSON
-func (p *OperateStaffVO) MarshalJSON() ([]byte, error) {
+func (p *OperateStaffResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 
 /*
-	--- PageSearchStaffByKeyVO ---
+	--- PageSearchStaffByKeyResp ---
 */
 // MarshalJSON
-func (p *PageSearchStaffByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageSearchStaffByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -25288,10 +25399,10 @@ func (p *PageSearchStaffByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- RegisterTenantQuery ---
+	--- RegisterTenantReq ---
 */
 // Init
-func (p *RegisterTenantQuery) Init() error {
+func (p *RegisterTenantReq) Init() error {
 	p.Name = nil
 	p.Logo = nil
 	p.ContactName = nil
@@ -25303,7 +25414,7 @@ func (p *RegisterTenantQuery) Init() error {
 }
 
 // Check
-func (p *RegisterTenantQuery) Check() error {
+func (p *RegisterTenantReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -25320,7 +25431,7 @@ func (p *RegisterTenantQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *RegisterTenantQuery) UnmarshalJSON(data []byte) error {
+func (p *RegisterTenantReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25401,7 +25512,7 @@ func (p *RegisterTenantQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *RegisterTenantQuery) UnmarshalValues(m map[string][]string) error {
+func (p *RegisterTenantReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25478,17 +25589,17 @@ func (p *RegisterTenantQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OpenTenantQuery ---
+	--- OpenTenantReq ---
 */
 // Init
-func (p *OpenTenantQuery) Init() error {
+func (p *OpenTenantReq) Init() error {
 	p.ID = nil
 
 	return nil
 }
 
 // Check
-func (p *OpenTenantQuery) Check() error {
+func (p *OpenTenantReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -25496,7 +25607,7 @@ func (p *OpenTenantQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OpenTenantQuery) UnmarshalJSON(data []byte) error {
+func (p *OpenTenantReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25532,7 +25643,7 @@ func (p *OpenTenantQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OpenTenantQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OpenTenantReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25564,17 +25675,17 @@ func (p *OpenTenantQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- SwitchTenantQuery ---
+	--- SwitchTenantReq ---
 */
 // Init
-func (p *SwitchTenantQuery) Init() error {
+func (p *SwitchTenantReq) Init() error {
 	p.TenantID = nil
 
 	return nil
 }
 
 // Check
-func (p *SwitchTenantQuery) Check() error {
+func (p *SwitchTenantReq) Check() error {
 	if p.TenantID == nil {
 		return types.NewError(http.StatusBadRequest, "tenant_id is required")
 	}
@@ -25582,7 +25693,7 @@ func (p *SwitchTenantQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *SwitchTenantQuery) UnmarshalJSON(data []byte) error {
+func (p *SwitchTenantReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25618,7 +25729,7 @@ func (p *SwitchTenantQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *SwitchTenantQuery) UnmarshalValues(m map[string][]string) error {
+func (p *SwitchTenantReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25650,10 +25761,10 @@ func (p *SwitchTenantQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- InviteMemberQuery ---
+	--- InviteMemberReq ---
 */
 // Init
-func (p *InviteMemberQuery) Init() error {
+func (p *InviteMemberReq) Init() error {
 	p.TenantID = nil
 	p.Phone = nil
 	p.RoleID = nil
@@ -25662,7 +25773,7 @@ func (p *InviteMemberQuery) Init() error {
 }
 
 // Check
-func (p *InviteMemberQuery) Check() error {
+func (p *InviteMemberReq) Check() error {
 	if p.TenantID == nil {
 		return types.NewError(http.StatusBadRequest, "tenant_id is required")
 	}
@@ -25676,7 +25787,7 @@ func (p *InviteMemberQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *InviteMemberQuery) UnmarshalJSON(data []byte) error {
+func (p *InviteMemberReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25730,7 +25841,7 @@ func (p *InviteMemberQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *InviteMemberQuery) UnmarshalValues(m map[string][]string) error {
+func (p *InviteMemberReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25780,17 +25891,17 @@ func (p *InviteMemberQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- JoinMemberQuery ---
+	--- JoinMemberReq ---
 */
 // Init
-func (p *JoinMemberQuery) Init() error {
+func (p *JoinMemberReq) Init() error {
 	p.InviteCode = nil
 
 	return nil
 }
 
 // Check
-func (p *JoinMemberQuery) Check() error {
+func (p *JoinMemberReq) Check() error {
 	if p.InviteCode == nil {
 		return types.NewError(http.StatusBadRequest, "invite_code is required")
 	}
@@ -25798,7 +25909,7 @@ func (p *JoinMemberQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *JoinMemberQuery) UnmarshalJSON(data []byte) error {
+func (p *JoinMemberReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25834,7 +25945,7 @@ func (p *JoinMemberQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *JoinMemberQuery) UnmarshalValues(m map[string][]string) error {
+func (p *JoinMemberReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -25866,10 +25977,10 @@ func (p *JoinMemberQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- TenantVO ---
+	--- TenantResp ---
 */
 // MarshalJSON
-func (p *TenantVO) MarshalJSON() ([]byte, error) {
+func (p *TenantResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(9 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -25884,10 +25995,10 @@ func (p *TenantVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- UserTenantListVO ---
+	--- UserTenantListResp ---
 */
 // MarshalJSON
-func (p *UserTenantListVO) MarshalJSON() ([]byte, error) {
+func (p *UserTenantListResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(2 * 50)
 	write.WriteRaw("tenants", types.Marshal(p.Tenants))
 	write.WriteRaw("current", types.Marshal(p.Current))
@@ -25895,10 +26006,10 @@ func (p *UserTenantListVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- MemberVO ---
+	--- MemberResp ---
 */
 // MarshalJSON
-func (p *MemberVO) MarshalJSON() ([]byte, error) {
+func (p *MemberResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("user_id", types.Marshal(p.UserID))
@@ -25911,10 +26022,10 @@ func (p *MemberVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageVisitByKeyQuery ---
+	--- PageVisitByKeyReq ---
 */
 // Init
-func (p *PageVisitByKeyQuery) Init() error {
+func (p *PageVisitByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderName = nil
@@ -25926,7 +26037,7 @@ func (p *PageVisitByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageVisitByKeyQuery) Check() error {
+func (p *PageVisitByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -25937,7 +26048,7 @@ func (p *PageVisitByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageVisitByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageVisitByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26018,7 +26129,7 @@ func (p *PageVisitByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageVisitByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageVisitByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26095,10 +26206,10 @@ func (p *PageVisitByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- EditVisitQuery ---
+	--- EditVisitReq ---
 */
 // Init
-func (p *EditVisitQuery) Init() error {
+func (p *EditVisitReq) Init() error {
 	p.ID = nil
 	p.Name = nil
 	p.Phone = nil
@@ -26110,7 +26221,7 @@ func (p *EditVisitQuery) Init() error {
 }
 
 // Check
-func (p *EditVisitQuery) Check() error {
+func (p *EditVisitReq) Check() error {
 	if p.Name == nil {
 		return types.NewError(http.StatusBadRequest, "name is required")
 	}
@@ -26130,7 +26241,7 @@ func (p *EditVisitQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *EditVisitQuery) UnmarshalJSON(data []byte) error {
+func (p *EditVisitReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26211,7 +26322,7 @@ func (p *EditVisitQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *EditVisitQuery) UnmarshalValues(m map[string][]string) error {
+func (p *EditVisitReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26288,17 +26399,17 @@ func (p *EditVisitQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddVisitQuery ---
+	--- AddVisitReq ---
 */
 // Init
-func (p *AddVisitQuery) Init() error {
+func (p *AddVisitReq) Init() error {
 	p.ElderID = nil
 
 	return nil
 }
 
 // Check
-func (p *AddVisitQuery) Check() error {
+func (p *AddVisitReq) Check() error {
 	if p.ElderID == nil {
 		return types.NewError(http.StatusBadRequest, "elder_id is required")
 	}
@@ -26306,7 +26417,7 @@ func (p *AddVisitQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddVisitQuery) UnmarshalJSON(data []byte) error {
+func (p *AddVisitReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26342,7 +26453,7 @@ func (p *AddVisitQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddVisitQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddVisitReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26374,10 +26485,10 @@ func (p *AddVisitQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- RecordLeaveQuery ---
+	--- RecordLeaveReq ---
 */
 // Init
-func (p *RecordLeaveQuery) Init() error {
+func (p *RecordLeaveReq) Init() error {
 	p.ID = nil
 	p.LeaveDate = nil
 
@@ -26385,7 +26496,7 @@ func (p *RecordLeaveQuery) Init() error {
 }
 
 // Check
-func (p *RecordLeaveQuery) Check() error {
+func (p *RecordLeaveReq) Check() error {
 	if p.ID == nil {
 		return types.NewError(http.StatusBadRequest, "id is required")
 	}
@@ -26396,7 +26507,7 @@ func (p *RecordLeaveQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *RecordLeaveQuery) UnmarshalJSON(data []byte) error {
+func (p *RecordLeaveReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26441,7 +26552,7 @@ func (p *RecordLeaveQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *RecordLeaveQuery) UnmarshalValues(m map[string][]string) error {
+func (p *RecordLeaveReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26482,10 +26593,10 @@ func (p *RecordLeaveQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageVisitByKeyVO ---
+	--- PageVisitByKeyResp ---
 */
 // MarshalJSON
-func (p *PageVisitByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageVisitByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(9 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -26500,10 +26611,10 @@ func (p *PageVisitByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetVisitByIDVO ---
+	--- GetVisitByIDResp ---
 */
 // MarshalJSON
-func (p *GetVisitByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetVisitByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -26516,10 +26627,10 @@ func (p *GetVisitByIDVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageVisitPlanQuery ---
+	--- PageVisitPlanReq ---
 */
 // Init
-func (p *PageVisitPlanQuery) Init() error {
+func (p *PageVisitPlanReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.ElderID = nil
@@ -26529,12 +26640,12 @@ func (p *PageVisitPlanQuery) Init() error {
 }
 
 // Check
-func (p *PageVisitPlanQuery) Check() error {
+func (p *PageVisitPlanReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *PageVisitPlanQuery) UnmarshalJSON(data []byte) error {
+func (p *PageVisitPlanReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26597,7 +26708,7 @@ func (p *PageVisitPlanQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageVisitPlanQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageVisitPlanReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26656,10 +26767,10 @@ func (p *PageVisitPlanQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddVisitPlanQuery ---
+	--- AddVisitPlanReq ---
 */
 // Init
-func (p *AddVisitPlanQuery) Init() error {
+func (p *AddVisitPlanReq) Init() error {
 	p.ElderID = nil
 	p.Title = nil
 	p.PlanDate = nil
@@ -26668,12 +26779,12 @@ func (p *AddVisitPlanQuery) Init() error {
 }
 
 // Check
-func (p *AddVisitPlanQuery) Check() error {
+func (p *AddVisitPlanReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *AddVisitPlanQuery) UnmarshalJSON(data []byte) error {
+func (p *AddVisitPlanReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26727,7 +26838,7 @@ func (p *AddVisitPlanQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddVisitPlanQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddVisitPlanReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26777,10 +26888,10 @@ func (p *AddVisitPlanQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- CompleteVisitPlanQuery ---
+	--- CompleteVisitPlanReq ---
 */
 // Init
-func (p *CompleteVisitPlanQuery) Init() error {
+func (p *CompleteVisitPlanReq) Init() error {
 	p.ID = nil
 	p.Content = nil
 	p.CompleteDate = nil
@@ -26789,12 +26900,12 @@ func (p *CompleteVisitPlanQuery) Init() error {
 }
 
 // Check
-func (p *CompleteVisitPlanQuery) Check() error {
+func (p *CompleteVisitPlanReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *CompleteVisitPlanQuery) UnmarshalJSON(data []byte) error {
+func (p *CompleteVisitPlanReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26848,7 +26959,7 @@ func (p *CompleteVisitPlanQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *CompleteVisitPlanQuery) UnmarshalValues(m map[string][]string) error {
+func (p *CompleteVisitPlanReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26898,22 +27009,22 @@ func (p *CompleteVisitPlanQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- DeleteVisitPlanQuery ---
+	--- DeleteVisitPlanReq ---
 */
 // Init
-func (p *DeleteVisitPlanQuery) Init() error {
+func (p *DeleteVisitPlanReq) Init() error {
 	p.ID = nil
 
 	return nil
 }
 
 // Check
-func (p *DeleteVisitPlanQuery) Check() error {
+func (p *DeleteVisitPlanReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *DeleteVisitPlanQuery) UnmarshalJSON(data []byte) error {
+func (p *DeleteVisitPlanReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26949,7 +27060,7 @@ func (p *DeleteVisitPlanQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *DeleteVisitPlanQuery) UnmarshalValues(m map[string][]string) error {
+func (p *DeleteVisitPlanReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -26981,22 +27092,22 @@ func (p *DeleteVisitPlanQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- GetElderLabelByIdQuery ---
+	--- GetElderLabelByIdReq ---
 */
 // Init
-func (p *GetElderLabelByIdQuery) Init() error {
+func (p *GetElderLabelByIdReq) Init() error {
 	p.ElderID = nil
 
 	return nil
 }
 
 // Check
-func (p *GetElderLabelByIdQuery) Check() error {
+func (p *GetElderLabelByIdReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *GetElderLabelByIdQuery) UnmarshalJSON(data []byte) error {
+func (p *GetElderLabelByIdReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27032,7 +27143,7 @@ func (p *GetElderLabelByIdQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *GetElderLabelByIdQuery) UnmarshalValues(m map[string][]string) error {
+func (p *GetElderLabelByIdReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27064,22 +27175,22 @@ func (p *GetElderLabelByIdQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- GetEditElderLabelByIdQuery ---
+	--- GetEditElderLabelByIdReq ---
 */
 // Init
-func (p *GetEditElderLabelByIdQuery) Init() error {
+func (p *GetEditElderLabelByIdReq) Init() error {
 	p.ElderID = nil
 
 	return nil
 }
 
 // Check
-func (p *GetEditElderLabelByIdQuery) Check() error {
+func (p *GetEditElderLabelByIdReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *GetEditElderLabelByIdQuery) UnmarshalJSON(data []byte) error {
+func (p *GetEditElderLabelByIdReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27115,7 +27226,7 @@ func (p *GetEditElderLabelByIdQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *GetEditElderLabelByIdQuery) UnmarshalValues(m map[string][]string) error {
+func (p *GetEditElderLabelByIdReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27147,22 +27258,22 @@ func (p *GetEditElderLabelByIdQuery) UnmarshalValues(m map[string][]string) erro
 }
 
 /*
-	--- DeleteCommunicationRecordQuery ---
+	--- DeleteCommunicationRecordReq ---
 */
 // Init
-func (p *DeleteCommunicationRecordQuery) Init() error {
+func (p *DeleteCommunicationRecordReq) Init() error {
 	p.ID = nil
 
 	return nil
 }
 
 // Check
-func (p *DeleteCommunicationRecordQuery) Check() error {
+func (p *DeleteCommunicationRecordReq) Check() error {
 	return nil
 }
 
 // UnmarshalJSON
-func (p *DeleteCommunicationRecordQuery) UnmarshalJSON(data []byte) error {
+func (p *DeleteCommunicationRecordReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27198,7 +27309,7 @@ func (p *DeleteCommunicationRecordQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *DeleteCommunicationRecordQuery) UnmarshalValues(m map[string][]string) error {
+func (p *DeleteCommunicationRecordReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27230,10 +27341,10 @@ func (p *DeleteCommunicationRecordQuery) UnmarshalValues(m map[string][]string) 
 }
 
 /*
-	--- PageVisitPlanVO ---
+	--- PageVisitPlanResp ---
 */
 // MarshalJSON
-func (p *PageVisitPlanVO) MarshalJSON() ([]byte, error) {
+func (p *PageVisitPlanResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(6 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
@@ -27245,10 +27356,10 @@ func (p *PageVisitPlanVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageWarehouseByKeyQuery ---
+	--- PageWarehouseByKeyReq ---
 */
 // Init
-func (p *PageWarehouseByKeyQuery) Init() error {
+func (p *PageWarehouseByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.WarehouseName = nil
@@ -27257,7 +27368,7 @@ func (p *PageWarehouseByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageWarehouseByKeyQuery) Check() error {
+func (p *PageWarehouseByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -27268,7 +27379,7 @@ func (p *PageWarehouseByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageWarehouseByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageWarehouseByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27322,7 +27433,7 @@ func (p *PageWarehouseByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageWarehouseByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageWarehouseByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27372,10 +27483,10 @@ func (p *PageWarehouseByKeyQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- OperateWarehouseQuery ---
+	--- OperateWarehouseReq ---
 */
 // Init
-func (p *OperateWarehouseQuery) Init() error {
+func (p *OperateWarehouseReq) Init() error {
 	p.ID = nil
 	p.StaffID = nil
 	p.Name = nil
@@ -27384,7 +27495,7 @@ func (p *OperateWarehouseQuery) Init() error {
 }
 
 // Check
-func (p *OperateWarehouseQuery) Check() error {
+func (p *OperateWarehouseReq) Check() error {
 	if p.StaffID == nil {
 		return types.NewError(http.StatusBadRequest, "staff_id is required")
 	}
@@ -27395,7 +27506,7 @@ func (p *OperateWarehouseQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *OperateWarehouseQuery) UnmarshalJSON(data []byte) error {
+func (p *OperateWarehouseReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27449,7 +27560,7 @@ func (p *OperateWarehouseQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *OperateWarehouseQuery) UnmarshalValues(m map[string][]string) error {
+func (p *OperateWarehouseReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27499,10 +27610,10 @@ func (p *OperateWarehouseQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- PageWarehouseByKeyVO ---
+	--- PageWarehouseByKeyResp ---
 */
 // MarshalJSON
-func (p *PageWarehouseByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageWarehouseByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
@@ -27511,19 +27622,19 @@ func (p *PageWarehouseByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- OperateWarehouseVO ---
+	--- OperateWarehouseResp ---
 */
 // MarshalJSON
-func (p *OperateWarehouseVO) MarshalJSON() ([]byte, error) {
+func (p *OperateWarehouseResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(0 * 50)
 	return write.Bytes(), nil
 }
 
 /*
-	--- PageWarehouseRecordByKeyQuery ---
+	--- PageWarehouseRecordByKeyReq ---
 */
 // Init
-func (p *PageWarehouseRecordByKeyQuery) Init() error {
+func (p *PageWarehouseRecordByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.WarehouseName = nil
@@ -27536,7 +27647,7 @@ func (p *PageWarehouseRecordByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageWarehouseRecordByKeyQuery) Check() error {
+func (p *PageWarehouseRecordByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -27547,7 +27658,7 @@ func (p *PageWarehouseRecordByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageWarehouseRecordByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageWarehouseRecordByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27637,7 +27748,7 @@ func (p *PageWarehouseRecordByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageWarehouseRecordByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageWarehouseRecordByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27723,10 +27834,10 @@ func (p *PageWarehouseRecordByKeyQuery) UnmarshalValues(m map[string][]string) e
 }
 
 /*
-	--- PageWarehouseMaterialByKeyQuery ---
+	--- PageWarehouseMaterialByKeyReq ---
 */
 // Init
-func (p *PageWarehouseMaterialByKeyQuery) Init() error {
+func (p *PageWarehouseMaterialByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.WarehouseID = nil
@@ -27736,7 +27847,7 @@ func (p *PageWarehouseMaterialByKeyQuery) Init() error {
 }
 
 // Check
-func (p *PageWarehouseMaterialByKeyQuery) Check() error {
+func (p *PageWarehouseMaterialByKeyReq) Check() error {
 	if p.PageNum == nil {
 		return types.NewError(http.StatusBadRequest, "page_num is required")
 	}
@@ -27750,7 +27861,7 @@ func (p *PageWarehouseMaterialByKeyQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *PageWarehouseMaterialByKeyQuery) UnmarshalJSON(data []byte) error {
+func (p *PageWarehouseMaterialByKeyReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27813,7 +27924,7 @@ func (p *PageWarehouseMaterialByKeyQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *PageWarehouseMaterialByKeyQuery) UnmarshalValues(m map[string][]string) error {
+func (p *PageWarehouseMaterialByKeyReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27872,10 +27983,10 @@ func (p *PageWarehouseMaterialByKeyQuery) UnmarshalValues(m map[string][]string)
 }
 
 /*
-	--- AddWarehouseRecordQuery ---
+	--- AddWarehouseRecordReq ---
 */
 // Init
-func (p *AddWarehouseRecordQuery) Init() error {
+func (p *AddWarehouseRecordReq) Init() error {
 	p.WarehouseID = nil
 	p.StaffID = nil
 	p.Source = nil
@@ -27886,7 +27997,7 @@ func (p *AddWarehouseRecordQuery) Init() error {
 }
 
 // Check
-func (p *AddWarehouseRecordQuery) Check() error {
+func (p *AddWarehouseRecordReq) Check() error {
 	if p.WarehouseID == nil {
 		return types.NewError(http.StatusBadRequest, "warehouse_id is required")
 	}
@@ -27906,7 +28017,7 @@ func (p *AddWarehouseRecordQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddWarehouseRecordQuery) UnmarshalJSON(data []byte) error {
+func (p *AddWarehouseRecordReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -27959,8 +28070,8 @@ func (p *AddWarehouseRecordQuery) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "warehouse_material_query_list":
-			e = types.Unmarshal(value, &p.WarehouseMaterialQueryList, func(value gjson.Result) []AddWarehouseMaterialQuery {
-				var obj []AddWarehouseMaterialQuery
+			e = types.Unmarshal(value, &p.WarehouseMaterialQueryList, func(value gjson.Result) []AddWarehouseMaterialReq {
+				var obj []AddWarehouseMaterialReq
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -27978,7 +28089,7 @@ func (p *AddWarehouseRecordQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddWarehouseRecordQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddWarehouseRecordReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -28027,8 +28138,8 @@ func (p *AddWarehouseRecordQuery) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "warehouse_material_query_list":
-			e = types.Unmarshal(value, &p.WarehouseMaterialQueryList, func(value gjson.Result) []AddWarehouseMaterialQuery {
-				var obj []AddWarehouseMaterialQuery
+			e = types.Unmarshal(value, &p.WarehouseMaterialQueryList, func(value gjson.Result) []AddWarehouseMaterialReq {
+				var obj []AddWarehouseMaterialReq
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -28046,10 +28157,10 @@ func (p *AddWarehouseRecordQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- AddWarehouseMaterialQuery ---
+	--- AddWarehouseMaterialReq ---
 */
 // Init
-func (p *AddWarehouseMaterialQuery) Init() error {
+func (p *AddWarehouseMaterialReq) Init() error {
 	p.MaterialID = nil
 	p.WarehouseNum = nil
 	p.ProductDate = nil
@@ -28059,7 +28170,7 @@ func (p *AddWarehouseMaterialQuery) Init() error {
 }
 
 // Check
-func (p *AddWarehouseMaterialQuery) Check() error {
+func (p *AddWarehouseMaterialReq) Check() error {
 	if p.MaterialID == nil {
 		return types.NewError(http.StatusBadRequest, "material_id is required")
 	}
@@ -28076,7 +28187,7 @@ func (p *AddWarehouseMaterialQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AddWarehouseMaterialQuery) UnmarshalJSON(data []byte) error {
+func (p *AddWarehouseMaterialReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -28139,7 +28250,7 @@ func (p *AddWarehouseMaterialQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AddWarehouseMaterialQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AddWarehouseMaterialReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -28198,10 +28309,10 @@ func (p *AddWarehouseMaterialQuery) UnmarshalValues(m map[string][]string) error
 }
 
 /*
-	--- AuditWarehouseRecordQuery ---
+	--- AuditWarehouseRecordReq ---
 */
 // Init
-func (p *AuditWarehouseRecordQuery) Init() error {
+func (p *AuditWarehouseRecordReq) Init() error {
 	p.WarehouseRecordID = nil
 	p.AuditResult = nil
 
@@ -28209,7 +28320,7 @@ func (p *AuditWarehouseRecordQuery) Init() error {
 }
 
 // Check
-func (p *AuditWarehouseRecordQuery) Check() error {
+func (p *AuditWarehouseRecordReq) Check() error {
 	if p.WarehouseRecordID == nil {
 		return types.NewError(http.StatusBadRequest, "warehouse_record_id is required")
 	}
@@ -28220,7 +28331,7 @@ func (p *AuditWarehouseRecordQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *AuditWarehouseRecordQuery) UnmarshalJSON(data []byte) error {
+func (p *AuditWarehouseRecordReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -28265,7 +28376,7 @@ func (p *AuditWarehouseRecordQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *AuditWarehouseRecordQuery) UnmarshalValues(m map[string][]string) error {
+func (p *AuditWarehouseRecordReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -28306,10 +28417,10 @@ func (p *AuditWarehouseRecordQuery) UnmarshalValues(m map[string][]string) error
 }
 
 /*
-	--- PageWarehouseRecordByKeyVO ---
+	--- PageWarehouseRecordByKeyResp ---
 */
 // MarshalJSON
-func (p *PageWarehouseRecordByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageWarehouseRecordByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("warehouse_name", types.Marshal(p.WarehouseName))
@@ -28322,10 +28433,10 @@ func (p *PageWarehouseRecordByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- PageWarehouseMaterialByKeyVO ---
+	--- PageWarehouseMaterialByKeyResp ---
 */
 // MarshalJSON
-func (p *PageWarehouseMaterialByKeyVO) MarshalJSON() ([]byte, error) {
+func (p *PageWarehouseMaterialByKeyResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(6 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("material_name", types.Marshal(p.MaterialName))
@@ -28337,24 +28448,24 @@ func (p *PageWarehouseMaterialByKeyVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- GetWarehouseRecordByIDVO ---
+	--- GetWarehouseRecordByIDResp ---
 */
 // MarshalJSON
-func (p *GetWarehouseRecordByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetWarehouseRecordByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(5 * 50)
 	write.WriteRaw("warehouse_name", types.Marshal(p.WarehouseName))
 	write.WriteRaw("staff_name", types.Marshal(p.StaffName))
 	write.WriteRaw("source", types.Marshal(p.Source))
 	write.WriteRaw("warehouse_date", types.Marshal(p.WarehouseDate))
-	write.WriteRaw("warehouse_material_by_id_vo_list", types.Marshal(p.WarehouseMaterialByIDVOList))
+	write.WriteRaw("warehouse_material_by_id_vo_list", types.Marshal(p.WarehouseMaterialByIDRespList))
 	return write.Bytes(), nil
 }
 
 /*
-	--- GetWarehouseMaterialByIDVO ---
+	--- GetWarehouseMaterialByIDResp ---
 */
 // MarshalJSON
-func (p *GetWarehouseMaterialByIDVO) MarshalJSON() ([]byte, error) {
+func (p *GetWarehouseMaterialByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("material_name", types.Marshal(p.MaterialName))
 	write.WriteRaw("warehouse_num", types.Marshal(p.WarehouseNum))
@@ -28364,17 +28475,17 @@ func (p *GetWarehouseMaterialByIDVO) MarshalJSON() ([]byte, error) {
 }
 
 /*
-	--- WxLoginQuery ---
+	--- WxLoginReq ---
 */
 // Init
-func (p *WxLoginQuery) Init() error {
+func (p *WxLoginReq) Init() error {
 	p.Code = nil
 
 	return nil
 }
 
 // Check
-func (p *WxLoginQuery) Check() error {
+func (p *WxLoginReq) Check() error {
 	if p.Code == nil {
 		return types.NewError(http.StatusBadRequest, "code is required")
 	}
@@ -28382,7 +28493,7 @@ func (p *WxLoginQuery) Check() error {
 }
 
 // UnmarshalJSON
-func (p *WxLoginQuery) UnmarshalJSON(data []byte) error {
+func (p *WxLoginReq) UnmarshalJSON(data []byte) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -28418,7 +28529,7 @@ func (p *WxLoginQuery) UnmarshalJSON(data []byte) error {
 }
 
 // UnmarshalValues
-func (p *WxLoginQuery) UnmarshalValues(m map[string][]string) error {
+func (p *WxLoginReq) UnmarshalValues(m map[string][]string) error {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error(r)
@@ -28450,10 +28561,10 @@ func (p *WxLoginQuery) UnmarshalValues(m map[string][]string) error {
 }
 
 /*
-	--- WxLoginVO ---
+	--- WxLoginResp ---
 */
 // MarshalJSON
-func (p *WxLoginVO) MarshalJSON() ([]byte, error) {
+func (p *WxLoginResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(4 * 50)
 	write.WriteRaw("need_bind", types.Marshal(p.NeedBind))
 	write.WriteRaw("token", types.Marshal(p.Token))

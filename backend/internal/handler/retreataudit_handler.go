@@ -27,7 +27,7 @@ func (r *retreataudit) RegisterRoute(group ack.Party) {
 // @Tags 退住审核
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageRetreatAuditByKeyQuery true "PageRetreatAuditByKeyQuery"
+// @Param data query dto.PageRetreatAuditByKeyReq true "PageRetreatAuditByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /retreatAudit/pageRetreatAuditByKey [get]
 func (r *retreataudit) pageRetreatAuditByKey(ctx ack.Context) {
@@ -51,7 +51,7 @@ func (r *retreataudit) getRetreatAuditById(ctx ack.Context) {
 // @Tags 退住审核
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AuditRetreatQuery true "AuditRetreatQuery"
+// @Param data body dto.AuditRetreatReq true "AuditRetreatReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /retreatAudit/auditRetreat [post]
 func (r *retreataudit) auditRetreat(ctx ack.Context) {
@@ -63,7 +63,7 @@ func (r *retreataudit) auditRetreat(ctx ack.Context) {
 // @Tags 退住审核
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /retreatAudit/pageSearchElderByKey [get]
 func (r *retreataudit) pageSearchElderByKey(ctx ack.Context) {

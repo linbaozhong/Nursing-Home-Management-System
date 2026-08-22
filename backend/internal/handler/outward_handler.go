@@ -31,7 +31,7 @@ func (o *outward) RegisterRoute(group ack.Party) {
 // @Tags 出库
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageOutwardByKeyQuery true "PageOutwardByKeyQuery"
+// @Param data query dto.PageOutwardByKeyReq true "PageOutwardByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /outward/pageOutwardByKey [get]
 func (o *outward) pageOutwardByKey(ctx ack.Context) {
@@ -55,7 +55,7 @@ func (o *outward) getOutwardById(ctx ack.Context) {
 // @Tags 出库
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddOutwardQuery true "AddOutwardQuery"
+// @Param data body dto.AddOutwardReq true "AddOutwardReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /outward/addOutward [post]
 func (o *outward) addOutward(ctx ack.Context) {
@@ -67,7 +67,7 @@ func (o *outward) addOutward(ctx ack.Context) {
 // @Tags 出库
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditOutwardQuery true "EditOutwardQuery"
+// @Param data body dto.EditOutwardReq true "EditOutwardReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /outward/editOutward [post]
 func (o *outward) editOutward(ctx ack.Context) {
@@ -91,7 +91,7 @@ func (o *outward) deleteOutward(ctx ack.Context) {
 // @Tags 出库
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageSearchElderByKeyQuery true "PageSearchElderByKeyQuery"
+// @Param data query dto.PageSearchElderByKeyReq true "PageSearchElderByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /outward/pageSearchElderByKey [get]
 func (o *outward) pageSearchElderByKey(ctx ack.Context) {
@@ -103,7 +103,7 @@ func (o *outward) pageSearchElderByKey(ctx ack.Context) {
 // @Tags 出库
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.DelayReturnQuery true "DelayReturnQuery"
+// @Param data body dto.DelayReturnReq true "DelayReturnReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /outward/delayReturn [post]
 func (o *outward) delayReturn(ctx ack.Context) {
@@ -115,7 +115,7 @@ func (o *outward) delayReturn(ctx ack.Context) {
 // @Tags 出库
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.RecordReturnQuery true "RecordReturnQuery"
+// @Param data body dto.RecordReturnReq true "RecordReturnReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /outward/recordReturn [post]
 func (o *outward) recordReturn(ctx ack.Context) {

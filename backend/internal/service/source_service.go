@@ -20,7 +20,7 @@ var Source = &source{}
 // PageSourceByKey 分页查询来源渠道
 // 对应 Java: SourceServiceImpl.pageSourceByKey -> SourceFunc.listNotDelSource
 // 逻辑: 查询未删除(del_flag=N)的来源, 可选按名称模糊匹配, 按创建时间倒序, 分页返回
-func (s *source) PageSourceByKey(ctx context.Context, in *dto.PageSourceByKeyQuery, out *[]dto.PageSourceByKeyVO) error {
+func (s *source) PageSourceByKey(ctx context.Context, in *dto.PageSourceByKeyReq, out *[]dto.PageSourceByKeyResp) error {
 	q := db.Table(tblsource.TableName).
 		Where(
 			tblsource.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
@@ -65,7 +65,7 @@ func (s *source) AddSource(ctx context.Context, in *dto.StringReq, out *dto.Empt
 
 // GetSourceById 根据编号获取来源渠道
 // 对应 Java: SourceServiceImpl.getSourceById -> sourceMapper.selectById
-func (s *source) GetSourceById(ctx context.Context, in *dto.IDReq, out *dto.OperateSourceVo) error {
+func (s *source) GetSourceById(ctx context.Context, in *dto.IDReq, out *dto.OperateSourceResp) error {
 	return db.Table(tblsource.TableName).
 		Where(tblsource.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblsource.Id.Eq(*in.ID)).
 		Cols(
@@ -76,7 +76,7 @@ func (s *source) GetSourceById(ctx context.Context, in *dto.IDReq, out *dto.Oper
 
 // EditSource 编辑来源渠道
 // 对应 Java: SourceServiceImpl.editSource -> SourceFunc.getSourceByName 判重(排除自身) + sourceMapper.updateById
-func (s *source) EditSource(ctx context.Context, in *dto.OperateSourceQuery, out *dto.EmptyResp) error {
+func (s *source) EditSource(ctx context.Context, in *dto.OperateSourceReq, out *dto.EmptyResp) error {
 	// 判断来源渠道是否已存在(排除自身)
 	has, e := dao.Source(db).Exists(ctx,
 		tblsource.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),

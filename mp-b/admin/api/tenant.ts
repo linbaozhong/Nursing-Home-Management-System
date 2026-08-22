@@ -32,8 +32,10 @@ export interface RegisterParams {
 }
 
 // ====== MOCK 数据（后台未完成，测试前端用；后台完成后放开各函数内注释并删除本段）======
+// 模拟“多企业”场景：选择企业页会列出 2 家企业
 const mockTenantList: TenantVO[] = [
-	{ id: 1, name: '示例养老院', logo: '', contact_name: '张三', contact_phone: '13500000000', plan: '专业版', status: 1, trial_start: '2026-01-01', trial_end: '2027-01-01' }
+	{ id: 1, name: '示例养老院', logo: '', contact_name: '张三', contact_phone: '13500000000', plan: '专业版', status: 1, trial_start: '2026-01-01', trial_end: '2027-01-01' },
+	{ id: 2, name: '康泰护理中心', logo: '', contact_name: '李四', contact_phone: '13500000001', plan: '标准版', status: 1, trial_start: '2026-02-01', trial_end: '2027-02-01' }
 ]
 const mockLoginUser: LoginUser = {
 	id: 1,
@@ -43,7 +45,8 @@ const mockLoginUser: LoginUser = {
 	tenant_id: 1,
 	member_id: 1,
 	role_id: 1,
-	need_bind: false,
+	role_name: '管理员',
+	need_bind: true,
 	auth_id_list: [],
 	auth_url_list: ['/people/old', '/check-in/leave', '/check-in/visit', '/check-in/accident', '/food/order'],
 	tenants: mockTenantList,
@@ -67,7 +70,7 @@ export function myTenants(): Promise<UserTenantList> {
 	return Promise.resolve({ tenants: mockTenantList, current: 1 })
 }
 
-/** 切换当前租户 */
+/** 切换当前租户：改本地登录态里的当前企业 id */
 export async function switchTenant(tenantId: number): Promise<LoginUser> {
 	// const data = await post<LoginUser>('/tenant/switchTenant', { tenant_id: tenantId })
 	// setLoginUser(data)

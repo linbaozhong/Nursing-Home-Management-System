@@ -28,7 +28,7 @@ func (a *activetype) RegisterRoute(group ack.Party) {
 // @Tags 活动分类
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageActiveTypeByKeyQuery true "PageActiveTypeByKeyQuery"
+// @Param data query dto.PageActiveTypeByKeyReq true "PageActiveTypeByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /activeType/pageActiveTypeByKey [get]
 func (a *activetype) pageActiveTypeByKey(ctx ack.Context) {
@@ -52,7 +52,7 @@ func (a *activetype) getActiveTypeById(ctx ack.Context) {
 // @Tags 活动分类
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddActiveTypeQuery true "AddActiveTypeQuery"
+// @Param data body dto.AddActiveTypeReq true "AddActiveTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /activeType/addActiveType [post]
 func (a *activetype) addActiveType(ctx ack.Context) {
@@ -64,7 +64,7 @@ func (a *activetype) addActiveType(ctx ack.Context) {
 // @Tags 活动分类
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.OperateActiveTypeQuery true "OperateActiveTypeQuery"
+// @Param data body dto.OperateActiveTypeReq true "OperateActiveTypeReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /activeType/editActiveType [post]
 func (a *activetype) editActiveType(ctx ack.Context) {

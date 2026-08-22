@@ -51,8 +51,8 @@ func (b *build) listRoomType(ctx ack.Context) {
 // @Tags 楼栋
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageBuildingByKeyQuery true "PageBuildingByKeyQuery"
-// @Success 200 {object} []dto.PageBuildingByKeyVO
+// @Param data query dto.PageBuildingByKeyReq true "PageBuildingByKeyReq"
+// @Success 200 {object} []dto.PageBuildingByKeyResp
 // @Router /build/pageBuildingByKey [get]
 func (b *build) pageBuildingByKey(ctx ack.Context) {
 	ack.Get(ctx, service.Build.PageBuildingByKey)
@@ -75,7 +75,7 @@ func (b *build) getBuildingById(ctx ack.Context) {
 // @Tags 楼栋
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddBuildingQuery true "AddBuildingQuery"
+// @Param data body dto.AddBuildingReq true "AddBuildingReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /build/addBuilding [post]
 func (b *build) addBuilding(ctx ack.Context) {
@@ -87,7 +87,7 @@ func (b *build) addBuilding(ctx ack.Context) {
 // @Tags 楼栋
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditBuildingQuery true "EditBuildingQuery"
+// @Param data body dto.EditBuildingReq true "EditBuildingReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /build/editBuilding [post]
 func (b *build) editBuilding(ctx ack.Context) {
@@ -111,7 +111,7 @@ func (b *build) deleteBuilding(ctx ack.Context) {
 // @Tags 楼栋
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageFloorByKeyQuery true "PageFloorByKeyQuery"
+// @Param data query dto.PageFloorByKeyReq true "PageFloorByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /build/pageFloorByKey [get]
 func (b *build) pageFloorByKey(ctx ack.Context) {
@@ -135,7 +135,7 @@ func (b *build) getFloorById(ctx ack.Context) {
 // @Tags 楼栋
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddFloorQuery true "AddFloorQuery"
+// @Param data body dto.AddFloorReq true "AddFloorReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /build/addFloor [post]
 func (b *build) addFloor(ctx ack.Context) {
@@ -147,7 +147,7 @@ func (b *build) addFloor(ctx ack.Context) {
 // @Tags 楼栋
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditFloorQuery true "EditFloorQuery"
+// @Param data body dto.EditFloorReq true "EditFloorReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /build/editFloor [post]
 func (b *build) editFloor(ctx ack.Context) {
@@ -171,7 +171,7 @@ func (b *build) deleteFloor(ctx ack.Context) {
 // @Tags 楼栋
 // @Accept application/json
 // @Produce application/json
-// @Param data query dto.PageRoomByKeyQuery true "PageRoomByKeyQuery"
+// @Param data query dto.PageRoomByKeyReq true "PageRoomByKeyReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /build/pageRoomByKey [get]
 func (b *build) pageRoomByKey(ctx ack.Context) {
@@ -195,7 +195,7 @@ func (b *build) getRoomById(ctx ack.Context) {
 // @Tags 楼栋
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.AddRoomQuery true "AddRoomQuery"
+// @Param data body dto.AddRoomReq true "AddRoomReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /build/addRoom [post]
 func (b *build) addRoom(ctx ack.Context) {
@@ -207,7 +207,7 @@ func (b *build) addRoom(ctx ack.Context) {
 // @Tags 楼栋
 // @Accept application/json
 // @Produce application/json
-// @Param data body dto.EditRoomQuery true "EditRoomQuery"
+// @Param data body dto.EditRoomReq true "EditRoomReq"
 // @Success 200 {object} dto.EmptyResp
 // @Router /build/editRoom [post]
 func (b *build) editRoom(ctx ack.Context) {

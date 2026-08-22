@@ -22,7 +22,7 @@ var Consume = &consume{}
 
 // PageConsumeByKey 分页查询消费记录（联表 elder 获取老人姓名/身份证）
 // 对应 Java: ConsumeServiceImpl.pageConsumeByKey
-func (c *consume) PageConsumeByKey(ctx context.Context, in *dto.PageConsumeByKeyQuery, out *[]dto.PageConsumeByKeyVO) error {
+func (c *consume) PageConsumeByKey(ctx context.Context, in *dto.PageConsumeByKeyReq, out *[]dto.PageConsumeByKeyResp) error {
 	q := db.Table(tblconsume.TableName).
 		LeftJoin(tblconsume.ElderId, tblelder.Id).
 		Where(tblconsume.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
@@ -50,7 +50,7 @@ func (c *consume) PageConsumeByKey(ctx context.Context, in *dto.PageConsumeByKey
 }
 
 // GetConsumeById 根据编号获取消费记录
-func (c *consume) GetConsumeById(ctx context.Context, in *dto.IDReq, out *dto.GetConsumeByIdVO) error {
+func (c *consume) GetConsumeById(ctx context.Context, in *dto.IDReq, out *dto.GetConsumeByIdResp) error {
 	obj, has, e := dao.Consume(db).GetByID(ctx, types.BigInt(*in.ID),
 		tblconsume.Id,
 		tblconsume.ElderId,
@@ -73,7 +73,7 @@ func (c *consume) GetConsumeById(ctx context.Context, in *dto.IDReq, out *dto.Ge
 }
 
 // AddConsume 新增消费
-func (c *consume) AddConsume(ctx context.Context, in *dto.AddConsumeQuery, out *dto.EmptyResp) error {
+func (c *consume) AddConsume(ctx context.Context, in *dto.AddConsumeReq, out *dto.EmptyResp) error {
 	bean := do.NewConsume()
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.ElderId = types.BigInt(*in.ElderID)
@@ -85,7 +85,7 @@ func (c *consume) AddConsume(ctx context.Context, in *dto.AddConsumeQuery, out *
 }
 
 // EditConsume 编辑消费
-func (c *consume) EditConsume(ctx context.Context, in *dto.EditConsumeQuery, out *dto.EmptyResp) error {
+func (c *consume) EditConsume(ctx context.Context, in *dto.EditConsumeReq, out *dto.EmptyResp) error {
 	var sets = make([]dialect.Setter, 0, 4)
 	sets = append(sets, tblconsume.ElderId.Set(*in.ElderID))
 	sets = append(sets, tblconsume.ConsumeType.Set(*in.ConsumeType))
