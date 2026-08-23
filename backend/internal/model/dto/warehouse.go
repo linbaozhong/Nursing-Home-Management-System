@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ WarehouseController 请求 ============
 
 // PageWarehouseByKeyReq 分页查询仓库请求
@@ -23,9 +25,9 @@ type OperateWarehouseReq struct {
 // PageWarehouseByKeyResp 分页查询仓库响应
 // @response
 type PageWarehouseByKeyResp struct {
-	ID        int64  `json:"id"`         // id
-	Name      string `json:"name"`       // 仓库名称
-	StaffName string `json:"staff_name"` // 仓库管理员
+	ID        types.BigInt `json:"id"`         // id
+	Name      string       `json:"name"`       // 仓库名称
+	StaffName string       `json:"staff_name"` // 仓库管理员
 }
 
 // OperateWarehouseResp 操作仓库响应（继承 OperateWarehouseReq）

@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ ElderRecordController 请求 ============
 
 // PageElderByKeyReq 分页查询长者请求
@@ -41,15 +43,15 @@ type AuditElderFeeReq struct {
 // PageElderByKeyResp 分页查询长者响应
 // @response
 type PageElderByKeyResp struct {
-	ID        int64  `json:"id"`         // id
-	BedName   string `json:"bed_name"`   // 床位名称
-	Name      string `json:"name"`       // 姓名
-	IDNum     string `json:"id_num"`     // 身份证号
-	Age       int    `json:"age"`        // 年龄
-	Sex       string `json:"sex"`        // 性别
-	Phone     string `json:"phone"`      // 电话
-	Address   string `json:"address"`    // 地址
-	CheckFlag string `json:"check_flag"` // 入住状态
+	ID        types.BigInt `json:"id"`         // id
+	BedName   string       `json:"bed_name"`   // 床位名称
+	Name      string       `json:"name"`       // 姓名
+	IDNum     string       `json:"id_num"`     // 身份证号
+	Age       int          `json:"age"`        // 年龄
+	Sex       string       `json:"sex"`        // 性别
+	Phone     string       `json:"phone"`      // 电话
+	Address   string       `json:"address"`    // 地址
+	CheckFlag string       `json:"check_flag"` // 入住状态
 }
 
 // GetElderRecordByIDResp 长者档案详情响应（定义见 common.go）
@@ -142,12 +144,12 @@ type DeleteEmergencyContactReq struct {
 // PageSearchEmergencyContactByKeyResp 分页查询紧急联系人响应
 // @response
 type PageSearchEmergencyContactByKeyResp struct {
-	ID       int64  `json:"id"`       // 紧急联系人编号
-	ElderId  int64  `json:"elder_id"` // 老人编号
-	Name     string `json:"name"`     // 联系人姓名
-	Phone    string `json:"phone"`    // 联系人电话
-	Relation string `json:"relation"` // 与老人关系
-	Remark   string `json:"remark"`   // 备注（DB 当前无该列，保留字段以兼容 gen 序列化）
+	ID       types.BigInt `json:"id"`       // 紧急联系人编号
+	ElderId  types.BigInt `json:"elder_id"` // 老人编号
+	Name     string       `json:"name"`     // 联系人姓名
+	Phone    string       `json:"phone"`    // 联系人电话
+	Relation string       `json:"relation"` // 与老人关系
+	Remark   string       `json:"remark"`   // 备注（DB 当前无该列，保留字段以兼容 gen 序列化）
 }
 
 // ListLabelResp 客户标签分类列表响应（定义见 common.go）

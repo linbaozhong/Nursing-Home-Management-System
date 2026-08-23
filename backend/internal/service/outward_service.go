@@ -62,7 +62,7 @@ func (o *outward) GetOutwardById(ctx context.Context, in *dto.IDReq, out *dto.Ge
 	if !has {
 		return errors.New("外出登记不存在")
 	}
-	out.ID = int64(obj.Id)
+	out.ID = types.BigInt(obj.Id)
 	out.ChaperoneName = obj.ChaperoneName.String()
 	out.ChaperonePhone = obj.ChaperonePhone.String()
 	out.ChaperoneType = obj.ChaperoneType.String()

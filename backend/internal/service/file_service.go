@@ -37,7 +37,7 @@ func (s *fileService) UploadImage(ctx context.Context, in *dto.UploadImageReq, o
 	if _, e := dao.BaseAttachment(db).InsertOne(ctx, att); e != nil {
 		return e
 	}
-	out.ID = int64(att.Id)
+	out.ID = types.BigInt(att.Id)
 	out.URL = att.Url.String()
 	return nil
 }
@@ -60,7 +60,7 @@ func (s *fileService) UploadFile(ctx context.Context, in *dto.UploadFileReq, out
 	if _, e := dao.BaseAttachment(db).InsertOne(ctx, att); e != nil {
 		return e
 	}
-	out.ID = int64(att.Id)
+	out.ID = types.BigInt(att.Id)
 	out.URL = att.Url.String()
 	return nil
 }
@@ -79,7 +79,7 @@ func (s *fileService) DownloadFile(ctx context.Context, in *dto.DownloadFileReq,
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	out.ID = int64(att.Id)
+	out.ID = types.BigInt(att.Id)
 	out.URL = att.Url.String()
 	return nil
 }

@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // PageVisitPlanReq 分页查询回访计划（Java: PageVisitPlanReq）
 // @request
@@ -61,10 +64,10 @@ type DeleteCommunicationRecordReq struct {
 // PageVisitPlanResp 分页查询回访计划响应
 // @response
 type PageVisitPlanResp struct {
-	ID           int64     `json:"id"`            // 回访计划编号
-	ElderID      int64     `json:"elder_id"`      // 老人编号
-	Title        string    `json:"title"`         // 回访计划标题
-	PlanDate     time.Time `json:"plan_date"`     // 计划回访时间
-	CompleteDate time.Time `json:"complete_date"` // 完成时间
-	Content      string    `json:"content"`       // 回访内容
+	ID           types.BigInt `json:"id"`            // 回访计划编号
+	ElderID      types.BigInt `json:"elder_id"`      // 老人编号
+	Title        string       `json:"title"`         // 回访计划标题
+	PlanDate     time.Time    `json:"plan_date"`     // 计划回访时间
+	CompleteDate time.Time    `json:"complete_date"` // 完成时间
+	Content      string       `json:"content"`       // 回访内容
 }

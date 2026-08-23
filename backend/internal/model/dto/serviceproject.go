@@ -29,10 +29,10 @@ type OperateServiceTypeReq struct {
 // PageServiceByKeyResp 分页查询服务响应
 // @response
 type PageServiceByKeyResp struct {
-	ID           int64       `json:"id"`            // id
-	TypeName     string      `json:"type_name"`     // 服务类型名称
-	ServiceName  string      `json:"service_name"`  // 服务名称
-	ChargeMethod string      `json:"charge_method"` // 收费方式
-	Price        types.Money `json:"price"`         // 服务价格
-	NeedDate     int         `json:"need_date"`     // 所需时间
+	ID           types.BigInt `json:"id"`            // id
+	TypeName     string       `json:"type_name"`     // 服务类型名称
+	ServiceName  string       `json:"service_name"`  // 服务名称
+	ChargeMethod string       `json:"charge_method"` // 收费方式
+	Price        types.Money  `json:"price"`         // 服务价格
+	NeedDate     int          `json:"need_date"`     // 所需时间
 }

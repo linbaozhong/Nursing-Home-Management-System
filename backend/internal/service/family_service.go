@@ -181,7 +181,7 @@ func (s *family) myElders(ctx context.Context, phone string) ([]*dto.FamilyElder
 	out := make([]*dto.FamilyElderResp, 0, len(beans))
 	for _, b := range beans {
 		out = append(out, &dto.FamilyElderResp{
-			ElderID:  b.ElderId.Int64(),
+			ElderID:  types.BigInt(b.ElderId.Int64()),
 			Name:     b.Name.String(),
 			Relation: b.Relation.String(),
 		})

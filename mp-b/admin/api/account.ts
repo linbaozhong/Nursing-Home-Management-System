@@ -28,7 +28,7 @@ const mockLoginUser: LoginUser = {
 	role_name: '管理员',
 	need_bind: true,
 	auth_id_list: [],
-	auth_url_list: ['/people/old', '/check-in/leave', '/check-in/visit', '/check-in/accident', '/food/order'],
+	auth_url_list: ['/people/old', '/check-in/leave', '/check-in/visit', '/check-in/accident', '/food/order', '/live/bed', '/live/enter', '/live/apply', '/serve/book', '/tenant/member', '/home/dashboard', '/audit'],
 	tenants: mockTenantList,
 	token: 'mock-token-001'
 }

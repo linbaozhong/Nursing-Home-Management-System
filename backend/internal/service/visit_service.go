@@ -99,7 +99,7 @@ func (v *visit) GetVisitById(ctx context.Context, in *dto.IDReq, out *dto.GetVis
 	if !has {
 		return errors.New("来访登记不存在")
 	}
-	out.ID = int64(obj.Id)
+	out.ID = types.BigInt(obj.Id)
 	out.VisitName = obj.Name.String()
 	out.VisitPhone = obj.Phone.String()
 	out.Relation = obj.Relation.String()

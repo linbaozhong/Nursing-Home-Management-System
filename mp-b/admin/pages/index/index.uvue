@@ -45,7 +45,14 @@
 		{ key: 'leave', name: '外出登记', icon: '出', bg: '#4CD964', url: '/pages/leave/list' },
 		{ key: 'visit', name: '来访登记', icon: '访', bg: '#F0AD4E', url: '/pages/visitor/list' },
 		{ key: 'accident', name: '事故登记', icon: '故', bg: '#DD524D', url: '/pages/accident/list' },
-		{ key: 'order', name: '点餐', icon: '餐', bg: '#8E7CF6', url: '/pages/order/list' }
+		{ key: 'order', name: '点餐', icon: '餐', bg: '#8E7CF6', url: '/pages/order/list' },
+		{ key: 'bed', name: '床位全景', icon: '床', bg: '#00A9A5', url: '/pages/bed/panorama' },
+		{ key: 'enter', name: '入住签约', icon: '签', bg: '#6C5CE7', url: '/pages/enter/wizard' },
+		{ key: 'apply', name: '退住申请', icon: '退', bg: '#E17055', url: '/pages/apply/list' },
+		{ key: 'nurse-book', name: '护理预定', icon: '护', bg: '#00B894', url: '/pages/nurse-book/list' },
+		{ key: 'member', name: '成员管理', icon: '员', bg: '#0984E3', url: '/pages/member/index' },
+		{ key: 'home', name: '数据概览', icon: '数', bg: '#6D214F', url: '/pages/home/dashboard' },
+		{ key: 'audit', name: '退住审核', icon: '审', bg: '#B33939', url: '/pages/audit/list' }
 	]
 
 	const user = ref<LoginUser | null>(null)

@@ -77,7 +77,7 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 	res := make([]dto.PageOutboundRecordByKeyResp, 0, len(joins))
 	for _, j := range joins {
 		res = append(res, dto.PageOutboundRecordByKeyResp{
-			ID:            int64(j.ID),
+			ID:            types.BigInt(j.ID),
 			WarehouseName: j.WarehouseName.String(),
 			OutboundDate:  j.OutboundDate.Time(),
 			Recipient:     j.ElderName.String(),
@@ -98,7 +98,7 @@ func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *d
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	out.ID = int64(rec.Id)
+	out.ID = types.BigInt(rec.Id)
 	out.RecipientType = rec.RecipientType.String()
 	out.MaterialUse = rec.MaterialUse.String()
 	out.OutboundDate = rec.OutboundDate.Time
@@ -206,7 +206,7 @@ func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, 
 	res := make([]dto.PageWarehouseMaterialByKeyResp, 0, len(list))
 	for _, m := range list {
 		res = append(res, dto.PageWarehouseMaterialByKeyResp{
-			ID:           int64(m.ID),
+			ID:           types.BigInt(m.ID),
 			MaterialName: m.MaterialName.String(),
 			Price:        m.Price,
 			WarehouseNum: int(m.WarehouseNum),

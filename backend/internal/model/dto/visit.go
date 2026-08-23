@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // ============ VisitController 请求 ============
 
@@ -47,25 +50,25 @@ type RecordLeaveReq struct {
 // PageVisitByKeyResp 分页查询来访登记响应
 // @response
 type PageVisitByKeyResp struct {
-	ID         int64     `json:"id"`          // id
-	ElderName  string    `json:"elder_name"`  // 老人姓名
-	VisitName  string    `json:"visit_name"`  // 来访者姓名
-	VisitPhone string    `json:"visit_phone"` // 来访者电话
-	Relation   string    `json:"relation"`    // 与老人关系
-	VisitDate  time.Time `json:"visit_date"`  // 来访时间
-	LeaveDate  time.Time `json:"leave_date"`  // 离开时间
-	VisitNum   int64     `json:"visit_num"`   // 来访者人数
-	VisitFlag  *int8     `json:"visit_flag"`  // 来访状态（0-在院 1-已离开）
+	ID         types.BigInt `json:"id"`          // id
+	ElderName  string       `json:"elder_name"`  // 老人姓名
+	VisitName  string       `json:"visit_name"`  // 来访者姓名
+	VisitPhone string       `json:"visit_phone"` // 来访者电话
+	Relation   string       `json:"relation"`    // 与老人关系
+	VisitDate  time.Time    `json:"visit_date"`  // 来访时间
+	LeaveDate  time.Time    `json:"leave_date"`  // 离开时间
+	VisitNum   int64        `json:"visit_num"`   // 来访者人数
+	VisitFlag  *int8        `json:"visit_flag"`  // 来访状态（0-在院 1-已离开）
 }
 
 // GetVisitByIDResp 根据编号获取来访登记响应
 // @response
 type GetVisitByIDResp struct {
-	ID         int64     `json:"id"`          // id
-	ElderName  string    `json:"elder_name"`  // 老人姓名
-	VisitName  string    `json:"visit_name"`  // 来访者姓名
-	VisitPhone string    `json:"visit_phone"` // 来访者电话
-	Relation   string    `json:"relation"`    // 与老人关系
-	VisitDate  time.Time `json:"visit_date"`  // 来访时间
-	VisitNum   int64     `json:"visit_num"`   // 来访者人数
+	ID         types.BigInt `json:"id"`          // id
+	ElderName  string       `json:"elder_name"`  // 老人姓名
+	VisitName  string       `json:"visit_name"`  // 来访者姓名
+	VisitPhone string       `json:"visit_phone"` // 来访者电话
+	Relation   string       `json:"relation"`    // 与老人关系
+	VisitDate  time.Time    `json:"visit_date"`  // 来访时间
+	VisitNum   int64        `json:"visit_num"`   // 来访者人数
 }

@@ -1,0 +1,293 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'成员管理'" />
+
+		<view class="intro">
+			<text class="intro__tip">管理当前企业的成员，可邀请新成员加入</text>
+		</view>
+
+		<scroll-view class="list" scroll-y :show-scrollbar="false">
+			<view v-for="m in members" :key="m.id" class="card">
+				<view class="card__head">
+					<text class="card__name">{{ m.name }}</text>
+					<text class="card__role">{{ m.role_name }}</text>
+				</view>
+				<text class="card__phone">{{ maskPhone(m.phone) }}</text>
+			</view>
+			<view v-if="members.length == 0" class="empty"><text>暂无成员</text></view>
+		</scroll-view>
+
+		<uni-fab-button class="fab" plus-class="fab__plus" @click="openInvite" />
+	</view>
+
+	<!-- 邀请成员弹层 -->
+	<view v-if="showInvite" class="mask" @click="showInvite = false">
+		<view class="panel" @click.stop>
+			<view class="panel__head">
+				<text class="panel__title">邀请成员</text>
+				<text class="panel__close" @click="showInvite = false">关闭</text>
+			</view>
+			<view class="form">
+				<view class="field">
+					<text class="field__label">手机号 <text class="field__required">*</text></text>
+					<input class="field__input" v-model="invitePhone" type="number" :maxlength="11" placeholder="被邀请人手机号" />
+				</view>
+				<view class="field">
+					<text class="field__label">角色 <text class="field__required">*</text></text>
+					<view class="radio-row">
+						<view
+							v-for="r in roles"
+							:key="r.id"
+							class="radio"
+							:class="{ 'radio--active': inviteRoleId == r.id }"
+							@click="inviteRoleId = r.id"
+						>
+							<text>{{ r.name }}</text>
+						</view>
+					</view>
+				</view>
+				<view class="form__submit" @click="doInvite">
+					<text>邀请</text>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onShow } from '@dcloudio/uni-app'
+	import { listMembers, listRoles, inviteMember, MemberItem, RoleOption } from '../../api/member'
+	import { maskPhone } from '../../utils/util'
+
+	const members = ref<MemberItem[]>([])
+	const roles = ref<RoleOption[]>([])
+	const showInvite = ref(false)
+	const invitePhone = ref('')
+	const inviteRoleId = ref(0)
+
+	onShow(() => {
+		loadMembers()
+		loadRoles()
+	})
+
+	async function loadMembers() {
+		try {
+			members.value = await listMembers()
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	async function loadRoles() {
+		try {
+			roles.value = await listRoles()
+			if (roles.value.length > 0) {
+				inviteRoleId.value = roles.value[0].id
+			}
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function openInvite() {
+		invitePhone.value = ''
+		showInvite.value = true
+	}
+
+	async function doInvite() {
+		if (invitePhone.value.length != 11) {
+			uni.showToast({ title: '请输入 11 位手机号', icon: 'none' })
+			return
+		}
+		if (inviteRoleId.value == 0) {
+			uni.showToast({ title: '请选择角色', icon: 'none' })
+			return
+		}
+		try {
+			await inviteMember(invitePhone.value, inviteRoleId.value)
+			uni.showToast({ title: '已邀请', icon: 'success' })
+			showInvite.value = false
+			loadMembers()
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.intro {
+		padding: 12px 16px 4px 16px;
+	}
+
+	.intro__tip {
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.list {
+		flex: 1;
+		padding: 8px 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+		flex-direction: column;
+	}
+
+	.card__head {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.card__name {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.card__role {
+		margin-left: 8px;
+		font-size: 12px;
+		color: #007AFF;
+	}
+
+	.card__phone {
+		margin-top: 6px;
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.empty {
+		align-items: center;
+		padding-top: 60px;
+	}
+
+	.empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.fab {
+		position: fixed;
+		right: 20px;
+		bottom: 40px;
+	}
+
+	.fab__plus {
+		background-color: #007AFF;
+	}
+
+	.mask {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		justify-content: flex-end;
+		z-index: 999;
+	}
+
+	.panel {
+		height: 55%;
+		background-color: #FFFFFF;
+		border-top-left-radius: 16px;
+		border-top-right-radius: 16px;
+		flex-direction: column;
+		padding-top: 14px;
+	}
+
+	.panel__head {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0 16px 12px 16px;
+	}
+
+	.panel__title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.panel__close {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.form {
+		padding: 8px 16px 16px 16px;
+	}
+
+	.field {
+		flex-direction: column;
+		margin-bottom: 16px;
+	}
+
+	.field__label {
+		font-size: 14px;
+		color: #333333;
+		margin-bottom: 8px;
+	}
+
+	.field__required {
+		color: #DD524D;
+	}
+
+	.field__input {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		font-size: 15px;
+	}
+
+	.radio-row {
+		flex-direction: row;
+	}
+
+	.radio {
+		height: 34px;
+		padding: 0 18px;
+		margin-right: 12px;
+		align-items: center;
+		justify-content: center;
+		border-radius: 17px;
+		background-color: #F5F6FA;
+	}
+
+	.radio text {
+		font-size: 14px;
+		color: #666666;
+	}
+
+	.radio--active {
+		background-color: #007AFF;
+	}
+
+	.radio--active text {
+		color: #FFFFFF;
+	}
+
+	.form__submit {
+		height: 44px;
+		border-radius: 22px;
+		background-color: #007AFF;
+		align-items: center;
+		justify-content: center;
+		margin-top: 8px;
+	}
+
+	.form__submit text {
+		font-size: 15px;
+		color: #FFFFFF;
+	}
+</style>

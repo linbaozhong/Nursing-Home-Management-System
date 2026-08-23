@@ -1,0 +1,296 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'护理预定'" />
+
+		<view class="search-bar">
+			<input
+				class="search-input"
+				v-model="keyword"
+				placeholder="搜索老人/项目"
+				confirm-type="search"
+			/>
+		</view>
+
+		<scroll-view class="list" scroll-y :show-scrollbar="false">
+			<view v-for="item in filteredList" :key="item.id" class="card" @click="goDetail(item)">
+				<view class="card__head">
+					<text class="card__name">{{ item.elder_name }}</text>
+					<StatusTag :text="item.order_flag" :type="item.order_flag == '已执行' ? 'success' : 'warning'" />
+				</view>
+				<view class="card__body">
+					<text>{{ item.service_name }} · {{ item.frequency }}次</text>
+				</view>
+				<view class="card__foot">
+					<text class="card__amount">{{ formatMoney(item.pay_amount) }}</text>
+					<view v-if="item.order_flag != '已执行'" class="card__send" @click.stop="onExecute(item)">
+						<text>执行</text>
+					</view>
+				</view>
+			</view>
+			<view v-if="filteredList.length == 0" class="empty"><text>暂无护理预定</text></view>
+		</scroll-view>
+
+		<uni-fab-button class="fab" plus-class="fab__plus" @click="goAdd" />
+
+		<!-- 执行护理：选择护理人员 -->
+		<view v-if="showExecute" class="mask" @click="showExecute = false">
+			<view class="panel" @click.stop>
+				<view class="panel__head">
+					<text class="panel__title">选择护理人员</text>
+					<text class="panel__close" @click="showExecute = false">取消</text>
+				</view>
+				<scroll-view class="panel__list" scroll-y>
+					<view v-for="s in staffs" :key="s.id" class="panel__item" @click="onStaffSelect(s)">
+						<text class="panel__name">{{ s.name }}</text>
+						<text class="panel__phone">{{ s.phone }}</text>
+					</view>
+					<view v-if="staffs.length == 0" class="panel__empty"><text>暂无护理人员</text></view>
+				</scroll-view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import StatusTag from '../../components/status-tag/StatusTag.uvue'
+	import { onShow } from '@dcloudio/uni-app'
+	import { pageNurseBookByKey, executeNurseBook, listNurseStaff, NurseBookItem, NurseStaff } from '../../api/nurse-book'
+	import { formatMoney, formatDateTime } from '../../utils/util'
+
+	const keyword = ref('')
+	const list = ref<NurseBookItem[]>([])
+	const showExecute = ref(false)
+	const staffs = ref<NurseStaff[]>([])
+	let executingId = 0
+
+	onShow(() => {
+		loadData()
+	})
+
+	async function loadData() {
+		try {
+			const res = await pageNurseBookByKey()
+			list.value = res.list
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	const filteredList = computed((): NurseBookItem[] => {
+		let items = list.value
+		const kw = keyword.value.trim()
+		if (kw != '') {
+			items = items.filter((it) => it.elder_name.indexOf(kw) >= 0 || it.service_name.indexOf(kw) >= 0)
+		}
+		return items
+	})
+
+	function goAdd() {
+		uni.navigateTo({ url: '/pages/nurse-book/edit' })
+	}
+
+	function goDetail(item: NurseBookItem) {
+		uni.navigateTo({ url: '/pages/nurse-book/edit?id=' + item.id })
+	}
+
+	async function onExecute(item: NurseBookItem) {
+		executingId = item.id
+		showExecute.value = true
+		if (staffs.value.length == 0) {
+			try {
+				staffs.value = await listNurseStaff()
+			} catch (e) {
+				// 已统一 toast
+			}
+		}
+	}
+
+	async function onStaffSelect(s: NurseStaff) {
+		showExecute.value = false
+		uni.showModal({
+			title: '确认执行',
+			content: '由 ' + s.name + ' 执行该项护理？',
+			success: async (res) => {
+				if (res.confirm) {
+					try {
+						await executeNurseBook(executingId, s.id, formatDateTime(new Date()))
+						uni.showToast({ title: '已执行', icon: 'success' })
+						loadData()
+					} catch (e) {
+						// 已统一 toast
+					}
+				}
+			}
+		})
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.search-bar {
+		padding: 10px 16px 0 16px;
+	}
+
+	.search-input {
+		height: 38px;
+		background-color: #FFFFFF;
+		border-radius: 19px;
+		padding-left: 14px;
+		font-size: 14px;
+	}
+
+	.list {
+		flex: 1;
+		padding: 8px 16px 0 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__head {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.card__name {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.card__body {
+		margin-top: 8px;
+	}
+
+	.card__body text {
+		font-size: 14px;
+		color: #666666;
+	}
+
+	.card__foot {
+		margin-top: 8px;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.card__amount {
+		font-size: 14px;
+		font-weight: 600;
+		color: #DD524D;
+	}
+
+	.card__send {
+		height: 28px;
+		padding: 0 12px;
+		border-radius: 14px;
+		background-color: #007AFF;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.card__send text {
+		font-size: 13px;
+		color: #FFFFFF;
+	}
+
+	.empty {
+		align-items: center;
+		padding-top: 60px;
+	}
+
+	.empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.fab {
+		position: fixed;
+		right: 20px;
+		bottom: 40px;
+	}
+
+	.fab__plus {
+		background-color: #007AFF;
+	}
+
+	.mask {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		justify-content: flex-end;
+		z-index: 999;
+	}
+
+	.panel {
+		height: 55%;
+		background-color: #FFFFFF;
+		border-top-left-radius: 16px;
+		border-top-right-radius: 16px;
+		flex-direction: column;
+		padding-top: 14px;
+	}
+
+	.panel__head {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0 16px 12px 16px;
+	}
+
+	.panel__title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.panel__close {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.panel__list {
+		flex: 1;
+	}
+
+	.panel__item {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 12px 16px;
+		border-bottom-width: 1px;
+		border-bottom-color: #F0F0F0;
+	}
+
+	.panel__name {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.panel__phone {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.panel__empty {
+		align-items: center;
+		padding-top: 40px;
+	}
+
+	.panel__empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+</style>

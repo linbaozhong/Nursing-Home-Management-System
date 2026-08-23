@@ -70,7 +70,7 @@ func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKe
 	res := make([]dto.PageOrderByKeyResp, 0, len(joins))
 	for _, j := range joins {
 		res = append(res, dto.PageOrderByKeyResp{
-			ID:                int64(j.ID),
+			ID:                types.BigInt(j.ID),
 			ElderName:         j.ElderName.String(),
 			ElderPhone:        j.ElderPhone.String(),
 			DineDate:          j.DineDate.Time,

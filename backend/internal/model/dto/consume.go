@@ -44,22 +44,22 @@ type EditConsumeReq struct {
 // PageConsumeByKeyResp 分页查询消费记录响应
 // @response
 type PageConsumeByKeyResp struct {
-	ID            int64       `json:"id"`             // 消费记录编号
-	ElderName     string      `json:"elder_name"`     // 老人姓名
-	IDNum         string      `json:"id_num"`         // 身份证号
-	ConsumeType   string      `json:"consume_type"`   // 消费类别
-	ConsumeAmount types.Money `json:"consume_amount"` // 消费金额
-	ConsumeDate   time.Time   `json:"consume_date"`   // 消费日期
+	ID            types.BigInt `json:"id"`             // 消费记录编号
+	ElderName     string       `json:"elder_name"`     // 老人姓名
+	IDNum         string       `json:"id_num"`         // 身份证号
+	ConsumeType   string       `json:"consume_type"`   // 消费类别
+	ConsumeAmount types.Money  `json:"consume_amount"` // 消费金额
+	ConsumeDate   time.Time    `json:"consume_date"`   // 消费日期
 }
 
 // GetConsumeByIdResp 根据编号获取消费记录响应
 // @response
 type GetConsumeByIdResp struct {
-	ID            int64       `json:"id"`             // 消费记录编号
-	ElderID       int64       `json:"elder_id"`       // 老人编号
-	ElderName     string      `json:"elder_name"`     // 老人姓名
-	ConsumeType   string      `json:"consume_type"`   // 消费类别
-	ConsumeAmount types.Money `json:"consume_amount"` // 消费金额
-	ConsumeDate   time.Time   `json:"consume_date"`   // 消费日期
-	Remark        string      `json:"remark"`         // 备注
+	ID            types.BigInt `json:"id"`             // 消费记录编号
+	ElderID       types.BigInt `json:"elder_id"`       // 老人编号
+	ElderName     string       `json:"elder_name"`     // 老人姓名
+	ConsumeType   string       `json:"consume_type"`   // 消费类别
+	ConsumeAmount types.Money  `json:"consume_amount"` // 消费金额
+	ConsumeDate   time.Time    `json:"consume_date"`   // 消费日期
+	Remark        string       `json:"remark"`         // 备注
 }

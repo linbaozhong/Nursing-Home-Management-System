@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ AccountController 请求 ============
 
 // LoginReq 登录请求
@@ -43,16 +45,16 @@ type EditReq struct {
 // LoginUserResp 登录用户响应
 // @response
 type LoginUserResp struct {
-	ID          int64        `json:"id"`            // 全局用户id
-	Name        string       `json:"name"`          // 姓名
-	Avator      string       `json:"avator"`        // 头像
-	Phone       string       `json:"phone"`         // 电话
-	TenantID    int64        `json:"tenant_id"`     // 当前租户编号
-	MemberID    int64        `json:"member_id"`     // 当前成员编号
-	RoleID      int64        `json:"role_id"`       // 当前角色编号
-	NeedBind    bool         `json:"need_bind"`     // 是否需要选择/绑定企业
-	AuthIDList  []int64      `json:"auth_id_list"`  // 权限id列表
-	AuthUrlList []string     `json:"auth_url_list"` // 权限url列表
-	Tenants     []TenantResp `json:"tenants"`       // 已绑定企业列表（多企业时返回）
-	Token       string       `json:"token"`         // token
+	ID          types.BigInt   `json:"id"`            // 全局用户id
+	Name        string         `json:"name"`          // 姓名
+	Avator      string         `json:"avator"`        // 头像
+	Phone       string         `json:"phone"`         // 电话
+	TenantID    types.BigInt   `json:"tenant_id"`     // 当前租户编号
+	MemberID    types.BigInt   `json:"member_id"`     // 当前成员编号
+	RoleID      types.BigInt   `json:"role_id"`       // 当前角色编号
+	NeedBind    bool           `json:"need_bind"`     // 是否需要选择/绑定企业
+	AuthIDList  []types.BigInt `json:"auth_id_list"`  // 权限id列表
+	AuthUrlList []string       `json:"auth_url_list"` // 权限url列表
+	Tenants     []TenantResp   `json:"tenants"`       // 已绑定企业列表（多企业时返回）
+	Token       string         `json:"token"`         // token
 }

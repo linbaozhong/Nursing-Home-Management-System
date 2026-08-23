@@ -77,7 +77,7 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 	res := make([]dto.PageNurseReserveByKeyResp, 0, len(joins))
 	for _, j := range joins {
 		res = append(res, dto.PageNurseReserveByKeyResp{
-			ID:           int64(j.ID),
+			ID:           types.BigInt(j.ID),
 			ElderName:    j.ElderName.String(),
 			BedName:      j.BedName.String(),
 			ServiceName:  j.ServiceName.String(),
@@ -108,7 +108,7 @@ func (s *nurseReserveService) GetNurseReserveByReserveIdAndElderId(ctx context.C
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	out.ID = int64(nr.Id)
+	out.ID = types.BigInt(nr.Id)
 	out.ServiceName = nr.ServiceName.String()
 	out.NeedDate = int(nr.NeedDate)
 	out.ServicePrice = nr.ServicePrice
@@ -237,7 +237,7 @@ func (s *nurseReserveService) ListNurseStaff(ctx context.Context, in *dto.EmptyR
 	res := make([]dto.PageSearchStaffByKeyResp, 0, len(staffs))
 	for _, st := range staffs {
 		res = append(res, dto.PageSearchStaffByKeyResp{
-			ID:    int64(st.Id),
+			ID:    types.BigInt(st.Id),
 			Name:  st.Name.String(),
 			Phone: st.Phone.String(),
 		})

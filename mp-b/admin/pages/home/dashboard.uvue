@@ -1,0 +1,241 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'数据概览'" />
+
+		<scroll-view class="body" scroll-y :show-scrollbar="false">
+			<!-- 今日概览 -->
+			<view class="card">
+				<text class="card__title">今日概览</text>
+				<view class="grid-2">
+					<view class="stat"><text class="stat__num">{{ overview.today_add_consult_num }}</text><text class="stat__label">新增咨询</text></view>
+					<view class="stat"><text class="stat__num">{{ overview.today_add_reserve_num }}</text><text class="stat__label">新增预定</text></view>
+					<view class="stat"><text class="stat__num">{{ overview.today_add_contract_num }}</text><text class="stat__label">新增合同</text></view>
+					<view class="stat"><text class="stat__num" :class="{ 'stat__num--danger': overview.today_contract_expire_num > 0 }">{{ overview.today_contract_expire_num }}</text><text class="stat__label">合同到期</text></view>
+				</view>
+			</view>
+
+			<!-- 可售床位 -->
+			<view class="card">
+				<text class="card__title">床位情况</text>
+				<view class="grid-3">
+					<view class="stat"><text class="stat__num">{{ bed.idle_room_num }}</text><text class="stat__label">空闲房间</text></view>
+					<view class="stat"><text class="stat__num">{{ bed.idle_bed_num }}</text><text class="stat__label">空闲床位</text></view>
+					<view class="stat"><text class="stat__num stat__num--danger">{{ bed.exit_audit_num }}</text><text class="stat__label">退住审核</text></view>
+				</view>
+			</view>
+
+			<!-- 今日销售跟进 -->
+			<view class="card">
+				<text class="card__title">今日销售跟进</text>
+				<view class="grid-3">
+					<view class="stat"><text class="stat__num">{{ follow.today_return_visit_num }}</text><text class="stat__label">今日待回访</text></view>
+					<view class="stat"><text class="stat__num">{{ follow.today_returned_visit_num }}</text><text class="stat__label">今日已回访</text></view>
+					<view class="stat"><text class="stat__num">{{ follow.stay_returned_visit_num }}</text><text class="stat__label">滞留回访</text></view>
+				</view>
+			</view>
+
+			<!-- 客户来源 -->
+			<view class="card">
+				<text class="card__title">客户来源渠道</text>
+				<view v-for="s in sourceList" :key="s.source_name" class="bar-row">
+					<text class="bar-row__label">{{ s.source_name }}</text>
+					<view class="bar-row__track">
+						<view class="bar-row__fill" :style="{ width: barWidth(s.consult_num) }"></view>
+					</view>
+					<text class="bar-row__num">{{ s.consult_num }}</text>
+				</view>
+			</view>
+
+			<!-- 本月业绩排行 -->
+			<view class="card">
+				<text class="card__title">本月业绩排行</text>
+				<view class="rank-head">
+					<text>咨询 {{ month.consult_client_num }}（{{ rate(month.consult_client_float_rate) }}%）</text>
+					<text>签约 {{ month.sign_contract_num }}</text>
+				</view>
+				<view v-for="s in month.sale_rank_list" :key="s.rank" class="rank-row">
+					<text class="rank-row__no">{{ s.rank }}</text>
+					<text class="rank-row__name">{{ s.name }}</text>
+					<text class="rank-row__num">咨询 {{ s.consult_num }} / 签约 {{ s.contract_num }}</text>
+				</view>
+			</view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onShow } from '@dcloudio/uni-app'
+	import {
+		todayOverview, availableBed, todaySaleFollow, monthPerformanceRank,
+		clientSource, TodayOverview, AvailableBed, TodaySaleFollow, MonthPerformanceRank, ClientSource
+	} from '../../api/home'
+
+	const overview = ref<TodayOverview>({ today_add_consult_num: 0, today_add_reserve_num: 0, today_add_contract_num: 0, today_contract_expire_num: 0 })
+	const bed = ref<AvailableBed>({ idle_room_num: 0, idle_bed_num: 0, exit_audit_num: 0 })
+	const follow = ref<TodaySaleFollow>({ today_return_visit_num: 0, today_returned_visit_num: 0, stay_returned_visit_num: 0 })
+	const month = ref<MonthPerformanceRank>({ consult_client_num: 0, consult_client_float_rate: 0, sign_contract_num: 0, sign_contract_float_rate: 0, consult_conversion_rate: 0, consult_conversion_float_rate: 0, sale_rank_list: [] })
+	const sourceList = ref<ClientSource[]>([])
+
+	let maxSource = 0
+
+	onShow(() => {
+		loadAll()
+	})
+
+	async function loadAll() {
+		try {
+			overview.value = await todayOverview()
+			bed.value = await availableBed()
+			follow.value = await todaySaleFollow()
+			month.value = await monthPerformanceRank()
+			sourceList.value = await clientSource()
+			maxSource = 0
+			sourceList.value.forEach((s) => {
+				if (s.consult_num > maxSource) maxSource = s.consult_num
+			})
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function barWidth(num: number): string {
+		if (maxSource == 0) return '0%'
+		const pct = Math.round(num / maxSource * 100)
+		return pct + '%'
+	}
+
+	function rate(v: number): string {
+		return (v * 100).toFixed(1)
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.body {
+		flex: 1;
+		padding: 10px 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__title {
+		font-size: 15px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.grid-2 {
+		flex-direction: row;
+		flex-wrap: wrap;
+		margin-top: 10px;
+	}
+
+	.grid-3 {
+		flex-direction: row;
+		flex-wrap: wrap;
+		margin-top: 10px;
+	}
+
+	.stat {
+		width: 50%;
+		align-items: center;
+		padding: 10px 0;
+	}
+
+	.grid-3 .stat {
+		width: 33.33%;
+	}
+
+	.stat__num {
+		font-size: 24px;
+		font-weight: 700;
+		color: #333333;
+	}
+
+	.stat__num--danger {
+		color: #DD524D;
+	}
+
+	.stat__label {
+		margin-top: 2px;
+		font-size: 12px;
+		color: #999999;
+	}
+
+	.bar-row {
+		flex-direction: row;
+		align-items: center;
+		margin-top: 10px;
+	}
+
+	.bar-row__label {
+		width: 70px;
+		font-size: 13px;
+		color: #333333;
+	}
+
+	.bar-row__track {
+		flex: 1;
+		height: 12px;
+		border-radius: 6px;
+		background-color: #F0F0F0;
+		overflow: hidden;
+	}
+
+	.bar-row__fill {
+		height: 12px;
+		border-radius: 6px;
+		background-color: #007AFF;
+	}
+
+	.bar-row__num {
+		width: 40px;
+		text-align: right;
+		font-size: 13px;
+		color: #666666;
+	}
+
+	.rank-head {
+		flex-direction: row;
+		justify-content: space-between;
+		margin-top: 8px;
+	}
+
+	.rank-head text {
+		font-size: 12px;
+		color: #999999;
+	}
+
+	.rank-row {
+		flex-direction: row;
+		align-items: center;
+		margin-top: 8px;
+	}
+
+	.rank-row__no {
+		width: 20px;
+		font-size: 14px;
+		color: #DD524D;
+		font-weight: 600;
+	}
+
+	.rank-row__name {
+		flex: 1;
+		font-size: 14px;
+		color: #333333;
+	}
+
+	.rank-row__num {
+		font-size: 12px;
+		color: #999999;
+	}
+</style>

@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ SourceController 请求 ============
 
 // PageSourceByKeyReq 分页查询来源渠道请求
@@ -22,8 +24,8 @@ type OperateSourceReq struct {
 // PageSourceByKeyResp 分页查询来源渠道响应
 // @response
 type PageSourceByKeyResp struct {
-	ID   int64  `json:"id"`   // id
-	Name string `json:"name"` // 来源渠道名称
+	ID   types.BigInt `json:"id"`   // id
+	Name string       `json:"name"` // 来源渠道名称
 }
 
 // OperateSourceResp 操作来源渠道响应

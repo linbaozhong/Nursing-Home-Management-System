@@ -27,8 +27,8 @@ type PageResult struct {
 // DropDown 下拉列表响应（对应 Java DropDown）
 // @response
 type DropDown struct {
-	ID   int64  `json:"id"`   // 编号
-	Name string `json:"name"` // 名称
+	ID   types.BigInt `json:"id"`   // 编号
+	Name string       `json:"name"` // 名称
 }
 
 // // @response
@@ -40,7 +40,7 @@ type DropDown struct {
 // BuildingResp 楼栋-楼层-房间-床位树响应（对应 Java base.BuildingVo）
 // @response
 type BuildingResp struct {
-	ID        int64              `json:"id"`         // 楼栋编号
+	ID        types.BigInt       `json:"id"`         // 楼栋编号
 	Name      string             `json:"name"`       // 楼栋名称
 	FloorNum  int                `json:"floor_num"`  // 楼层数量
 	FloorList []BuildingItemResp `json:"floor_list"` // 楼层列表
@@ -49,7 +49,7 @@ type BuildingResp struct {
 // BuildingItemResp 楼层（对应 Java base.BuildingVo.BuildingItem）
 // @response
 type BuildingItemResp struct {
-	ID       int64           `json:"id"`        // 楼层编号
+	ID       types.BigInt    `json:"id"`        // 楼层编号
 	Name     string          `json:"name"`      // 楼层名称
 	RoomNum  int             `json:"room_num"`  // 房间数量
 	RoomList []FloorItemResp `json:"room_list"` // 房间列表
@@ -58,7 +58,7 @@ type BuildingItemResp struct {
 // FloorItemResp 房间（对应 Java base.BuildingVo.BuildingItem.FloorItem）
 // @response
 type FloorItemResp struct {
-	ID      int64          `json:"id"`       // 房间编号
+	ID      types.BigInt   `json:"id"`       // 房间编号
 	Name    string         `json:"name"`     // 房间名称
 	BedNum  int            `json:"bed_num"`  // 床位数量
 	BedList []RoomItemResp `json:"bed_list"` // 床位列表
@@ -67,12 +67,12 @@ type FloorItemResp struct {
 // RoomItemResp 床位（对应 Java base.BuildingVo...RoomItem）
 // @response
 type RoomItemResp struct {
-	ID        int64  `json:"id"`         // 床位编号
-	Name      string `json:"name"`       // 床位名称
-	BedFlag   string `json:"bed_flag"`   // 床位状态
-	ElderName string `json:"elder_name"` // 所住老人
-	Sex       string `json:"sex"`        // 老人性别
-	Age       int    `json:"age"`        // 老人年龄
+	ID        types.BigInt `json:"id"`         // 床位编号
+	Name      string       `json:"name"`       // 床位名称
+	BedFlag   string       `json:"bed_flag"`   // 床位状态
+	ElderName string       `json:"elder_name"` // 所住老人
+	Sex       string       `json:"sex"`        // 老人性别
+	Age       int          `json:"age"`        // 老人年龄
 }
 
 // ============ 跨 Controller 共享请求对象 ============
@@ -143,10 +143,10 @@ type NurseGradeServiceResp struct {
 // GetBedByIDResp 床位详情响应（被 ElderRecord 引用）
 // @response
 type GetBedByIDResp struct {
-	BedID      int64       `json:"bed_id"`      // 床位编号
-	BedName    string      `json:"bed_name"`    // 床位名称
-	RoomType   string      `json:"room_type"`   // 房间类型
-	MonthPrice types.Money `json:"month_price"` // 月床位费用
+	BedID      types.BigInt `json:"bed_id"`      // 床位编号
+	BedName    string       `json:"bed_name"`    // 床位名称
+	RoomType   string       `json:"room_type"`   // 房间类型
+	MonthPrice types.Money  `json:"month_price"` // 月床位费用
 }
 
 // GetElderRecordByIDResp 长者档案详情响应（被 ElderRecord 引用）
@@ -167,15 +167,15 @@ type GetElderRecordByIDResp struct {
 // GetElderLabelByIDLabelResp 客户标签响应（被 ElderRecord 引用）
 // @response
 type GetElderLabelByIDLabelResp struct {
-	ID    int64  `json:"id"`    // 编号
-	Name  string `json:"name"`  // 名称
-	Color string `json:"color"` // 颜色
+	ID    types.BigInt `json:"id"`    // 编号
+	Name  string       `json:"name"`  // 名称
+	Color string       `json:"color"` // 颜色
 }
 
 // ListLabelResp 客户标签分类列表响应（被 ElderRecord、Label 引用）
 // @response
 type ListLabelResp struct {
-	ID            int64           `json:"id"`              // 标签分类编号
+	ID            types.BigInt    `json:"id"`              // 标签分类编号
 	Name          string          `json:"name"`            // 标签分类名称
 	LabelItemList []LabelItemResp `json:"label_item_list"` // 标签分类子项列表
 }
@@ -183,10 +183,10 @@ type ListLabelResp struct {
 // LabelItemResp 标签子项（嵌套）
 // @response
 type LabelItemResp struct {
-	ID     int64  `json:"id"`      // 标签编号
-	TypeID int64  `json:"type_id"` // 标签分类编号
-	Name   string `json:"name"`    // 标签名称
-	Color  string `json:"color"`   // 标签颜色
+	ID     types.BigInt `json:"id"`      // 标签编号
+	TypeID types.BigInt `json:"type_id"` // 标签分类编号
+	Name   string       `json:"name"`    // 标签名称
+	Color  string       `json:"color"`   // 标签颜色
 }
 
 // GetElderFeeByIDResp 老人费用详情响应（被 ElderRecord 引用）
@@ -201,17 +201,17 @@ type GetElderFeeByIDResp struct {
 // FeeDetail 费用详情（嵌套）
 // @response
 type FeeDetail struct {
-	FeeDate                  string  `json:"fee_date"`                    // 消费时间
-	ContractInsideNurseFee   float64 `json:"contract_inside_nurse_fee"`   // 合同内护理费用
-	ContractInsideDishesFee  float64 `json:"contract_inside_dishes_fee"`  // 合同内餐饮费用
-	ContractInsideBedFee     float64 `json:"contract_inside_bed_fee"`     // 合同内床位费用
-	OrderNurseFee            float64 `json:"order_nurse_fee"`             // 预定护理费用
-	OrderDishesFee           float64 `json:"order_dishes_fee"`            // 预定套餐费用
-	ContractOutsideNurseFee  float64 `json:"contract_outside_nurse_fee"`  // 合同外护理费用
-	ContractOutsideDishesFee float64 `json:"contract_outside_dishes_fee"` // 合同外餐饮费用
-	ContractOutsideBedFee    float64 `json:"contract_outside_bed_fee"`    // 合同外床位费用
-	PayableFee               float64 `json:"payable_fee"`                 // 应缴费用
-	ReturnableFee            float64 `json:"returnable_fee"`              // 应退费用
+	FeeDate                  string      `json:"fee_date"`                    // 消费时间
+	ContractInsideNurseFee   types.Money `json:"contract_inside_nurse_fee"`   // 合同内护理费用
+	ContractInsideDishesFee  types.Money `json:"contract_inside_dishes_fee"`  // 合同内餐饮费用
+	ContractInsideBedFee     types.Money `json:"contract_inside_bed_fee"`     // 合同内床位费用
+	OrderNurseFee            types.Money `json:"order_nurse_fee"`             // 预定护理费用
+	OrderDishesFee           types.Money `json:"order_dishes_fee"`            // 预定套餐费用
+	ContractOutsideNurseFee  types.Money `json:"contract_outside_nurse_fee"`  // 合同外护理费用
+	ContractOutsideDishesFee types.Money `json:"contract_outside_dishes_fee"` // 合同外餐饮费用
+	ContractOutsideBedFee    types.Money `json:"contract_outside_bed_fee"`    // 合同外床位费用
+	PayableFee               types.Money `json:"payable_fee"`                 // 应缴费用
+	ReturnableFee            types.Money `json:"returnable_fee"`              // 应退费用
 }
 
 // Date 仅用于标识时间类型字段（go 中使用 time.Time）

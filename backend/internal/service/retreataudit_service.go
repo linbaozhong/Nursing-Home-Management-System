@@ -29,7 +29,7 @@ type retreatAuditJoin struct {
 }
 
 // PageRetreatAuditByKey 分页查询退住审核
-func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto.PageRetreatAuditByKeyReq, out *[]dto.PageRetreatAuditByKeyVO) error {
+func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto.PageRetreatAuditByKeyReq, out *[]dto.PageRetreatAuditByKeyResp) error {
 	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
@@ -37,11 +37,11 @@ func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto
 		LeftJoin(tblretreatapply.ElderId, tblelder.Id).
 		LeftJoin(tblretreatapply.CreateId, tblstaff.Id).
 		Where(tblretreatapply.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
-	if in.Key != nil && *in.Key != "" {
-		q = q.Where(tblelder.Name.Like(*in.Key))
+	if in.ElderName != nil && *in.ElderName != "" {
+		q = q.Where(tblelder.Name.Like(*in.ElderName))
 	}
 	var joins []retreatAuditJoin
-	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblretreatapply.Id,
 			tblretreatapply.ApplyFlag,
@@ -53,16 +53,14 @@ func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto
 	if e != nil {
 		return e
 	}
-	if !has {
-		return nil
-	}
-	res := make([]dto.PageRetreatAuditByKeyVO, 0, len(joins))
+	res := make([]dto.PageRetreatAuditByKeyResp, 0, len(joins))
 	for _, j := range joins {
-		res = append(res, dto.PageRetreatAuditByKeyVO{
-			ID:        int64(j.ID),
-			ElderName: j.ElderName.String(),
-			ApplyFlag: constant.AuditStatus(j.ApplyFlag).String(),
-			ApplyName: j.ApplyName.String(),
+		res = append(res, dto.PageRetreatAuditByKeyResp{
+			ID:            types.BigInt(j.ID),
+			ElderName:     j.ElderName.String(),
+			ApplyFlag:     j.ApplyFlag,
+			ApplyFlagName: constant.AuditStatus(j.ApplyFlag).String(),
+			ApplyName:     j.ApplyName.String(),
 		})
 	}
 	*out = res
@@ -70,7 +68,7 @@ func (s *retreatAuditService) PageRetreatAuditByKey(ctx context.Context, in *dto
 }
 
 // GetRetreatAuditById 查询退住审核详情（含老人信息）
-func (s *retreatAuditService) GetRetreatAuditById(ctx context.Context, in *dto.IDReq, out *dto.GetRetreatAuditByIDVO) error {
+func (s *retreatAuditService) GetRetreatAuditById(ctx context.Context, in *dto.IDReq, out *dto.GetRetreatAuditByIDResp) error {
 	apply := new(do.RetreatApply)
 	has, e := dao.RetreatApply(db).Get(ctx, ace.Where(tblretreatapply.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblretreatapply.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
@@ -104,13 +102,13 @@ func (s *retreatAuditService) AuditRetreat(ctx context.Context, in *dto.AuditRet
 		return constant.ErrDataNotExist
 	}
 	if *in.AuditResult == "不通过" {
-		if _, e = dao.RetreatApply(db).UpdateById(ctx, *in.ID, tblretreatapply.ApplyFlag.Set(types.Int8(constant.AuditNotPass))); e != nil {
+		if _, e = dao.RetreatApply(db).UpdateById(ctx, types.BigInt(*in.ID), tblretreatapply.ApplyFlag.Set(types.Int8(constant.AuditNotPass))); e != nil {
 			return e
 		}
 		return nil
 	}
 	// 审核通过
-	if _, e = dao.RetreatApply(db).UpdateById(ctx, *in.ID, tblretreatapply.ApplyFlag.Set(types.Int8(constant.AuditPass))); e != nil {
+	if _, e = dao.RetreatApply(db).UpdateById(ctx, types.BigInt(*in.ID), tblretreatapply.ApplyFlag.Set(types.Int8(constant.AuditPass))); e != nil {
 		return e
 	}
 	// 同步老人状态为退住审核

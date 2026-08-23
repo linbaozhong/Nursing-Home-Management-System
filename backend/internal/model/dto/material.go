@@ -76,10 +76,10 @@ type PageMaterialTypeByKeyReq struct {
 // PageMaterialByKeyResp 分页查询物资响应
 // @response
 type PageMaterialByKeyResp struct {
-	ID       int64       `json:"id"`        // id
-	Name     string      `json:"name"`      // 物资名称
-	TypeName string      `json:"type_name"` // 物资分类
-	Price    types.Money `json:"price"`     // 物资单价
+	ID       types.BigInt `json:"id"`        // id
+	Name     string       `json:"name"`      // 物资名称
+	TypeName string       `json:"type_name"` // 物资分类
+	Price    types.Money  `json:"price"`     // 物资单价
 }
 
 // OperateMaterialResp 操作物资响应（继承 OperateMaterialReq）
@@ -91,6 +91,6 @@ type OperateMaterialResp struct {
 // PageMaterialTypeResp 分页查询物资分类响应
 // @response
 type PageMaterialTypeResp struct {
-	ID   int64  `json:"id"`   // 物资分类编号
-	Name string `json:"name"` // 物资分类名称
+	ID   types.BigInt `json:"id"`   // 物资分类编号
+	Name string       `json:"name"` // 物资分类名称
 }

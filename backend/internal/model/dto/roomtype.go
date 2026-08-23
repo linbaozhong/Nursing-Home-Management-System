@@ -25,9 +25,9 @@ type OperateRoomTypeReq struct {
 // PageRoomTypeByKeyResp 分页查询房间类型响应
 // @response
 type PageRoomTypeByKeyResp struct {
-	ID         int64       `json:"id"`
-	Name       string      `json:"name"`
-	MonthPrice types.Money `json:"month_price"`
+	ID         types.BigInt `json:"id"`
+	Name       string       `json:"name"`
+	MonthPrice types.Money  `json:"month_price"`
 }
 
 // OperateRoomTypeResp 操作房间类型响应（继承 OperateRoomTypeReq）

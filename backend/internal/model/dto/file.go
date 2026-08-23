@@ -1,12 +1,14 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ FileController 响应 ============
 
 // FileInfoResp 文件上传成功响应
 // @response
 type FileInfoResp struct {
-	ID  int64  `json:"id"`  // id
-	URL string `json:"url"` // url
+	ID  types.BigInt `json:"id"`  // id
+	URL string       `json:"url"` // url
 }
 
 // UploadImageReq 上传图片请求

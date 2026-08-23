@@ -147,25 +147,25 @@ func (b *build) buildTree(buildings []*do.Building, floors []*do.Floor, rooms []
 	tree := make([]dto.BuildingResp, 0, len(buildings))
 	for _, bd := range buildings {
 		vo := dto.BuildingResp{
-			ID:       int64(bd.Id),
+			ID:       types.BigInt(bd.Id),
 			Name:     string(bd.Name),
 			FloorNum: int(bd.FloorNum),
 		}
 		for _, fl := range buildingMap[uint64(bd.Id)] {
 			fi := dto.BuildingItemResp{
-				ID:      int64(fl.Id),
+				ID:      types.BigInt(fl.Id),
 				Name:    string(fl.Name),
 				RoomNum: int(fl.RoomNum),
 			}
 			for _, rm := range floorMap[uint64(fl.Id)] {
 				ri := dto.FloorItemResp{
-					ID:     int64(rm.Id),
+					ID:     types.BigInt(rm.Id),
 					Name:   string(rm.Name),
 					BedNum: int(rm.BedNum),
 				}
 				for _, bd2 := range roomMap[uint64(rm.Id)] {
 					ri.BedList = append(ri.BedList, dto.RoomItemResp{
-						ID:      int64(bd2.Id),
+						ID:      types.BigInt(bd2.Id),
 						Name:    string(bd2.Name),
 						BedFlag: constant.YesNo(bd2.BedFlag).String(),
 					})
@@ -211,7 +211,7 @@ func (b *build) GetBuildingById(ctx context.Context, in *dto.IDReq, out *dto.Ope
 	if !has || obj == nil {
 		return errors.New("楼宇不存在")
 	}
-	out.ID = int64(obj.Id)
+	out.ID = types.BigInt(obj.Id)
 	out.Name = obj.Name.String()
 	out.FloorNum = int(obj.FloorNum)
 	return nil
@@ -316,7 +316,7 @@ func (b *build) GetFloorByBuildingId(ctx context.Context, in *dto.GetFloorByBuil
 	*out = make([]dto.DropDown, 0, len(list))
 	for _, floor := range list {
 		*out = append(*out, dto.DropDown{
-			ID:   int64(floor.Id),
+			ID:   types.BigInt(floor.Id),
 			Name: floor.Name.String(),
 		})
 	}
@@ -333,8 +333,8 @@ func (b *build) GetFloorById(ctx context.Context, in *dto.IDReq, out *dto.Operat
 	if !has || obj == nil {
 		return errors.New("楼层不存在")
 	}
-	out.ID = int64(obj.Id)
-	out.BuildingID = int64(obj.BuildingId)
+	out.ID = types.BigInt(obj.Id)
+	out.BuildingID = types.BigInt(obj.BuildingId)
 	out.Name = obj.Name.String()
 	out.RoomNum = int(obj.RoomNum)
 	return nil
@@ -454,7 +454,7 @@ func (b *build) GetRoomByFloorId(ctx context.Context, in *dto.GetRoomByFloorIdRe
 	*out = make([]dto.RoomByFloorIdVO, 0, len(list))
 	for _, room := range list {
 		*out = append(*out, dto.RoomByFloorIdVO{
-			ID:     int64(room.Id),
+			ID:     types.BigInt(room.Id),
 			Name:   room.Name.String(),
 			BedNum: int(room.BedNum),
 		})
@@ -472,9 +472,9 @@ func (b *build) GetRoomById(ctx context.Context, in *dto.IDReq, out *dto.Operate
 	if !has || obj == nil {
 		return errors.New("房间不存在")
 	}
-	out.ID = int64(obj.Id)
-	out.TypeId = int64(obj.TypeId)
-	out.FloorId = int64(obj.FloorId)
+	out.ID = types.BigInt(obj.Id)
+	out.TypeId = types.BigInt(obj.TypeId)
+	out.FloorId = types.BigInt(obj.FloorId)
 	out.Name = obj.Name.String()
 	out.BedNum = int(obj.BedNum)
 	return nil
@@ -610,7 +610,7 @@ func (b *build) PageBedByKey(ctx context.Context, in *dto.PageBedByKeyReq, out *
 	*out = make([]dto.PageBedByKeyVO, 0, len(pageItems))
 	for _, item := range pageItems {
 		*out = append(*out, dto.PageBedByKeyVO{
-			ID:      int64(item.bed.Id),
+			ID:      types.BigInt(item.bed.Id),
 			Name:    item.bed.Name.String(),
 			BedFlag: item.bed.BedFlag.String(),
 		})
@@ -650,8 +650,8 @@ func (b *build) GetBedById(ctx context.Context, in *dto.IDReq, out *dto.OperateB
 	if !has || obj == nil {
 		return errors.New("床位不存在")
 	}
-	out.ID = int64(obj.Id)
-	out.RoomId = int64(obj.RoomId)
+	out.ID = types.BigInt(obj.Id)
+	out.RoomId = types.BigInt(obj.RoomId)
 	out.Name = obj.Name.String()
 	return nil
 }
@@ -744,7 +744,7 @@ func (b *build) ListRoomType(ctx context.Context, in *dto.EmptyReq, out *[]dto.D
 	}
 	dropList := make([]dto.DropDown, 0, len(list))
 	for _, v := range list {
-		dropList = append(dropList, dto.DropDown{ID: int64(v.Id), Name: string(v.Name)})
+		dropList = append(dropList, dto.DropDown{ID: types.BigInt(v.Id), Name: string(v.Name)})
 	}
 	*out = dropList
 	return nil

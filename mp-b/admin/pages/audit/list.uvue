@@ -1,0 +1,178 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'退住审核'" />
+
+		<view class="search-bar">
+			<input class="search-input" v-model="keyword" placeholder="搜索老人姓名" confirm-type="search" />
+		</view>
+
+		<scroll-view class="list" scroll-y :show-scrollbar="false">
+			<view v-for="item in filteredList" :key="item.id" class="card">
+				<view class="card__head">
+					<text class="card__name">{{ item.elder_name }}</text>
+					<StatusTag :text="item.apply_flag" :type="flagType(item.apply_flag)" />
+				</view>
+				<view class="card__foot">
+					<text class="card__apply">申请人：{{ item.apply_name }}</text>
+					<view class="card__ops" v-if="canAudit(item.apply_flag)">
+						<view class="op op--danger" @click="doAudit(item, false)"><text>驳回</text></view>
+						<view class="op op--success" @click="doAudit(item, true)"><text>通过</text></view>
+					</view>
+				</view>
+			</view>
+			<view v-if="filteredList.length == 0" class="empty"><text>暂无待审核</text></view>
+		</scroll-view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import StatusTag from '../../components/status-tag/StatusTag.uvue'
+	import { onShow } from '@dcloudio/uni-app'
+	import { pageAuditByKey, auditRetreat, AuditItem } from '../../api/audit'
+
+	const keyword = ref('')
+	const list = ref<AuditItem[]>([])
+
+	onShow(() => {
+		loadData()
+	})
+
+	async function loadData() {
+		try {
+			const res = await pageAuditByKey()
+			list.value = res.list
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	const filteredList = computed((): AuditItem[] => {
+		let items = list.value
+		const kw = keyword.value.trim()
+		if (kw != '') {
+			items = items.filter((it) => it.elder_name.indexOf(kw) >= 0)
+		}
+		return items
+	})
+
+	function flagType(flag: string): 'success' | 'danger' | 'warning' | 'default' {
+		if (flag == '通过') return 'success'
+		if (flag == '不通过') return 'danger'
+		if (flag == '审核中') return 'warning'
+		return 'default'
+	}
+
+	function canAudit(flag: string): boolean {
+		return flag == '待审核' || flag == '审核中'
+	}
+
+	function doAudit(item: AuditItem, pass: boolean) {
+		uni.showModal({
+			title: pass ? '通过审核' : '驳回审核',
+			content: '确认对 ' + item.elder_name + ' 的退住申请' + (pass ? '通过' : '驳回') + '？',
+			success: async (res) => {
+				if (res.confirm) {
+					try {
+						await auditRetreat(item.id, pass, '')
+						uni.showToast({ title: pass ? '已通过' : '已驳回', icon: 'success' })
+						loadData()
+					} catch (e) {
+						// 已统一 toast
+					}
+				}
+			}
+		})
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.search-bar {
+		padding: 10px 16px 0 16px;
+	}
+
+	.search-input {
+		height: 38px;
+		background-color: #FFFFFF;
+		border-radius: 19px;
+		padding-left: 14px;
+		font-size: 14px;
+	}
+
+	.list {
+		flex: 1;
+		padding: 8px 16px 0 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__head {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.card__name {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.card__foot {
+		margin-top: 10px;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.card__apply {
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.card__ops {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.op {
+		height: 30px;
+		padding: 0 14px;
+		margin-left: 10px;
+		border-radius: 15px;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.op text {
+		font-size: 13px;
+		color: #FFFFFF;
+	}
+
+	.op--danger {
+		background-color: #DD524D;
+	}
+
+	.op--success {
+		background-color: #4CD964;
+	}
+
+	.empty {
+		align-items: center;
+		padding-top: 60px;
+	}
+
+	.empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+</style>

@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // ============ ConsultController 请求 ============
 
@@ -107,25 +110,25 @@ type PageIntentByKeyReq struct {
 // PageConsultByKeyResp 分页查询咨询响应
 // @response
 type PageConsultByKeyResp struct {
-	ConsultID    int64     `json:"consult_id"`    // 咨询人编号
-	ElderID      int64     `json:"elder_id"`      // 老人编号
-	ConsultName  string    `json:"consult_name"`  // 咨询人姓名
-	ConsultPhone string    `json:"consult_phone"` // 咨询人电话
-	ElderName    string    `json:"elder_name"`    // 老人姓名
-	ElderPhone   string    `json:"elder_phone"`   // 老人电话
-	Sex          string    `json:"sex"`           // 性别
-	Age          int       `json:"age"`           // 年龄
-	ConsultDate  time.Time `json:"consult_date"`  // 咨询日期
-	SourceName   string    `json:"source_name"`   // 来源渠道
-	StaffName    string    `json:"staff_name"`    // 接待人姓名
+	ConsultID    types.BigInt `json:"consult_id"`    // 咨询人编号
+	ElderID      types.BigInt `json:"elder_id"`      // 老人编号
+	ConsultName  string       `json:"consult_name"`  // 咨询人姓名
+	ConsultPhone string       `json:"consult_phone"` // 咨询人电话
+	ElderName    string       `json:"elder_name"`    // 老人姓名
+	ElderPhone   string       `json:"elder_phone"`   // 老人电话
+	Sex          string       `json:"sex"`           // 性别
+	Age          int          `json:"age"`           // 年龄
+	ConsultDate  time.Time    `json:"consult_date"`  // 咨询日期
+	SourceName   string       `json:"source_name"`   // 来源渠道
+	StaffName    string       `json:"staff_name"`    // 接待人姓名
 }
 
 // PageCommunicationRecordResp 分页查询沟通记录响应
 // @response
 type PageCommunicationRecordResp struct {
-	ID                  int64     `json:"id"`                   // id
-	RecordDate          time.Time `json:"record_date"`          // 记录时间
-	CommunicationRecord string    `json:"communication_record"` // 沟通记录
+	ID                  types.BigInt `json:"id"`                   // id
+	RecordDate          time.Time    `json:"record_date"`          // 记录时间
+	CommunicationRecord string       `json:"communication_record"` // 沟通记录
 }
 
 // GetConsultByConsultIDAndElderIDResp 按咨询人/老人编号获取咨询信息响应（继承 OperateConsultReq）

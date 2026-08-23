@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"github.com/linbaozhong/gentity/pkg/types"
 	"github.com/linbaozhong/gentity/pkg/validator"
 )
 
@@ -54,9 +55,9 @@ type FamilyMyEldersReq struct {
 // FamilyElderResp 家属绑定老人响应
 // @response
 type FamilyElderResp struct {
-	ElderID  int64  `json:"elder_id"` // 老人编号
-	Name     string `json:"name"`     // 老人姓名
-	Relation string `json:"relation"` // 与老人关系
+	ElderID  types.BigInt `json:"elder_id"` // 老人编号
+	Name     string       `json:"name"`     // 老人姓名
+	Relation string       `json:"relation"` // 与老人关系
 }
 
 // FamilyLoginResp 家属登录响应
@@ -77,9 +78,9 @@ type FamilyMyEldersResp struct {
 // RechargeUnifiedOrderReq 家属充值统一下单请求
 // @request
 type RechargeUnifiedOrderReq struct {
-	Phone   *string `json:"phone" valid:"required"`         // 当前家属手机号
-	ElderID *int64  `json:"elder_id" valid:"required"`      // 充值到哪位老人账户
-	Amount  *int64  `json:"amount" valid:"required,min(0)"` // 金额（元）
+	Phone   *string      `json:"phone" valid:"required"`         // 当前家属手机号
+	ElderID *int64       `json:"elder_id" valid:"required"`      // 充值到哪位老人账户
+	Amount  *types.Money `json:"amount" valid:"required,min(0)"` // 金额（元，types.Money 内部以分存储）
 }
 
 // BindOpenidReq 家属绑定微信openid请求

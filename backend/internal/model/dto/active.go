@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // ============ ActiveController 请求 ============
 
@@ -36,16 +39,16 @@ type OperateActiveReq struct {
 // PageActiveByKeyResp 分页查询活动响应
 // @response
 type PageActiveByKeyResp struct {
-	ID            int64     `json:"id"`             // id
-	TypeName      string    `json:"type_name"`      // 活动分类名称
-	Theme         string    `json:"theme"`          // 活动主题
-	Name          string    `json:"name"`           // 活动名称
-	Content       string    `json:"content"`        // 活动内容
-	Address       string    `json:"address"`        // 活动地点
-	Organizer     string    `json:"organizer"`      // 组织者姓名
-	Phone         string    `json:"phone"`          // 组织者电话
-	ActiveDate    time.Time `json:"active_date"`    // 活动日期
-	ActivePicture string    `json:"active_picture"` // 活动图片
+	ID            types.BigInt `json:"id"`             // id
+	TypeName      string       `json:"type_name"`      // 活动分类名称
+	Theme         string       `json:"theme"`          // 活动主题
+	Name          string       `json:"name"`           // 活动名称
+	Content       string       `json:"content"`        // 活动内容
+	Address       string       `json:"address"`        // 活动地点
+	Organizer     string       `json:"organizer"`      // 组织者姓名
+	Phone         string       `json:"phone"`          // 组织者电话
+	ActiveDate    time.Time    `json:"active_date"`    // 活动日期
+	ActivePicture string       `json:"active_picture"` // 活动图片
 }
 
 // GetActiveByIDResp 根据编号获取活动响应（继承 OperateActiveReq）
@@ -58,9 +61,9 @@ type GetActiveByIDResp struct {
 // ParticipateElderResp 参加活动老人响应
 // @response
 type ParticipateElderResp struct {
-	ID    int64  `json:"id"`    // id
-	Name  string `json:"name"`  // 老人姓名
-	Phone string `json:"phone"` // 老人电话
+	ID    types.BigInt `json:"id"`    // id
+	Name  string       `json:"name"`  // 老人姓名
+	Phone string       `json:"phone"` // 老人电话
 }
 
 var _ = time.Time{}

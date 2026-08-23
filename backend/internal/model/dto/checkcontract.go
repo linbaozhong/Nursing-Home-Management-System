@@ -51,26 +51,26 @@ type PageSearchElderByKeyReq struct {
 // PageCheckContractByKeyResp 分页查询入住签约响应
 // @response
 type PageCheckContractByKeyResp struct {
-	ID        int64  `json:"id"`         // id
-	Name      string `json:"name"`       // 姓名
-	IDNum     string `json:"id_num"`     // 身份证号
-	Age       int    `json:"age"`        // 年龄
-	Sex       string `json:"sex"`        // 性别
-	Phone     string `json:"phone"`      // 电话
-	Address   string `json:"address"`    // 地址
-	CheckFlag string `json:"check_flag"` // 入住状态
+	ID        types.BigInt `json:"id"`         // id
+	Name      string       `json:"name"`       // 姓名
+	IDNum     string       `json:"id_num"`     // 身份证号
+	Age       int          `json:"age"`        // 年龄
+	Sex       string       `json:"sex"`        // 性别
+	Phone     string       `json:"phone"`      // 电话
+	Address   string       `json:"address"`    // 地址
+	CheckFlag string       `json:"check_flag"` // 入住状态
 }
 
 // PageSearchElderByKeyResp 分页搜索老人响应
 // @response
 type PageSearchElderByKeyResp struct {
-	ID        int64  `json:"id"`         // id
-	Name      string `json:"name"`       // 姓名
-	IDNum     string `json:"id_num"`     // 身份证号
-	Sex       string `json:"sex"`        // 性别
-	Phone     string `json:"phone"`      // 电话
-	Address   string `json:"address"`    // 地址
-	CheckFlag string `json:"check_flag"` // 入住状态
+	ID        types.BigInt `json:"id"`         // id
+	Name      string       `json:"name"`       // 姓名
+	IDNum     string       `json:"id_num"`     // 身份证号
+	Sex       string       `json:"sex"`        // 性别
+	Phone     string       `json:"phone"`      // 电话
+	Address   string       `json:"address"`    // 地址
+	CheckFlag string       `json:"check_flag"` // 入住状态
 }
 
 // GetCheckContractByIDResp 根据编号获取入住签约响应（继承 OperateCheckContractReq）

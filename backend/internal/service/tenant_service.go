@@ -237,7 +237,7 @@ func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserT
 			continue
 		}
 		tenants = append(tenants, dto.TenantResp{
-			ID:           tn.Id.Int64(),
+			ID:           types.BigInt(tn.Id.Int64()),
 			Name:         tn.Name.String(),
 			Logo:         tn.Logo.String(),
 			ContactName:  tn.ContactName.String(),
@@ -249,7 +249,7 @@ func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserT
 		})
 	}
 	out.Tenants = tenants
-	out.Current = lib.TenantID(ctx)
+	out.Current = types.BigInt(lib.TenantID(ctx))
 	return nil
 }
 
@@ -335,10 +335,10 @@ func (t *tenant) InviteMember(ctx context.Context, in *dto.InviteMemberReq, out 
 	if e != nil {
 		return e
 	}
-	out.ID = memberID
-	out.UserID = userID
+	out.ID = types.BigInt(memberID)
+	out.UserID = types.BigInt(userID)
 	out.Phone = *in.Phone
-	out.RoleID = *in.RoleID
+	out.RoleID = types.BigInt(*in.RoleID)
 	out.Status = constant.MemberStatusActive
 	return nil
 }
@@ -405,7 +405,7 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginReq, out *dto.WxLog
 			return e2
 		}
 		tenants = append(tenants, dto.TenantResp{
-			ID:           tn.Id.Int64(),
+			ID:           types.BigInt(tn.Id.Int64()),
 			Name:         tn.Name.String(),
 			Logo:         tn.Logo.String(),
 			ContactName:  tn.ContactName.String(),
@@ -457,7 +457,7 @@ func (a *account) fillUserByMember(ctx context.Context, userID, tenantID, member
 	if e != nil {
 		return e
 	}
-	out.ID = userID
+	out.ID = types.BigInt(userID)
 	out.Name = user.Name.String()
 	out.Avator = user.Avator.String()
 	out.Phone = user.Phone.String()

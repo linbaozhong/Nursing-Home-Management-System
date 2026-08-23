@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ BuildController 请求 ============
 
 // PageBedByKeyReq 分页查询床位请求
@@ -67,9 +69,9 @@ type GetBuildingTreeResp = BuildingResp
 // PageBuildingByKeyResp 分页查询楼栋响应
 // @response
 type PageBuildingByKeyResp struct {
-	ID       int64  `json:"id"`        // 楼栋编号
-	Name     string `json:"name"`      // 楼栋名称
-	FloorNum int    `json:"floor_num"` // 楼层数量
+	ID       types.BigInt `json:"id"`        // 楼栋编号
+	Name     string       `json:"name"`      // 楼栋名称
+	FloorNum int          `json:"floor_num"` // 楼层数量
 }
 
 // PageBuildingByKeyReq 分页查询楼宇请求
@@ -188,69 +190,69 @@ type GetRoomByFloorIdReq struct {
 // OperateBuildingResp 楼栋详情响应（对应 OperateBuildingResp）
 // @response
 type OperateBuildingResp struct {
-	ID       int64  `json:"id"`        // 楼栋编号
-	Name     string `json:"name"`      // 楼栋名称
-	FloorNum int    `json:"floor_num"` // 楼层数量
+	ID       types.BigInt `json:"id"`        // 楼栋编号
+	Name     string       `json:"name"`      // 楼栋名称
+	FloorNum int          `json:"floor_num"` // 楼层数量
 }
 
 // PageFloorByKeyResp 分页查询楼层响应（对应 PageFloorByKeyResp）
 // @response
 type PageFloorByKeyResp struct {
-	ID         int64  `json:"id"`          // 楼层编号
-	BuildingID int64  `json:"building_id"` // 楼栋编号
-	Name       string `json:"name"`        // 楼层名称
-	RoomNum    int    `json:"room_num"`    // 房间数量
+	ID         types.BigInt `json:"id"`          // 楼层编号
+	BuildingID types.BigInt `json:"building_id"` // 楼栋编号
+	Name       string       `json:"name"`        // 楼层名称
+	RoomNum    int          `json:"room_num"`    // 房间数量
 }
 
 // OperateFloorResp 楼层详情响应（对应 OperateFloorResp）
 // @response
 type OperateFloorResp struct {
-	ID         int64  `json:"id"`          // 楼层编号
-	BuildingID int64  `json:"building_id"` // 楼栋编号
-	Name       string `json:"name"`        // 楼层名称
-	RoomNum    int    `json:"room_num"`    // 房间数量
+	ID         types.BigInt `json:"id"`          // 楼层编号
+	BuildingID types.BigInt `json:"building_id"` // 楼栋编号
+	Name       string       `json:"name"`        // 楼层名称
+	RoomNum    int          `json:"room_num"`    // 房间数量
 }
 
 // PageRoomByKeyResp 分页查询房间响应（对应 PageRoomByKeyResp）
 // @response
 type PageRoomByKeyResp struct {
-	ID      int64  `json:"id"`       // 房间编号
-	TypeId  int64  `json:"type_id"`  // 房间类型
-	FloorId int64  `json:"floor_id"` // 楼层编号
-	Name    string `json:"name"`     // 房间名称
-	BedNum  int    `json:"bed_num"`  // 床位数量
+	ID      types.BigInt `json:"id"`       // 房间编号
+	TypeId  types.BigInt `json:"type_id"`  // 房间类型
+	FloorId types.BigInt `json:"floor_id"` // 楼层编号
+	Name    string       `json:"name"`     // 房间名称
+	BedNum  int          `json:"bed_num"`  // 床位数量
 }
 
 // OperateRoomResp 房间详情响应（对应 OperateRoomResp）
 // @response
 type OperateRoomResp struct {
-	ID      int64  `json:"id"`       // 房间编号
-	TypeId  int64  `json:"type_id"`  // 房间类型
-	FloorId int64  `json:"floor_id"` // 楼层编号
-	Name    string `json:"name"`     // 房间名称
-	BedNum  int    `json:"bed_num"`  // 床位数量
+	ID      types.BigInt `json:"id"`       // 房间编号
+	TypeId  types.BigInt `json:"type_id"`  // 房间类型
+	FloorId types.BigInt `json:"floor_id"` // 楼层编号
+	Name    string       `json:"name"`     // 房间名称
+	BedNum  int          `json:"bed_num"`  // 床位数量
 }
 
 // RoomByFloorIdResp 根据楼层获取房间列表响应（对应 FloorItem）
 // @response
 type RoomByFloorIdResp struct {
-	ID     int64  `json:"id"`      // 房间编号
-	Name   string `json:"name"`    // 房间名称
-	BedNum int    `json:"bed_num"` // 床位数量
+	ID     types.BigInt `json:"id"`      // 房间编号
+	Name   string       `json:"name"`    // 房间名称
+	BedNum int          `json:"bed_num"` // 床位数量
 }
 
 // PageBedByKeyResp 分页查询床位响应（对应 PageBedByKeyResp）
 // @response
 type PageBedByKeyResp struct {
-	ID      int64  `json:"id"`       // 床位编号
-	Name    string `json:"name"`     // 床位名称
-	BedFlag string `json:"bed_flag"` // 床位状态
+	ID      types.BigInt `json:"id"`       // 床位编号
+	Name    string       `json:"name"`     // 床位名称
+	BedFlag string       `json:"bed_flag"` // 床位状态
 }
 
 // OperateBedResp 床位详情响应（对应 OperateBedResp）
 // @response
 type OperateBedResp struct {
-	ID     int64  `json:"id"`      // 床位编号
-	RoomId int64  `json:"room_id"` // 房间编号
-	Name   string `json:"name"`    // 床位名称
+	ID     types.BigInt `json:"id"`      // 床位编号
+	RoomId types.BigInt `json:"room_id"` // 房间编号
+	Name   string       `json:"name"`    // 床位名称
 }

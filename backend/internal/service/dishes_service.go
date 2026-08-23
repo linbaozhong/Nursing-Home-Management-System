@@ -146,7 +146,7 @@ func (d *dishes) GetDishesTypeById(ctx context.Context, in *dto.IDReq, out *dto.
 	if !has {
 		return errors.New("菜品类别不存在")
 	}
-	out.ID = int64(obj.Id)
+	out.ID = types.BigInt(obj.Id)
 	out.Name = obj.Name.String()
 	return nil
 }

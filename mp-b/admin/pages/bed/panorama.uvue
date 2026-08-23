@@ -1,0 +1,235 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'床位全景'" />
+
+		<!-- 层级：楼栋 → 楼层 → 房间列表 -->
+		<view class="level-bar">
+			<view
+				v-for="(lv, i) in breadcrumbs"
+				:key="i"
+				class="level-item"
+				:class="{ 'level-item--active': i == breadcrumbs.length - 1 }"
+				@click="goLevel(i)"
+			>
+				<text>{{ lv }}</text>
+			</view>
+		</view>
+
+		<!-- 楼栋选择 -->
+		<view v-if="stage == 'building'" class="list">
+			<view v-for="b in buildings" :key="b.id" class="card" @click="pickBuilding(b)">
+				<text class="card__name">{{ b.name }}</text>
+				<text class="card__arrow">›</text>
+			</view>
+		</view>
+
+		<!-- 楼层选择 -->
+		<view v-else-if="stage == 'floor'" class="list">
+			<view v-for="f in floors" :key="f.id" class="card" @click="pickFloor(f)">
+				<text class="card__name">{{ f.name }}</text>
+				<text class="card__arrow">›</text>
+			</view>
+		</view>
+
+		<!-- 房间列表（含床位） -->
+		<view v-else-if="stage == 'room'" class="list">
+			<scroll-view class="scroll" scroll-y :show-scrollbar="false">
+				<view v-for="r in rooms" :key="r.id" class="room-card">
+					<text class="room-card__name">{{ r.name }}</text>
+					<view class="room-card__beds">
+						<view
+							v-for="b in r.bed_list"
+							:key="b.id"
+							class="bed"
+							:class="{
+								'bed--occ': b.bed_flag == '已入住',
+								'bed--free': b.bed_flag == '空'
+							}"
+						>
+							<text class="bed__name">{{ b.name }}</text>
+							<text class="bed__elder" v-if="b.elder_name != ''">{{ b.elder_name }}</text>
+							<text class="bed__elder" v-else>空闲</text>
+						</view>
+					</view>
+				</view>
+				<view v-if="rooms.length == 0" class="empty"><text>暂无房间</text></view>
+			</scroll-view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onMounted } from '@dcloudio/uni-app'
+	import { listBuilding, listFloorByBuildingId, listRoomByFloorId, DropDownItem, FloorItem } from '../../api/bed'
+
+	const stage = ref('building')
+	const breadcrumbs = ref<string[]>([])
+	const buildings = ref<DropDownItem[]>([])
+	const floors = ref<DropDownItem[]>([])
+	const rooms = ref<FloorItem[]>([])
+
+	onMounted(() => {
+		loadBuildings()
+	})
+
+	async function loadBuildings() {
+		try {
+			buildings.value = await listBuilding()
+			breadcrumbs.value = ['楼栋']
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	async function pickBuilding(b: DropDownItem) {
+		stage.value = 'floor'
+		breadcrumbs.value = ['楼栋', b.name]
+		try {
+			floors.value = await listFloorByBuildingId(b.id)
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	async function pickFloor(f: DropDownItem) {
+		stage.value = 'room'
+		breadcrumbs.value = ['楼栋', f.name, '房间']
+		try {
+			rooms.value = await listRoomByFloorId(f.id)
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function goLevel(i: number) {
+		if (i == 0) {
+			stage.value = 'building'
+			breadcrumbs.value = ['楼栋']
+		} else if (i == 1 && stage.value == 'room') {
+			// 返回楼栋级（已在 rooms 时，回退到楼栋列表）
+			stage.value = 'building'
+			breadcrumbs.value = ['楼栋']
+		}
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.level-bar {
+		flex-direction: row;
+		align-items: center;
+		padding: 12px 16px 4px 16px;
+	}
+
+	.level-item {
+		margin-right: 8px;
+		padding: 4px 10px;
+		border-radius: 12px;
+		background-color: #FFFFFF;
+	}
+
+	.level-item text {
+		font-size: 13px;
+		color: #666666;
+	}
+
+	.level-item--active {
+		background-color: #007AFF;
+	}
+
+	.level-item--active text {
+		color: #FFFFFF;
+	}
+
+	.list {
+		flex: 1;
+		padding: 8px 16px;
+	}
+
+	.card {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 16px;
+		margin-bottom: 12px;
+	}
+
+	.card__name {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.card__arrow {
+		font-size: 22px;
+		color: #CCCCCC;
+	}
+
+	.scroll {
+		flex: 1;
+	}
+
+	.room-card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.room-card__name {
+		font-size: 15px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.room-card__beds {
+		margin-top: 8px;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
+	.bed {
+		width: 30%;
+		margin-right: 3%;
+		margin-bottom: 8px;
+		border-radius: 8px;
+		padding: 8px;
+		flex-direction: column;
+	}
+
+	.bed--occ {
+		background-color: #FFE0E0;
+	}
+
+	.bed--free {
+		background-color: #E3F5E8;
+	}
+
+	.bed__name {
+		font-size: 13px;
+		color: #333333;
+		font-weight: 600;
+	}
+
+	.bed__elder {
+		margin-top: 2px;
+		font-size: 11px;
+		color: #666666;
+	}
+
+	.empty {
+		align-items: center;
+		padding-top: 60px;
+	}
+
+	.empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+</style>

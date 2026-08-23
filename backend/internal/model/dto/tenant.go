@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // ============ Tenant 请求 ============
 
@@ -46,32 +49,32 @@ type JoinMemberReq struct {
 // TenantResp 租户信息
 // @response
 type TenantResp struct {
-	ID           int64     `json:"id"`            // 租户编号
-	Name         string    `json:"name"`          // 企业名称
-	Logo         string    `json:"logo"`          // 企业logo
-	ContactName  string    `json:"contact_name"`  // 联系人姓名
-	ContactPhone string    `json:"contact_phone"` // 联系电话
-	Plan         string    `json:"plan"`          // 套餐
-	Status       int8      `json:"status"`        // 状态：0试用中 1正式 2锁定
-	TrialStart   time.Time `json:"trial_start"`   // 试用开始
-	TrialEnd     time.Time `json:"trial_end"`     // 试用结束
+	ID           types.BigInt `json:"id"`            // 租户编号
+	Name         string       `json:"name"`          // 企业名称
+	Logo         string       `json:"logo"`          // 企业logo
+	ContactName  string       `json:"contact_name"`  // 联系人姓名
+	ContactPhone string       `json:"contact_phone"` // 联系电话
+	Plan         string       `json:"plan"`          // 套餐
+	Status       int8         `json:"status"`        // 状态：0试用中 1正式 2锁定
+	TrialStart   time.Time    `json:"trial_start"`   // 试用开始
+	TrialEnd     time.Time    `json:"trial_end"`     // 试用结束
 }
 
 // UserTenantListResp 用户已绑定企业列表
 // @response
 type UserTenantListResp struct {
 	Tenants []TenantResp `json:"tenants"` // 企业列表
-	Current int64        `json:"current"` // 当前企业编号（0表示未选择）
+	Current types.BigInt `json:"current"` // 当前企业编号（0表示未选择）
 }
 
 // MemberResp 成员信息
 // @response
 type MemberResp struct {
-	ID       int64    `json:"id"`        // 成员编号
-	UserID   int64    `json:"user_id"`   // 全局用户编号
-	Name     string   `json:"name"`      // 姓名
-	Phone    string   `json:"phone"`     // 手机号
-	RoleID   int64    `json:"role_id"`   // 角色编号
-	Status   int8     `json:"status"`    // 状态：0在职 1离职
-	AuthUrls []string `json:"auth_urls"` // 权限url列表
+	ID       types.BigInt `json:"id"`        // 成员编号
+	UserID   types.BigInt `json:"user_id"`   // 全局用户编号
+	Name     string       `json:"name"`      // 姓名
+	Phone    string       `json:"phone"`     // 手机号
+	RoleID   types.BigInt `json:"role_id"`   // 角色编号
+	Status   int8         `json:"status"`    // 状态：0在职 1离职
+	AuthUrls []string     `json:"auth_urls"` // 权限url列表
 }

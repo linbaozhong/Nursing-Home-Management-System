@@ -36,7 +36,7 @@ func (s *serviceproject) ListServiceType(ctx context.Context, in *dto.OperateSer
 	*out = make([]dto.DropDown, 0, len(list))
 	for _, v := range list {
 		*out = append(*out, dto.DropDown{
-			ID:   int64(v.Id),
+			ID:   types.BigInt(v.Id),
 			Name: v.Name.String(),
 		})
 	}

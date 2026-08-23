@@ -98,15 +98,34 @@ export function isLogin(): boolean {
  *   /check-in/visit    来访登记
  *   /check-in/accident 事故登记
  *   /food/order        点餐
+ * P1 模块映射：
+ *   /live/bed          床位全景
+ *   /live/enter        入住签约
+ *   /live/apply        退住申请
+ *   /serve/book        护理预定
+ *   /tenant/member     成员管理
+ * P2 模块映射：
+ *   /home/dashboard    首页驾驶舱
+ *   /audit             退住审核
  */
-export type ModuleKey = 'elder' | 'leave' | 'visit' | 'accident' | 'order'
+export type ModuleKey =
+	| 'elder' | 'leave' | 'visit' | 'accident' | 'order'
+	| 'bed' | 'enter' | 'apply' | 'nurse-book' | 'member'
+	| 'home' | 'audit'
 
 const MODULE_AUTH_URL: Record<ModuleKey, string> = {
 	elder: '/people/old',
 	leave: '/check-in/leave',
 	visit: '/check-in/visit',
 	accident: '/check-in/accident',
-	order: '/food/order'
+	order: '/food/order',
+	bed: '/live/bed',
+	enter: '/live/enter',
+	apply: '/live/apply',
+	'nurse-book': '/serve/book',
+	member: '/tenant/member',
+	home: '/home/dashboard',
+	audit: '/audit'
 }
 
 /** 判断当前登录用户是否有某模块权限（基于 auth_url_list 精确匹配）。
@@ -119,10 +138,10 @@ export function canAccess(module: ModuleKey, user?: LoginUser | null): boolean {
 	return (u.auth_url_list ?? []).indexOf(MODULE_AUTH_URL[module]) >= 0
 }
 
-/** 返回当前用户可访问的模块列表（顺序：档案/外出/来访/事故/点餐）。
+/** 返回当前用户可访问的模块列表（顺序：档案/外出/来访/事故/点餐 + P1 + P2）。
  * 可传入已取好的 user 以避免重复读取本地存储；不传则内部取一次。 */
 export function accessibleModules(user?: LoginUser | null): ModuleKey[] {
 	const u = user === undefined ? getLoginUser() : user // 只读一次本地存储，循环内复用
-	const order: ModuleKey[] = ['elder', 'leave', 'visit', 'accident', 'order']
+	const order: ModuleKey[] = ['elder', 'leave', 'visit', 'accident', 'order', 'bed', 'enter', 'apply', 'nurse-book', 'member', 'home', 'audit']
 	return order.filter((m) => canAccess(m, u))
 }

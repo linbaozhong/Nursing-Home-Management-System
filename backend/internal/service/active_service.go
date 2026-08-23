@@ -127,7 +127,7 @@ func (a *active) GetActiveById(ctx context.Context, in *dto.IDReq, out *dto.GetA
 			continue
 		}
 		voList = append(voList, dto.ParticipateElderResp{
-			ID:    int64(el.Id),
+			ID:    types.BigInt(el.Id),
 			Name:  string(el.Name),
 			Phone: string(el.Phone),
 		})
@@ -235,7 +235,7 @@ func (a *active) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchEld
 	*out = make([]dto.ParticipateElderResp, 0, len(list))
 	for _, elder := range list {
 		*out = append(*out, dto.ParticipateElderResp{
-			ID:    int64(elder.Id),
+			ID:    types.BigInt(elder.Id),
 			Name:  elder.Name.String(),
 			Phone: elder.Phone.String(),
 		})
@@ -253,7 +253,7 @@ func (a *active) GetActiveType(ctx context.Context, in *dto.EmptyReq, out *[]dto
 	}
 	dropList := make([]dto.DropDown, 0, len(list))
 	for _, v := range list {
-		dropList = append(dropList, dto.DropDown{ID: int64(v.Id), Name: string(v.Name)})
+		dropList = append(dropList, dto.DropDown{ID: types.BigInt(v.Id), Name: string(v.Name)})
 	}
 	*out = dropList
 	return nil

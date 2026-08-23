@@ -133,7 +133,7 @@ func (b *bedpanorama) ListRoomByKey(ctx context.Context, in *dto.ListRoomByKeyRe
 	*out = make([]dto.FloorItemResp, 0, len(floorIdSet))
 	for _, floor := range floorIdSet {
 		floorVO := dto.FloorItemResp{
-			ID:      int64(floor.Id),
+			ID:      types.BigInt(floor.Id),
 			Name:    floor.Name.String(),
 			BedList: make([]dto.RoomItemResp, 0),
 		}
@@ -143,7 +143,7 @@ func (b *bedpanorama) ListRoomByKey(ctx context.Context, in *dto.ListRoomByKeyRe
 			bedNum += len(roomBeds)
 			for _, bed := range roomBeds {
 				bedVO := dto.RoomItemResp{
-					ID:      int64(bed.Id),
+					ID:      types.BigInt(bed.Id),
 					Name:    bed.Name.String(),
 					BedFlag: bed.BedFlag.String(),
 				}

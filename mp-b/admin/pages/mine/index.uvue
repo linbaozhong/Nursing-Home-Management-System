@@ -1,6 +1,12 @@
 <template>
 	<view class="page">
-		<uni-nav-bar :title="'我的'" />
+		<uni-nav-bar :title="'我的'">
+			<template #right>
+				<view class="nav-btn" @click="goConfig">
+					<text class="nav-btn__icon">⚙</text>
+				</view>
+			</template>
+		</uni-nav-bar>
 
 		<view class="profile">
 			<image v-if="user && user.avator != ''" class="avatar" :src="user.avator" />
@@ -40,6 +46,10 @@
 		uni.navigateTo({ url: '/pages/mine/edit-pass' })
 	}
 
+	function goConfig() {
+		uni.navigateTo({ url: '/pages/config/index' })
+	}
+
 	function doLogout() {
 		uni.showModal({
 			title: '提示',
@@ -58,6 +68,18 @@
 	.page {
 		flex: 1;
 		background-color: #F5F6FA;
+	}
+
+	.nav-btn {
+		width: 44px;
+		height: 44px;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.nav-btn__icon {
+		font-size: 22px;
+		color: #333333;
 	}
 
 	.profile {

@@ -27,23 +27,23 @@ type OperateCateringSetReq struct {
 // PageCateringSetByKeyResp 分页查询餐饮套餐响应
 // @response
 type PageCateringSetByKeyResp struct {
-	ID         int64       `json:"id"`          // id
-	Name       string      `json:"name"`        // 套餐名称
-	MonthPrice types.Money `json:"month_price"` // 月套餐费用
+	ID         types.BigInt `json:"id"`          // id
+	Name       string       `json:"name"`        // 套餐名称
+	MonthPrice types.Money  `json:"month_price"` // 月套餐费用
 }
 
 // SetDishesResp 套餐菜品明细响应
 // @response
 type SetDishesResp struct {
-	ID    int64       `json:"id"`    // 菜品编号
-	Name  string      `json:"name"`  // 菜品名称
-	Price types.Money `json:"price"` // 菜品价格
+	ID    types.BigInt `json:"id"`    // 菜品编号
+	Name  string       `json:"name"`  // 菜品名称
+	Price types.Money  `json:"price"` // 菜品价格
 }
 
 // GetCateringSetByIDResp 根据编号获取餐饮套餐响应（含菜品明细）
 // @response
 type GetCateringSetByIDResp struct {
-	ID         int64           `json:"id"`          // id
+	ID         types.BigInt    `json:"id"`          // id
 	Name       string          `json:"name"`        // 套餐名称
 	MonthPrice types.Money     `json:"month_price"` // 月套餐费用
 	SetDishes  []SetDishesResp `json:"set_dishes"`  // 套餐菜品明细

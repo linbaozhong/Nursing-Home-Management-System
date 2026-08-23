@@ -107,7 +107,7 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 			continue
 		}
 		res = append(res, dto.PageWarehouseRecordByKeyResp{
-			ID:            int64(r.ID),
+			ID:            types.BigInt(r.ID),
 			WarehouseName: r.WarehouseName.String(), // 来自 As
 			MaterialName:  strings.Join(names, ","),
 			WarehouseDate: r.WarehouseDate.Time,
@@ -128,7 +128,7 @@ func (s *warehouseRecordService) ListWarehouse(ctx context.Context, in *dto.Empt
 	}
 	res := make([]dto.DropDown, 0, len(list))
 	for _, w := range list {
-		res = append(res, dto.DropDown{ID: int64(w.Id), Name: w.Name.String()})
+		res = append(res, dto.DropDown{ID: types.BigInt(w.Id), Name: w.Name.String()})
 	}
 	*out = res
 	return nil

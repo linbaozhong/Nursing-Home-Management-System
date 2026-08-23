@@ -175,7 +175,7 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 	roomMap := make(map[int64][]dto.FloorItemResp, len(rooms))
 	for _, f := range rooms {
 		roomMap[int64(f.FloorId)] = append(roomMap[int64(f.FloorId)], dto.FloorItemResp{
-			ID:   int64(f.Id),
+			ID:   types.BigInt(f.Id),
 			Name: f.Name.String(),
 		})
 	}
@@ -183,7 +183,7 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 	floorMap := make(map[int64][]dto.BuildingItemResp, len(floors))
 	for _, b := range floors {
 		floorMap[int64(b.BuildingId)] = append(floorMap[int64(b.BuildingId)], dto.BuildingItemResp{
-			ID:       int64(b.Id),
+			ID:       types.BigInt(b.Id),
 			Name:     b.Name.String(),
 			RoomList: roomMap[int64(b.Id)],
 		})
@@ -192,7 +192,7 @@ func (c *checkcontract) GetBuildTree(ctx context.Context, in *dto.EmptyReq, out 
 	tree := make([]dto.BuildingResp, 0, len(buildings))
 	for _, b := range buildings {
 		tree = append(tree, dto.BuildingResp{
-			ID:        int64(b.Id),
+			ID:        types.BigInt(b.Id),
 			Name:      b.Name.String(),
 			FloorList: floorMap[int64(b.Id)],
 		})

@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ IntentionController 请求 ============
 
 // PageIntentionByKeyReq 分页查询意向客户请求
@@ -29,7 +31,7 @@ type OperateIntentionReq struct {
 // PageIntentionByKeyResp 分页查询意向客户响应
 // @response
 type PageIntentionByKeyResp struct {
-	ID            int64                `json:"id"`            // 老人编号
+	ID            types.BigInt         `json:"id"`            // 老人编号
 	Name          string               `json:"name"`          // 老人姓名
 	Phone         string               `json:"phone"`         // 老人电话
 	Sex           string               `json:"sex"`           // 性别

@@ -27,7 +27,7 @@ func (s *staffService) GetRole(ctx context.Context, in *dto.EmptyReq, out *[]dto
 	}
 	res := make([]dto.DropDown, 0, len(list))
 	for _, r := range list {
-		res = append(res, dto.DropDown{ID: int64(r.Id), Name: r.Name.String()})
+		res = append(res, dto.DropDown{ID: types.BigInt(r.Id), Name: r.Name.String()})
 	}
 	*out = res
 	return nil

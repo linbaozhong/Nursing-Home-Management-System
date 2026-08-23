@@ -285,7 +285,7 @@ func (e *elderrecord) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKey
 	*out = make([]dto.ListLabelResp, 0, len(labels))
 	for _, l := range labels {
 		*out = append(*out, dto.ListLabelResp{
-			ID:   int64(l.Id),
+			ID:   types.BigInt(l.Id),
 			Name: l.Name.String(),
 		})
 	}

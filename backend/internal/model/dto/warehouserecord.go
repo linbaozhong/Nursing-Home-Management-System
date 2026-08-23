@@ -61,24 +61,24 @@ type AuditWarehouseRecordReq struct {
 // PageWarehouseRecordByKeyResp 入库记录响应
 // @response
 type PageWarehouseRecordByKeyResp struct {
-	ID            int64     `json:"id"`             // id
-	WarehouseName string    `json:"warehouse_name"` // 仓库名称
-	MaterialName  string    `json:"material_name"`  // 物资名称
-	WarehouseDate time.Time `json:"warehouse_date"` // 入库时间
-	Source        string    `json:"source"`         // 物资来源
-	StaffName     string    `json:"staff_name"`     // 经办人
-	WarehouseFlag string    `json:"warehouse_flag"` // 入库状态
+	ID            types.BigInt `json:"id"`             // id
+	WarehouseName string       `json:"warehouse_name"` // 仓库名称
+	MaterialName  string       `json:"material_name"`  // 物资名称
+	WarehouseDate time.Time    `json:"warehouse_date"` // 入库时间
+	Source        string       `json:"source"`         // 物资来源
+	StaffName     string       `json:"staff_name"`     // 经办人
+	WarehouseFlag string       `json:"warehouse_flag"` // 入库状态
 }
 
 // PageWarehouseMaterialByKeyResp 分页查询仓库物资响应
 // @response
 type PageWarehouseMaterialByKeyResp struct {
-	ID           int64       `json:"id"`            // id
-	MaterialName string      `json:"material_name"` // 物资名称
-	Price        types.Money `json:"price"`         // 物资单价
-	WarehouseNum int         `json:"warehouse_num"` // 入库数量
-	Inventory    int         `json:"inventory"`     // 库存数量
-	ExpireDate   time.Time   `json:"expire_date"`   // 有效期
+	ID           types.BigInt `json:"id"`            // id
+	MaterialName string       `json:"material_name"` // 物资名称
+	Price        types.Money  `json:"price"`         // 物资单价
+	WarehouseNum int          `json:"warehouse_num"` // 入库数量
+	Inventory    int          `json:"inventory"`     // 库存数量
+	ExpireDate   time.Time    `json:"expire_date"`   // 有效期
 }
 
 // GetWarehouseRecordByIDResp 根据编号查询入库记录响应

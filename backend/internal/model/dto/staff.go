@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ StaffController 请求 ============
 
 // PageStaffByKeyReq 分页查询员工请求
@@ -41,14 +43,14 @@ type OperateStaffReq struct {
 // PageStaffByKeyResp 分页查询员工响应
 // @response
 type PageStaffByKeyResp struct {
-	ID        int64  `json:"id"`         // id
-	Name      string `json:"name"`       // 员工姓名
-	RoleName  string `json:"role_name"`  // 角色名称
-	IDNum     string `json:"id_num"`     // 身份证号
-	Sex       string `json:"sex"`        // 员工性别
-	Phone     string `json:"phone"`      // 员工电话
-	Email     string `json:"email"`      // 员工邮箱
-	LeaveFlag string `json:"leave_flag"` // 离职状态
+	ID        types.BigInt `json:"id"`         // id
+	Name      string       `json:"name"`       // 员工姓名
+	RoleName  string       `json:"role_name"`  // 角色名称
+	IDNum     string       `json:"id_num"`     // 身份证号
+	Sex       string       `json:"sex"`        // 员工性别
+	Phone     string       `json:"phone"`      // 员工电话
+	Email     string       `json:"email"`      // 员工邮箱
+	LeaveFlag string       `json:"leave_flag"` // 离职状态
 }
 
 // OperateStaffResp 操作员工响应（继承 OperateStaffReq）
@@ -60,7 +62,7 @@ type OperateStaffResp struct {
 // PageSearchStaffByKeyResp 分页搜索员工响应
 // @response
 type PageSearchStaffByKeyResp struct {
-	ID    int64  `json:"id"`    // id
-	Name  string `json:"name"`  // 员工姓名
-	Phone string `json:"phone"` // 员工电话
+	ID    types.BigInt `json:"id"`    // id
+	Name  string       `json:"name"`  // 员工姓名
+	Phone string       `json:"phone"` // 员工电话
 }

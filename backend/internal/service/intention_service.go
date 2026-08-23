@@ -70,7 +70,7 @@ func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageI
 	res := make([]dto.PageIntentionByKeyResp, 0, len(list))
 	for _, el := range list {
 		vo := dto.PageIntentionByKeyResp{
-			ID:    int64(el.Id),
+			ID:    types.BigInt(el.Id),
 			Name:  el.Name.String(),
 			Phone: el.Phone.String(),
 			Sex:   el.Sex.String(),

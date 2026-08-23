@@ -42,17 +42,17 @@ type ExecuteNurseReserveReq struct {
 // PageNurseReserveByKeyResp 分页查询护理预定响应
 // @response
 type PageNurseReserveByKeyResp struct {
-	ID           int64       `json:"id"`            // id
-	ElderName    string      `json:"elder_name"`    // 老人姓名
-	BedName      string      `json:"bed_name"`      // 床位名称
-	ServiceName  string      `json:"service_name"`  // 项目名称
-	NeedDate     int         `json:"need_date"`     // 所需时间
-	ServicePrice types.Money `json:"service_price"` // 服务费用
-	ChargeMethod string      `json:"charge_method"` // 收费方式
-	Frequency    int         `json:"frequency"`     // 服务次数
-	PayAmount    types.Money `json:"pay_amount"`    // 支付总额
-	NurseDate    time.Time   `json:"nurse_date"`    // 护理时间
-	OrderFlag    string      `json:"order_flag"`    // 订单状态
+	ID           types.BigInt `json:"id"`            // id
+	ElderName    string       `json:"elder_name"`    // 老人姓名
+	BedName      string       `json:"bed_name"`      // 床位名称
+	ServiceName  string       `json:"service_name"`  // 项目名称
+	NeedDate     int          `json:"need_date"`     // 所需时间
+	ServicePrice types.Money  `json:"service_price"` // 服务费用
+	ChargeMethod string       `json:"charge_method"` // 收费方式
+	Frequency    int          `json:"frequency"`     // 服务次数
+	PayAmount    types.Money  `json:"pay_amount"`    // 支付总额
+	NurseDate    time.Time    `json:"nurse_date"`    // 护理时间
+	OrderFlag    string       `json:"order_flag"`    // 订单状态
 }
 
 // GetNurseReserveByReserveIdAndElderIdReq 按护理预定/老人编号获取护理预定请求
@@ -79,15 +79,15 @@ type EditNurseReserveReq struct {
 // GetNurseReserveByReserveIdAndElderIdResp 按护理预定/老人编号获取护理预定响应
 // @response
 type GetNurseReserveByReserveIdAndElderIdResp struct {
-	ID           int64       `json:"id"`            // 护理预定编号
-	ElderName    string      `json:"elder_name"`    // 老人姓名
-	BedName      string      `json:"bed_name"`      // 床位名称
-	ServiceName  string      `json:"service_name"`  // 项目名称
-	NeedDate     int         `json:"need_date"`     // 所需时间
-	ServicePrice types.Money `json:"service_price"` // 服务费用
-	ChargeMethod string      `json:"charge_method"` // 收费方式
-	Frequency    int         `json:"frequency"`     // 服务次数
-	PayAmount    types.Money `json:"pay_amount"`    // 支付总额
-	NurseDate    time.Time   `json:"nurse_date"`    // 护理时间
-	OrderFlag    string      `json:"order_flag"`    // 订单状态
+	ID           types.BigInt `json:"id"`            // 护理预定编号
+	ElderName    string       `json:"elder_name"`    // 老人姓名
+	BedName      string       `json:"bed_name"`      // 床位名称
+	ServiceName  string       `json:"service_name"`  // 项目名称
+	NeedDate     int          `json:"need_date"`     // 所需时间
+	ServicePrice types.Money  `json:"service_price"` // 服务费用
+	ChargeMethod string       `json:"charge_method"` // 收费方式
+	Frequency    int          `json:"frequency"`     // 服务次数
+	PayAmount    types.Money  `json:"pay_amount"`    // 支付总额
+	NurseDate    time.Time    `json:"nurse_date"`    // 护理时间
+	OrderFlag    string       `json:"order_flag"`    // 订单状态
 }

@@ -146,6 +146,83 @@
 				"navigationStyle": "custom",
 				"navigationBarTitleText": "修改密码"
 			}
+		},
+		{
+			"path": "pages/bed/panorama",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "床位全景"
+			}
+		},
+		{
+			"path": "pages/enter/wizard",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "入住签约"
+			}
+		},
+		{
+			"path": "pages/apply/list",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "退住申请"
+			}
+		},
+		{
+			"path": "pages/apply/edit",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "退住申请"
+			}
+		},
+		{
+			"path": "pages/nurse-book/list",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "护理预定"
+			}
+		},
+		{
+			"path": "pages/nurse-book/edit",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "护理预定"
+			}
+		},
+		{
+			"path": "pages/member/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "成员管理"
+			}
+		},
+		{
+			"path": "pages/home/dashboard",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "数据概览"
+			}
+		},
+		{
+			"path": "pages/audit/list",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "退住审核"
+			}
+		},
+		{
+			"path": "pages/config/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "基础配置"
+			}
+		},
+		{
+			"path": "pages/config/item",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "配置项"
+			}
 		}
 	],
 	"globalStyle": {

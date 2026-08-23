@@ -1,0 +1,187 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'退住申请'" />
+
+		<WizardForm
+			:steps="['选择老人', '申请信息']"
+			:current="current"
+			:disabled="submitting"
+			@next="onNext"
+			@prev="onPrev"
+			@submit="doSubmit"
+		>
+			<template #step-0>
+				<view class="step">
+					<view class="field" @click="showElderSearch = true">
+						<view class="field__label-row">
+							<text class="field__label">老人</text>
+							<text class="field__required">*</text>
+						</view>
+						<view class="field__picker">
+							<text v-if="elder.name != ''" class="field__value">{{ elder.name }}</text>
+							<text v-else class="field__placeholder">点击选择老人</text>
+						</view>
+					</view>
+				</view>
+			</template>
+
+			<template #step-1>
+				<view class="step">
+					<view class="field">
+						<view class="field__label-row">
+							<text class="field__label">退住原因</text>
+							<text class="field__required">*</text>
+						</view>
+						<textarea class="field__textarea" v-model="form.apply_reason" placeholder="请填写退住原因" :maxlength="200" />
+					</view>
+					<view class="field">
+						<view class="field__label-row">
+							<text class="field__label">申请日期</text>
+							<text class="field__required">*</text>
+						</view>
+						<DateTimePicker v-model="form.apply_date" />
+					</view>
+				</view>
+			</template>
+		</WizardForm>
+
+		<ElderSearch :visible="showElderSearch" @update:visible="showElderSearch = $event" @select="onElderSelect" />
+	</view>
+</template>
+
+<script setup lang="uts">
+	import WizardForm from '../../components/wizard-form/WizardForm.uvue'
+	import ElderSearch from '../../components/elder-search/ElderSearch.uvue'
+	import DateTimePicker from '../../components/date-time-picker/DateTimePicker.uvue'
+	import { addApply, editApply } from '../../api/apply'
+
+	const current = ref(0)
+	const submitting = ref(false)
+	const showElderSearch = ref(false)
+	const isEdit = ref(false)
+	let currentId = 0
+
+	const elder = ref<{ id: number; name: string }>({ id: 0, name: '' })
+
+	const form = ref<{
+		apply_reason: string
+		apply_date: string
+	}>({
+		apply_reason: '',
+		apply_date: ''
+	})
+
+	function onNext() {
+		if (current.value == 0) {
+			if (elder.value.id == 0) {
+				uni.showToast({ title: '请选择老人', icon: 'none' })
+				return
+			}
+		}
+		current.value = current.value + 1
+	}
+
+	function onPrev() {
+		current.value = current.value - 1
+	}
+
+	function onElderSelect(item: any) {
+		elder.value = { id: item.id, name: item.name }
+	}
+
+	function validate(): boolean {
+		if (form.value.apply_reason == '') {
+			uni.showToast({ title: '请填写退住原因', icon: 'none' })
+			return false
+		}
+		if (form.value.apply_date == '') {
+			uni.showToast({ title: '请选择申请日期', icon: 'none' })
+			return false
+		}
+		return true
+	}
+
+	async function doSubmit() {
+		if (!validate()) {
+			return
+		}
+		submitting.value = true
+		try {
+			const payload = {
+				elder_id: elder.value.id,
+				apply_reason: form.value.apply_reason,
+				apply_date: form.value.apply_date
+			}
+			if (isEdit.value) {
+				await editApply({ ...payload, id: currentId })
+			} else {
+				await addApply(payload)
+			}
+			uni.showToast({ title: '保存成功', icon: 'success' })
+			setTimeout(() => uni.navigateBack(), 500)
+		} catch (e) {
+			// 已统一 toast
+		} finally {
+			submitting.value = false
+		}
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.step {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 16px;
+	}
+
+	.field {
+		flex-direction: column;
+		margin-bottom: 16px;
+	}
+
+	.field__label {
+		font-size: 14px;
+		color: #333333;
+	}
+
+	.field__label-row {
+		flex-direction: row;
+		align-items: center;
+		margin-bottom: 8px;
+	}
+
+	.field__required {
+		color: #DD524D;
+	}
+
+	.field__picker {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		justify-content: center;
+	}
+
+	.field__value {
+		font-size: 15px;
+		color: #333333;
+	}
+
+	.field__placeholder {
+		font-size: 15px;
+		color: #999999;
+	}
+
+	.field__textarea {
+		height: 120px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding: 12px;
+		font-size: 15px;
+	}
+</style>

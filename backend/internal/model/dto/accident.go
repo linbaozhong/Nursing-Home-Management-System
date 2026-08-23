@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // ============ AccidentController 请求 ============
 
@@ -39,19 +42,19 @@ type AccidentQuery struct {
 // PageAccidentByKeyResp 分页查询事故登记响应
 // @response
 type PageAccidentByKeyResp struct {
-	ID        int64     `json:"id"`         // id
-	ElderName string    `json:"elder_name"` // 老人姓名
-	StaffName string    `json:"staff_name"` // 护工姓名
-	OccurDate time.Time `json:"occur_date"` // 发生时间
+	ID        types.BigInt `json:"id"`         // id
+	ElderName string       `json:"elder_name"` // 老人姓名
+	StaffName string       `json:"staff_name"` // 护工姓名
+	OccurDate time.Time    `json:"occur_date"` // 发生时间
 }
 
 // GetAccidentByIDResp 根据编号获取事故登记响应
 // @response
 type GetAccidentByIDResp struct {
-	ID          int64     `json:"id"`          // id
-	ElderName   string    `json:"elder_name"`  // 老人姓名
-	StaffID     int64     `json:"staff_id"`    // 护工编号
-	OccurDate   time.Time `json:"occur_date"`  // 发生时间
-	Description string    `json:"description"` // 事故描述
-	Picture     string    `json:"picture"`     // 事故图片
+	ID          types.BigInt `json:"id"`          // id
+	ElderName   string       `json:"elder_name"`  // 老人姓名
+	StaffID     types.BigInt `json:"staff_id"`    // 护工编号
+	OccurDate   time.Time    `json:"occur_date"`  // 发生时间
+	Description string       `json:"description"` // 事故描述
+	Picture     string       `json:"picture"`     // 事故图片
 }

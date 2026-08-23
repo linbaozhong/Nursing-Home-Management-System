@@ -1,0 +1,437 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="title" />
+
+		<view class="search-bar">
+			<input class="search-input" v-model="keyword" :placeholder="'搜索' + title" confirm-type="search" />
+		</view>
+
+		<scroll-view class="list" scroll-y :show-scrollbar="false">
+			<view v-for="item in filteredList" :key="item.id" class="card">
+				<view class="card__main">
+					<text class="card__name">{{ primary(item) }}</text>
+				</view>
+				<view class="card__sub">
+					<text v-for="s in subInfo(item)" :key="s.label" class="card__sub-text">{{ s.label }}：{{ s.text }}</text>
+				</view>
+				<view class="card__ops">
+					<text class="op op--edit" @click="openEdit(item)">编辑</text>
+					<text class="op op--del" @click="doDelete(item)">删除</text>
+				</view>
+			</view>
+			<view v-if="filteredList.length == 0" class="empty"><text>{{ title }}为空</text></view>
+		</scroll-view>
+
+		<uni-fab-button class="fab" plus-class="fab__plus" @click="openAdd" />
+
+		<!-- 新增/编辑表单弹层 -->
+		<view v-if="showForm" class="mask" @click="showForm = false">
+			<view class="panel" @click.stop>
+				<view class="panel__head">
+					<text class="panel__title">{{ formId > 0 ? '编辑' : '新增' }}{{ title }}</text>
+					<text class="panel__close" @click="showForm = false">关闭</text>
+				</view>
+				<view class="form">
+					<view v-for="f in fields" :key="f.key" class="field">
+						<text class="field__label">{{ f.label }} <text class="field__required">*</text></text>
+						<input v-if="f.kind == 'text' || f.kind == 'number' || f.kind == 'digit'"
+							class="field__input" v-model="(form as any)[f.key]"
+							:type="f.kind == 'number' ? 'number' : (f.kind == 'digit' ? 'digit' : 'text')"
+							:placeholder="f.label" />
+					</view>
+					<view class="form__submit" @click="doSave">
+						<text>保存</text>
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script setup lang="uts">
+	import { onLoad, onShow } from '@dcloudio/uni-app'
+	import {
+		pageSourceByKey, addSource, editSource, deleteSource,
+		pageRoomTypeByKey, addRoomType, editRoomType, deleteRoomType,
+		pageServiceByKey, addService, editService, deleteService,
+		pageDishesByKey2, addDishes, editDishes, deleteDishes,
+		pageNurseGradeByKey, addNurseGrade, editNurseGrade, deleteNurseGrade,
+		pageBuildingByKey, addBuilding, editBuilding, deleteBuilding
+	} from '../../api/config'
+
+	interface FieldDef {
+		key: string
+		label: string
+		kind: string
+	}
+
+	const type = ref('source')
+	const title = ref('')
+	const keyword = ref('')
+	const list = ref<any[]>([])
+	const showForm = ref(false)
+	const formId = ref(0)
+	const form = ref<Record<string, string>>({})
+
+	const CONFIG_META: Record<string, {
+		title: string
+		fields: FieldDef[]
+		load: (kw: string) => Promise<any>
+		add: (form: any) => Promise<void>
+		edit: (id: number, form: any) => Promise<void>
+		del: (id: number) => Promise<void>
+		primary: (item: any) => string
+		subs: (item: any) => { label: string; text: string }[]
+	}> = {}
+
+	// 来源
+	CONFIG_META['source'] = {
+		title: '来源渠道',
+		fields: [{ key: 'name', label: '来源名称', kind: 'text' }],
+		load: (kw) => pageSourceByKey(kw),
+		add: (f) => addSource(f.name),
+		edit: (id, f) => editSource(id, f.name),
+		del: (id) => deleteSource(id),
+		primary: (it) => it.name,
+		subs: () => []
+	}
+
+	// 房型
+	CONFIG_META['roomtype'] = {
+		title: '房间类型',
+		fields: [
+			{ key: 'name', label: '房型名称', kind: 'text' },
+			{ key: 'month_price', label: '月价(元)', kind: 'digit' }
+		],
+		load: (kw) => pageRoomTypeByKey(kw),
+		add: (f) => addRoomType(f.name, parseNum(f.month_price)),
+		edit: (id, f) => editRoomType(id, f.name, parseNum(f.month_price)),
+		del: (id) => deleteRoomType(id),
+		primary: (it) => it.name,
+		subs: (it) => [{ label: '月价', text: '¥' + it.month_price }]
+	}
+
+	// 服务
+	CONFIG_META['service'] = {
+		title: '服务项目',
+		fields: [
+			{ key: 'type_name', label: '服务类型', kind: 'text' },
+			{ key: 'service_name', label: '服务名称', kind: 'text' },
+			{ key: 'price', label: '价格(元)', kind: 'digit' },
+			{ key: 'need_date', label: '所需时间(分钟)', kind: 'number' }
+		],
+		load: (kw) => pageServiceByKey(kw),
+		add: (f) => addService(f.type_name, f.service_name, parseNum(f.price), '按次', parseInt(f.need_date) || 0),
+		edit: (id, f) => editService(id, f.type_name, f.service_name, parseNum(f.price), '按次', parseInt(f.need_date) || 0),
+		del: (id) => deleteService(id),
+		primary: (it) => it.service_name,
+		subs: (it) => [{ label: '类型', text: it.type_name }, { label: '价格', text: '¥' + it.price }]
+	}
+
+	// 菜品
+	CONFIG_META['dishes'] = {
+		title: '菜品',
+		fields: [
+			{ key: 'type_name', label: '分类', kind: 'text' },
+			{ key: 'dishes_name', label: '菜品名称', kind: 'text' },
+			{ key: 'price', label: '价格(元)', kind: 'digit' }
+		],
+		load: (kw) => pageDishesByKey2(kw),
+		add: (f) => addDishes(f.type_name, f.dishes_name, parseNum(f.price)),
+		edit: (id, f) => editDishes(id, f.type_name, f.dishes_name, parseNum(f.price)),
+		del: (id) => deleteDishes(id),
+		primary: (it) => it.dishes_name,
+		subs: (it) => [{ label: '分类', text: it.type_name }, { label: '价格', text: '¥' + it.price }]
+	}
+
+	// 护理等级
+	CONFIG_META['nursegrade'] = {
+		title: '护理等级',
+		fields: [
+			{ key: 'name', label: '等级名称', kind: 'text' },
+			{ key: 'type', label: '护理类型', kind: 'text' },
+			{ key: 'month_price', label: '月价(元)', kind: 'digit' }
+		],
+		load: (kw) => pageNurseGradeByKey(kw),
+		add: (f) => addNurseGrade(f.name, f.type, parseNum(f.month_price)),
+		edit: (id, f) => editNurseGrade(id, f.name, f.type, parseNum(f.month_price)),
+		del: (id) => deleteNurseGrade(id),
+		primary: (it) => it.name,
+		subs: (it) => [{ label: '类型', text: it.type }, { label: '月价', text: '¥' + it.month_price }]
+	}
+
+	// 楼栋
+	CONFIG_META['building'] = {
+		title: '楼栋',
+		fields: [
+			{ key: 'name', label: '楼栋名称', kind: 'text' },
+			{ key: 'floor_num', label: '楼层数', kind: 'number' }
+		],
+		load: (kw) => pageBuildingByKey(kw),
+		add: (f) => addBuilding(f.name, parseInt(f.floor_num) || 0),
+		edit: (id, f) => editBuilding(id, f.name, parseInt(f.floor_num) || 0),
+		del: (id) => deleteBuilding(id),
+		primary: (it) => it.name,
+		subs: (it) => [{ label: '楼层', text: '' + it.floor_num }]
+	}
+
+	onLoad((options) => {
+		type.value = String(options?.type || 'source')
+		title.value = CONFIG_META[type.value]?.title || '配置'
+	})
+
+	onShow(() => {
+		loadData()
+	})
+
+	async function loadData() {
+		try {
+			const res = await CONFIG_META[type.value].load(keyword.value)
+			list.value = res.list
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	const filteredList = computed((): any[] => {
+		const kw = keyword.value.trim()
+		if (kw == '') return list.value
+		const meta = CONFIG_META[type.value]
+		return list.value.filter((it) => meta.primary(it).indexOf(kw) >= 0)
+	})
+
+	function primary(item: any): string {
+		return CONFIG_META[type.value].primary(item)
+	}
+
+	function subInfo(item: any): any[] {
+		return CONFIG_META[type.value].subs(item)
+	}
+
+	function parseNum(v: string): number {
+		return parseFloat(v) || 0
+	}
+
+	function openAdd() {
+		formId.value = 0
+		form.value = {}
+		CONFIG_META[type.value].fields.forEach((f) => { form.value[f.key] = '' })
+		showForm.value = true
+	}
+
+	function openEdit(item: any) {
+		formId.value = item.id
+		form.value = {}
+		CONFIG_META[type.value].fields.forEach((f) => { form.value[f.key] = '' + item[f.key] })
+		showForm.value = true
+	}
+
+	async function doSave() {
+		const meta = CONFIG_META[type.value]
+		for (let i = 0; i < meta.fields.length; i++) {
+			if (String(form.value[meta.fields[i].key] || '').trim() == '') {
+				uni.showToast({ title: '请填写' + meta.fields[i].label, icon: 'none' })
+				return
+			}
+		}
+		try {
+			if (formId.value > 0) {
+				await meta.edit(formId.value, form.value)
+			} else {
+				await meta.add(form.value)
+			}
+			uni.showToast({ title: '已保存', icon: 'success' })
+			showForm.value = false
+			loadData()
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	function doDelete(item: any) {
+		uni.showModal({
+			title: '删除',
+			content: '确认删除该记录？',
+			success: async (res) => {
+				if (res.confirm) {
+					try {
+						await CONFIG_META[type.value].del(item.id)
+						uni.showToast({ title: '已删除', icon: 'success' })
+						loadData()
+					} catch (e) { }
+				}
+			}
+		})
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.search-bar {
+		padding: 10px 16px 0 16px;
+	}
+
+	.search-input {
+		height: 38px;
+		background-color: #FFFFFF;
+		border-radius: 19px;
+		padding-left: 14px;
+		font-size: 14px;
+	}
+
+	.list {
+		flex: 1;
+		padding: 8px 16px 0 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__main {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.card__name {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.card__sub {
+		flex-direction: row;
+		margin-top: 6px;
+	}
+
+	.card__sub-text {
+		margin-right: 14px;
+		font-size: 13px;
+		color: #999999;
+	}
+
+	.card__ops {
+		flex-direction: row;
+		align-items: center;
+		margin-top: 8px;
+	}
+
+	.op {
+		font-size: 13px;
+	}
+
+	.op--edit {
+		color: #007AFF;
+	}
+
+	.op--del {
+		margin-left: 16px;
+		color: #DD524D;
+	}
+
+	.empty {
+		align-items: center;
+		padding-top: 60px;
+	}
+
+	.empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.fab {
+		position: fixed;
+		right: 20px;
+		bottom: 40px;
+	}
+
+	.fab__plus {
+		background-color: #007AFF;
+	}
+
+	.mask {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background-color: rgba(0, 0, 0, 0.5);
+		justify-content: flex-end;
+		z-index: 999;
+	}
+
+	.panel {
+		height: 65%;
+		background-color: #FFFFFF;
+		border-top-left-radius: 16px;
+		border-top-right-radius: 16px;
+		flex-direction: column;
+		padding-top: 14px;
+	}
+
+	.panel__head {
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0 16px 12px 16px;
+	}
+
+	.panel__title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.panel__close {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.form {
+		padding: 8px 16px 16px 16px;
+	}
+
+	.field {
+		flex-direction: column;
+		margin-bottom: 16px;
+	}
+
+	.field__label {
+		font-size: 14px;
+		color: #333333;
+		margin-bottom: 8px;
+	}
+
+	.field__required {
+		color: #DD524D;
+	}
+
+	.field__input {
+		height: 44px;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		font-size: 15px;
+	}
+
+	.form__submit {
+		height: 44px;
+		border-radius: 22px;
+		background-color: #007AFF;
+		align-items: center;
+		justify-content: center;
+		margin-top: 8px;
+	}
+
+	.form__submit text {
+		font-size: 15px;
+		color: #FFFFFF;
+	}
+</style>

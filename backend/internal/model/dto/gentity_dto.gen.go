@@ -13280,8 +13280,8 @@ func (p *RechargeUnifiedOrderReq) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "amount":
-			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -13330,8 +13330,8 @@ func (p *RechargeUnifiedOrderReq) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "amount":
-			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *int64 {
-				var obj *int64
+			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -22284,8 +22284,8 @@ func (p *AddReserveReq) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "deposit":
-			e = types.Unmarshal(value, &p.Deposit, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Deposit, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -22415,8 +22415,8 @@ func (p *AddReserveReq) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "deposit":
-			e = types.Unmarshal(value, &p.Deposit, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Deposit, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -22730,8 +22730,8 @@ func (p *EditReserveReq) UnmarshalJSON(data []byte) error {
 				return obj
 			}(value))
 		case "deposit":
-			e = types.Unmarshal(value, &p.Deposit, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Deposit, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -22870,8 +22870,8 @@ func (p *EditReserveReq) UnmarshalValues(m map[string][]string) error {
 				return obj
 			}(value))
 		case "deposit":
-			e = types.Unmarshal(value, &p.Deposit, func(value gjson.Result) *float64 {
-				var obj *float64
+			e = types.Unmarshal(value, &p.Deposit, func(value gjson.Result) *types.Money {
+				var obj *types.Money
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -22947,7 +22947,7 @@ func (p *EditReserveReq) UnmarshalValues(m map[string][]string) error {
 */
 // MarshalJSON
 func (p *PageReserveByKeyResp) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(12 * 50)
+	write := types.NewJsonWriter(13 * 50)
 	write.WriteRaw("reserve_id", types.Marshal(p.ReserveID))
 	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
 	write.WriteRaw("staff_name", types.Marshal(p.StaffName))
@@ -22960,6 +22960,7 @@ func (p *PageReserveByKeyResp) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("deposit", types.Marshal(p.Deposit))
 	write.WriteRaw("reserve_flag", types.Marshal(p.ReserveFlag))
 	write.WriteRaw("check_flag", types.Marshal(p.CheckFlag))
+	write.WriteRaw("due_date", types.Marshal(p.DueDate))
 	return write.Bytes(), nil
 }
 
@@ -23855,6 +23856,20 @@ func (p *PageRetreatAuditByKeyReq) UnmarshalValues(m map[string][]string) error 
 	}
 
 	return nil
+}
+
+/*
+	--- PageRetreatAuditByKeyResp ---
+*/
+// MarshalJSON
+func (p *PageRetreatAuditByKeyResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(5 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
+	write.WriteRaw("apply_flag", types.Marshal(p.ApplyFlag))
+	write.WriteRaw("apply_flag_name", types.Marshal(p.ApplyFlagName))
+	write.WriteRaw("apply_name", types.Marshal(p.ApplyName))
+	return write.Bytes(), nil
 }
 
 /*

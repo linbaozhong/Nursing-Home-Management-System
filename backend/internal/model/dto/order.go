@@ -45,15 +45,15 @@ type SendOrderReq struct {
 // PageOrderByKeyResp 分页查询点餐响应
 // @response
 type PageOrderByKeyResp struct {
-	ID                int64       `json:"id"`                  // id
-	ElderName         string      `json:"elder_name"`          // 老人姓名
-	ElderPhone        string      `json:"elder_phone"`         // 老人电话
-	DineDate          time.Time   `json:"dine_date"`           // 就餐时间
-	DineType          string      `json:"dine_type"`           // 就餐方式
-	StaffName         string      `json:"staff_name"`          // 送餐人员姓名
-	DeliverDishesDate time.Time   `json:"deliver_dishes_date"` // 送餐时间
-	PayAmount         types.Money `json:"pay_amount"`          // 支付总额
-	OrderFlag         string      `json:"order_flag"`          // 订单状态
+	ID                types.BigInt `json:"id"`                  // id
+	ElderName         string       `json:"elder_name"`          // 老人姓名
+	ElderPhone        string       `json:"elder_phone"`         // 老人电话
+	DineDate          time.Time    `json:"dine_date"`           // 就餐时间
+	DineType          string       `json:"dine_type"`           // 就餐方式
+	StaffName         string       `json:"staff_name"`          // 送餐人员姓名
+	DeliverDishesDate time.Time    `json:"deliver_dishes_date"` // 送餐时间
+	PayAmount         types.Money  `json:"pay_amount"`          // 支付总额
+	OrderFlag         string       `json:"order_flag"`          // 订单状态
 }
 
 // GetOrderByIDResp 根据编号查询点餐响应

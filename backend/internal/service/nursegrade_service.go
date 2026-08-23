@@ -224,7 +224,7 @@ func (s *nurseGradeService) GetNurseById(ctx context.Context, in *dto.IDReq, out
 	if !has {
 		return nil
 	}
-	out.ID = int64(bean.Id)
+	out.ID = types.BigInt(bean.Id)
 	out.Name = bean.Name.String()
 	out.Phone = bean.Phone.String()
 	return nil

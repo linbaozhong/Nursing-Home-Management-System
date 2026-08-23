@@ -1,5 +1,7 @@
 package dto
 
+import "github.com/linbaozhong/gentity/pkg/types"
+
 // ============ ActiveTypeController 请求 ============
 
 // PageActiveTypeByKeyReq 分页查询活动分类请求
@@ -29,8 +31,8 @@ type AddActiveTypeReq struct {
 // PageActiveTypeByKeyResp 分页查询活动分类响应
 // @response
 type PageActiveTypeByKeyResp struct {
-	ID   int64  `json:"id"`   // id
-	Name string `json:"name"` // 活动分类名称
+	ID   types.BigInt `json:"id"`   // id
+	Name string       `json:"name"` // 活动分类名称
 }
 
 // OperateActiveTypeResp 操作活动分类响应（继承 OperateActiveTypeReq）

@@ -20,10 +20,10 @@ type PageNurseGradeByKeyReq struct {
 // PageNurseGradeByKeyResp 分页查询护理等级响应
 // @response
 type PageNurseGradeByKeyResp struct {
-	ID         int64       `json:"id"`          // id
-	Name       string      `json:"name"`        // 护理等级名称
-	Type       string      `json:"type"`        // 护理类型
-	MonthPrice types.Money `json:"month_price"` // 月护理费用
+	ID         types.BigInt `json:"id"`          // id
+	Name       string       `json:"name"`        // 护理等级名称
+	Type       string       `json:"type"`        // 护理类型
+	MonthPrice types.Money  `json:"month_price"` // 月护理费用
 }
 
 // GetNurseGradeByIDResp 护理等级详情响应（定义见 common.go）
@@ -58,17 +58,17 @@ type PageNurseByKeyReq struct {
 // PageNurseByKeyResp 分页查询护理员响应
 // @response
 type PageNurseByKeyResp struct {
-	ID    int64  `json:"id"`    // id
-	Name  string `json:"name"`  // 护理员姓名
-	Phone string `json:"phone"` // 电话
+	ID    types.BigInt `json:"id"`    // id
+	Name  string       `json:"name"`  // 护理员姓名
+	Phone string       `json:"phone"` // 电话
 }
 
 // GetNurseByIdResp 护理员详情响应
 // @response
 type GetNurseByIdResp struct {
-	ID    int64  `json:"id"`    // id
-	Name  string `json:"name"`  // 护理员姓名
-	Phone string `json:"phone"` // 电话
+	ID    types.BigInt `json:"id"`    // id
+	Name  string       `json:"name"`  // 护理员姓名
+	Phone string       `json:"phone"` // 电话
 }
 
 // AddNurseReq 新增护理员请求

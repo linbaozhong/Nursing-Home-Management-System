@@ -18,14 +18,14 @@ type PageInventoryByKeyReq struct {
 // PageInventoryByKeyResp 分页查询库存响应
 // @response
 type PageInventoryByKeyResp struct {
-	WarehouseName string      `json:"warehouse_name"` // 仓库名称
-	MaterialID    int64       `json:"material_id"`    // 物资编号
-	MaterialName  string      `json:"material_name"`  // 物资名称
-	Total         int         `json:"total"`          // 总库存
-	WarehouseNum  int         `json:"warehouse_num"`  // 入库数量
-	Inventory     int         `json:"inventory"`      // 库存数量
-	OutboundNum   int         `json:"outbound_num"`   // 出库数量
-	Price         types.Money `json:"price"`          // 物资单价
+	WarehouseName string       `json:"warehouse_name"` // 仓库名称
+	MaterialID    types.BigInt `json:"material_id"`    // 物资编号
+	MaterialName  string       `json:"material_name"`  // 物资名称
+	Total         int          `json:"total"`          // 总库存
+	WarehouseNum  int          `json:"warehouse_num"`  // 入库数量
+	Inventory     int          `json:"inventory"`      // 库存数量
+	OutboundNum   int          `json:"outbound_num"`   // 出库数量
+	Price         types.Money  `json:"price"`          // 物资单价
 }
 
 // PageInventoryRecordByKeyReq 分页查询库存记录请求

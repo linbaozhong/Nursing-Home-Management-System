@@ -155,8 +155,8 @@ func (r *retreatApply) GetRetreatApplyById(ctx context.Context, in *dto.IDReq, o
 	if !has {
 		return errors.New("退住申请不存在")
 	}
-	out.ApplyID = int64(obj.Id)
-	out.ElderID = int64(obj.ElderId)
+	out.ApplyID = types.BigInt(obj.Id)
+	out.ElderID = types.BigInt(obj.ElderId)
 	out.ApplyFlag = conv.Ptr(int8(obj.ApplyFlag))
 	elder, hasE, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Eq(obj.ElderId)))
 	if e != nil {

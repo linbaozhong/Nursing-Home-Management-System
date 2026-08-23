@@ -60,7 +60,7 @@ func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out
 	if !has {
 		return errors.New("套餐不存在")
 	}
-	out.ID = int64(set.Id)
+	out.ID = types.BigInt(set.Id)
 	out.Name = set.Name.String()
 	out.MonthPrice = set.MonthPrice
 
@@ -86,7 +86,7 @@ func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out
 	out.SetDishes = make([]dto.SetDishesResp, 0, len(dishes))
 	for _, d := range dishes {
 		out.SetDishes = append(out.SetDishes, dto.SetDishesResp{
-			ID:    int64(d.Id),
+			ID:    types.BigInt(d.Id),
 			Name:  d.Name.String(),
 			Price: d.Price,
 		})

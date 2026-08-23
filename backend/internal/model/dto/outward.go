@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // ============ OutwardController 请求 ============
 
@@ -57,24 +60,24 @@ type EditOutwardReq struct {
 // PageOutwardByKeyResp 分页查询外出登记响应
 // @response
 type PageOutwardByKeyResp struct {
-	ID             int64     `json:"id"`               // 外出登记编号
-	ElderName      string    `json:"elder_name"`       // 老人姓名
-	ChaperoneName  string    `json:"chaperone_name"`   // 陪同人姓名
-	ChaperonePhone string    `json:"chaperone_phone"`  // 陪同人电话
-	ChaperoneType  string    `json:"chaperone_type"`   // 陪同人类型
-	OutwardDate    time.Time `json:"outward_date"`     // 外出时间
-	PlanReturnDate time.Time `json:"plan_return_date"` // 计划返回时间
-	RealReturnDate time.Time `json:"real_return_date"` // 实际返回时间
+	ID             types.BigInt `json:"id"`               // 外出登记编号
+	ElderName      string       `json:"elder_name"`       // 老人姓名
+	ChaperoneName  string       `json:"chaperone_name"`   // 陪同人姓名
+	ChaperonePhone string       `json:"chaperone_phone"`  // 陪同人电话
+	ChaperoneType  string       `json:"chaperone_type"`   // 陪同人类型
+	OutwardDate    time.Time    `json:"outward_date"`     // 外出时间
+	PlanReturnDate time.Time    `json:"plan_return_date"` // 计划返回时间
+	RealReturnDate time.Time    `json:"real_return_date"` // 实际返回时间
 }
 
 // GetOutwardByIDResp 根据编号查询外出登记响应
 // @response
 type GetOutwardByIDResp struct {
-	ID             int64     `json:"id"`               // id
-	ElderName      string    `json:"elder_name"`       // 老人姓名
-	ChaperoneName  string    `json:"chaperone_name"`   // 陪同人姓名
-	ChaperonePhone string    `json:"chaperone_phone"`  // 陪同人电话
-	ChaperoneType  string    `json:"chaperone_type"`   // 陪同人类型
-	OutwardDate    time.Time `json:"outward_date"`     // 外出时间
-	PlanReturnDate time.Time `json:"plan_return_date"` // 计划返回时间
+	ID             types.BigInt `json:"id"`               // id
+	ElderName      string       `json:"elder_name"`       // 老人姓名
+	ChaperoneName  string       `json:"chaperone_name"`   // 陪同人姓名
+	ChaperonePhone string       `json:"chaperone_phone"`  // 陪同人电话
+	ChaperoneType  string       `json:"chaperone_type"`   // 陪同人类型
+	OutwardDate    time.Time    `json:"outward_date"`     // 外出时间
+	PlanReturnDate time.Time    `json:"plan_return_date"` // 计划返回时间
 }

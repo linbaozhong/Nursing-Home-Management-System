@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // ============ OutboundRecordController 请求 ============
 
@@ -47,20 +50,20 @@ type AuditOutboundRecordReq struct {
 // PageOutboundRecordByKeyResp 分页查询出库记录响应
 // @response
 type PageOutboundRecordByKeyResp struct {
-	ID            int64     `json:"id"`             // id
-	WarehouseName string    `json:"warehouse_name"` // 仓库名称
-	MaterialName  string    `json:"material_name"`  // 物资名称
-	OutboundDate  time.Time `json:"outbound_date"`  // 出库时间
-	MaterialUse   string    `json:"material_use"`   // 物资去向
-	Recipient     string    `json:"recipient"`      // 领用人
-	StaffName     string    `json:"staff_name"`     // 登记人
-	OutboundFlag  string    `json:"outbound_flag"`  // 出库状态
+	ID            types.BigInt `json:"id"`             // id
+	WarehouseName string       `json:"warehouse_name"` // 仓库名称
+	MaterialName  string       `json:"material_name"`  // 物资名称
+	OutboundDate  time.Time    `json:"outbound_date"`  // 出库时间
+	MaterialUse   string       `json:"material_use"`   // 物资去向
+	Recipient     string       `json:"recipient"`      // 领用人
+	StaffName     string       `json:"staff_name"`     // 登记人
+	OutboundFlag  string       `json:"outbound_flag"`  // 出库状态
 }
 
 // GetOutboundRecordByIDResp 根据编号查询出库记录响应
 // @response
 type GetOutboundRecordByIDResp struct {
-	ID                           int64                         `json:"id"`                              // id
+	ID                           types.BigInt                  `json:"id"`                              // id
 	RecipientType                string                        `json:"recipient_type"`                  // 领用人类型
 	Recipient                    string                        `json:"recipient"`                       // 领用人
 	WarehouseName                string                        `json:"warehouse_name"`                  // 仓库名称

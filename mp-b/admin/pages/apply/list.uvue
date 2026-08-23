@@ -1,0 +1,204 @@
+<template>
+	<view class="page">
+		<uni-nav-bar :title="'退住申请'" />
+
+		<view class="search-bar">
+			<input
+				class="search-input"
+				v-model="keyword"
+				placeholder="搜索老人姓名"
+				confirm-type="search"
+			/>
+		</view>
+
+		<view class="filter-bar">
+			<view
+				v-for="s in flagOptions"
+				:key="s.value"
+				class="filter-item"
+				:class="{ 'filter-item--active': flag == s.value }"
+				@click="flag = s.value"
+			>
+				<text>{{ s.label }}</text>
+			</view>
+		</view>
+
+		<scroll-view class="list" scroll-y :show-scrollbar="false">
+			<view v-for="item in filteredList" :key="item.apply_id" class="card" @click="goEdit(item)">
+				<view class="card__head">
+					<text class="card__name">{{ item.elder_name }}</text>
+					<StatusTag :text="flagText(item.apply_flag)" :type="flagType(item.apply_flag)" />
+				</view>
+				<view class="card__body">
+					<text>{{ item.bed_name }}</text>
+				</view>
+			</view>
+			<view v-if="filteredList.length == 0" class="empty"><text>暂无退住申请</text></view>
+		</scroll-view>
+
+		<uni-fab-button class="fab" plus-class="fab__plus" @click="goAdd" />
+	</view>
+</template>
+
+<script setup lang="uts">
+	import StatusTag from '../../components/status-tag/StatusTag.uvue'
+	import { onShow } from '@dcloudio/uni-app'
+	import { pageApplyByKey, ApplyItem } from '../../api/apply'
+
+	const keyword = ref('')
+	const flag = ref(-1)
+	const list = ref<ApplyItem[]>([])
+
+	const flagOptions = [
+		{ label: '全部', value: -1 },
+		{ label: '待审核', value: 0 },
+		{ label: '已通过', value: 2 }
+	]
+
+	onShow(() => {
+		loadData()
+	})
+
+	async function loadData() {
+		try {
+			const res = await pageApplyByKey()
+			list.value = res.list
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
+	const filteredList = computed((): ApplyItem[] => {
+		let items = list.value
+		const kw = keyword.value.trim()
+		if (kw != '') {
+			items = items.filter((it) => it.elder_name.indexOf(kw) >= 0)
+		}
+		if (flag.value >= 0) {
+			items = items.filter((it) => Number(it.apply_flag) == flag.value)
+		}
+		return items
+	})
+
+	function flagText(f: number): string {
+		if (f == 2) return '已通过'
+		if (f == 1) return '审核中'
+		if (f == -1) return '不通过'
+		return '待审核'
+	}
+
+	function flagType(f: number): 'success' | 'danger' | 'warning' | 'default' {
+		if (f == 2) return 'success'
+		if (f == -1) return 'danger'
+		if (f == 1) return 'warning'
+		return 'default'
+	}
+
+	function goAdd() {
+		uni.navigateTo({ url: '/pages/apply/edit' })
+	}
+
+	function goEdit(item: ApplyItem) {
+		uni.navigateTo({ url: '/pages/apply/edit?id=' + item.apply_id })
+	}
+</script>
+
+<style scoped>
+	.page {
+		flex: 1;
+		background-color: #F5F6FA;
+	}
+
+	.search-bar {
+		padding: 10px 16px 0 16px;
+	}
+
+	.search-input {
+		height: 38px;
+		background-color: #FFFFFF;
+		border-radius: 19px;
+		padding-left: 14px;
+		font-size: 14px;
+	}
+
+	.filter-bar {
+		flex-direction: row;
+		padding: 10px 16px 6px 16px;
+	}
+
+	.filter-item {
+		margin-right: 18px;
+		height: 30px;
+		align-items: center;
+		justify-content: center;
+		padding: 0 12px;
+		border-radius: 15px;
+		background-color: #FFFFFF;
+	}
+
+	.filter-item text {
+		font-size: 13px;
+		color: #666666;
+	}
+
+	.filter-item--active {
+		background-color: #007AFF;
+	}
+
+	.filter-item--active text {
+		color: #FFFFFF;
+	}
+
+	.list {
+		flex: 1;
+		padding: 6px 16px 0 16px;
+	}
+
+	.card {
+		background-color: #FFFFFF;
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+
+	.card__head {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.card__name {
+		font-size: 16px;
+		font-weight: 600;
+		color: #333333;
+	}
+
+	.card__body {
+		margin-top: 8px;
+	}
+
+	.card__body text {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.empty {
+		align-items: center;
+		padding-top: 60px;
+	}
+
+	.empty text {
+		font-size: 14px;
+		color: #999999;
+	}
+
+	.fab {
+		position: fixed;
+		right: 20px;
+		bottom: 40px;
+	}
+
+	.fab__plus {
+		background-color: #007AFF;
+	}
+</style>

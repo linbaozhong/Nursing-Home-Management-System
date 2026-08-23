@@ -1,6 +1,9 @@
 package dto
 
-import "time"
+import (
+	"github.com/linbaozhong/gentity/pkg/types"
+	"time"
+)
 
 // ============ RetreatApplyController 请求 ============
 
@@ -57,11 +60,11 @@ type EditRetreatApplyReq struct {
 // PageRetreatByKeyResp 分页查询退住响应（RetreatApply / RetreatAudit 共用）
 // @response
 type PageRetreatByKeyResp struct {
-	ApplyID   int64  `json:"apply_id"`   // 申请编号
-	ElderID   int64  `json:"elder_id"`   // 老人编号
-	ElderName string `json:"elder_name"` // 老人姓名
-	ElderSex  string `json:"elder_sex"`  // 老人性别
-	IDNum     string `json:"id_num"`     // 身份证号
-	BedName   string `json:"bed_name"`   // 床位名称
-	ApplyFlag *int8  `json:"apply_flag"` // 审核状态（0-待审核 1-审核中 2-通过 -1-不通过）
+	ApplyID   types.BigInt `json:"apply_id"`   // 申请编号
+	ElderID   types.BigInt `json:"elder_id"`   // 老人编号
+	ElderName string       `json:"elder_name"` // 老人姓名
+	ElderSex  string       `json:"elder_sex"`  // 老人性别
+	IDNum     string       `json:"id_num"`     // 身份证号
+	BedName   string       `json:"bed_name"`   // 床位名称
+	ApplyFlag *int8        `json:"apply_flag"` // 审核状态（0-待审核 1-审核中 2-通过 -1-不通过）
 }

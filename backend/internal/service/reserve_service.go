@@ -42,11 +42,11 @@ func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReser
 		LeftJoin(tblreserve.ElderId, tblelder.Id).
 		LeftJoin(tblreserve.StaffId, tblstaff.Id).
 		Where(tblreserve.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
-	if in.Key != nil && *in.Key != "" {
-		q = q.Where(tblelder.Name.Like(*in.Key))
+	if in.ElderName != nil && *in.ElderName != "" {
+		q = q.Where(tblelder.Name.Like(*in.ElderName))
 	}
 	var joins []reserveJoin
-	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
+	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
 			tblreserve.Id,
 			tblreserve.ElderId,
@@ -61,17 +61,14 @@ func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReser
 	if e != nil {
 		return e
 	}
-	if !has {
-		return nil
-	}
 	res := make([]dto.PageReserveByKeyResp, 0, len(joins))
 	for _, j := range joins {
 		res = append(res, dto.PageReserveByKeyResp{
-			ID:          int64(j.ID),
+			ReserveID:   j.ID,
 			ElderName:   j.ElderName.String(),
 			StaffName:   j.StaffName.String(),
-			Deposit:     j.Deposit.Float64(),
-			DueDate:     j.DueDate.Time(),
+			Deposit:     j.Deposit,
+			DueDate:     j.DueDate.Time,
 			ReserveFlag: constant.YesNo(j.ReserveFlag).String(),
 		})
 	}
@@ -81,8 +78,7 @@ func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReser
 
 // GetReserveById 查询预定详情
 func (s *reserveService) GetReserveById(ctx context.Context, in *dto.IDReq, out *dto.GetReserveByReserveIDAndElderIDResp) error {
-	rec := new(do.Reserve)
-	has, e := dao.Reserve(db).Get(ctx, ace.Where(tblreserve.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblreserve.Id.Eq(types.BigInt(*in.ID))))
+	rec, has, e := dao.Reserve(db).Get(ctx, ace.Where(tblreserve.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblreserve.Id.Eq(types.BigInt(*in.ID))))
 	if e != nil {
 		return e
 	}
@@ -91,7 +87,7 @@ func (s *reserveService) GetReserveById(ctx context.Context, in *dto.IDReq, out 
 	}
 	out.ReserveID = int64(rec.Id)
 	out.ElderID = int64(rec.ElderId)
-	out.StaffID = int64(rec.StaffId)
+	out.StaffID = types.BigInt(rec.StaffId)
 	out.DueDate = rec.DueDate.Time()
 	out.Deposit = rec.Deposit.Float64()
 	out.Remark = rec.Remark.String()
@@ -124,7 +120,7 @@ func (s *reserveService) AddReserve(ctx context.Context, in *dto.AddReserveReq, 
 	}
 	// 预留床位
 	if in.BedID != nil {
-		_, _ = dao.Bed(db).UpdateById(ctx, *in.BedID, tblbed.BedFlag.Set(types.Int8(constant.BedReserve)))
+		_, _ = dao.Bed(db).UpdateById(ctx, types.BigInt(*in.BedID), tblbed.BedFlag.Set(types.Int8(constant.BedReserve)))
 		_, _ = dao.Elder(db).UpdateById(ctx, elderId, tblelder.BedId.Set(types.BigInt(*in.BedID)))
 	}
 	rec := &do.Reserve{
@@ -173,7 +169,7 @@ func (s *reserveService) EditReserve(ctx context.Context, in *dto.EditReserveReq
 
 // DeleteReserve 删除预定（物理删除）
 func (s *reserveService) DeleteReserve(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	if _, e := dao.Reserve(db).DeleteById(ctx, *in.ID); e != nil {
+	if _, e := dao.Reserve(db).DeleteById(ctx, types.BigInt(*in.ID)); e != nil {
 		return e
 	}
 	return nil
@@ -206,7 +202,7 @@ func (s *reserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageS
 	res := make([]dto.PageSearchElderByKeyResp, 0, len(elders))
 	for _, el := range elders {
 		res = append(res, dto.PageSearchElderByKeyResp{
-			ID:        int64(el.Id),
+			ID:        types.BigInt(el.Id),
 			Name:      el.Name.String(),
 			IDNum:     el.IdNum.String(),
 			Sex:       el.Sex.String(),
@@ -246,7 +242,7 @@ func (s *reserveService) PageSearchStaffByKey(ctx context.Context, in *dto.PageS
 	res := make([]dto.PageSearchStaffByKeyResp, 0, len(staffs))
 	for _, st := range staffs {
 		res = append(res, dto.PageSearchStaffByKeyResp{
-			ID:    int64(st.Id),
+			ID:    types.BigInt(st.Id),
 			Name:  st.Name.String(),
 			Phone: st.Phone.String(),
 		})
@@ -268,7 +264,7 @@ func (s *reserveService) GetBuildTree(ctx context.Context, in *dto.IDReq, out *[
 	res := make([]dto.BuildingResp, 0, len(buildings))
 	for _, b := range buildings {
 		res = append(res, dto.BuildingResp{
-			ID:   int64(b.Id),
+			ID:   types.BigInt(b.Id),
 			Name: b.Name.String(),
 		})
 	}
@@ -292,7 +288,7 @@ func (s *reserveService) GetReserveByReserveIdAndElderId(ctx context.Context, in
 	}
 	out.ReserveID = int64(rec.Id)
 	out.ElderID = int64(rec.ElderId)
-	out.StaffID = int64(rec.StaffId)
+	out.StaffID = types.BigInt(rec.StaffId)
 	out.DueDate = rec.DueDate.Time()
 	out.Deposit = rec.Deposit.Float64()
 	out.Remark = rec.Remark.String()
@@ -310,7 +306,7 @@ func (s *reserveService) Refund(ctx context.Context, in *dto.IDReq, out *dto.Emp
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	if _, e = dao.Reserve(db).UpdateById(ctx, *in.ID, tblreserve.ReserveFlag.Set(types.Int8(constant.YesNoYes))); e != nil {
+	if _, e = dao.Reserve(db).UpdateById(ctx, types.BigInt(*in.ID), tblreserve.ReserveFlag.Set(types.Int8(constant.YesNoYes))); e != nil {
 		return e
 	}
 	// 释放老人床位并回退状态
@@ -318,10 +314,10 @@ func (s *reserveService) Refund(ctx context.Context, in *dto.IDReq, out *dto.Emp
 		el, found, eerr := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Eq(rec.ElderId)))
 		if eerr == nil && found {
 			if el.BedId != 0 {
-				_, _ = dao.Bed(db).UpdateById(ctx, int64(el.BedId), tblbed.BedFlag.Set(types.Int8(constant.BedIdle)))
-				_, _ = dao.Elder(db).UpdateById(ctx, int64(rec.ElderId), tblelder.BedId.Set(types.BigInt(0)))
+				_, _ = dao.Bed(db).UpdateById(ctx, types.BigInt(el.BedId), tblbed.BedFlag.Set(types.Int8(constant.BedIdle)))
+				_, _ = dao.Elder(db).UpdateById(ctx, types.BigInt(rec.ElderId), tblelder.BedId.Set(types.BigInt(0)))
 			}
-			_, _ = dao.Elder(db).UpdateById(ctx, int64(rec.ElderId), tblelder.CheckFlag.Set(types.Int8(constant.CheckIntention)))
+			_, _ = dao.Elder(db).UpdateById(ctx, types.BigInt(rec.ElderId), tblelder.CheckFlag.Set(types.Int8(constant.CheckIntention)))
 		}
 	}
 	return nil

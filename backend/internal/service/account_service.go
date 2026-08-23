@@ -93,7 +93,7 @@ func (a *account) loginWithUser(ctx context.Context, user *do.User, out *dto.Log
 			continue
 		}
 		tenants = append(tenants, dto.TenantResp{
-			ID:           tn.Id.Int64(),
+			ID:           types.BigInt(tn.Id.Int64()),
 			Name:         tn.Name.String(),
 			Logo:         tn.Logo.String(),
 			ContactName:  tn.ContactName.String(),

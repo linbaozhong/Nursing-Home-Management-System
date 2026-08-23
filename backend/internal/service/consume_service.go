@@ -64,8 +64,8 @@ func (c *consume) GetConsumeById(ctx context.Context, in *dto.IDReq, out *dto.Ge
 	if !has {
 		return errors.New("消费记录不存在")
 	}
-	out.ID = int64(obj.Id)
-	out.ElderID = int64(obj.ElderId)
+	out.ID = types.BigInt(obj.Id)
+	out.ElderID = types.BigInt(obj.ElderId)
 	out.ConsumeType = obj.ConsumeType.String()
 	out.ConsumeAmount = obj.ConsumeAmount
 	out.ConsumeDate = obj.ConsumeDate.Time
