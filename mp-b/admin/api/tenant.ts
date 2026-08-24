@@ -5,7 +5,7 @@
 import { get, post } from '../utils/request'
 import { setLoginUser, LoginUser } from '../utils/auth'
 
-export interface TenantVO {
+export interface TenantResp {
 	id: number
 	name: string
 	logo: string
@@ -18,7 +18,7 @@ export interface TenantVO {
 }
 
 export interface UserTenantList {
-	tenants: TenantVO[]
+	tenants: TenantResp[]
 	current: number
 }
 
@@ -33,7 +33,7 @@ export interface RegisterParams {
 
 // ====== MOCK 数据（后台未完成，测试前端用；后台完成后放开各函数内注释并删除本段）======
 // 模拟“多企业”场景：选择企业页会列出 2 家企业
-const mockTenantList: TenantVO[] = [
+const mockTenantList: TenantResp[] = [
 	{ id: 1, name: '示例养老院', logo: '', contact_name: '张三', contact_phone: '13500000000', plan: '专业版', status: 1, trial_start: '2026-01-01', trial_end: '2027-01-01' },
 	{ id: 2, name: '康泰护理中心', logo: '', contact_name: '李四', contact_phone: '13500000001', plan: '标准版', status: 1, trial_start: '2026-02-01', trial_end: '2027-02-01' }
 ]

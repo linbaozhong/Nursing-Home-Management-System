@@ -22,6 +22,7 @@ func (b *build) RegisterRoute(group ack.Party) {
 	_g.Post("/editBuilding", b.editBuilding)
 	_g.Post("/deleteBuilding", b.deleteBuilding)
 	_g.Get("/pageFloorByKey", b.pageFloorByKey)
+	_g.Get("/listFloorByBuildingId", b.listFloorByBuildingId)
 	_g.Get("/getFloorById", b.getFloorById)
 	_g.Post("/addFloor", b.addFloor)
 	_g.Post("/editFloor", b.editFloor)
@@ -116,6 +117,18 @@ func (b *build) deleteBuilding(ctx ack.Context) {
 // @Router /build/pageFloorByKey [get]
 func (b *build) pageFloorByKey(ctx ack.Context) {
 	ack.Get(ctx, service.Build.PageFloorByKey)
+}
+
+// 根据楼栋编号获取楼层列表
+// @Summary 根据楼栋编号获取楼层列表
+// @Tags 楼栋
+// @Accept application/json
+// @Produce application/json
+// @Param data query dto.GetFloorByBuildingIdReq true "GetFloorByBuildingIdReq"
+// @Success 200 {object} []dto.DropDown
+// @Router /build/listFloorByBuildingId [get]
+func (b *build) listFloorByBuildingId(ctx ack.Context) {
+	ack.Get(ctx, service.Build.GetFloorByBuildingId)
 }
 
 // 获取楼层

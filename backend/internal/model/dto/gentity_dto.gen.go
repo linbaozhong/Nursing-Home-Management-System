@@ -1379,7 +1379,7 @@ func (p *PageActiveByKeyResp) MarshalJSON() ([]byte, error) {
 // MarshalJSON
 func (p *GetActiveByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(1 * 50)
-	write.WriteRaw("participate_elder_vo_list", types.Marshal(p.ParticipateElderRespList))
+	write.WriteRaw("participate_elder_resp_list", types.Marshal(p.ParticipateElderRespList))
 	return write.Bytes(), nil
 }
 
@@ -2392,6 +2392,7 @@ func (p *OperateBedReq) Init() error {
 	p.RoomID = nil
 	p.Name = nil
 	p.BedLimit = nil
+	p.BedTypeID = nil
 
 	return nil
 }
@@ -2463,6 +2464,15 @@ func (p *OperateBedReq) UnmarshalJSON(data []byte) error {
 				}
 				return obj
 			}(value))
+		case "bed_type_id":
+			e = types.Unmarshal(value, &p.BedTypeID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -2516,6 +2526,15 @@ func (p *OperateBedReq) UnmarshalValues(m map[string][]string) error {
 		case "bed_limit":
 			e = types.Unmarshal(value, &p.BedLimit, func(value gjson.Result) *int {
 				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "bed_type_id":
+			e = types.Unmarshal(value, &p.BedTypeID, func(value gjson.Result) *int64 {
+				var obj *int64
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -3990,6 +4009,8 @@ func (p *AddRoomReq) Init() error {
 	p.Name = nil
 	p.BedNum = nil
 	p.RoomLimit = nil
+	p.FacilityIDs = nil
+	p.Beds = nil
 
 	return nil
 }
@@ -4085,6 +4106,24 @@ func (p *AddRoomReq) UnmarshalJSON(data []byte) error {
 				}
 				return obj
 			}(value))
+		case "facility_ids":
+			e = types.Unmarshal(value, &p.FacilityIDs, func(value gjson.Result) []int64 {
+				var obj []int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "beds":
+			e = types.Unmarshal(value, &p.Beds, func(value gjson.Result) []OperateBedReq {
+				var obj []OperateBedReq
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -4162,6 +4201,24 @@ func (p *AddRoomReq) UnmarshalValues(m map[string][]string) error {
 				}
 				return obj
 			}(value))
+		case "facility_ids":
+			e = types.Unmarshal(value, &p.FacilityIDs, func(value gjson.Result) []int64 {
+				var obj []int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "beds":
+			e = types.Unmarshal(value, &p.Beds, func(value gjson.Result) []OperateBedReq {
+				var obj []OperateBedReq
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -4183,6 +4240,8 @@ func (p *EditRoomReq) Init() error {
 	p.Name = nil
 	p.BedNum = nil
 	p.RoomLimit = nil
+	p.FacilityIDs = nil
+	p.Beds = nil
 
 	return nil
 }
@@ -4278,6 +4337,24 @@ func (p *EditRoomReq) UnmarshalJSON(data []byte) error {
 				}
 				return obj
 			}(value))
+		case "facility_ids":
+			e = types.Unmarshal(value, &p.FacilityIDs, func(value gjson.Result) []int64 {
+				var obj []int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "beds":
+			e = types.Unmarshal(value, &p.Beds, func(value gjson.Result) []OperateBedReq {
+				var obj []OperateBedReq
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -4349,6 +4426,24 @@ func (p *EditRoomReq) UnmarshalValues(m map[string][]string) error {
 		case "room_limit":
 			e = types.Unmarshal(value, &p.RoomLimit, func(value gjson.Result) *int {
 				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "facility_ids":
+			e = types.Unmarshal(value, &p.FacilityIDs, func(value gjson.Result) []int64 {
+				var obj []int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "beds":
+			e = types.Unmarshal(value, &p.Beds, func(value gjson.Result) []OperateBedReq {
+				var obj []OperateBedReq
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -4632,12 +4727,25 @@ func (p *PageRoomByKeyResp) MarshalJSON() ([]byte, error) {
 */
 // MarshalJSON
 func (p *OperateRoomResp) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(5 * 50)
+	write := types.NewJsonWriter(7 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("type_id", types.Marshal(p.TypeId))
 	write.WriteRaw("floor_id", types.Marshal(p.FloorId))
 	write.WriteRaw("name", types.Marshal(p.Name))
 	write.WriteRaw("bed_num", types.Marshal(p.BedNum))
+	write.WriteRaw("beds", types.Marshal(p.Beds))
+	write.WriteRaw("facilities", types.Marshal(p.Facilities))
+	return write.Bytes(), nil
+}
+
+/*
+	--- RoomFacilityResp ---
+*/
+// MarshalJSON
+func (p *RoomFacilityResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(2 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("name", types.Marshal(p.Name))
 	return write.Bytes(), nil
 }
 
@@ -4658,10 +4766,12 @@ func (p *RoomByFloorIdResp) MarshalJSON() ([]byte, error) {
 */
 // MarshalJSON
 func (p *PageBedByKeyResp) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(3 * 50)
+	write := types.NewJsonWriter(5 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
 	write.WriteRaw("bed_flag", types.Marshal(p.BedFlag))
+	write.WriteRaw("bed_type_id", types.Marshal(p.BedTypeId))
+	write.WriteRaw("bed_type_name", types.Marshal(p.BedTypeName))
 	return write.Bytes(), nil
 }
 
@@ -4670,10 +4780,12 @@ func (p *PageBedByKeyResp) MarshalJSON() ([]byte, error) {
 */
 // MarshalJSON
 func (p *OperateBedResp) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(3 * 50)
+	write := types.NewJsonWriter(5 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("room_id", types.Marshal(p.RoomId))
 	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("bed_type_id", types.Marshal(p.BedTypeId))
+	write.WriteRaw("bed_type_name", types.Marshal(p.BedTypeName))
 	return write.Bytes(), nil
 }
 
@@ -6394,7 +6506,7 @@ func (p *OperateServiceReq) UnmarshalValues(m map[string][]string) error {
 // MarshalJSON
 func (p *GetNurseGradeByIDResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(1 * 50)
-	write.WriteRaw("nurse_grade_service_vo_list", types.Marshal(p.NurseGradeServiceRespList))
+	write.WriteRaw("nurse_grade_service_resp_list", types.Marshal(p.NurseGradeServiceRespList))
 	return write.Bytes(), nil
 }
 
@@ -6432,10 +6544,10 @@ func (p *GetElderRecordByIDResp) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("sex", types.Marshal(p.Sex))
 	write.WriteRaw("phone", types.Marshal(p.Phone))
 	write.WriteRaw("address", types.Marshal(p.Address))
-	write.WriteRaw("elder_emergency_contact_by_id_vo_list", types.Marshal(p.ElderEmergencyContactByIDRespList))
-	write.WriteRaw("elder_nurse_grade_by_id_vo", types.Marshal(p.ElderNurseGradeByIDResp))
-	write.WriteRaw("elder_catering_set_by_id_vo", types.Marshal(p.ElderCateringSetByIDResp))
-	write.WriteRaw("elder_bed_by_id_vo", types.Marshal(p.ElderBedByIDResp))
+	write.WriteRaw("elder_emergency_contact_by_id_resp_list", types.Marshal(p.ElderEmergencyContactByIDRespList))
+	write.WriteRaw("elder_nurse_grade_by_id_resp", types.Marshal(p.ElderNurseGradeByIDResp))
+	write.WriteRaw("elder_catering_set_by_id_resp", types.Marshal(p.ElderCateringSetByIDResp))
+	write.WriteRaw("elder_bed_by_id_resp", types.Marshal(p.ElderBedByIDResp))
 	return write.Bytes(), nil
 }
 
@@ -14752,7 +14864,7 @@ func (p *PageIntentionByKeyResp) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("phone", types.Marshal(p.Phone))
 	write.WriteRaw("sex", types.Marshal(p.Sex))
 	write.WriteRaw("age", types.Marshal(p.Age))
-	write.WriteRaw("label_vo_list", types.Marshal(p.LabelRespList))
+	write.WriteRaw("label_resp_list", types.Marshal(p.LabelRespList))
 	return write.Bytes(), nil
 }
 
@@ -14773,7 +14885,7 @@ func (p *IntentionLabelResp) MarshalJSON() ([]byte, error) {
 // MarshalJSON
 func (p *OperateIntentionResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(1 * 50)
-	write.WriteRaw("intention_label_vo_list", types.Marshal(p.IntentionLabelRespList))
+	write.WriteRaw("intention_label_resp_list", types.Marshal(p.IntentionLabelRespList))
 	return write.Bytes(), nil
 }
 
@@ -17250,6 +17362,7 @@ func (p *OperateMaterialReq) UnmarshalValues(m map[string][]string) error {
 func (p *OperateMaterialTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
+	p.Kind = nil
 
 	return nil
 }
@@ -17297,6 +17410,15 @@ func (p *OperateMaterialTypeReq) UnmarshalJSON(data []byte) error {
 				}
 				return obj
 			}(value))
+		case "kind":
+			e = types.Unmarshal(value, &p.Kind, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -17332,6 +17454,15 @@ func (p *OperateMaterialTypeReq) UnmarshalValues(m map[string][]string) error {
 		case "name":
 			e = types.Unmarshal(value, &p.Name, func(value gjson.Result) *string {
 				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "kind":
+			e = types.Unmarshal(value, &p.Kind, func(value gjson.Result) *int {
+				var obj *int
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -17697,6 +17828,7 @@ func (p *EditMaterialReq) UnmarshalValues(m map[string][]string) error {
 func (p *AddMaterialTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
+	p.Kind = nil
 
 	return nil
 }
@@ -17744,6 +17876,15 @@ func (p *AddMaterialTypeReq) UnmarshalJSON(data []byte) error {
 				}
 				return obj
 			}(value))
+		case "kind":
+			e = types.Unmarshal(value, &p.Kind, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -17785,6 +17926,15 @@ func (p *AddMaterialTypeReq) UnmarshalValues(m map[string][]string) error {
 				}
 				return obj
 			}(value))
+		case "kind":
+			e = types.Unmarshal(value, &p.Kind, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -17802,6 +17952,7 @@ func (p *AddMaterialTypeReq) UnmarshalValues(m map[string][]string) error {
 func (p *EditMaterialTypeReq) Init() error {
 	p.ID = nil
 	p.Name = nil
+	p.Kind = nil
 
 	return nil
 }
@@ -17849,6 +18000,15 @@ func (p *EditMaterialTypeReq) UnmarshalJSON(data []byte) error {
 				}
 				return obj
 			}(value))
+		case "kind":
+			e = types.Unmarshal(value, &p.Kind, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -17890,6 +18050,15 @@ func (p *EditMaterialTypeReq) UnmarshalValues(m map[string][]string) error {
 				}
 				return obj
 			}(value))
+		case "kind":
+			e = types.Unmarshal(value, &p.Kind, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -17908,6 +18077,7 @@ func (p *PageMaterialTypeByKeyReq) Init() error {
 	p.PageNum = nil
 	p.PageSize = nil
 	p.Name = nil
+	p.Kind = nil
 
 	return nil
 }
@@ -17967,6 +18137,15 @@ func (p *PageMaterialTypeByKeyReq) UnmarshalJSON(data []byte) error {
 				}
 				return obj
 			}(value))
+		case "kind":
+			e = types.Unmarshal(value, &p.Kind, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -18017,6 +18196,15 @@ func (p *PageMaterialTypeByKeyReq) UnmarshalValues(m map[string][]string) error 
 				}
 				return obj
 			}(value))
+		case "kind":
+			e = types.Unmarshal(value, &p.Kind, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -18054,9 +18242,10 @@ func (p *OperateMaterialResp) MarshalJSON() ([]byte, error) {
 */
 // MarshalJSON
 func (p *PageMaterialTypeResp) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(2 * 50)
+	write := types.NewJsonWriter(3 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
+	write.WriteRaw("kind", types.Marshal(p.Kind))
 	return write.Bytes(), nil
 }
 
@@ -20468,7 +20657,7 @@ func (p *GetOrderByIDResp) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("dine_type", types.Marshal(p.DineType))
 	write.WriteRaw("staff_name", types.Marshal(p.StaffName))
 	write.WriteRaw("deliver_dishes_date", types.Marshal(p.DeliverDishesDate))
-	write.WriteRaw("order_dishes_vo_list", types.Marshal(p.OrderDishesRespList))
+	write.WriteRaw("order_dishes_resp_list", types.Marshal(p.OrderDishesRespList))
 	return write.Bytes(), nil
 }
 
@@ -21154,7 +21343,7 @@ func (p *GetOutboundRecordByIDResp) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("outbound_date", types.Marshal(p.OutboundDate))
 	write.WriteRaw("material_use", types.Marshal(p.MaterialUse))
 	write.WriteRaw("staff_name", types.Marshal(p.StaffName))
-	write.WriteRaw("outbound_material_by_id_vo_list", types.Marshal(p.OutboundMaterialByIDRespList))
+	write.WriteRaw("outbound_material_by_id_resp_list", types.Marshal(p.OutboundMaterialByIDRespList))
 	return write.Bytes(), nil
 }
 
@@ -28472,7 +28661,7 @@ func (p *GetWarehouseRecordByIDResp) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("staff_name", types.Marshal(p.StaffName))
 	write.WriteRaw("source", types.Marshal(p.Source))
 	write.WriteRaw("warehouse_date", types.Marshal(p.WarehouseDate))
-	write.WriteRaw("warehouse_material_by_id_vo_list", types.Marshal(p.WarehouseMaterialByIDRespList))
+	write.WriteRaw("warehouse_material_by_id_resp_list", types.Marshal(p.WarehouseMaterialByIDRespList))
 	return write.Bytes(), nil
 }
 

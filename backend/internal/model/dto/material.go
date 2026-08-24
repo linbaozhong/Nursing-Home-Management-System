@@ -27,6 +27,7 @@ type OperateMaterialReq struct {
 type OperateMaterialTypeReq struct {
 	ID   *int64  `json:"id"`                    // id
 	Name *string `json:"name" valid:"required"` // 物资分类名称
+	Kind *int    `json:"kind"`                  // 分类用途：1=床型，99=设施/其他
 }
 
 // AddMaterialReq 新增物资请求
@@ -54,6 +55,7 @@ type EditMaterialReq struct {
 type AddMaterialTypeReq struct {
 	ID   *int64  `json:"id"`                    // id
 	Name *string `json:"name" valid:"required"` // 物资分类名称
+	Kind *int    `json:"kind"`                  // 分类用途：1=床型，99=设施/其他
 }
 
 // EditMaterialTypeReq 编辑物资分类请求
@@ -61,6 +63,7 @@ type AddMaterialTypeReq struct {
 type EditMaterialTypeReq struct {
 	ID   *int64  `json:"id"`                    // id
 	Name *string `json:"name" valid:"required"` // 物资分类名称
+	Kind *int    `json:"kind"`                  // 分类用途：1=床型，99=设施/其他
 }
 
 // PageMaterialTypeByKeyReq 分页查询物资分类请求
@@ -69,6 +72,7 @@ type PageMaterialTypeByKeyReq struct {
 	PageNum  *int    `json:"page_num" valid:"required"`  // 页码
 	PageSize *int    `json:"page_size" valid:"required"` // 条数
 	Name     *string `json:"name"`                       // 物资分类名称
+	Kind     *int    `json:"kind"`                       // 按用途筛选：1=床型，99=设施/其他
 }
 
 // ============ MaterialController 响应 ============
@@ -93,4 +97,5 @@ type OperateMaterialResp struct {
 type PageMaterialTypeResp struct {
 	ID   types.BigInt `json:"id"`   // 物资分类编号
 	Name string       `json:"name"` // 物资分类名称
+	Kind int          `json:"kind"` // 分类用途：1=床型，99=设施/其他
 }

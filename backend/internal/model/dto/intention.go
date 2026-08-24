@@ -31,12 +31,12 @@ type OperateIntentionReq struct {
 // PageIntentionByKeyResp 分页查询意向客户响应
 // @response
 type PageIntentionByKeyResp struct {
-	ID            types.BigInt         `json:"id"`            // 老人编号
-	Name          string               `json:"name"`          // 老人姓名
-	Phone         string               `json:"phone"`         // 老人电话
-	Sex           string               `json:"sex"`           // 性别
-	Age           int                  `json:"age"`           // 年龄
-	LabelRespList []IntentionLabelResp `json:"label_vo_list"` // 客户标签
+	ID            types.BigInt         `json:"id"`              // 老人编号
+	Name          string               `json:"name"`            // 老人姓名
+	Phone         string               `json:"phone"`           // 老人电话
+	Sex           string               `json:"sex"`             // 性别
+	Age           int                  `json:"age"`             // 年龄
+	LabelRespList []IntentionLabelResp `json:"label_resp_list"` // 客户标签
 }
 
 // IntentionLabelResp 意向客户标签（嵌套）
@@ -50,7 +50,7 @@ type IntentionLabelResp struct {
 // @response
 type OperateIntentionResp struct {
 	OperateIntentionReq
-	IntentionLabelRespList []IntentionLabelResp `json:"intention_label_vo_list"` // 客户标签
+	IntentionLabelRespList []IntentionLabelResp `json:"intention_label_resp_list"` // 客户标签
 }
 
 // AddIntentReq 新增意向客户请求

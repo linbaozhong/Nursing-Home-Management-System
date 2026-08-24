@@ -39,10 +39,11 @@ type OperateRoomReq struct {
 // OperateBedReq 操作床位请求
 // @request
 type OperateBedReq struct {
-	ID       *int64  `json:"id"`                         // id
-	RoomID   *int64  `json:"room_id" valid:"required"`   // 房间编号
-	Name     *string `json:"name" valid:"required"`      // 床位名称
-	BedLimit *int    `json:"bed_limit" valid:"required"` // 房间床位总数限制
+	ID        *int64  `json:"id"`                         // id
+	RoomID    *int64  `json:"room_id" valid:"required"`   // 房间编号
+	Name      *string `json:"name" valid:"required"`      // 床位名称
+	BedLimit  *int    `json:"bed_limit" valid:"required"` // 房间床位总数限制
+	BedTypeID *int64  `json:"bed_type_id"`                // 床型编号（关联 material_type.id，kind=1）
 }
 
 // DeleteNodeReq 删除节点请求
@@ -152,23 +153,27 @@ type PageRoomByKeyReq struct {
 // AddRoomReq 新增房间请求
 // @request
 type AddRoomReq struct {
-	ID        *int64  `json:"id"`                          // id
-	TypeID    *int64  `json:"type_id" valid:"required"`    // 房间类型编号
-	FloorID   *int64  `json:"floor_id" valid:"required"`   // 楼层编号
-	Name      *string `json:"name" valid:"required"`       // 房间名称
-	BedNum    *int    `json:"bed_num" valid:"required"`    // 床位数量
-	RoomLimit *int    `json:"room_limit" valid:"required"` // 楼层房间总数限制
+	ID          *int64          `json:"id"`                          // id
+	TypeID      *int64          `json:"type_id" valid:"required"`    // 房间类型编号
+	FloorID     *int64          `json:"floor_id" valid:"required"`   // 楼层编号
+	Name        *string         `json:"name" valid:"required"`       // 房间名称
+	BedNum      *int            `json:"bed_num" valid:"required"`    // 床位数量
+	RoomLimit   *int            `json:"room_limit" valid:"required"` // 楼层房间总数限制
+	FacilityIDs []int64         `json:"facility_ids"`                // 设施(物资分类)编号，kind=99，多选
+	Beds        []OperateBedReq `json:"beds"`                        // 床位列表（含床号/床型）
 }
 
 // EditRoomReq 编辑房间请求
 // @request
 type EditRoomReq struct {
-	ID        *int64  `json:"id"`                          // id
-	TypeID    *int64  `json:"type_id" valid:"required"`    // 房间类型编号
-	FloorID   *int64  `json:"floor_id" valid:"required"`   // 楼层编号
-	Name      *string `json:"name" valid:"required"`       // 房间名称
-	BedNum    *int    `json:"bed_num" valid:"required"`    // 床位数量
-	RoomLimit *int    `json:"room_limit" valid:"required"` // 楼层房间总数限制
+	ID          *int64          `json:"id"`                          // id
+	TypeID      *int64          `json:"type_id" valid:"required"`    // 房间类型编号
+	FloorID     *int64          `json:"floor_id" valid:"required"`   // 楼层编号
+	Name        *string         `json:"name" valid:"required"`       // 房间名称
+	BedNum      *int            `json:"bed_num" valid:"required"`    // 床位数量
+	RoomLimit   *int            `json:"room_limit" valid:"required"` // 楼层房间总数限制
+	FacilityIDs []int64         `json:"facility_ids"`                // 设施(物资分类)编号，kind=99，多选
+	Beds        []OperateBedReq `json:"beds"`                        // 床位列表（含床号/床型）
 }
 
 // GetFloorByBuildingIdReq 根据楼栋编号获取楼层列表请求
@@ -226,11 +231,20 @@ type PageRoomByKeyResp struct {
 // OperateRoomResp 房间详情响应（对应 OperateRoomResp）
 // @response
 type OperateRoomResp struct {
-	ID      types.BigInt `json:"id"`       // 房间编号
-	TypeId  types.BigInt `json:"type_id"`  // 房间类型
-	FloorId types.BigInt `json:"floor_id"` // 楼层编号
-	Name    string       `json:"name"`     // 房间名称
-	BedNum  int          `json:"bed_num"`  // 床位数量
+	ID         types.BigInt       `json:"id"`         // 房间编号
+	TypeId     types.BigInt       `json:"type_id"`    // 房间类型
+	FloorId    types.BigInt       `json:"floor_id"`   // 楼层编号
+	Name       string             `json:"name"`       // 房间名称
+	BedNum     int                `json:"bed_num"`    // 床位数量
+	Beds       []OperateBedResp   `json:"beds"`       // 房间床位列表（含床型）
+	Facilities []RoomFacilityResp `json:"facilities"` // 房间设施（物资分类项）
+}
+
+// RoomFacilityResp 房间设施响应（关联 material_type，kind=99）
+// @response
+type RoomFacilityResp struct {
+	ID   types.BigInt `json:"id"`   // 设施(物资分类)编号
+	Name string       `json:"name"` // 设施名称
 }
 
 // RoomByFloorIdResp 根据楼层获取房间列表响应（对应 FloorItem）
@@ -244,15 +258,19 @@ type RoomByFloorIdResp struct {
 // PageBedByKeyResp 分页查询床位响应（对应 PageBedByKeyResp）
 // @response
 type PageBedByKeyResp struct {
-	ID      types.BigInt `json:"id"`       // 床位编号
-	Name    string       `json:"name"`     // 床位名称
-	BedFlag string       `json:"bed_flag"` // 床位状态
+	ID          types.BigInt `json:"id"`            // 床位编号
+	Name        string       `json:"name"`          // 床位名称
+	BedFlag     string       `json:"bed_flag"`      // 床位状态
+	BedTypeId   types.BigInt `json:"bed_type_id"`   // 床型编号（material_type.id，kind=1）
+	BedTypeName string       `json:"bed_type_name"` // 床型名称
 }
 
 // OperateBedResp 床位详情响应（对应 OperateBedResp）
 // @response
 type OperateBedResp struct {
-	ID     types.BigInt `json:"id"`      // 床位编号
-	RoomId types.BigInt `json:"room_id"` // 房间编号
-	Name   string       `json:"name"`    // 床位名称
+	ID          types.BigInt `json:"id"`            // 床位编号
+	RoomId      types.BigInt `json:"room_id"`       // 房间编号
+	Name        string       `json:"name"`          // 床位名称
+	BedTypeId   types.BigInt `json:"bed_type_id"`   // 床型编号（material_type.id，kind=1）
+	BedTypeName string       `json:"bed_type_name"` // 床型名称
 }

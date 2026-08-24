@@ -2,30 +2,88 @@
 	<view class="page">
 		<uni-nav-bar :title="title" />
 
+		<!-- 层级筛选：楼栋→楼层（floor / room 专用） -->
+		<view v-if="isHierarchy" class="hierarchy">
+			<scroll-view class="hierarchy__scroll" scroll-x :show-scrollbar="false">
+				<view
+					v-for="b in buildings"
+					:key="b.id"
+					class="chip"
+					:class="{ 'chip--active': b.id == currentBuildingId }"
+					@click="pickBuilding(b.id)"
+				><text>{{ b.name }}</text></view>
+			</scroll-view>
+			<scroll-view v-if="isRoom" class="hierarchy__scroll hierarchy__scroll--floor" scroll-x :show-scrollbar="false">
+				<view
+					v-for="f in floors"
+					:key="f.id"
+					class="chip"
+					:class="{ 'chip--active': f.id == currentFloorId }"
+					@click="pickFloor(f.id)"
+				><text>{{ f.name }}</text></view>
+			</scroll-view>
+		</view>
+
 		<view class="search-bar">
 			<input class="search-input" v-model="keyword" :placeholder="'搜索' + title" confirm-type="search" />
 		</view>
 
 		<scroll-view class="list" scroll-y :show-scrollbar="false">
-			<view v-for="item in filteredList" :key="item.id" class="card">
-				<view class="card__main">
-					<text class="card__name">{{ primary(item) }}</text>
+			<!-- 房间卡片（含床位/设施）：左滑显示编辑/删除 -->
+			<template v-if="isRoom">
+				<view v-for="item in visibleRooms" :key="item.id" class="swipe"
+					@touchstart="onSwipeStart(item.id, $event)"
+					@touchend="onSwipeEnd(item.id, $event)">
+					<view class="swipe__actions" style="width: {{ ACTION_WIDTH }}px;">
+						<view class="swipe__action swipe__action--edit" @click="openEdit(item); closeSwipe()"><text>编辑</text></view>
+						<view class="swipe__action swipe__action--del" @click="doDelete(item); closeSwipe()"><text>删除</text></view>
+					</view>
+					<view class="swipe__content card" :style="{ transform: swipeTransform(item.id) }" @click="closeSwipe">
+						<view class="card__main">
+							<text class="card__name">{{ item.name }}</text>
+						</view>
+						<view class="card__sub">
+							<text class="card__sub-text">类型:{{ item.type_name }}</text>
+							<text class="card__sub-text">床位:{{ item.bed_list ? item.bed_list.length : 0 }}</text>
+							<text class="card__sub-text">设施:{{ item.facilities || '无' }}</text>
+						</view>
+						<view class="bed-chips">
+							<view v-for="bd in (item.bed_list || [])" :key="bd.name" class="bed-chip" :class="{ 'bed-chip--occ': bd.bed_flag == '已入住' }">
+								<text class="bed-chip__name">{{ item.name }}-{{ bd.name }}</text>
+								<text class="bed-chip__type">{{ bd.bed_type }}</text>
+							</view>
+						</view>
+					</view>
 				</view>
-				<view class="card__sub">
-					<text v-for="s in subInfo(item)" :key="s.label" class="card__sub-text">{{ s.label }}：{{ s.text }}</text>
+			</template>
+
+			<!-- 通用卡片（其余配置项）：左滑显示编辑/删除 -->
+			<template v-else>
+				<view v-for="item in filteredList" :key="item.id" class="swipe"
+					@touchstart="onSwipeStart(item.id, $event)"
+					@touchend="onSwipeEnd(item.id, $event)">
+					<view class="swipe__actions" style="width: {{ ACTION_WIDTH }}px;">
+						<view v-if="type != 'floor'" class="swipe__action swipe__action--edit" @click="openEdit(item); closeSwipe()"><text>编辑</text></view>
+						<view class="swipe__action swipe__action--del" @click="doDelete(item); closeSwipe()"><text>删除</text></view>
+					</view>
+					<view class="swipe__content card" :style="{ transform: swipeTransform(item.id) }" @click="closeSwipe">
+						<view class="card__main">
+							<text class="card__name">{{ primary(item) }}</text>
+						</view>
+						<view class="card__sub">
+							<text v-for="s in subInfo(item)" :key="s.label" class="card__sub-text">{{ s.label }}：{{ s.text }}</text>
+						</view>
+					</view>
 				</view>
-				<view class="card__ops">
-					<text class="op op--edit" @click="openEdit(item)">编辑</text>
-					<text class="op op--del" @click="doDelete(item)">删除</text>
-				</view>
-			</view>
-			<view v-if="filteredList.length == 0" class="empty"><text>{{ title }}为空</text></view>
+			</template>
+
+			<view v-if="(isRoom ? visibleRooms.length : filteredList.length) == 0" class="empty"><text>{{ title }}为空</text></view>
 		</scroll-view>
 
 		<uni-fab-button class="fab" plus-class="fab__plus" @click="openAdd" />
 
-		<!-- 新增/编辑表单弹层 -->
-		<view v-if="showForm" class="mask" @click="showForm = false">
+		<!-- 新增/编辑表单弹层（通用） -->
+		<view v-if="showForm && !isRoom" class="mask" @click="showForm = false">
 			<view class="panel" @click.stop>
 				<view class="panel__head">
 					<text class="panel__title">{{ formId > 0 ? '编辑' : '新增' }}{{ title }}</text>
@@ -45,6 +103,75 @@
 				</view>
 			</view>
 		</view>
+
+		<!-- 房间专用弹层：房号 + 房型 + 床位 + 设施标签 -->
+		<view v-if="showForm && isRoom" class="mask" @click="showForm = false">
+			<scroll-view class="panel panel--room" scroll-y @click.stop>
+				<view class="panel__head">
+					<text class="panel__title">{{ formId > 0 ? '编辑' : '新增' }}{{ title }}</text>
+					<text class="panel__close" @click="showForm = false">关闭</text>
+				</view>
+				<view class="form">
+					<view class="field">
+						<text class="field__label">房号 <text class="field__required">*</text></text>
+						<input class="field__input" v-model="roomName" placeholder="如 A201" />
+					</view>
+					<view class="field">
+						<text class="field__label">房间类型 <text class="field__required">*</text></text>
+						<view class="chip-wrap">
+							<view
+								v-for="t in roomTypes"
+								:key="t.id"
+								class="chip"
+								:class="{ 'chip--active': t.id == roomTypeId }"
+								@click="roomTypeId = t.id"
+							><text>{{ t.name }}</text></view>
+						</view>
+					</view>
+					<view class="field">
+						<text class="field__label">床位</text>
+						<view v-for="(bd, i) in bedRows" :key="i" class="bed-edit">
+							<view class="bed-row">
+								<input class="bed-row__input" v-model="bd.name" placeholder="床号，如 01" />
+								<text class="bed-row__del" @click="removeBedRow(i)">删</text>
+							</view>
+							<view class="chip-wrap bed-edit__types">
+								<view
+									v-for="bt in bedTypes"
+									:key="bt.id"
+									class="chip bed-edit__type"
+									:class="{ 'chip--active': bd.bed_type == bt.name }"
+									@click="bd.bed_type = bt.name"
+								><text>{{ bt.name }}</text></view>
+							</view>
+						</view>
+						<view class="form__link" @click="addBedRow"><text>+ 添加床位</text></view>
+					</view>
+					<view class="field">
+						<text class="field__label">房内设施</text>
+						<view class="chip-wrap">
+							<view
+								v-for="fc in facilityOptions"
+								:key="fc"
+								class="chip"
+								:class="{ 'chip--active': selectedFacilities.indexOf(fc) >= 0 }"
+								@click="toggleFacility(fc)"
+							><text>{{ fc }}</text></view>
+						</view>
+						<view class="bed-row">
+							<input class="bed-row__input" v-model="customFacility" placeholder="自定义设施" />
+							<view class="form__link" @click="addCustomFacility"><text>添加</text></view>
+						</view>
+						<view class="facility-selected">
+							<view v-for="fc in selectedFacilities" :key="fc" class="facility-tag"><text>{{ fc }}</text></view>
+						</view>
+					</view>
+					<view class="form__submit" @click="doSave">
+						<text>保存</text>
+					</view>
+				</view>
+			</scroll-view>
+		</view>
 	</view>
 </template>
 
@@ -56,7 +183,11 @@
 		pageServiceByKey, addService, editService, deleteService,
 		pageDishesByKey2, addDishes, editDishes, deleteDishes,
 		pageNurseGradeByKey, addNurseGrade, editNurseGrade, deleteNurseGrade,
-		pageBuildingByKey, addBuilding, editBuilding, deleteBuilding
+		pageBuildingByKey, addBuilding, editBuilding, deleteBuilding,
+		listFloorByBuilding, addFloor, deleteFloor,
+		pageRoomByKey, addRoom, editRoom, deleteRoom,
+		pageBedTypeByKey, addBedType, editBedType, deleteBedType,
+		ROOM_FACILITY_OPTIONS
 	} from '../../api/config'
 
 	interface FieldDef {
@@ -72,6 +203,64 @@
 	const showForm = ref(false)
 	const formId = ref(0)
 	const form = ref<Record<string, string>>({})
+
+	// 当前配置类型对应的表单元件（无匹配时为空数组，避免弹窗只见「保存」）
+	const fields = computed((): FieldDef[] => {
+		const meta = CONFIG_META[type.value]
+		return meta ? meta.fields : []
+	})
+
+	// ========== 左滑显示操作（编辑/删除） ==========
+	const ACTION_WIDTH = 120 // 操作区宽度(px)
+	const swipeOpenId = ref(0)      // 当前左滑展开的项 id（0 = 无）
+	const swipeStartX = ref(0)
+	const swipeDraggingId = ref(0)  // 正在拖拽的项 id（0 = 无）
+
+	function isSwipeOpen(id: number): boolean {
+		return swipeOpenId.value == id
+	}
+
+	function touchX(event: any): number {
+		try {
+			const touch = event.changedTouches && event.changedTouches[0]
+				? event.changedTouches[0]
+				: (event.touches && event.touches[0])
+			return touch ? touch.clientX as number : 0
+		} catch (e) {
+			return 0
+		}
+	}
+
+	function onSwipeStart(id: number, event: any) {
+		swipeDraggingId.value = id
+		swipeStartX.value = touchX(event)
+		if (swipeOpenId.value != id) {
+			swipeOpenId.value = 0 // 先收起其它项
+		}
+	}
+
+	function onSwipeEnd(id: number, event: any) {
+		const dx = touchX(event) - swipeStartX.value
+		swipeDraggingId.value = 0
+		if (swipeOpenId.value == id) {
+			// 已展开：向右滑回关闭；向左保持展开
+			if (dx > 10) swipeOpenId.value = 0
+			return
+		}
+		if (dx <= -30) {
+			swipeOpenId.value = id
+		} else if (dx > 10) {
+			swipeOpenId.value = 0
+		}
+	}
+
+	function swipeTransform(id: number): string {
+		return isSwipeOpen(id) ? 'translateX(-' + ACTION_WIDTH + 'px)' : 'translateX(0px)'
+	}
+
+	function closeSwipe() {
+		swipeOpenId.value = 0
+	}
 
 	const CONFIG_META: Record<string, {
 		title: string
@@ -160,19 +349,100 @@
 		subs: (it) => [{ label: '类型', text: it.type }, { label: '月价', text: '¥' + it.month_price }]
 	}
 
-	// 楼栋
+	// 楼栋（楼层数由楼层自动统计回写，无需手工录入）
 	CONFIG_META['building'] = {
 		title: '楼栋',
 		fields: [
-			{ key: 'name', label: '楼栋名称', kind: 'text' },
-			{ key: 'floor_num', label: '楼层数', kind: 'number' }
+			{ key: 'name', label: '楼栋名称', kind: 'text' }
 		],
 		load: (kw) => pageBuildingByKey(kw),
-		add: (f) => addBuilding(f.name, parseInt(f.floor_num) || 0),
-		edit: (id, f) => editBuilding(id, f.name, parseInt(f.floor_num) || 0),
+		add: (f) => addBuilding(f.name, 0),
+		edit: (id, f) => editBuilding(id, f.name, 0),
 		del: (id) => deleteBuilding(id),
 		primary: (it) => it.name,
 		subs: (it) => [{ label: '楼层', text: '' + it.floor_num }]
+	}
+
+	// 楼层（可增删，保存/删除后自动统计回写楼栋楼层数）
+	CONFIG_META['floor'] = {
+		title: '楼层',
+		fields: [
+			{ key: 'name', label: '楼层名称', kind: 'text' }
+		],
+		load: async (kw) => ({ list: (await listFloorByBuilding(currentBuildingId.value)).filter((it: any) => !kw || it.name.indexOf(kw) >= 0) }),
+		add: async (f) => { await addFloor(currentBuildingId.value, f.name) },
+		edit: async () => { uni.showToast({ title: '楼层不可编辑，请删除后重建', icon: 'none' }) },
+		del: async (id) => { await deleteFloor(currentBuildingId.value, id) },
+		primary: (it) => it.name,
+		subs: () => []
+	}
+
+	// 床型
+	CONFIG_META['bedtype'] = {
+		title: '床型',
+		fields: [{ key: 'name', label: '床型名称', kind: 'text' }],
+		load: (kw) => pageBedTypeByKey(kw),
+		add: (f) => addBedType(f.name),
+		edit: (id, f) => editBedType(id, f.name),
+		del: (id) => deleteBedType(id),
+		primary: (it) => it.name,
+		subs: () => []
+	}
+
+	// 房间
+	CONFIG_META['room'] = {
+		title: '房间',
+		fields: [],
+		load: async (kw) => ({ list: (await pageRoomByKey(kw)).list }),
+		add: () => Promise.resolve(),
+		edit: () => Promise.resolve(),
+		del: () => Promise.resolve(),
+		primary: (it) => it.name,
+		subs: (it) => [{ label: '类型', text: it.type_name }, { label: '床位', text: '' + it.bed_list.length }, { label: '设施', text: it.facilities || '无' }]
+	}
+
+	// ========== 层级（楼栋→楼层）选择状态，用于 floor / room ==========
+	const buildings = ref<any[]>([])        // 楼栋列表
+	const floors = ref<any[]>([])           // 当前楼栋楼层
+	const roomTypes = ref<any[]>([])        // 房型（房间表单下拉）
+	const bedTypes = ref<any[]>([])         // 床型（房间床位下拉）
+	const currentBuildingId = ref(0)
+	const currentFloorId = ref(0)
+
+	const isHierarchy = computed(() => type.value == 'floor' || type.value == 'room')
+	const isRoom = computed(() => type.value == 'room')
+
+	const visibleRooms = computed((): any[] => {
+		if (!isRoom.value) return filteredList.value
+		if (currentFloorId.value == 0) return []
+		return filteredList.value.filter((it) => it.floor_id == currentFloorId.value)
+	})
+
+	async function loadBoundaries() {
+		const res = await pageBuildingByKey('')
+		buildings.value = res.list
+		if (currentBuildingId.value == 0 && buildings.value.length > 0) {
+			currentBuildingId.value = buildings.value[0].id
+		}
+		await pickBuilding(currentBuildingId.value)
+	}
+
+	async function pickBuilding(id: number) {
+		currentBuildingId.value = id
+		currentFloorId.value = 0
+		floors.value = await listFloorByBuilding(id)
+		if (floors.value.length > 0) {
+			currentFloorId.value = floors.value[0].id
+		}
+	}
+
+	function pickFloor(id: number) {
+		currentFloorId.value = id
+	}
+
+	async function updateRoomTypes() {
+		roomTypes.value = (await pageRoomTypeByKey('')).list
+		bedTypes.value = (await pageBedTypeByKey('')).list
 	}
 
 	onLoad((options) => {
@@ -186,6 +456,12 @@
 
 	async function loadData() {
 		try {
+			if (isHierarchy.value) {
+				await loadBoundaries()
+				if (isRoom.value) {
+					await updateRoomTypes()
+				}
+			}
 			const res = await CONFIG_META[type.value].load(keyword.value)
 			list.value = res.list
 		} catch (e) {
@@ -212,7 +488,108 @@
 		return parseFloat(v) || 0
 	}
 
+	// ========== 房间专用表单（床位子列表 + 设施标签） ==========
+	const roomName = ref('')
+	const roomTypeId = ref<number>(0)
+	const bedRows = ref<{ name: string; bed_type: string }[]>([])
+	const facilityOptions = ref<string[]>(ROOM_FACILITY_OPTIONS)
+	const selectedFacilities = ref<string[]>([])
+	const customFacility = ref('')
+
+	function defaultBedType(): string {
+		return bedTypes.value.length > 0 ? bedTypes.value[0].name : '标准床'
+	}
+
+	function openRoomAdd() {
+		formId.value = 0
+		roomName.value = ''
+		roomTypeId.value = roomTypes.value.length > 0 ? roomTypes.value[0].id : 0
+		bedRows.value = [{ name: '01', bed_type: defaultBedType() }]
+		selectedFacilities.value = []
+		customFacility.value = ''
+		showForm.value = true
+	}
+
+	function openRoomEdit(item: any) {
+		formId.value = item.id
+		roomName.value = item.name || ''
+		roomTypeId.value = Number(item.type_id) || (roomTypes.value.length > 0 ? roomTypes.value[0].id : 0)
+		bedRows.value = (item.bed_list || []).map((b: any) => ({ name: '' + b.name, bed_type: b.bed_type || defaultBedType() }))
+		if (bedRows.value.length == 0) {
+			bedRows.value = [{ name: '01', bed_type: defaultBedType() }]
+		}
+		selectedFacilities.value = (item.facilities || '').split(',').filter((s: string) => s.trim() != '')
+		customFacility.value = ''
+		showForm.value = true
+	}
+
+	function addBedRow() {
+		bedRows.value = [...bedRows.value, { name: '', bed_type: defaultBedType() }]
+	}
+
+	function removeBedRow(index: number) {
+		bedRows.value = bedRows.value.filter((_, i) => i != index)
+	}
+
+	function toggleFacility(name: string) {
+		if (selectedFacilities.value.indexOf(name) >= 0) {
+			selectedFacilities.value = selectedFacilities.value.filter((x) => x != name)
+		} else {
+			selectedFacilities.value = [...selectedFacilities.value, name]
+		}
+	}
+
+	function addCustomFacility() {
+		const v = customFacility.value.trim()
+		if (v == '') return
+		if (selectedFacilities.value.indexOf(v) < 0) {
+			selectedFacilities.value = [...selectedFacilities.value, v]
+		}
+		customFacility.value = ''
+	}
+
+	async function saveRoom() {
+		if (roomName.value.trim() == '') {
+			uni.showToast({ title: '请填写房号', icon: 'none' })
+			return
+		}
+		if (roomTypeId.value == 0) {
+			uni.showToast({ title: '请选择房间类型', icon: 'none' })
+			return
+		}
+		if (currentFloorId.value == 0) {
+			uni.showToast({ title: '请先选择楼层', icon: 'none' })
+			return
+		}
+		const typeName = (roomTypes.value.find((t) => t.id == roomTypeId.value) || {}).name || ''
+		const payload: any = {
+			name: roomName.value.trim(),
+			type_id: roomTypeId.value,
+			type_name: typeName,
+			floor_id: currentFloorId.value,
+			building_id: currentBuildingId.value,
+			bed_list: bedRows.value.map((b, i) => ({ name: (b.name || '').trim(), bed_type: b.bed_type, bed_flag: formId.value > 0 ? '' : '空', id: -(i + 1) })),
+			facilities: selectedFacilities.value.join(',')
+		}
+		try {
+			if (formId.value > 0) {
+				await editRoom(formId.value, payload)
+			} else {
+				await addRoom(payload)
+			}
+			uni.showToast({ title: '已保存', icon: 'success' })
+			showForm.value = false
+			loadData()
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
 	function openAdd() {
+		if (type.value == 'room') {
+			openRoomAdd()
+			return
+		}
 		formId.value = 0
 		form.value = {}
 		CONFIG_META[type.value].fields.forEach((f) => { form.value[f.key] = '' })
@@ -220,6 +597,10 @@
 	}
 
 	function openEdit(item: any) {
+		if (type.value == 'room') {
+			openRoomEdit(item)
+			return
+		}
 		formId.value = item.id
 		form.value = {}
 		CONFIG_META[type.value].fields.forEach((f) => { form.value[f.key] = '' + item[f.key] })
@@ -227,6 +608,10 @@
 	}
 
 	async function doSave() {
+		if (type.value == 'room') {
+			await saveRoom()
+			return
+		}
 		const meta = CONFIG_META[type.value]
 		for (let i = 0; i < meta.fields.length; i++) {
 			if (String(form.value[meta.fields[i].key] || '').trim() == '') {
@@ -433,5 +818,203 @@
 	.form__submit text {
 		font-size: 15px;
 		color: #FFFFFF;
+	}
+
+	/* 层级筛选 */
+	.hierarchy {
+		flex-direction: column;
+		padding: 10px 16px 0 16px;
+	}
+
+	.hierarchy__scroll {
+		flex-direction: row;
+		white-space: nowrap;
+	}
+
+	.hierarchy__scroll--floor {
+		margin-top: 8px;
+	}
+
+	.chip-wrap {
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
+	.chip {
+		height: 32px;
+		padding-left: 14px;
+		padding-right: 14px;
+		margin-right: 10px;
+		border-radius: 16px;
+		background-color: #F0F1F5;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.chip text {
+		font-size: 13px;
+		color: #666666;
+	}
+
+	.chip--active {
+		background-color: #007AFF;
+	}
+
+	.chip--active text {
+		color: #FFFFFF;
+	}
+
+	/* 房间卡片床位标签 */
+	.bed-chips {
+		flex-direction: row;
+		flex-wrap: wrap;
+		margin-top: 8px;
+	}
+
+	.bed-chip {
+		flex-direction: row;
+		align-items: center;
+		height: 26px;
+		padding-left: 10px;
+		padding-right: 10px;
+		margin-right: 8px;
+		margin-bottom: 6px;
+		border-radius: 13px;
+		background-color: #E8F4FF;
+	}
+
+	.bed-chip--occ {
+		background-color: #FFE9E6;
+	}
+
+	.bed-chip__name {
+		font-size: 12px;
+		color: #007AFF;
+	}
+
+	.bed-chip__type {
+		margin-left: 6px;
+		font-size: 12px;
+		color: #999999;
+	}
+
+	/* 房间弹窗 */
+	.panel--room {
+		height: 88%;
+		padding-bottom: 20px;
+	}
+
+	.bed-row {
+		flex-direction: row;
+		align-items: center;
+		margin-top: 8px;
+	}
+
+	.bed-row__input {
+		height: 40px;
+		flex: 1;
+		background-color: #F5F6FA;
+		border-radius: 8px;
+		padding-left: 12px;
+		font-size: 14px;
+		margin-right: 8px;
+	}
+
+	.bed-row__del {
+		font-size: 13px;
+		color: #DD524D;
+		width: 30px;
+		text-align: center;
+	}
+
+	.form__link {
+		margin-top: 10px;
+	}
+
+	.form__link text {
+		font-size: 14px;
+		color: #007AFF;
+	}
+
+	.facility-selected {
+		flex-direction: row;
+		flex-wrap: wrap;
+		margin-top: 10px;
+	}
+
+	.facility-tag {
+		height: 26px;
+		padding-left: 10px;
+		padding-right: 10px;
+		margin-right: 8px;
+		margin-bottom: 6px;
+		border-radius: 13px;
+		background-color: #E8F4FF;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.facility-tag text {
+		font-size: 12px;
+		color: #007AFF;
+	}
+
+	/* 左滑操作容器 */
+	.swipe {
+		position: relative;
+		overflow: hidden;
+		margin-bottom: 12px;
+		border-radius: 10px;
+	}
+
+	.swipe__actions {
+		position: absolute;
+		top: 0;
+		right: 0;
+		height: 100%;
+		flex-direction: row;
+		align-items: stretch;
+	}
+
+	.swipe__action {
+		align-items: center;
+		justify-content: center;
+		width: 60px;
+	}
+
+	.swipe__action text {
+		font-size: 14px;
+		color: #FFFFFF;
+	}
+
+	.swipe__action--edit {
+		background-color: #007AFF;
+	}
+
+	.swipe__action--del {
+		background-color: #DD524D;
+	}
+
+	.swipe__content {
+		position: relative;
+		margin-bottom: 0;
+		border-radius: 10px;
+		background-color: #FFFFFF;
+		transition-property: transform;
+		transition-duration: 0.2s;
+	}
+
+	/* 房间床位编辑器 */
+	.bed-edit {
+		flex-direction: column;
+		margin-bottom: 10px;
+	}
+
+	.bed-edit__types {
+		margin-top: 8px;
+	}
+
+	.bed-edit__type {
+		margin-top: 8px;
 	}
 </style>

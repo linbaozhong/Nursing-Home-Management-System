@@ -148,7 +148,6 @@
 </template>
 
 <script setup lang="uts">
-	import { onMounted } from '@dcloudio/uni-app'
 	import WizardForm from '../../components/wizard-form/WizardForm.uvue'
 	import DateTimePicker from '../../components/date-time-picker/DateTimePicker.uvue'
 	import { listNurseGrade, listCateringSet, listBed, addEnter, DropDownItem, BedOption } from '../../api/enter'

@@ -25,6 +25,15 @@ var (
 	ErrRoomOut    = types.NewError(500, "房间总数超过限制")
 )
 
+// MaterialTypeKind 物资分类用途
+type MaterialTypeKind int8
+
+// 物资分类用途常量
+const (
+	KindBed      MaterialTypeKind = 1  // 床型
+	KindFacility MaterialTypeKind = 99 // 设施/其他
+)
+
 // BedStatus 床位状态
 type BedStatus int8
 

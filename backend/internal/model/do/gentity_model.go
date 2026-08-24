@@ -83,16 +83,17 @@ type SetDishes struct {
 // @tablename bed
 type Bed struct {
 	pool.Model
-	Name       types.String `json:"name,omitempty" db:"'name' size:40"`           // 床位名称
-	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // 编号
-	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户编号
-	RoomId     types.BigInt `json:"room_id,omitempty" db:"'room_id' size:20"`     // 房间编号
-	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人编号
-	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
-	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
-	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
-	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
-	BedFlag    types.Int8   `json:"bed_flag,omitempty" db:"'bed_flag' size:5"`    // 床位状态(空闲/预定/入住/退住审核)
+	Name       types.String `json:"name,omitempty" db:"'name' size:40"`               // 床位名称
+	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`           // 编号
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`     // 租户编号
+	RoomId     types.BigInt `json:"room_id,omitempty" db:"'room_id' size:20"`         // 房间编号
+	BedTypeID  types.BigInt `json:"bed_type_id,omitempty" db:"'bed_type_id' size:20"` // 床位类型(1-普通床/2-高低床/3-上下床/4-单人床/5-双人床/6-三人床/7-四人床/8-多人床/9-特殊床)
+	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`     // 创建人编号
+	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`         // 创建时间
+	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`     // 修改人编号
+	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`         // 修改时间
+	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`        // 删除状态（Y/N）
+	BedFlag    types.Int8   `json:"bed_flag,omitempty" db:"'bed_flag' size:5"`        // 床位状态(空闲/预定/入住/退住审核)
 }
 
 // Consult
@@ -149,6 +150,7 @@ type MaterialType struct {
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
 	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`    // 删除状态（Y/N）
+	Kind       types.Int8   `json:"kind,omitempty" db:"'kind' size:1"`            // 物资分类(1-床型/99-其他)
 }
 
 // RetreatApply
@@ -476,6 +478,21 @@ type RoomType struct {
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`       // 修改人编号
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`           // 修改时间
 	DelFlag    types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`          // 删除状态（Y/N）
+}
+
+// RoomMaterial
+// @tablename room_material
+type RoomMaterial struct {
+	pool.Model
+	Id             types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                     // 编号
+	TenantId       types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`               // 租户编号
+	RoomId         types.BigInt `json:"room_id,omitempty" db:"'room_id' size:20"`                   // 房间编号
+	MaterialTypeId types.BigInt `json:"material_type_id,omitempty" db:"'material_type_id' size:20"` // 物资类别编号
+	CreateId       types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`               // 创建人编号
+	CreateTime     types.Time   `json:"create_time,omitempty" db:"'create_time'"`                   // 创建时间
+	UpdateId       types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`               // 修改人编号
+	UpdateTime     types.Time   `json:"update_time,omitempty" db:"'update_time'"`                   // 修改时间
+	DelFlag        types.Int8   `json:"del_flag,omitempty" db:"'del_flag' size:1"`                  // 删除状态（Y/N）
 }
 
 // Auth

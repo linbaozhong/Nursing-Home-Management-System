@@ -63,14 +63,14 @@ type PageOutboundRecordByKeyResp struct {
 // GetOutboundRecordByIDResp 根据编号查询出库记录响应
 // @response
 type GetOutboundRecordByIDResp struct {
-	ID                           types.BigInt                  `json:"id"`                              // id
-	RecipientType                string                        `json:"recipient_type"`                  // 领用人类型
-	Recipient                    string                        `json:"recipient"`                       // 领用人
-	WarehouseName                string                        `json:"warehouse_name"`                  // 仓库名称
-	OutboundDate                 time.Time                     `json:"outbound_date"`                   // 出库时间
-	MaterialUse                  string                        `json:"material_use"`                    // 物资去向
-	StaffName                    string                        `json:"staff_name"`                      // 登记人
-	OutboundMaterialByIDRespList []GetOutboundMaterialByIDResp `json:"outbound_material_by_id_vo_list"` // 出库物资列表
+	ID                           types.BigInt                  `json:"id"`                                // id
+	RecipientType                string                        `json:"recipient_type"`                    // 领用人类型
+	Recipient                    string                        `json:"recipient"`                         // 领用人
+	WarehouseName                string                        `json:"warehouse_name"`                    // 仓库名称
+	OutboundDate                 time.Time                     `json:"outbound_date"`                     // 出库时间
+	MaterialUse                  string                        `json:"material_use"`                      // 物资去向
+	StaffName                    string                        `json:"staff_name"`                        // 登记人
+	OutboundMaterialByIDRespList []GetOutboundMaterialByIDResp `json:"outbound_material_by_id_resp_list"` // 出库物资列表
 }
 
 // GetOutboundMaterialByIDResp 出库物资响应（嵌套，继承 Rank）

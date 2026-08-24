@@ -17,6 +17,7 @@ var (
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "material_type", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "material_type", Type: "types.Time", IsRelation: false}
 	DelFlag    = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "material_type", Type: "types.Int8", IsRelation: false}
+	Kind       = dialect.Field{Name: "kind", Json: "kind", Table: "material_type", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -30,6 +31,7 @@ var (
 		UpdateId,
 		UpdateTime,
 		DelFlag,
+		Kind,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
@@ -41,5 +43,6 @@ var (
 		UpdateId,
 		UpdateTime,
 		DelFlag,
+		Kind,
 	}
 )

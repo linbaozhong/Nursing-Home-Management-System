@@ -3,7 +3,7 @@
 package do
 
 import (
-	"api/internal/model/define/table/tblmaterialtype"
+	"api/internal/model/define/table/tblroommaterial"
 	"database/sql"
 	"errors"
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
@@ -14,28 +14,31 @@ import (
 )
 
 var (
-	materialtypePool = pool.New[*MaterialType](func() any {
-		_obj := &MaterialType{}
+	roommaterialPool = pool.New[*RoomMaterial](func() any {
+		_obj := &RoomMaterial{}
 		return _obj
 	})
 )
 
-func NewMaterialType() *MaterialType {
-	_obj := materialtypePool.Get()
+func NewRoomMaterial() *RoomMaterial {
+	_obj := roommaterialPool.Get()
 	return _obj
 }
 
 // MarshalJSON
-func (p *MaterialType) MarshalJSON() ([]byte, error) {
+func (p *RoomMaterial) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(9 * 50)
-	if p.Name != "" {
-		write.WriteRaw("name", types.Marshal(p.Name))
-	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
 	}
 	if p.TenantId != 0 {
 		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
+	if p.RoomId != 0 {
+		write.WriteRaw("room_id", types.Marshal(p.RoomId))
+	}
+	if p.MaterialTypeId != 0 {
+		write.WriteRaw("material_type_id", types.Marshal(p.MaterialTypeId))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -52,14 +55,11 @@ func (p *MaterialType) MarshalJSON() ([]byte, error) {
 	if p.DelFlag != 0 {
 		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
 	}
-	if p.Kind != 0 {
-		write.WriteRaw("kind", types.Marshal(p.Kind))
-	}
 	return write.Bytes(), nil
 }
 
 // UnmarshalJSON
-func (p *MaterialType) UnmarshalJSON(data []byte) error {
+func (p *RoomMaterial) UnmarshalJSON(data []byte) error {
 
 	if !gjson.ValidBytes(data) {
 		return errors.New("invalid json")
@@ -68,12 +68,14 @@ func (p *MaterialType) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "name":
-			p.Name = types.String(value.Str)
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "tenant_id":
 			p.TenantId = types.BigInt(value.Uint())
+		case "room_id":
+			p.RoomId = types.BigInt(value.Uint())
+		case "material_type_id":
+			p.MaterialTypeId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -84,8 +86,6 @@ func (p *MaterialType) UnmarshalJSON(data []byte) error {
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "del_flag":
 			p.DelFlag = types.Int8(value.Int())
-		case "kind":
-			p.Kind = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -97,53 +97,53 @@ func (p *MaterialType) UnmarshalJSON(data []byte) error {
 }
 
 // Free
-func (p *MaterialType) Free() {
+func (p *RoomMaterial) Free() {
 	if p == nil {
 		return
 	}
 
-	materialtypePool.Put(p)
+	roommaterialPool.Put(p)
 }
 
 // Reset
-func (p *MaterialType) Reset() {
-	p.Name = ""
+func (p *RoomMaterial) Reset() {
 	p.Id = 0
 	p.TenantId = 0
+	p.RoomId = 0
+	p.MaterialTypeId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.DelFlag = 0
-	p.Kind = 0
 
 }
 
-func (p *MaterialType) TableName() string {
-	return "material_type"
+func (p *RoomMaterial) TableName() string {
+	return "room_material"
 }
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
-var materialtypeFieldToPtrFunc = map[string]func(*MaterialType) any{
-	tblmaterialtype.Name.Name:       func(p *MaterialType) any { return &p.Name },
-	tblmaterialtype.Id.Name:         func(p *MaterialType) any { return &p.Id },
-	tblmaterialtype.TenantId.Name:   func(p *MaterialType) any { return &p.TenantId },
-	tblmaterialtype.CreateId.Name:   func(p *MaterialType) any { return &p.CreateId },
-	tblmaterialtype.CreateTime.Name: func(p *MaterialType) any { return &p.CreateTime },
-	tblmaterialtype.UpdateId.Name:   func(p *MaterialType) any { return &p.UpdateId },
-	tblmaterialtype.UpdateTime.Name: func(p *MaterialType) any { return &p.UpdateTime },
-	tblmaterialtype.DelFlag.Name:    func(p *MaterialType) any { return &p.DelFlag },
-	tblmaterialtype.Kind.Name:       func(p *MaterialType) any { return &p.Kind },
+var roommaterialFieldToPtrFunc = map[string]func(*RoomMaterial) any{
+	tblroommaterial.Id.Name:             func(p *RoomMaterial) any { return &p.Id },
+	tblroommaterial.TenantId.Name:       func(p *RoomMaterial) any { return &p.TenantId },
+	tblroommaterial.RoomId.Name:         func(p *RoomMaterial) any { return &p.RoomId },
+	tblroommaterial.MaterialTypeId.Name: func(p *RoomMaterial) any { return &p.MaterialTypeId },
+	tblroommaterial.CreateId.Name:       func(p *RoomMaterial) any { return &p.CreateId },
+	tblroommaterial.CreateTime.Name:     func(p *RoomMaterial) any { return &p.CreateTime },
+	tblroommaterial.UpdateId.Name:       func(p *RoomMaterial) any { return &p.UpdateId },
+	tblroommaterial.UpdateTime.Name:     func(p *RoomMaterial) any { return &p.UpdateTime },
+	tblroommaterial.DelFlag.Name:        func(p *RoomMaterial) any { return &p.DelFlag },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
-func (p *MaterialType) fieldPtr(args ...dialect.Field) []func(*MaterialType) any {
+func (p *RoomMaterial) fieldPtr(args ...dialect.Field) []func(*RoomMaterial) any {
 	if len(args) == 0 {
-		args = tblmaterialtype.ReadableFields
+		args = tblroommaterial.ReadableFields
 	}
-	fs := make([]func(*MaterialType) any, 0, len(args))
+	fs := make([]func(*RoomMaterial) any, 0, len(args))
 	for _, col := range args {
-		if f, ok := materialtypeFieldToPtrFunc[col.Name]; ok {
+		if f, ok := roommaterialFieldToPtrFunc[col.Name]; ok {
 			fs = append(fs, f)
 		}
 	}
@@ -154,7 +154,7 @@ func (p *MaterialType) fieldPtr(args ...dialect.Field) []func(*MaterialType) any
 // 如果未传入任何字段参数，则默认使用 ReadableFields 中的字段。
 // 参数 args 为可变参数，代表需要获取指针的字段。
 // 返回值为一个包含对应字段指针的切片。
-func (p *MaterialType) AssignPtr(args ...dialect.Field) []any {
+func (p *RoomMaterial) AssignPtr(args ...dialect.Field) []any {
 	fs := p.fieldPtr(args...)
 	_vals := make([]any, len(fs))
 	for i, f := range fs {
@@ -166,10 +166,10 @@ func (p *MaterialType) AssignPtr(args ...dialect.Field) []any {
 // AssignPtrByColumns 根据 SQL 实际返回的列名，按列顺序返回对应字段的指针切片。
 // 列在映射表中找不到对应字段时，用一个占位指针跳过（保持列数/顺序与 rows 一致），避免 Scan 报错。
 // 参数 cols 为 rows.Columns() 返回的列名切片。
-func (p *MaterialType) AssignPtrByColumns(cols ...string) []any {
+func (p *RoomMaterial) AssignPtrByColumns(cols ...string) []any {
 	_vals := make([]any, 0, len(cols))
 	for _, col := range cols {
-		if f, ok := materialtypeFieldToPtrFunc[col]; ok {
+		if f, ok := roommaterialFieldToPtrFunc[col]; ok {
 			_vals = append(_vals, f(p))
 			continue
 		}
@@ -180,9 +180,9 @@ func (p *MaterialType) AssignPtrByColumns(cols ...string) []any {
 	return _vals
 }
 
-func (p *MaterialType) Slice(rows *sql.Rows, args ...dialect.Field) ([]*MaterialType, bool, error) {
+func (p *RoomMaterial) Slice(rows *sql.Rows, args ...dialect.Field) ([]*RoomMaterial, bool, error) {
 	defer rows.Close()
-	material_types := make([]*MaterialType, 0)
+	room_materials := make([]*RoomMaterial, 0)
 
 	// 只获取一次：字段 -> ptrFunc 的有序列表（与实例无关）
 	fs := p.fieldPtr(args...)
@@ -191,7 +191,7 @@ func (p *MaterialType) Slice(rows *sql.Rows, args ...dialect.Field) ([]*Material
 	_vals := make([]any, len(fs))
 
 	for rows.Next() {
-		_p := NewMaterialType()
+		_p := NewRoomMaterial()
 		// 每行只做"指针绑定到新实例"，
 		for i, f := range fs {
 			_vals[i] = f(_p)
@@ -202,71 +202,71 @@ func (p *MaterialType) Slice(rows *sql.Rows, args ...dialect.Field) ([]*Material
 			log.Error(e)
 			return nil, false, e
 		}
-		material_types = append(material_types, _p)
+		room_materials = append(room_materials, _p)
 	}
 	if e := rows.Err(); e != nil {
 		log.Error(e)
 		return nil, false, e
 	}
-	return material_types, len(material_types) > 0, nil
+	return room_materials, len(room_materials) > 0, nil
 }
 
 // RawAssignValues 向数据库写入数据前，为表列赋值。多用于批量插入和更新
 // 如果 args 为空，则赋值所有可写字段
 // 如果 args 不为空，则只赋值 args 中的字段
-func (p *MaterialType) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]string, []any) {
+func (p *RoomMaterial) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]string, []any) {
 	if len(args) == 0 {
-		args = tblmaterialtype.WritableFields
+		args = tblroommaterial.WritableFields
 	}
 	return p.AssignValues(d, args...)
 }
 
 // 定义字段到值检查和获取函数的映射
-var materialtypeFieldToValueFunc = map[dialect.Field]func(*MaterialType) (any, bool){
-	tblmaterialtype.Name: func(p *MaterialType) (any, bool) {
-		return p.Name, p.Name == ""
-	},
-	tblmaterialtype.Id: func(p *MaterialType) (any, bool) {
+var roommaterialFieldToValueFunc = map[dialect.Field]func(*RoomMaterial) (any, bool){
+	tblroommaterial.Id: func(p *RoomMaterial) (any, bool) {
 		return p.Id, p.Id == 0
 	},
-	tblmaterialtype.TenantId: func(p *MaterialType) (any, bool) {
+	tblroommaterial.TenantId: func(p *RoomMaterial) (any, bool) {
 		return p.TenantId, p.TenantId == 0
 	},
-	tblmaterialtype.CreateId: func(p *MaterialType) (any, bool) {
+	tblroommaterial.RoomId: func(p *RoomMaterial) (any, bool) {
+		return p.RoomId, p.RoomId == 0
+	},
+	tblroommaterial.MaterialTypeId: func(p *RoomMaterial) (any, bool) {
+		return p.MaterialTypeId, p.MaterialTypeId == 0
+	},
+	tblroommaterial.CreateId: func(p *RoomMaterial) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
-	tblmaterialtype.CreateTime: func(p *MaterialType) (any, bool) {
+	tblroommaterial.CreateTime: func(p *RoomMaterial) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
-	tblmaterialtype.UpdateId: func(p *MaterialType) (any, bool) {
+	tblroommaterial.UpdateId: func(p *RoomMaterial) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
-	tblmaterialtype.UpdateTime: func(p *MaterialType) (any, bool) {
+	tblroommaterial.UpdateTime: func(p *RoomMaterial) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblmaterialtype.DelFlag: func(p *MaterialType) (any, bool) {
+	tblroommaterial.DelFlag: func(p *RoomMaterial) (any, bool) {
 		return p.DelFlag, p.DelFlag == 0
-	},
-	tblmaterialtype.Kind: func(p *MaterialType) (any, bool) {
-		return p.Kind, p.Kind == 0
 	},
 }
 
 // AssignValues 向数据库写入数据前，为表列赋值。
 // 如果 args 为空，则将非零值赋与可写字段
 // 如果 args 不为空，则只赋值 args 中的字段
-func (p *MaterialType) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]string, []any) {
+func (p *RoomMaterial) AssignValues(d dialect.Dialect, args ...dialect.Field) ([]string, []any) {
 	// 未传参时使用全部可写字段，并跳过零值
 	skipZero := len(args) == 0
 	if skipZero {
-		args = tblmaterialtype.WritableFields
+		args = tblroommaterial.WritableFields
 	}
 
 	cols := make([]string, 0, len(args))
 	vals := make([]any, 0, len(args))
 
 	for _, arg := range args {
-		if f, has := materialtypeFieldToValueFunc[arg]; has {
+		if f, has := roommaterialFieldToValueFunc[arg]; has {
 			value, isZero := f(p)
 			// 显式指定字段时全量包含；默认模式跳过零值字段
 			if skipZero && isZero {
@@ -279,10 +279,10 @@ func (p *MaterialType) AssignValues(d dialect.Dialect, args ...dialect.Field) ([
 	return cols, vals
 }
 
-func (p *MaterialType) AssignKeys() (dialect.Field, any) {
-	return tblmaterialtype.PrimaryKey, p.Id
+func (p *RoomMaterial) AssignKeys() (dialect.Field, any) {
+	return tblroommaterial.PrimaryKey, p.Id
 }
 
-func (p *MaterialType) AssignPrimaryKeyValues(result sql.Result) error {
+func (p *RoomMaterial) AssignPrimaryKeyValues(result sql.Result) error {
 	return nil
 }

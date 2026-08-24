@@ -325,6 +325,7 @@ CREATE TABLE `bed` (
   `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `room_id` bigint(20) NOT NULL COMMENT '房间编号',
   `name` varchar(40) NOT NULL COMMENT '床位名称',
+  `bed_type_id` bigint(20) DEFAULT NULL COMMENT '床型编号(关联 material_type.id，kind=1)',
   `bed_flag` varchar(5) NOT NULL COMMENT '床位状态(空闲/预定/入住/退住审核)',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
@@ -1068,6 +1069,7 @@ CREATE TABLE `material_type` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
   `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
   `name` varchar(10) NOT NULL COMMENT '物资类别名称',
+  `kind` tinyint(4) NOT NULL DEFAULT 99 COMMENT '分类用途：1=床型，99=设施/其他',
   `del_flag` varchar(2) NOT NULL COMMENT '删除状态（Y/N）',
   `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
   `create_time` datetime NOT NULL COMMENT '创建时间',
@@ -1078,9 +1080,9 @@ CREATE TABLE `material_type` (
 
 /*Data for the table `material_type` */
 
-insert  into `material_type`(`id`,`name`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values 
-(1,'餐具','N',1,'2023-01-15 11:03:17',1,'2023-01-15 11:05:31'),
-(2,'药品','N',1,'2023-01-15 11:03:57',1,'2023-01-15 11:05:24');
+insert  into `material_type`(`id`,`name`,`kind`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values 
+(1,'餐具',99,'N',1,'2023-01-15 11:03:17',1,'2023-01-15 11:05:31'),
+(2,'药品',99,'N',1,'2023-01-15 11:03:57',1,'2023-01-15 11:05:24');
 
 /*Table structure for table `medicine` */
 
@@ -1691,6 +1693,24 @@ insert  into `room`(`id`,`type_id`,`floor_id`,`name`,`bed_num`,`del_flag`,`creat
 (8,2,10,'测试房间1',2,'N',1,'2023-04-05 02:37:04',1,'2023-04-05 02:38:47'),
 (9,1,10,'测试房间2',1,'N',1,'2023-04-05 02:37:47',1,'2023-04-05 02:37:47');
 
+/*Table structure for table `room_material` */
+
+DROP TABLE IF EXISTS `room_material`;
+
+CREATE TABLE `room_material` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `tenant_id` bigint(20) NOT NULL DEFAULT 1 COMMENT '租户编号',
+  `room_id` bigint(20) NOT NULL COMMENT '房间编号',
+  `material_type_id` bigint(20) NOT NULL COMMENT '设施(物资分类)编号，kind=99',
+  `del_flag` varchar(2) NOT NULL DEFAULT 'N' COMMENT '删除状态(Y/N)',
+  `create_id` bigint(20) NOT NULL COMMENT '创建人编号',
+  `create_time` datetime NOT NULL COMMENT '创建时间',
+  `update_id` bigint(20) NOT NULL COMMENT '修改人编号',
+  `update_time` datetime NOT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_room` (`room_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*Table structure for table `room_type` */
 
 DROP TABLE IF EXISTS `room_type`;
@@ -2094,6 +2114,37 @@ insert  into `user`(`id`,`union_id`,`openid`,`phone`,`pass`,`name`,`avator`,`cre
 
 insert  into `member`(`id`,`user_id`,`tenant_id`,`role_id`,`permissions`,`status`,`create_id`,`create_time`,`update_id`,`update_time`,`del_flag`) values 
 (1,1,1,1,'',0,0,'2022-12-31 12:34:43',0,'2022-12-31 12:34:43',0);
+
+
+-- 家属账号表：一个手机号对应一个账号，可绑定多位老人（通过 family_member.phone 关联）
+CREATE TABLE IF NOT EXISTS `family_account` (
+                                                `id`          BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                                `phone`       VARCHAR(20)  NOT NULL COMMENT '家属手机号（登录账号）',
+                                                `pass`        VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '登录密码（md5）',
+                                                `openid`      VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '微信 openid（充值支付前置）',
+                                                `create_time` DATETIME     DEFAULT NULL COMMENT '创建时间',
+                                                `update_time` DATETIME     DEFAULT NULL COMMENT '更新时间',
+                                                `del_flag`    TINYINT      NOT NULL DEFAULT 0 COMMENT '逻辑删除',
+                                                PRIMARY KEY (`id`),
+                                                UNIQUE KEY `uk_phone` (`phone`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='家属账号表';
+
+-- 家属充值订单表：充值直接加款到对应老人 elder.balance
+CREATE TABLE IF NOT EXISTS `family_recharge` (
+                                                 `id`          BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                                 `order_no`    VARCHAR(64)  NOT NULL COMMENT '商户订单号',
+                                                 `phone`       VARCHAR(20)  NOT NULL DEFAULT '' COMMENT '家属手机号',
+                                                 `elder_id`    BIGINT       NOT NULL COMMENT '充值到哪位老人',
+                                                 `amount`      BIGINT       NOT NULL DEFAULT 0 COMMENT '充值金额（单位：分）',
+                                                 `status`      TINYINT      NOT NULL DEFAULT 0 COMMENT '0-待支付 1-已支付 2-已关闭',
+                                                 `prepay_id`   VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '微信预支付 id',
+                                                 `create_time` DATETIME     DEFAULT NULL COMMENT '创建时间',
+                                                 `update_time` DATETIME     DEFAULT NULL COMMENT '更新时间',
+                                                 `del_flag`    TINYINT      NOT NULL DEFAULT 0 COMMENT '逻辑删除',
+                                                 PRIMARY KEY (`id`),
+                                                 UNIQUE KEY `uk_order_no` (`order_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='家属充值订单表';
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

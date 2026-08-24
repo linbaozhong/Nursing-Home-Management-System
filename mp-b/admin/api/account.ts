@@ -4,7 +4,7 @@
  */
 // 接入真实后端时，取消下面这行 import 即可使用 get/post
 // import { get, post } from '../utils/request'
-import { setLoginUser, clearAuth, LoginUser, TenantVO } from '../utils/auth'
+import { setLoginUser, clearAuth, LoginUser, TenantResp } from '../utils/auth'
 
 export interface LoginParams {
 	phone: string
@@ -13,7 +13,7 @@ export interface LoginParams {
 
 // ====== MOCK 数据（后台未完成，测试前端用；后台完成后放开各函数内注释并删除本段）======
 // 模拟“多企业 + 需绑定”场景：验证 多企业 → 选择企业页 分流
-const mockTenantList: TenantVO[] = [
+const mockTenantList: TenantResp[] = [
 	{ id: 1, name: '示例养老院', logo: '', contact_name: '张三', contact_phone: '13500000000', plan: '专业版', status: 1, trial_start: '2026-01-01', trial_end: '2027-01-01' },
 	{ id: 2, name: '康泰护理中心', logo: '', contact_name: '李四', contact_phone: '13500000001', plan: '标准版', status: 1, trial_start: '2026-02-01', trial_end: '2027-02-01' }
 ]
@@ -48,7 +48,7 @@ export interface WxLoginResult {
 	need_bind: boolean
 	token: string
 	user: LoginUser | null
-	tenants: TenantVO[]
+	tenants: TenantResp[]
 }
 
 /** 微信静默登录（返回 need_bind / token / tenants 用于分流） */

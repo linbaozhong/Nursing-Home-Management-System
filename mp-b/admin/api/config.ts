@@ -113,13 +113,146 @@ export function deleteNurseGrade(id: number): Promise<void> { return Promise.res
 export function pageBuildingByKey(keyword?: string): Promise<PageResult<BuildingItem>> {
 	// return get<PageResult<BuildingItem>>('/build/pageBuildingByKey', { page_num: 1, page_size: 200, key: keyword || undefined })
 	// ====== MOCK（接入真实后端时放开上方注释并删掉本段）======
-	let list: BuildingItem[] = [
-		{ id: 1, name: 'A栋', floor_num: 3 },
-		{ id: 2, name: 'B栋', floor_num: 2 }
-	]
+	let list: BuildingItem[] = mockBuildingList
 	if (keyword) list = list.filter((it) => it.name.indexOf(keyword) >= 0)
 	return Promise.resolve(mockPage(list))
 }
 export function addBuilding(name: string, floorNum: number): Promise<void> { return Promise.resolve() }
 export function editBuilding(id: number, name: string, floorNum: number): Promise<void> { return Promise.resolve() }
 export function deleteBuilding(id: number): Promise<void> { return Promise.resolve() }
+
+// ---------- 楼层（配置项 key: floor，可增删；保存后自动统计回写楼栋 floor_num） ----------
+export interface FloorCfgItem {
+	id: number
+	building_id: number
+	name: string
+}
+// mock 内存状态：每个楼栋的楼层层级。初始按 building.floor_num 展开。
+const mockFloorStore: Map<number, FloorCfgItem[]> = new Map<number, FloorCfgItem[]>()
+
+function ensureFloorStore() {
+	if (mockFloorStore.size > 0) return
+	mockBuildingList.forEach((b) => {
+		const floors: FloorCfgItem[] = []
+		for (let i = 1; i <= b.floor_num; i++) {
+			floors.push({ id: b.id * 100 + i, building_id: b.id, name: i + '层' })
+		}
+		mockFloorStore.set(b.id, floors)
+	})
+}
+
+// 统计并回写楼栋的 floor_num
+function recountBuildingFloorNum(buildingId: number) {
+	const floors = mockFloorStore.get(buildingId) || []
+	const maxN = floors.reduce((m, f) => {
+		const n = Number(f.name.replace(/[^0-9]/g, ''))
+		return n > m ? n : m
+	}, 0)
+	const b = mockBuildingList.find((it) => it.id == buildingId)
+	if (b) b.floor_num = maxN
+}
+
+export function listFloorByBuilding(buildingId: number): Promise<FloorCfgItem[]> {
+	// return get<FloorCfgItem[]>('/build/listFloorByBuildingId', { building_id: buildingId })
+	// ====== MOCK（接入真实后端时放开上方注释并删掉本段）======
+	ensureFloorStore()
+	return Promise.resolve(mockFloorStore.get(buildingId) || [])
+}
+
+export function addFloor(buildingId: number, name: string): Promise<FloorCfgItem[]> {
+	// return post<FloorCfgItem[]>('/build/addFloor', { building_id: buildingId, name })
+	// ====== MOCK（接入真实后端时放开上方注释并删掉本段）======
+	ensureFloorStore()
+	const list = mockFloorStore.get(buildingId) || []
+	const maxId = list.reduce((m, f) => (f.id > m ? f.id : m), buildingId * 100)
+	list.push({ id: maxId + 1, building_id: buildingId, name })
+	mockFloorStore.set(buildingId, list)
+	recountBuildingFloorNum(buildingId)
+	return Promise.resolve(list)
+}
+
+export function deleteFloor(buildingId: number, floorId: number): Promise<FloorCfgItem[]> {
+	// return post<FloorCfgItem[]>('/build/deleteFloor', { building_id: buildingId, id: floorId })
+	// ====== MOCK（接入真实后端时放开上方注释并删掉本段）======
+	ensureFloorStore()
+	const list = mockFloorStore.get(buildingId) || []
+	mockFloorStore.set(buildingId, list.filter((f) => f.id != floorId))
+	recountBuildingFloorNum(buildingId)
+	return Promise.resolve(mockFloorStore.get(buildingId) || [])
+}
+
+// ---------- 设施（配置项 key: facility） ----------
+export const ROOM_FACILITY_OPTIONS = ['餐桌', '轮椅', '空调', '电视', '独立卫生间', '呼叫铃', '衣柜', '阳台', '无障碍扶手']
+
+// ---------- 床型（配置项 key: bedtype，供房间床位选择） ----------
+export interface BedTypeItem { id: number; name: string }
+export function pageBedTypeByKey(keyword?: string): Promise<PageResult<BedTypeItem>> {
+	// return get<PageResult<BedTypeItem>>('/bed/pageBedTypeByKey', { page_num: 1, page_size: 200, key: keyword || undefined })
+	// ====== MOCK（接入真实后端时放开上方注释并删掉本段）======
+	let list: BedTypeItem[] = [
+		{ id: 1, name: '标准床' },
+		{ id: 2, name: '智能床' },
+		{ id: 3, name: '电动护理床' }
+	]
+	if (keyword) list = list.filter((it) => it.name.indexOf(keyword) >= 0)
+	return Promise.resolve(mockPage(list))
+}
+export function addBedType(name: string): Promise<void> { return Promise.resolve() }
+export function editBedType(id: number, name: string): Promise<void> { return Promise.resolve() }
+export function deleteBedType(id: number): Promise<void> { return Promise.resolve() }
+
+// ---------- 房间（配置项 key: room） ----------
+export interface BedCfgItem {
+	id: number
+	name: string
+	bed_type: string
+	bed_flag: string
+}
+export interface RoomCfgItem {
+	id: number
+	floor_id: number
+	building_id: number
+	name: string
+	type_id: number
+	type_name: string
+	bed_list: BedCfgItem[]
+	facilities: string
+}
+export function pageRoomByKey(keyword?: string): Promise<PageResult<RoomCfgItem>> {
+	// return get<PageResult<RoomCfgItem>>('/build/pageRoomByKey', { page_num: 1, page_size: 200, key: keyword || undefined })
+	// ====== MOCK（接入真实后端时放开上方注释并删掉本段）======
+	let list = mockRoomList.filter((it) => !keyword || it.name.indexOf(keyword) >= 0)
+	return Promise.resolve(mockPage(list))
+}
+export function addRoom(form: RoomCfgItem): Promise<void> { return Promise.resolve() }
+export function editRoom(id: number, form: RoomCfgItem): Promise<void> { return Promise.resolve() }
+export function deleteRoom(id: number): Promise<void> { return Promise.resolve() }
+
+// ====== 房间 mock 数据（在底部维持对楼栋 mock 的依赖）======
+const mockBuildingList = [
+	{ id: 1, name: 'A栋', floor_num: 3 },
+	{ id: 2, name: 'B栋', floor_num: 2 }
+]
+const mockRoomList: RoomCfgItem[] = [
+	{
+		id: 101, floor_id: 102, building_id: 1, name: 'A201', type_id: 2, type_name: '标准双人间',
+		bed_list: [
+			{ id: 10101, name: '01', bed_type: '标准床', bed_flag: '空' },
+			{ id: 10102, name: '02', bed_type: '智能床', bed_flag: '空' }
+		],
+		facilities: '餐桌,轮椅'
+	},
+	{
+		id: 102, floor_id: 102, building_id: 1, name: 'A202', type_id: 1, type_name: '标准单人间',
+		bed_list: [{ id: 10201, name: '01', bed_type: '标准床', bed_flag: '空' }],
+		facilities: '空调,电视,独立卫生间'
+	},
+	{
+		id: 201, floor_id: 101, building_id: 1, name: 'A101', type_id: 2, type_name: '标准双人间',
+		bed_list: [
+			{ id: 20101, name: '01', bed_type: '标准床', bed_flag: '已入住' },
+			{ id: 20102, name: '02', bed_type: '标准床', bed_flag: '空' }
+		],
+		facilities: '餐桌'
+	}
+]

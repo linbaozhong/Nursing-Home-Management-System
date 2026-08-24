@@ -19,7 +19,6 @@
 </template>
 
 <script setup lang="uts">
-	import { onShow } from '@dcloudio/uni-app'
 	import { getLoginUser } from '../../utils/auth'
 	import { canAccess } from '../../utils/auth'
 
@@ -31,13 +30,16 @@
 			title: '基础信息',
 			items: [
 				{ type: 'source', name: '来源渠道' },
-				{ type: 'roomtype', name: '房间类型' }
+				{ type: 'roomtype', name: '房间类型' },
+                                                  				{ type: 'bedtype', name: '床型' }
 			]
 		},
 		{
 			title: '床位楼栋',
 			items: [
-				{ type: 'building', name: '楼栋' }
+				{ type: 'building', name: '楼栋' },
+				{ type: 'floor', name: '楼层' },
+				{ type: 'room', name: '房间' }
 			]
 		},
 		{

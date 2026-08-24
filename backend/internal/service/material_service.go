@@ -13,6 +13,7 @@ import (
 	"api/internal/model/dto"
 
 	"github.com/linbaozhong/gentity/pkg/ace"
+	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/conv"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
@@ -144,11 +145,16 @@ func (m *material) PageMaterialTypeByKey(ctx context.Context, in *dto.PageMateri
 	if in.Name != nil && *in.Name != "" {
 		q.And(tblmaterialtype.Name.Like(*in.Name))
 	}
+	if in.Kind != nil {
+		q.And(tblmaterialtype.Kind.Eq(types.Int8(int8(*in.Kind))))
+	}
+	cols := []dialect.Field{
+		tblmaterialtype.Id.AsName("id"),
+		tblmaterialtype.Name.AsName("name"),
+		tblmaterialtype.Kind.AsName("kind"),
+	}
 	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
-		Cols(
-			tblmaterialtype.Id.AsName("id"),
-			tblmaterialtype.Name.AsName("name"),
-		).
+		Cols(cols...).
 		Desc(tblmaterialtype.CreateTime).
 		Select().
 		Gets(ctx, out)
@@ -166,6 +172,7 @@ func (m *material) GetMaterialTypeById(ctx context.Context, in *dto.IDReq, out *
 	}
 	out.ID = conv.Ptr(int64(obj.Id))
 	out.Name = conv.Ptr(obj.Name.String())
+	out.Kind = conv.Ptr(int(obj.Kind))
 	return nil
 }
 
@@ -196,6 +203,12 @@ func (m *material) AddMaterialType(ctx context.Context, in *dto.AddMaterialTypeR
 	bean := do.NewMaterialType()
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
+	if in.Kind != nil {
+		bean.Kind = types.Int8(int8(*in.Kind))
+	} else {
+		// 默认归为设施/其他
+		bean.Kind = types.Int8(constant.KindFacility)
+	}
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	_, e = dao.MaterialType(db).InsertOne(ctx, bean)
 	return e
@@ -219,6 +232,9 @@ func (m *material) EditMaterialType(ctx context.Context, in *dto.EditMaterialTyp
 	bean := do.NewMaterialType()
 	bean.Id = types.BigInt(*in.ID)
 	bean.Name = types.String(*in.Name)
+	if in.Kind != nil {
+		bean.Kind = types.Int8(int8(*in.Kind))
+	}
 	_, e = dao.MaterialType(db).UpdateOne(ctx, bean)
 	return e
 }

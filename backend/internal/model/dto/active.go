@@ -55,7 +55,7 @@ type PageActiveByKeyResp struct {
 // @response
 type GetActiveByIDResp struct {
 	OperateActiveReq
-	ParticipateElderRespList []ParticipateElderResp `json:"participate_elder_vo_list"` // 参加活动老人列表
+	ParticipateElderRespList []ParticipateElderResp `json:"participate_elder_resp_list"` // 参加活动老人列表
 }
 
 // ParticipateElderResp 参加活动老人响应

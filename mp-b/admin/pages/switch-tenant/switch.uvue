@@ -31,10 +31,9 @@
 
 <script setup lang="uts">
 	import { onShow } from '@dcloudio/uni-app'
-	import { myTenants, switchTenant } from '../../api/tenant'
-	import { TenantVO } from '../../api/tenant'
+	import { myTenants, switchTenant, TenantResp } from '../../api/tenant'
 
-	const tenants = ref<TenantVO[]>([])
+	const tenants = ref<TenantResp[]>([])
 	const loading = ref(false)
 
 	onShow(() => {

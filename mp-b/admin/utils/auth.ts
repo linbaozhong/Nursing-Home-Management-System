@@ -1,11 +1,11 @@
 /**
  * 登录信息 / 权限存取
- * 对应后端 dto.LoginUserVO
+ * 对应后端 dto.LoginUserResp
  */
 // 全局 uni API（uni-app-x 运行时提供，此处供 TS 工具文件识别）
 declare const uni: any
 
-export interface TenantVO {
+export interface TenantResp {
 	id: number
 	name: string
 	logo: string
@@ -29,7 +29,7 @@ export interface LoginUser {
 	need_bind: boolean
 	auth_id_list: number[]
 	auth_url_list: string[]
-	tenants: TenantVO[]
+	tenants: TenantResp[]
 	token: string
 }
 

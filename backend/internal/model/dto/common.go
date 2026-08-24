@@ -122,7 +122,7 @@ type OperateServiceReq struct {
 // @response
 type GetNurseGradeByIDResp struct {
 	OperateNurseGradeReq
-	NurseGradeServiceRespList []NurseGradeServiceResp `json:"nurse_grade_service_vo_list"` // 护理等级服务列表
+	NurseGradeServiceRespList []NurseGradeServiceResp `json:"nurse_grade_service_resp_list"` // 护理等级服务列表
 }
 
 // NurseGradeServiceResp 护理等级服务响应（嵌套，继承 OperateServiceReq）
@@ -137,7 +137,7 @@ type NurseGradeServiceResp struct {
 // 	ID              int64         `json:"id"`                 // id
 // 	Name            string        `json:"name"`               // 套餐名称
 // 	MonthPrice      types.Money       `json:"month_price"`        // 月套餐费用
-// 	SetDishesRespList []SetDishesResp `json:"set_dishes_vo_list"` // 护理等级服务列表
+// 	SetDishesRespList []SetDishesResp `json:"set_dishes_resp_list"` // 护理等级服务列表
 // }
 
 // GetBedByIDResp 床位详情响应（被 ElderRecord 引用）
@@ -152,16 +152,16 @@ type GetBedByIDResp struct {
 // GetElderRecordByIDResp 长者档案详情响应（被 ElderRecord 引用）
 // @response
 type GetElderRecordByIDResp struct {
-	Name                              string                       `json:"name"`                                  // 姓名
-	IDNum                             string                       `json:"id_num"`                                // 身份证号
-	Age                               int                          `json:"age"`                                   // 年龄
-	Sex                               string                       `json:"sex"`                                   // 性别
-	Phone                             string                       `json:"phone"`                                 // 电话
-	Address                           string                       `json:"address"`                               // 地址
-	ElderEmergencyContactByIDRespList []OperateEmergencyContactReq `json:"elder_emergency_contact_by_id_vo_list"` // 长者紧急联系人
-	ElderNurseGradeByIDResp           *GetNurseGradeByIDResp       `json:"elder_nurse_grade_by_id_vo"`            // 长者护理等级
-	ElderCateringSetByIDResp          *GetCateringSetByIDResp      `json:"elder_catering_set_by_id_vo"`           // 长者餐饮套餐
-	ElderBedByIDResp                  *GetBedByIDResp              `json:"elder_bed_by_id_vo"`                    // 长者床位
+	Name                              string                       `json:"name"`                                    // 姓名
+	IDNum                             string                       `json:"id_num"`                                  // 身份证号
+	Age                               int                          `json:"age"`                                     // 年龄
+	Sex                               string                       `json:"sex"`                                     // 性别
+	Phone                             string                       `json:"phone"`                                   // 电话
+	Address                           string                       `json:"address"`                                 // 地址
+	ElderEmergencyContactByIDRespList []OperateEmergencyContactReq `json:"elder_emergency_contact_by_id_resp_list"` // 长者紧急联系人
+	ElderNurseGradeByIDResp           *GetNurseGradeByIDResp       `json:"elder_nurse_grade_by_id_resp"`            // 长者护理等级
+	ElderCateringSetByIDResp          *GetCateringSetByIDResp      `json:"elder_catering_set_by_id_resp"`           // 长者餐饮套餐
+	ElderBedByIDResp                  *GetBedByIDResp              `json:"elder_bed_by_id_resp"`                    // 长者床位
 }
 
 // GetElderLabelByIDLabelResp 客户标签响应（被 ElderRecord 引用）

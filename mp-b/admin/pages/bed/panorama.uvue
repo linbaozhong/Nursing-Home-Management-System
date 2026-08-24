@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="uts">
-	import { onMounted } from '@dcloudio/uni-app'
+	// onMounted 是 uni-app x 编译器自动注入的页面生命周期宏，无需 import
 	import { listBuilding, listFloorByBuildingId, listRoomByFloorId, DropDownItem, FloorItem } from '../../api/bed'
 
 	const stage = ref('building')

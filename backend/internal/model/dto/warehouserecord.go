@@ -84,11 +84,11 @@ type PageWarehouseMaterialByKeyResp struct {
 // GetWarehouseRecordByIDResp 根据编号查询入库记录响应
 // @response
 type GetWarehouseRecordByIDResp struct {
-	WarehouseName                 string                         `json:"warehouse_name"`                   // 仓库名称
-	StaffName                     string                         `json:"staff_name"`                       // 经办人姓名
-	Source                        string                         `json:"source"`                           // 物资来源
-	WarehouseDate                 time.Time                      `json:"warehouse_date"`                   // 入库时间
-	WarehouseMaterialByIDRespList []GetWarehouseMaterialByIDResp `json:"warehouse_material_by_id_vo_list"` // 入库物资列表
+	WarehouseName                 string                         `json:"warehouse_name"`                     // 仓库名称
+	StaffName                     string                         `json:"staff_name"`                         // 经办人姓名
+	Source                        string                         `json:"source"`                             // 物资来源
+	WarehouseDate                 time.Time                      `json:"warehouse_date"`                     // 入库时间
+	WarehouseMaterialByIDRespList []GetWarehouseMaterialByIDResp `json:"warehouse_material_by_id_resp_list"` // 入库物资列表
 }
 
 // GetWarehouseMaterialByIDResp 入库物资响应（嵌套，继承 Rank）

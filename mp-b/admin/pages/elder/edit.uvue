@@ -102,7 +102,7 @@
 			ageStr.value = '' + res.age
 			form.value.phone = res.phone
 			form.value.address = res.address
-			form.value.nurse_level = res.elder_nurse_grade_by_id_vo ? '' : ''
+			form.value.nurse_level = res.elder_nurse_grade_by_id_resp ? '' : ''
 			form.value.check_flag = ''
 		} catch (e) {
 			// 已统一 toast

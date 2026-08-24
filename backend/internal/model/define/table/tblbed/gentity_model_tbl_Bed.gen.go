@@ -13,6 +13,7 @@ var (
 	Id         = dialect.Field{Name: "id", Json: "id", Table: "bed", Type: "types.BigInt", IsRelation: false}
 	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
 	RoomId     = dialect.Field{Name: "room_id", Json: "room_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
+	BedTypeID  = dialect.Field{Name: "bed_type_id", Json: "bed_type_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "bed", Type: "types.Time", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
@@ -28,6 +29,7 @@ var (
 		Id,
 		TenantId,
 		RoomId,
+		BedTypeID,
 		CreateId,
 		CreateTime,
 		UpdateId,
@@ -41,6 +43,7 @@ var (
 		Id,
 		TenantId,
 		RoomId,
+		BedTypeID,
 		CreateId,
 		CreateTime,
 		UpdateId,

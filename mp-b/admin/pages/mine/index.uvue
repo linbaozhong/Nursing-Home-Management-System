@@ -20,6 +20,10 @@
 		</view>
 
 		<view class="menu">
+			<view class="menu__item" @click="goConfig">
+				<text class="menu__label">基础配置</text>
+				<text class="menu__arrow">›</text>
+			</view>
 			<view class="menu__item" @click="goEditPass">
 				<text class="menu__label">修改密码</text>
 				<text class="menu__arrow">›</text>

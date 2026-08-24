@@ -59,13 +59,13 @@ type PageOrderByKeyResp struct {
 // GetOrderByIDResp 根据编号查询点餐响应
 // @response
 type GetOrderByIDResp struct {
-	ElderName           string            `json:"elder_name"`           // 老人姓名
-	ElderPhone          string            `json:"elder_phone"`          // 老人电话
-	DineDate            time.Time         `json:"dine_date"`            // 就餐时间
-	DineType            string            `json:"dine_type"`            // 就餐方式
-	StaffName           string            `json:"staff_name"`           // 送餐人员姓名
-	DeliverDishesDate   time.Time         `json:"deliver_dishes_date"`  // 送餐时间
-	OrderDishesRespList []OrderDishesResp `json:"order_dishes_vo_list"` // 订单菜品列表
+	ElderName           string            `json:"elder_name"`             // 老人姓名
+	ElderPhone          string            `json:"elder_phone"`            // 老人电话
+	DineDate            time.Time         `json:"dine_date"`              // 就餐时间
+	DineType            string            `json:"dine_type"`              // 就餐方式
+	StaffName           string            `json:"staff_name"`             // 送餐人员姓名
+	DeliverDishesDate   time.Time         `json:"deliver_dishes_date"`    // 送餐时间
+	OrderDishesRespList []OrderDishesResp `json:"order_dishes_resp_list"` // 订单菜品列表
 }
 
 // OrderDishesResp 菜单菜品响应（嵌套，继承 Rank）

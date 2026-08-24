@@ -10,7 +10,9 @@ import (
 	"api/internal/model/define/table/tblbed"
 	"api/internal/model/define/table/tblbuilding"
 	"api/internal/model/define/table/tblfloor"
+	"api/internal/model/define/table/tblmaterialtype"
 	"api/internal/model/define/table/tblroom"
+	"api/internal/model/define/table/tblroommaterial"
 	"api/internal/model/define/table/tblroomtype"
 	"api/internal/model/do"
 	"api/internal/model/dto"
@@ -281,7 +283,7 @@ func (b *build) DeleteBuilding(ctx context.Context, in *dto.IDReq, out *dto.Empt
 
 // PageFloorByKey 分页查询楼层
 // 对应 Java: BuildServiceImpl.pageFloorByKey -> FloorMapper.listFloorByKey
-func (b *build) PageFloorByKey(ctx context.Context, in *dto.PageFloorByKeyReq, out *[]dto.PageFloorByKeyVO) error {
+func (b *build) PageFloorByKey(ctx context.Context, in *dto.PageFloorByKeyReq, out *[]dto.PageFloorByKeyResp) error {
 	q := db.Table(tblfloor.TableName).Where(tblfloor.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblfloor.DelFlag.Eq(constant.YesNoNo))
 	if in.BuildID != nil {
 		q.And(tblfloor.BuildingId.Eq(types.BigInt(*in.BuildID)))
@@ -325,7 +327,7 @@ func (b *build) GetFloorByBuildingId(ctx context.Context, in *dto.GetFloorByBuil
 
 // GetFloorById 根据楼层编号获取楼层详情
 // 对应 Java: BuildServiceImpl.getFloorById -> floorMapper.selectByPrimaryKey
-func (b *build) GetFloorById(ctx context.Context, in *dto.IDReq, out *dto.OperateFloorVO) error {
+func (b *build) GetFloorById(ctx context.Context, in *dto.IDReq, out *dto.OperateFloorResp) error {
 	obj, has, e := dao.Floor(db).GetByID(ctx, types.BigInt(*in.ID))
 	if e != nil {
 		return e
@@ -361,7 +363,11 @@ func (b *build) AddFloor(ctx context.Context, in *dto.AddFloorReq, out *dto.Empt
 	}
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	_, e := dao.Floor(db).InsertOne(ctx, bean)
-	return e
+	if e != nil {
+		return e
+	}
+	// 新增楼层后自动统计回写楼栋楼层数
+	return b.recountBuildingFloorNum(ctx, *in.BuildingID)
 }
 
 // EditFloor 编辑楼层
@@ -387,7 +393,7 @@ func (b *build) EditFloor(ctx context.Context, in *dto.EditFloorReq, out *dto.Em
 	return e
 }
 
-// DeleteFloor 删除楼层（逻辑删除）
+// DeleteFloor 删除楼层（逻辑删除 + 回写楼栋楼层数）
 // 对应 Java: BuildServiceImpl.deleteNode -> floorFunc.deleteFloorNode
 func (b *build) DeleteFloor(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	if occupied, e := b.hasOccupiedBed(ctx, markFloor, *in.ID); e != nil {
@@ -395,15 +401,41 @@ func (b *build) DeleteFloor(ctx context.Context, in *dto.IDReq, out *dto.EmptyRe
 	} else if occupied {
 		return errors.New("该楼层下存在占用床位，无法删除")
 	}
-	_, e := dao.Floor(db).UpdateById(ctx, types.BigInt(*in.ID), tblfloor.DelFlag.Set(constant.YesNoYes))
-	return e
+	floor, has, e := dao.Floor(db).GetByID(ctx, types.BigInt(*in.ID))
+	if e != nil {
+		return e
+	}
+	if !has || floor == nil {
+		return errors.New("楼层不存在")
+	}
+	buildingID := int64(floor.BuildingId)
+	_, e = dao.Floor(db).UpdateById(ctx, types.BigInt(*in.ID), tblfloor.DelFlag.Set(constant.YesNoYes))
+	if e != nil {
+		return e
+	}
+	// 删除楼层后自动统计回写楼栋楼层数
+	return b.recountBuildingFloorNum(ctx, buildingID)
 }
 
 // ==================== 房间 ====================
 
+// recountBuildingFloorNum 根据该楼栋现有有效楼层数量回写 building.floor_num
+func (b *build) recountBuildingFloorNum(ctx context.Context, buildingID int64) error {
+	count, e := dao.Floor(db).Count(ctx,
+		tblfloor.BuildingId.Eq(buildingID),
+		tblfloor.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+		tblfloor.DelFlag.Eq(constant.YesNoNo),
+	)
+	if e != nil {
+		return e
+	}
+	_, e = dao.Building(db).UpdateById(ctx, types.BigInt(buildingID), tblbuilding.FloorNum.Set(types.Int32(int32(count))))
+	return e
+}
+
 // PageRoomByKey 分页查询房间
 // 对应 Java: BuildServiceImpl.pageRoomByKey -> RoomMapper.listRoomByKey
-func (b *build) PageRoomByKey(ctx context.Context, in *dto.PageRoomByKeyReq, out *[]dto.PageRoomByKeyVO) error {
+func (b *build) PageRoomByKey(ctx context.Context, in *dto.PageRoomByKeyReq, out *[]dto.PageRoomByKeyResp) error {
 	q := db.Table(tblroom.TableName).Where(tblroom.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblroom.DelFlag.Eq(constant.YesNoNo))
 	if in.BuildID != nil {
 		floors, _, e := dao.Floor(db).List(ctx, ace.Where(tblfloor.BuildingId.Eq(types.BigInt(*in.BuildID)), tblfloor.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblfloor.DelFlag.Eq(constant.YesNoNo)))
@@ -442,7 +474,7 @@ func (b *build) PageRoomByKey(ctx context.Context, in *dto.PageRoomByKeyReq, out
 
 // GetRoomByFloorId 根据楼层编号获取房间
 // 对应 Java: BuildServiceImpl.getRoomByFloorId -> roomMapper.selectByFloorId
-func (b *build) GetRoomByFloorId(ctx context.Context, in *dto.GetRoomByFloorIdReq, out *[]dto.RoomByFloorIdVO) error {
+func (b *build) GetRoomByFloorId(ctx context.Context, in *dto.GetRoomByFloorIdReq, out *[]dto.RoomByFloorIdResp) error {
 	q := ace.Where(tblroom.FloorId.Eq(types.BigInt(*in.FloorID)), tblroom.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblroom.DelFlag.Eq(constant.YesNoNo))
 	if in.Name != nil {
 		q = q.And(tblroom.Name.Like(*in.Name))
@@ -451,9 +483,9 @@ func (b *build) GetRoomByFloorId(ctx context.Context, in *dto.GetRoomByFloorIdRe
 	if e != nil {
 		return e
 	}
-	*out = make([]dto.RoomByFloorIdVO, 0, len(list))
+	*out = make([]dto.RoomByFloorIdResp, 0, len(list))
 	for _, room := range list {
-		*out = append(*out, dto.RoomByFloorIdVO{
+		*out = append(*out, dto.RoomByFloorIdResp{
 			ID:     types.BigInt(room.Id),
 			Name:   room.Name.String(),
 			BedNum: int(room.BedNum),
@@ -464,7 +496,7 @@ func (b *build) GetRoomByFloorId(ctx context.Context, in *dto.GetRoomByFloorIdRe
 
 // GetRoomById 根据房间编号获取房间详情
 // 对应 Java: BuildServiceImpl.getRoomById -> roomMapper.selectById
-func (b *build) GetRoomById(ctx context.Context, in *dto.IDReq, out *dto.OperateRoomVO) error {
+func (b *build) GetRoomById(ctx context.Context, in *dto.IDReq, out *dto.OperateRoomResp) error {
 	obj, has, e := dao.Room(db).GetByID(ctx, types.BigInt(*in.ID))
 	if e != nil {
 		return e
@@ -477,6 +509,7 @@ func (b *build) GetRoomById(ctx context.Context, in *dto.IDReq, out *dto.Operate
 	out.FloorId = types.BigInt(obj.FloorId)
 	out.Name = obj.Name.String()
 	out.BedNum = int(obj.BedNum)
+	b.fillRoomBedsAndFacilities(ctx, out)
 	return nil
 }
 
@@ -501,8 +534,35 @@ func (b *build) AddRoom(ctx context.Context, in *dto.AddRoomReq, out *dto.EmptyR
 		bean.BedNum = types.Int32(int32(*in.BedNum))
 	}
 	bean.DelFlag = types.Int8(constant.YesNoNo)
-	_, e := dao.Room(db).InsertOne(ctx, bean)
-	return e
+	roomID, e := dao.Room(db).Insert(ctx,
+		tblroom.TenantId.Set(types.BigInt(lib.TenantID(ctx))),
+		tblroom.TypeId.Set(*in.TypeID),
+		tblroom.FloorId.Set(*in.FloorID),
+		tblroom.Name.Set(*in.Name),
+		tblroom.BedNum.Set(types.Int32(int32(*in.BedNum))),
+		tblroom.DelFlag.Set(constant.YesNoNo),
+	)
+	if e != nil {
+		return e
+	}
+	if in.Beds != nil && len(in.Beds) > 0 {
+		if ec := b.replaceRoomBeds(ctx, roomID, in.Beds); ec != nil {
+			return ec
+		}
+	}
+	if in.FacilityIDs != nil && len(in.FacilityIDs) > 0 {
+		if ec := b.replaceRoomFacilities(ctx, roomID, in.FacilityIDs); ec != nil {
+			return ec
+		}
+	}
+	// 回写房间床位数量 = 实际床位数量
+	if in.Beds != nil && len(in.Beds) > 0 {
+		_, e = dao.Room(db).UpdateById(ctx, types.BigInt(roomID), tblroom.BedNum.Set(types.Int32(int32(len(in.Beds)))))
+		if e != nil {
+			return e
+		}
+	}
+	return nil
 }
 
 // EditRoom 编辑房间
@@ -526,7 +586,25 @@ func (b *build) EditRoom(ctx context.Context, in *dto.EditRoomReq, out *dto.Empt
 		sets = append(sets, tblroom.BedNum.Set(types.Int32(int32(*in.BedNum))))
 	}
 	_, e := dao.Room(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
-	return e
+	if e != nil {
+		return e
+	}
+	roomID := *in.ID
+	if in.Beds != nil {
+		if ec := b.replaceRoomBeds(ctx, roomID, in.Beds); ec != nil {
+			return ec
+		}
+		_, e = dao.Room(db).UpdateById(ctx, types.BigInt(roomID), tblroom.BedNum.Set(types.Int32(int32(len(in.Beds)))))
+		if e != nil {
+			return e
+		}
+	}
+	if in.FacilityIDs != nil {
+		if ec := b.replaceRoomFacilities(ctx, roomID, in.FacilityIDs); ec != nil {
+			return ec
+		}
+	}
+	return nil
 }
 
 // DeleteRoom 删除房间（逻辑删除）
@@ -545,11 +623,123 @@ func (b *build) DeleteRoom(ctx context.Context, in *dto.IDReq, out *dto.EmptyRes
 	return e
 }
 
+// replaceRoomBeds 整体替换某房间的床位：先逻辑删除旧床位，再按 bed_list 重建
+// 依赖 gentity 重新生成：do.Bed.BedTypeId / tblbed.BedTypeId
+func (b *build) replaceRoomBeds(ctx context.Context, roomID int64, beds []dto.OperateBedReq) error {
+	if _, e := dao.Bed(db).Update(ctx,
+		[]dialect.Setter{tblbed.DelFlag.Set(constant.YesNoYes)},
+		tblbed.RoomId.Eq(roomID),
+		tblbed.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+		tblbed.DelFlag.Eq(constant.YesNoNo),
+	); e != nil {
+		return e
+	}
+	for _, bd := range beds {
+		bean := do.NewBed()
+		bean.TenantId = types.BigInt(lib.TenantID(ctx))
+		bean.RoomId = types.BigInt(roomID)
+		bean.Name = types.String("")
+		if bd.Name != nil {
+			bean.Name = types.String(*bd.Name)
+		}
+		bean.BedTypeID = types.BigInt(0)
+		if bd.BedTypeID != nil {
+			bean.BedTypeID = types.BigInt(*bd.BedTypeID)
+		}
+		bean.BedFlag = types.Int8(constant.BedIdle)
+		bean.DelFlag = types.Int8(constant.YesNoNo)
+		if _, e := dao.Bed(db).InsertOne(ctx, bean, tblbed.Name, tblbed.RoomId, tblbed.BedTypeID, tblbed.BedFlag, tblbed.DelFlag, tblbed.TenantId); e != nil {
+			return e
+		}
+	}
+	return nil
+}
+
+// replaceRoomFacilities 整体替换某房间的设施（room_material 关联表）
+// 依赖 gentity 重新生成：tblroommaterial / do.RoomMaterial / dao.RoomMaterial
+func (b *build) replaceRoomFacilities(ctx context.Context, roomID int64, facilityIDs []int64) error {
+	if _, e := dao.RoomMaterial(db).Delete(ctx,
+		tblroommaterial.RoomId.Eq(roomID),
+		tblroommaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+		tblroommaterial.DelFlag.Eq(constant.YesNoNo),
+	); e != nil {
+		return e
+	}
+	for _, fid := range facilityIDs {
+		if _, e := dao.RoomMaterial(db).Insert(ctx,
+			tblroommaterial.TenantId.Set(types.BigInt(lib.TenantID(ctx))),
+			tblroommaterial.RoomId.Set(roomID),
+			tblroommaterial.MaterialTypeId.Set(fid),
+			tblroommaterial.DelFlag.Set(constant.YesNoNo),
+		); e != nil {
+			return e
+		}
+	}
+	return nil
+}
+
+// fillRoomBedsAndFacilities 给房间详情填充床位列表与设施列表
+// 依赖 gentity 重新生成：tblroommaterial / dao.RoomMaterial / do.Bed.BedTypeId
+func (b *build) fillRoomBedsAndFacilities(ctx context.Context, out *dto.OperateRoomResp) error {
+	// 床位
+	beds, _, e := dao.Bed(db).List(ctx, ace.Where(tblbed.RoomId.Eq(types.BigInt(out.ID)), tblbed.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblbed.DelFlag.Eq(constant.YesNoNo)).Cols(tblbed.Id, tblbed.Name, tblbed.BedTypeID, tblbed.BedFlag))
+	if e != nil {
+		return e
+	}
+	tyIDs := make([]any, 0, len(beds))
+	for _, bd := range beds {
+		if bd.BedTypeID != 0 {
+			tyIDs = append(tyIDs, int64(bd.BedTypeID))
+		}
+	}
+	tyMap := map[int64]string{}
+	if len(tyIDs) > 0 {
+		tys, _, e2 := dao.MaterialType(db).List(ctx, ace.Where(tblmaterialtype.Id.In(tyIDs...), tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterialtype.DelFlag.Eq(constant.YesNoNo)))
+		if e2 != nil {
+			return e2
+		}
+		for _, t := range tys {
+			tyMap[int64(t.Id)] = t.Name.String()
+		}
+	}
+	out.Beds = make([]dto.OperateBedResp, 0, len(beds))
+	for _, bd := range beds {
+		out.Beds = append(out.Beds, dto.OperateBedResp{
+			ID:          types.BigInt(bd.Id),
+			Name:        bd.Name.String(),
+			BedTypeId:   types.BigInt(bd.BedTypeID),
+			BedTypeName: tyMap[int64(bd.BedTypeID)],
+		})
+	}
+	// 设施
+	rms, _, e := dao.RoomMaterial(db).List(ctx, ace.Where(tblroommaterial.RoomId.Eq(types.BigInt(out.ID)), tblroommaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblroommaterial.DelFlag.Eq(constant.YesNoNo)).Cols(tblroommaterial.MaterialTypeId))
+	if e != nil {
+		return e
+	}
+	facIDs := make([]any, 0, len(rms))
+	for _, rm := range rms {
+		facIDs = append(facIDs, int64(rm.MaterialTypeId))
+	}
+	if len(facIDs) == 0 {
+		out.Facilities = []dto.RoomFacilityResp{}
+		return nil
+	}
+	facs, _, e := dao.MaterialType(db).List(ctx, ace.Where(tblmaterialtype.Id.In(facIDs...), tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterialtype.DelFlag.Eq(constant.YesNoNo)))
+	if e != nil {
+		return e
+	}
+	out.Facilities = make([]dto.RoomFacilityResp, 0, len(facs))
+	for _, f := range facs {
+		out.Facilities = append(out.Facilities, dto.RoomFacilityResp{ID: types.BigInt(f.Id), Name: f.Name.String()})
+	}
+	return nil
+}
+
 // ==================== 床位 ====================
 
 // PageBedByKey 分页查询床位（按关键词/楼栋/楼层/房间/状态）
 // 对应 Java: BuildServiceImpl.pageBedByKey -> bedFunc.filterBedByKey + PageUtil 内存分页
-func (b *build) PageBedByKey(ctx context.Context, in *dto.PageBedByKeyReq, out *[]dto.PageBedByKeyVO) error {
+func (b *build) PageBedByKey(ctx context.Context, in *dto.PageBedByKeyReq, out *[]dto.PageBedByKeyResp) error {
 	beds, _, e := dao.Bed(db).List(ctx, ace.Where(tblbed.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblbed.DelFlag.Eq(constant.YesNoNo)))
 	if e != nil {
 		return e
@@ -607,12 +797,30 @@ func (b *build) PageBedByKey(ctx context.Context, in *dto.PageBedByKeyReq, out *
 		end = total
 	}
 	pageItems := filtered[start:end]
-	*out = make([]dto.PageBedByKeyVO, 0, len(pageItems))
+	*out = make([]dto.PageBedByKeyResp, 0, len(pageItems))
+	bedTypeID := make([]any, 0, len(pageItems))
 	for _, item := range pageItems {
-		*out = append(*out, dto.PageBedByKeyVO{
-			ID:      types.BigInt(item.bed.Id),
-			Name:    item.bed.Name.String(),
-			BedFlag: item.bed.BedFlag.String(),
+		if item.bed.BedTypeID != 0 {
+			bedTypeID = append(bedTypeID, int64(item.bed.BedTypeID))
+		}
+	}
+	tyMap := map[int64]string{}
+	if len(bedTypeID) > 0 {
+		types2, _, e := dao.MaterialType(db).List(ctx, ace.Where(tblmaterialtype.Id.In(bedTypeID...), tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterialtype.DelFlag.Eq(constant.YesNoNo)))
+		if e != nil {
+			return e
+		}
+		for _, t := range types2 {
+			tyMap[int64(t.Id)] = t.Name.String()
+		}
+	}
+	for _, item := range pageItems {
+		*out = append(*out, dto.PageBedByKeyResp{
+			ID:          types.BigInt(item.bed.Id),
+			Name:        item.bed.Name.String(),
+			BedFlag:     item.bed.BedFlag.String(),
+			BedTypeId:   types.BigInt(item.bed.BedTypeID),
+			BedTypeName: tyMap[int64(item.bed.BedTypeID)],
 		})
 	}
 	return nil
@@ -634,6 +842,9 @@ func (b *build) AddBed(ctx context.Context, in *dto.OperateBedReq, out *dto.Empt
 	if in.Name != nil {
 		bean.Name = types.String(*in.Name)
 	}
+	if in.BedTypeID != nil {
+		bean.BedTypeID = types.BigInt(*in.BedTypeID)
+	}
 	bean.BedFlag = types.Int8(constant.BedIdle)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
 	_, e := dao.Bed(db).InsertOne(ctx, bean)
@@ -642,7 +853,7 @@ func (b *build) AddBed(ctx context.Context, in *dto.OperateBedReq, out *dto.Empt
 
 // GetBedById 根据床位编号获取床位详情
 // 对应 Java: BuildServiceImpl.getBedById -> bedMapper.selectByPrimaryKey
-func (b *build) GetBedById(ctx context.Context, in *dto.IDReq, out *dto.OperateBedVO) error {
+func (b *build) GetBedById(ctx context.Context, in *dto.IDReq, out *dto.OperateBedResp) error {
 	obj, has, e := dao.Bed(db).GetByID(ctx, types.BigInt(*in.ID))
 	if e != nil {
 		return e
@@ -653,6 +864,16 @@ func (b *build) GetBedById(ctx context.Context, in *dto.IDReq, out *dto.OperateB
 	out.ID = types.BigInt(obj.Id)
 	out.RoomId = types.BigInt(obj.RoomId)
 	out.Name = obj.Name.String()
+	out.BedTypeId = types.BigInt(obj.BedTypeID)
+	if obj.BedTypeID != 0 {
+		t, has2, e2 := dao.MaterialType(db).Get(ctx, ace.Where(tblmaterialtype.Id.Eq(types.BigInt(obj.BedTypeID)), tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterialtype.DelFlag.Eq(constant.YesNoNo)))
+		if e2 != nil {
+			return e2
+		}
+		if has2 && t != nil {
+			out.BedTypeName = t.Name.String()
+		}
+	}
 	return nil
 }
 
@@ -671,6 +892,9 @@ func (b *build) EditBed(ctx context.Context, in *dto.OperateBedReq, out *dto.Emp
 	}
 	if in.Name != nil {
 		sets = append(sets, tblbed.Name.Set(types.String(*in.Name)))
+	}
+	if in.BedTypeID != nil {
+		sets = append(sets, tblbed.BedTypeID.Set(types.BigInt(*in.BedTypeID)))
 	}
 	_, e := dao.Bed(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
 	return e
