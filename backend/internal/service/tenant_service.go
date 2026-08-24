@@ -461,7 +461,6 @@ func (a *account) fillUserByMember(ctx context.Context, userID, tenantID, member
 	out.Name = user.Name.String()
 	out.Avator = user.Avator.String()
 	out.Phone = user.Phone.String()
-	out.Pass = user.Pass.String()
 	out.Token = tk
 	out.AuthUrlList = authUrls
 	return nil
