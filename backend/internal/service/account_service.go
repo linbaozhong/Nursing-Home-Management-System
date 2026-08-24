@@ -32,7 +32,7 @@ type codeItem struct {
 var codeCache sync.Map
 
 // SendCode 发送验证码
-func (a *account) SendCode(ctx context.Context, in *dto.SendCodeReq, out *dto.LoginUserResp) error {
+func (a *account) SendCode(ctx context.Context, in *dto.SendCodeReq, out *dto.SendCodeResp) error {
 	if in.Phone == nil || !isValidPhone(*in.Phone) {
 		return constant.ErrPhoneError
 	}
@@ -41,7 +41,7 @@ func (a *account) SendCode(ctx context.Context, in *dto.SendCodeReq, out *dto.Lo
 		code:   code,
 		expire: time.Now().Add(5 * time.Minute).Unix(),
 	})
-	out.Pass = code
+	out.Code = code
 	return nil
 }
 
