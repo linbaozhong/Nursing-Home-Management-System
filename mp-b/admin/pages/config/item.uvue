@@ -427,6 +427,16 @@
 		await pickBuilding(currentBuildingId.value)
 	}
 
+	// 仅重新拉取当前类型列表（切换楼栋/楼层时调用，避免与 loadBoundaries 递归）
+	async function reloadList() {
+		try {
+			const res = await CONFIG_META[type.value].load(keyword.value)
+			list.value = res.list
+		} catch (e) {
+			// 已统一 toast
+		}
+	}
+
 	async function pickBuilding(id: number) {
 		currentBuildingId.value = id
 		currentFloorId.value = 0
@@ -434,10 +444,12 @@
 		if (floors.value.length > 0) {
 			currentFloorId.value = floors.value[0].id
 		}
+		await reloadList()
 	}
 
-	function pickFloor(id: number) {
+	async function pickFloor(id: number) {
 		currentFloorId.value = id
+		await reloadList()
 	}
 
 	async function updateRoomTypes() {
@@ -457,13 +469,13 @@
 	async function loadData() {
 		try {
 			if (isHierarchy.value) {
-				await loadBoundaries()
+				await loadBoundaries()          // 内部会通过 pickBuilding → reloadList 加载列表
 				if (isRoom.value) {
 					await updateRoomTypes()
 				}
+			} else {
+				await reloadList()
 			}
-			const res = await CONFIG_META[type.value].load(keyword.value)
-			list.value = res.list
 		} catch (e) {
 			// 已统一 toast
 		}
