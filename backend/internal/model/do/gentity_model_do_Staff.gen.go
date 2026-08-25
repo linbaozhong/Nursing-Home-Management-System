@@ -76,8 +76,8 @@ func (p *Staff) MarshalJSON() ([]byte, error) {
 	if p.Age != 0 {
 		write.WriteRaw("age", types.Marshal(p.Age))
 	}
-	if p.LeaveFlag != 0 {
-		write.WriteRaw("leave_flag", types.Marshal(p.LeaveFlag))
+	if p.Status != 0 {
+		write.WriteRaw("leave_flag", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -125,7 +125,7 @@ func (p *Staff) UnmarshalJSON(data []byte) error {
 		case "age":
 			p.Age = types.Int32(value.Int())
 		case "leave_flag":
-			p.LeaveFlag = types.Int8(value.Int())
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -163,7 +163,7 @@ func (p *Staff) Reset() {
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.Age = 0
-	p.LeaveFlag = 0
+	p.Status = 0
 
 }
 
@@ -189,7 +189,7 @@ var staffFieldToPtrFunc = map[string]func(*Staff) any{
 	tblstaff.UpdateId.Name:   func(p *Staff) any { return &p.UpdateId },
 	tblstaff.UpdateTime.Name: func(p *Staff) any { return &p.UpdateTime },
 	tblstaff.Age.Name:        func(p *Staff) any { return &p.Age },
-	tblstaff.LeaveFlag.Name:  func(p *Staff) any { return &p.LeaveFlag },
+	tblstaff.LeaveFlag.Name:  func(p *Staff) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -328,7 +328,7 @@ var staffFieldToValueFunc = map[dialect.Field]func(*Staff) (any, bool){
 		return p.Age, p.Age == 0
 	},
 	tblstaff.LeaveFlag: func(p *Staff) (any, bool) {
-		return p.LeaveFlag, p.LeaveFlag == 0
+		return p.Status, p.Status == 0
 	},
 }
 

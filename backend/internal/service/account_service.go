@@ -101,7 +101,7 @@ func (a *account) loginWithUser(ctx context.Context, user *do.User, out *dto.Log
 			Plan:         tn.Plan.String(),
 			Status:       tn.Status.Int8(),
 			TrialStart:   tn.TrialStart.Time,
-			TrialEnd:     tn.TrialEnd.Time,
+			TrialEnd:     tn.ExpireTime.Time,
 		})
 	}
 	if len(tenants) == 0 {

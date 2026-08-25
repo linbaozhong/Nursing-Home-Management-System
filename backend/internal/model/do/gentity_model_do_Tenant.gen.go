@@ -36,7 +36,7 @@ func (p *Tenant) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("plan", types.Marshal(p.Plan))
 	write.WriteRaw("status", types.Marshal(p.Status))
 	write.WriteRaw("trial_start", types.Marshal(p.TrialStart))
-	write.WriteRaw("trial_end", types.Marshal(p.TrialEnd))
+	write.WriteRaw("trial_end", types.Marshal(p.ExpireTime))
 	write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -72,7 +72,7 @@ func (p *Tenant) UnmarshalJSON(data []byte) error {
 		case "trial_start":
 			p.TrialStart = types.Time{Time: value.Time()}
 		case "trial_end":
-			p.TrialEnd = types.Time{Time: value.Time()}
+			p.ExpireTime = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -112,7 +112,7 @@ func (p *Tenant) Reset() {
 	p.Plan = ""
 	p.Status = 0
 	p.TrialStart = types.Time{}
-	p.TrialEnd = types.Time{}
+	p.ExpireTime = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
@@ -135,7 +135,7 @@ var tenantFieldToPtrFunc = map[string]func(*Tenant) any{
 	tbltenant.Plan.Name:         func(p *Tenant) any { return &p.Plan },
 	tbltenant.Status.Name:       func(p *Tenant) any { return &p.Status },
 	tbltenant.TrialStart.Name:   func(p *Tenant) any { return &p.TrialStart },
-	tbltenant.TrialEnd.Name:     func(p *Tenant) any { return &p.TrialEnd },
+	tbltenant.TrialEnd.Name:     func(p *Tenant) any { return &p.ExpireTime },
 	tbltenant.CreateId.Name:     func(p *Tenant) any { return &p.CreateId },
 	tbltenant.CreateTime.Name:   func(p *Tenant) any { return &p.CreateTime },
 	tbltenant.UpdateId.Name:     func(p *Tenant) any { return &p.UpdateId },
@@ -255,7 +255,7 @@ var tenantFieldToValueFunc = map[dialect.Field]func(*Tenant) (any, bool){
 		return p.TrialStart, p.TrialStart.IsZero()
 	},
 	tbltenant.TrialEnd: func(p *Tenant) (any, bool) {
-		return p.TrialEnd, p.TrialEnd.IsZero()
+		return p.ExpireTime, p.ExpireTime.IsZero()
 	},
 	tbltenant.CreateId: func(p *Tenant) (any, bool) {
 		return p.CreateId, p.CreateId == 0

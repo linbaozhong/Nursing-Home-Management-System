@@ -46,11 +46,11 @@ func (p *Visit) MarshalJSON() ([]byte, error) {
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
 	}
-	if !p.VisitDate.IsZero() {
-		write.WriteRaw("visit_date", types.Marshal(p.VisitDate))
+	if !p.VisitTime.IsZero() {
+		write.WriteRaw("visit_date", types.Marshal(p.VisitTime))
 	}
-	if !p.LeaveDate.IsZero() {
-		write.WriteRaw("leave_date", types.Marshal(p.LeaveDate))
+	if !p.LeaveTime.IsZero() {
+		write.WriteRaw("leave_date", types.Marshal(p.LeaveTime))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -99,9 +99,9 @@ func (p *Visit) UnmarshalJSON(data []byte) error {
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
 		case "visit_date":
-			p.VisitDate = types.Time{Time: value.Time()}
+			p.VisitTime = types.Time{Time: value.Time()}
 		case "leave_date":
-			p.LeaveDate = types.Time{Time: value.Time()}
+			p.LeaveTime = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -143,8 +143,8 @@ func (p *Visit) Reset() {
 	p.Id = 0
 	p.TenantId = 0
 	p.ElderId = 0
-	p.VisitDate = types.Time{}
-	p.LeaveDate = types.Time{}
+	p.VisitTime = types.Time{}
+	p.LeaveTime = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.UpdateId = 0
@@ -167,8 +167,8 @@ var visitFieldToPtrFunc = map[string]func(*Visit) any{
 	tblvisit.Id.Name:         func(p *Visit) any { return &p.Id },
 	tblvisit.TenantId.Name:   func(p *Visit) any { return &p.TenantId },
 	tblvisit.ElderId.Name:    func(p *Visit) any { return &p.ElderId },
-	tblvisit.VisitDate.Name:  func(p *Visit) any { return &p.VisitDate },
-	tblvisit.LeaveDate.Name:  func(p *Visit) any { return &p.LeaveDate },
+	tblvisit.VisitDate.Name:  func(p *Visit) any { return &p.VisitTime },
+	tblvisit.LeaveDate.Name:  func(p *Visit) any { return &p.LeaveTime },
 	tblvisit.CreateId.Name:   func(p *Visit) any { return &p.CreateId },
 	tblvisit.CreateTime.Name: func(p *Visit) any { return &p.CreateTime },
 	tblvisit.UpdateId.Name:   func(p *Visit) any { return &p.UpdateId },
@@ -284,10 +284,10 @@ var visitFieldToValueFunc = map[dialect.Field]func(*Visit) (any, bool){
 		return p.ElderId, p.ElderId == 0
 	},
 	tblvisit.VisitDate: func(p *Visit) (any, bool) {
-		return p.VisitDate, p.VisitDate.IsZero()
+		return p.VisitTime, p.VisitTime.IsZero()
 	},
 	tblvisit.LeaveDate: func(p *Visit) (any, bool) {
-		return p.LeaveDate, p.LeaveDate.IsZero()
+		return p.LeaveTime, p.LeaveTime.IsZero()
 	},
 	tblvisit.CreateId: func(p *Visit) (any, bool) {
 		return p.CreateId, p.CreateId == 0

@@ -237,7 +237,7 @@ func (s *nurseGradeService) AddNurse(ctx context.Context, in *dto.AddNurseReq, o
 	bean.Name = types.String(*in.NurseName)
 	bean.Phone = types.String(*in.Phone)
 	bean.RoleId = types.BigInt(nurseRoleID)
-	bean.LeaveFlag = types.Int8(constant.YesNoNo)
+	bean.Status = types.Int8(constant.YesNoNo)
 	_, e := dao.Staff(db).InsertOne(ctx, bean, tblstaff.TenantId, tblstaff.Name, tblstaff.Phone, tblstaff.RoleId, tblstaff.LeaveFlag, tblstaff.CreateId, tblstaff.CreateTime)
 	if e != nil {
 		return e

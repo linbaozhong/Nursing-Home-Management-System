@@ -106,7 +106,7 @@ func (s *staffService) AddStaff(ctx context.Context, in *dto.OperateStaffReq, ou
 	bean.Email = types.String(*in.Email)
 	bean.Address = types.String(*in.Address)
 	bean.Avator = types.String(*in.Avator)
-	bean.LeaveFlag = types.Int8(constant.YesNoNo)
+	bean.Status = types.Int8(constant.YesNoNo)
 	// 初始密码：手机号后 6 位（Java 端为 aesEncode(phone[5:11])，Go 端暂明文存储）
 	if ph := *in.Phone; len(ph) >= 11 {
 		bean.Pass = types.String(ph[5:11])

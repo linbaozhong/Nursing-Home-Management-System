@@ -32,9 +32,9 @@ CREATE TABLE `assessment` (
                               `deleted_at` datetime DEFAULT NULL COMMENT '软删除时间',
                               PRIMARY KEY (`id`),
                               KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_evaluator_id` (`evaluator_id`),
-  CONSTRAINT `fk_assessments_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_assessments_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_assessments_staff` FOREIGN KEY (`evaluator_id`) REFERENCES `staff` (`id`),
   CONSTRAINT `fk_assessments_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='评估记录表';
@@ -53,7 +53,7 @@ CREATE TABLE `accident` (
                             `occur_date` datetime NOT NULL COMMENT '发生时间',
                             `description` varchar(255) NOT NULL COMMENT '事故描述',
                             `picture` varchar(255) NOT NULL COMMENT '事故图片',
-                            `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                            `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                             `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                             `create_time` datetime NOT NULL COMMENT '创建时间',
                             `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -63,7 +63,7 @@ CREATE TABLE `accident` (
 
 /*Data for the table `accident` */
 
-insert  into `accident`(`id`,`elder_id`,`staff_id`,`occur_date`,`description`,`picture`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `accident`(`id`,`elder_id`,`staff_id`,`occur_date`,`description`,`picture`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                                             (1,1,5,'2022-12-13 00:00:00','摔倒','http://127.0.0.1:9001/upload/img/20230401/1642192054401458176_屏幕截图_20221210_093317.png',0,1,'2023-02-04 19:24:16',1,'2023-04-01 23:47:53'),
 /*Table structure for table `bill` */
     CREATE TABLE `bill` (
@@ -83,7 +83,7 @@ insert  into `accident`(`id`,`elder_id`,`staff_id`,`occur_date`,`description`,`p
                         PRIMARY KEY (`id`),
                         UNIQUE KEY `uk_bill_no` (`bill_no`),
                         KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elder_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_status` (`status`),
   KEY `idx_bill_period` (`bill_period`),
   CONSTRAINT `fk_bills_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
@@ -116,7 +116,7 @@ CREATE TABLE `fee_item` (
                             `calculation_type` tinyint NOT NULL COMMENT '计算方式：1-固定金额，2-按天，3-按用量',
                             `default_price` bigint NOT NULL DEFAULT '0' COMMENT '默认单价（分）',
                             `billing_cycle` tinyint DEFAULT NULL COMMENT '周期性费用计费周期：1-月，2-季，3-年',
-                            `state` tinyint NOT NULL DEFAULT '1' COMMENT '管理状态',
+                            `state` tinyint NOT NULL DEFAULT '1'  DEFAULT '1' COMMENT '管理状态',
                             `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                             `create_time` datetime NOT NULL COMMENT '创建时间',
                             `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -143,7 +143,7 @@ CREATE TABLE `active` (
                           `phone` varchar(11) NOT NULL COMMENT '组织者电话',
                           `active_date` datetime NOT NULL COMMENT '活动日期',
                           `active_picture` varchar(255) NOT NULL COMMENT '活动图片',
-                          `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                          `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                           `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                           `create_time` datetime NOT NULL COMMENT '创建时间',
                           `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -153,7 +153,7 @@ CREATE TABLE `active` (
 
 /*Data for the table `active` */
 
-insert  into `active`(`id`,`type_id`,`theme`,`name`,`content`,`address`,`organizer`,`phone`,`active_date`,`active_picture`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `active`(`id`,`type_id`,`theme`,`name`,`content`,`address`,`organizer`,`phone`,`active_date`,`active_picture`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                                                                                (1,1,'关爱老人','关爱老人文艺汇演','内容','礼堂','张三','13546574576','2023-01-10 09:48:24','url',0,1,'2023-01-10 09:48:37',1,'2023-01-10 13:27:32'),
                                                                                                                                                                                                (5,1,'关爱老人','文艺汇演','文艺汇演内容','礼堂','张三','13546574657','2022-12-13 00:00:00','url',0,1,'2023-01-10 13:38:53',1,'2023-01-12 09:09:53');
 
@@ -188,7 +188,7 @@ CREATE TABLE `active_type` (
                                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
                                `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                                `name` varchar(10) NOT NULL COMMENT '活动类型名称',
-                               `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                               `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                `create_time` datetime NOT NULL COMMENT '创建时间',
                                `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -198,7 +198,7 @@ CREATE TABLE `active_type` (
 
 /*Data for the table `active_type` */
 
-insert  into `active_type`(`id`,`name`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `active_type`(`id`,`name`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                            (1,'老年大学',0,1,'2023-01-04 00:44:56',1,'2023-01-04 00:47:11'),
                                                                                                            (2,'文艺演出',0,1,'2023-01-04 00:45:09',1,'2023-01-04 00:47:13');
 
@@ -282,7 +282,7 @@ CREATE TABLE `base_attachment` (
                                    `url` varchar(225) NOT NULL COMMENT 'url相对路径',
                                    `suff` varchar(225) NOT NULL COMMENT '文件后缀',
                                    `size` bigint(20) NOT NULL COMMENT '文件大小 B',
-                                   `del_flag` tinyint NOT NULL COMMENT '删除状态(Y/N)',
+                                   `state` tinyint NOT NULL DEFAULT '1'  COMMENT '删除状态(Y/N)',
                                    `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                    `create_time` datetime NOT NULL COMMENT '创建时间',
                                    `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -292,7 +292,7 @@ CREATE TABLE `base_attachment` (
 
 /*Data for the table `base_attachment` */
 
-insert  into `base_attachment`(`id`,`name`,`real_name`,`path`,`url`,`suff`,`size`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `base_attachment`(`id`,`name`,`real_name`,`path`,`url`,`suff`,`size`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                                       (1344,'1609459836239560704_logo.787fb61a.png','logo.787fb61a.png','D:\\图片\\testDir\\upload\\img\\20230101\\1609459836239560704_logo.787fb61a.png','http://111.231.218.141:9001/upload/img/20230101/1609459836239560704_logo.787fb61a.png','png',46258,0,1,'2023-01-01 16:01:42',1,'2023-01-01 16:01:42'),
                                                                                                                                                       (1345,'1609460779576209408_00717pRCly4gs71qfmxq2j30k00b43yu.jpg','00717pRCly4gs71qfmxq2j30k00b43yu.jpg','D:\\图片\\testDir\\upload\\img\\20230101\\1609460779576209408_00717pRCly4gs71qfmxq2j30k00b43yu.jpg','http://111.231.218.141:9001/upload/img/20230101/1609460779576209408_00717pRCly4gs71qfmxq2j30k00b43yu.jpg','jpg',22580,0,1,'2023-01-01 16:05:27',1,'2023-01-01 16:05:27'),
                                                                                                                                                       (1346,'1609460823654150144_9C0mso5xyxHg9fa86766b2a3a201423493bf199755a3.png','9C0mso5xyxHg9fa86766b2a3a201423493bf199755a3.png','D:\\图片\\testDir\\upload\\img\\20230101\\1609460823654150144_9C0mso5xyxHg9fa86766b2a3a201423493bf199755a3.png','http://111.231.218.141:9001/upload/img/20230101/1609460823654150144_9C0mso5xyxHg9fa86766b2a3a201423493bf199755a3.png','png',57975,0,1,'2023-01-01 16:05:37',1,'2023-01-01 16:05:37'),
@@ -412,7 +412,7 @@ CREATE TABLE `bed` (
                        `type_id` bigint(20) unsigned DEFAULT NULL COMMENT '床型编号：1-普通床，2-护理床，3-加床(关联 material_type.id，kind=1)',
                        `status` tinyint NOT NULL COMMENT '床位状态(空闲/预定/入住/退住审核/维修)',
                        `price` bigint DEFAULT '0' COMMENT '床位费（分）',
-                       `state` tinyint NOT NULL COMMENT '管理状态：-1=删除，0=禁用，1=正常',
+                       `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=正常',
                        `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                        `create_time` datetime NOT NULL COMMENT '创建时间',
                        `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -447,7 +447,7 @@ CREATE TABLE `building` (
                             `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                             `name` varchar(10) NOT NULL COMMENT '楼栋名称',
                             `floor_num` int(11) NOT NULL COMMENT '楼层数量',
-                            `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                            `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                             `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                             `create_time` datetime NOT NULL COMMENT '创建时间',
                             `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -457,7 +457,7 @@ CREATE TABLE `building` (
 
 /*Data for the table `building` */
 
-insert  into `building`(`id`,`name`,`floor_num`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `building`(`id`,`name`,`floor_num`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                     (1,'楼栋1',2,0,1,'2023-01-02 14:19:07',1,'2023-01-04 21:01:15'),
                                                                                                                     (2,'楼栋2',3,0,1,'2023-01-04 20:59:59',1,'2023-04-05 02:16:01'),
                                                                                                                     (3,'楼栋3',5,1,1,'2023-01-04 21:00:02',1,'2023-04-05 02:33:49'),
@@ -482,7 +482,7 @@ CREATE TABLE `catering_set` (
                                 `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                                 `name` varchar(10) NOT NULL COMMENT '餐饮套餐名称',
                                 `month_price` bigint(20) NOT NULL COMMENT '月套餐费用',
-                                `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                                `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                 `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                 `create_time` datetime NOT NULL COMMENT '创建时间',
                                 `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -492,7 +492,7 @@ CREATE TABLE `catering_set` (
 
 /*Data for the table `catering_set` */
 
-insert  into `catering_set`(`id`,`name`,`month_price`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `catering_set`(`id`,`name`,`month_price`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                           (1,'颐养套餐',1200.00,0,1,'2023-01-13 16:22:34',1,'2023-01-13 16:24:34'),
                                                                                                                           (2,'黄金套餐',1200.00,0,1,'2023-01-13 16:23:12',1,'2023-01-13 16:23:12'),
                                                                                                                           (3,'测试',12.70,0,1,'2023-04-04 11:55:31',1,'2023-04-04 11:57:24'),
@@ -509,7 +509,7 @@ CREATE TABLE `communication_record` (
                                         `elder_id` bigint(20) unsigned NOT NULL COMMENT '老人id',
                                         `record_date` datetime NOT NULL COMMENT '记录时间',
                                         `communication_record` varchar(255) NOT NULL COMMENT '沟通记录',
-                                        `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                                        `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                         `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                         `create_time` datetime NOT NULL COMMENT '创建时间',
                                         `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -519,7 +519,7 @@ CREATE TABLE `communication_record` (
 
 /*Data for the table `communication_record` */
 
-insert  into `communication_record`(`id`,`elder_id`,`record_date`,`communication_record`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `communication_record`(`id`,`elder_id`,`record_date`,`communication_record`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
     (1,1,'2022-12-14 00:00:00','测试记录',0,1,'2023-01-05 23:12:59',1,'2023-01-05 23:13:57');
 
 /*Table structure for table `consult` */
@@ -710,7 +710,7 @@ CREATE TABLE `dishes` (
                           `type_id` bigint(20) unsigned NOT NULL COMMENT '菜品类别id',
                           `name` varchar(15) NOT NULL COMMENT '菜品名称',
                           `price` bigint(20) NOT NULL COMMENT '菜品价格',
-                          `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                          `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                           `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                           `create_time` datetime NOT NULL COMMENT '创建时间',
                           `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -720,7 +720,7 @@ CREATE TABLE `dishes` (
 
 /*Data for the table `dishes` */
 
-insert  into `dishes`(`id`,`type_id`,`name`,`price`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `dishes`(`id`,`type_id`,`name`,`price`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                         (1,1,'粥',2.00,0,1,'2023-01-13 13:03:21',1,'2023-01-13 13:06:54'),
                                                                                                                         (2,2,'粥',2.00,0,1,'2023-01-13 13:03:29',1,'2023-01-13 13:03:29'),
                                                                                                                         (3,2,'包子',1.00,0,1,'2023-01-13 13:06:37',1,'2023-04-14 18:10:01'),
@@ -735,7 +735,7 @@ CREATE TABLE `dishes_type` (
                                `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
                                `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                                `name` varchar(10) NOT NULL COMMENT '菜品类别名称',
-                               `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                               `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                `create_time` datetime NOT NULL COMMENT '创建时间',
                                `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -745,7 +745,7 @@ CREATE TABLE `dishes_type` (
 
 /*Data for the table `dishes_type` */
 
-insert  into `dishes_type`(`id`,`name`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `dishes_type`(`id`,`name`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                            (1,'早餐',0,1,'2023-01-13 13:01:25',1,'2023-01-13 13:02:57'),
                                                                                                            (2,'午餐',0,1,'2023-01-13 13:01:35',1,'2023-01-13 13:01:35'),
                                                                                                            (3,'晚餐',0,1,'2023-01-13 13:01:41',1,'2023-01-13 13:01:41'),
@@ -763,7 +763,7 @@ CREATE TABLE `drug_deposit` (
                                 `elder_id` bigint(20) unsigned NOT NULL COMMENT '老人id',
                                 `mode` varchar(5) NOT NULL COMMENT '缴存药品方式',
                                 `deposit_flag` tinyint NOT NULL COMMENT '缴存状态',
-                                `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                                `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                 `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                 `create_time` datetime NOT NULL COMMENT '创建时间',
                                 `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -952,7 +952,7 @@ CREATE TABLE `family_member` (
                                  `address` varchar(50) NOT NULL COMMENT '地址',
                                  `relation` varchar(5) NOT NULL COMMENT '与老人关系',
                                  `receive_flag` tinyint NOT NULL COMMENT '是否接收消息（Y/N）',
-                                 `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                                 `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                  `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                  `create_time` datetime NOT NULL COMMENT '创建时间',
                                  `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -972,7 +972,7 @@ CREATE TABLE `floor` (
                          `building_id` bigint(20) unsigned NOT NULL COMMENT '楼栋id',
                          `name` varchar(20) NOT NULL COMMENT '楼层名称',
                          `room_num` int(11) NOT NULL COMMENT '房间数量',
-                         `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                         `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                          `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                          `create_time` datetime NOT NULL COMMENT '创建时间',
                          `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -982,7 +982,7 @@ CREATE TABLE `floor` (
 
 /*Data for the table `floor` */
 
-insert  into `floor`(`id`,`building_id`,`name`,`room_num`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `floor`(`id`,`building_id`,`name`,`room_num`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                               (1,1,'楼栋1-1层',10,0,1,'2023-01-02 14:22:54',1,'2023-01-02 14:22:57'),
                                                                                                                               (2,1,'楼栋1-2层',10,0,1,'2023-01-02 14:22:54',1,'2023-01-04 22:23:22'),
                                                                                                                               (3,1,'楼栋1-3层',10,0,1,'2023-01-02 14:22:54',1,'2023-01-02 14:22:57'),
@@ -1028,7 +1028,15 @@ CREATE TABLE `health_data` (
                                `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
                                `update_time` datetime NOT NULL COMMENT '修改时间',
                                PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='';
+                                   KEY `idx_tenant_id` (`tenant_id`),
+                               KEY `idx_elder_id` (`elder_id`),
+  KEY `idx_record_time` (`create_time`),
+  KEY `idx_recorder_id` (`create_id`),
+  CONSTRAINT `fk_health_data_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_health_data_recorder` FOREIGN KEY (`create_id`) REFERENCES `staff` (`id`),
+  CONSTRAINT `fk_health_data_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='生命体征记录表';
+
 
 /*Data for the table `health_data` */
 
@@ -1054,7 +1062,7 @@ CREATE TABLE `health_info` (
                                `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
                                `update_time` datetime NOT NULL COMMENT '修改时间',
                                PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='健康信息表';
 
 /*Data for the table `health_info` */
 
@@ -1068,7 +1076,7 @@ CREATE TABLE `label` (
                          `type_id` bigint(20) unsigned NOT NULL COMMENT '类别id',
                          `name` varchar(10) NOT NULL COMMENT '标签名称',
                          `color` varchar(15) NOT NULL COMMENT '标签颜色',
-                         `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                         `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                          `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                          `create_time` datetime NOT NULL COMMENT '创建时间',
                          `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1078,7 +1086,7 @@ CREATE TABLE `label` (
 
 /*Data for the table `label` */
 
-insert  into `label`(`id`,`type_id`,`name`,`color`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `label`(`id`,`type_id`,`name`,`color`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                        (1,1,'跑步','rgb',0,1,'2023-01-03 21:14:18',1,'2023-01-03 22:53:35'),
                                                                                                                        (2,1,'看书','rgb',0,1,'2023-01-03 21:14:18',1,'2023-01-03 21:14:22'),
                                                                                                                        (3,2,'标签1','rgb',1,1,'2023-01-03 21:14:18',1,'2023-01-03 22:52:41'),
@@ -1102,7 +1110,7 @@ CREATE TABLE `label_type` (
                               `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
                               `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                               `name` varchar(10) NOT NULL COMMENT '分类名称',
-                              `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                              `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                               `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                               `create_time` datetime NOT NULL COMMENT '创建时间',
                               `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1112,7 +1120,7 @@ CREATE TABLE `label_type` (
 
 /*Data for the table `label_type` */
 
-insert  into `label_type`(`id`,`name`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `label_type`(`id`,`name`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                           (1,'分类1',0,1,'2023-01-03 21:13:23',1,'2023-01-03 22:48:39'),
                                                                                                           (2,'分类2',0,1,'2023-01-03 21:13:23',1,'2023-01-03 21:13:26'),
                                                                                                           (3,'分类3',0,1,'2023-01-03 22:22:00',1,'2023-01-03 22:22:00'),
@@ -1135,7 +1143,7 @@ CREATE TABLE `material` (
                             `type_id` bigint(20) unsigned NOT NULL COMMENT '物资类别id',
                             `name` varchar(15) NOT NULL COMMENT '物资名称',
                             `price` bigint(20) NOT NULL COMMENT '物资单价',
-                            `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                            `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                             `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                             `create_time` datetime NOT NULL COMMENT '创建时间',
                             `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1145,7 +1153,7 @@ CREATE TABLE `material` (
 
 /*Data for the table `material` */
 
-insert  into `material`(`id`,`type_id`,`name`,`price`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `material`(`id`,`type_id`,`name`,`price`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                           (1,1,'勺子',10.00,0,1,'2023-01-15 11:06:24',1,'2023-01-15 11:08:58'),
                                                                                                                           (2,2,'当归',100.00,0,1,'2023-01-15 11:06:36',1,'2023-01-15 11:07:51'),
                                                                                                                           (3,1,'盘子',10.00,0,1,'2023-01-15 11:07:03',1,'2023-01-15 11:09:29');
@@ -1159,7 +1167,7 @@ CREATE TABLE `material_type` (
                                  `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                                  `name` varchar(10) NOT NULL COMMENT '物资类别名称',
                                  `kind` tinyint(4) NOT NULL DEFAULT 99 COMMENT '分类用途：1=床型，99=设施/其他',
-                                 `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                                 `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                  `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                  `create_time` datetime NOT NULL COMMENT '创建时间',
                                  `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1169,7 +1177,7 @@ CREATE TABLE `material_type` (
 
 /*Data for the table `material_type` */
 
-insert  into `material_type`(`id`,`name`,`kind`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `material_type`(`id`,`name`,`kind`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                     (1,'餐具',99,0,1,'2023-01-15 11:03:17',1,'2023-01-15 11:05:31'),
                                                                                                                     (2,'药品',99,0,1,'2023-01-15 11:03:57',1,'2023-01-15 11:05:24');
 
@@ -1185,7 +1193,7 @@ CREATE TABLE `medicine` (
                             `specification` varchar(10) NOT NULL COMMENT '药品规格',
                             `dosage_form` varchar(5) NOT NULL COMMENT '药品剂型',
                             `manufacturer` varchar(25) NOT NULL COMMENT '生产厂家',
-                            `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                            `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                             `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                             `create_time` datetime NOT NULL COMMENT '创建时间',
                             `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1268,7 +1276,7 @@ CREATE TABLE `nurse_grade` (
                                `name` varchar(10) NOT NULL COMMENT '级别名称',
                                `type` varchar(5) NOT NULL COMMENT '护理类型',
                                `month_price` bigint(20) NOT NULL COMMENT '月护理费用',
-                               `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                               `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                `create_time` datetime NOT NULL COMMENT '创建时间',
                                `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1278,7 +1286,7 @@ CREATE TABLE `nurse_grade` (
 
 /*Data for the table `nurse_grade` */
 
-insert  into `nurse_grade`(`id`,`name`,`type`,`month_price`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `nurse_grade`(`id`,`name`,`type`,`month_price`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                 (1,'一级护理','自理',1000.00,0,1,'2023-01-12 09:13:25',1,'2023-04-04 00:25:17'),
                                                                                                                                 (2,'二级护理','自理',1000.00,0,1,'2023-01-12 09:14:16',1,'2023-01-12 09:15:01'),
                                                                                                                                 (3,'三级护理','自理',1000.00,0,1,'2023-02-01 12:15:12',1,'2023-02-01 12:15:12'),
@@ -1295,7 +1303,7 @@ CREATE TABLE `nurse_group` (
                                `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                                `staff_id` bigint(20) unsigned NOT NULL COMMENT '护工小组组长id',
                                `name` varchar(10) NOT NULL COMMENT '护工小组名称',
-                               `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                               `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                `create_time` datetime NOT NULL COMMENT '创建时间',
                                `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1499,7 +1507,7 @@ CREATE TABLE `outbound_record` (
                                    `material_use` varchar(5) NOT NULL COMMENT '物资去向',
                                    `outbound_date` datetime NOT NULL COMMENT '出库时间',
                                    `outbound_flag` tinyint NOT NULL COMMENT '出库状态',
-                                   `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                                   `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                    `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                    `create_time` datetime NOT NULL COMMENT '创建时间',
                                    `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1509,7 +1517,7 @@ CREATE TABLE `outbound_record` (
 
 /*Data for the table `outbound_record` */
 
-insert  into `outbound_record`(`id`,`warehouse_id`,`staff_id`,`recipient_id`,`recipient_type`,`material_use`,`outbound_date`,`outbound_flag`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `outbound_record`(`id`,`warehouse_id`,`staff_id`,`recipient_id`,`recipient_type`,`material_use`,`outbound_date`,`outbound_flag`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                                                                                                  (7,1,6,2,'老人','使用','2022-12-14 00:00:00',2,0,1,'2023-01-31 21:32:29',1,'2023-01-31 21:44:09'),
                                                                                                                                                                                                                  (9,1,6,2,'员工','使用','2022-12-14 00:00:00',0,1,1,'2023-01-31 21:34:36',1,'2023-01-31 21:43:15'),
                                                                                                                                                                                                                  (10,1,6,2,'员工','使用','2022-12-14 00:00:00',-1,0,1,'2023-01-31 22:18:00',1,'2023-01-31 22:18:44');
@@ -1528,7 +1536,7 @@ CREATE TABLE `outward` (
                            `outward_date` datetime NOT NULL COMMENT '外出时间',
                            `plan_return_date` datetime NOT NULL COMMENT '计划返回时间',
                            `real_return_date` datetime DEFAULT NULL COMMENT '实际返回时间',
-                           `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                           `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                            `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                            `create_time` datetime NOT NULL COMMENT '创建时间',
                            `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1538,7 +1546,7 @@ CREATE TABLE `outward` (
 
 /*Data for the table `outward` */
 
-insert  into `outward`(`id`,`elder_id`,`chaperone_name`,`chaperone_phone`,`chaperone_type`,`outward_date`,`plan_return_date`,`real_return_date`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `outward`(`id`,`elder_id`,`chaperone_name`,`chaperone_phone`,`chaperone_type`,`outward_date`,`plan_return_date`,`real_return_date`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                                                                                                     (1,1,'张三','13546473658','家属','2022-12-12 00:00:00','2022-12-14 00:00:00','2022-12-13 00:00:00',1,1,'2023-02-03 15:02:36',1,'2023-02-03 21:32:02'),
                                                                                                                                                                                                                     (2,17,'张三','13547584403','护工','2023-04-01 00:00:00','2023-04-26 00:00:00','2023-04-26 00:00:00',0,1,'2023-04-01 10:00:08',1,'2023-04-26 15:52:03'),
                                                                                                                                                                                                                     (3,2,'张三','13547584403','护工','2023-04-01 00:00:00','2023-05-04 00:00:00',NULL,1,1,'2023-04-01 10:25:20',1,'2023-04-01 11:29:20'),
@@ -1629,13 +1637,17 @@ DROP TABLE IF EXISTS `role`;
 
 CREATE TABLE `role` (
                         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+                        `tenant_id` bigint NOT NULL COMMENT '租户ID（平台角色tenant_id=0）',
                         `name` varchar(10) NOT NULL COMMENT '角色名称',
+                        `permissions` json DEFAULT NULL COMMENT '权限列表',
+                        `is_system` tinyint NOT NULL DEFAULT '0' COMMENT '是否系统预置：0-否，1-是',
                         `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                         `create_time` datetime NOT NULL COMMENT '创建时间',
                         `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
                         `update_time` datetime NOT NULL COMMENT '修改时间',
                         PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='';
+                            KEY `idx_tenant_id` (`tenant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色表';
 
 /*Data for the table `role` */
 
@@ -1758,10 +1770,14 @@ CREATE TABLE `room` (
                         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
                         `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                         `type_id` bigint(20) unsigned NOT NULL COMMENT '房间类型id',
+                        `build_id` bigint(20) unsigned NOT NULL COMMENT '楼栋id',
                         `floor_id` bigint(20) unsigned NOT NULL COMMENT '楼层id',
                         `name` varchar(30) NOT NULL COMMENT '房间名称',
                         `bed_num` int(11) NOT NULL COMMENT '床位数量',
-                        `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                        `type` tinyint DEFAULT '1' COMMENT '房间类型：1-单人间，2-双人间，3-多人间',
+                        `status` tinyint NOT NULL DEFAULT '0' COMMENT '状态：0-空闲，1-部分占用，2-全满，3-维修',
+                        `price` bigint DEFAULT '0' COMMENT '房间基准价（分）',
+                        `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                         `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                         `create_time` datetime NOT NULL COMMENT '创建时间',
                         `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1771,7 +1787,7 @@ CREATE TABLE `room` (
 
 /*Data for the table `room` */
 
-insert  into `room`(`id`,`type_id`,`floor_id`,`name`,`bed_num`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `room`(`id`,`type_id`,`floor_id`,`name`,`bed_num`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                    (1,1,1,'爱心楼-1层-1房',1,0,1,'2023-01-02 14:25:33',1,'2023-01-02 14:25:38'),
                                                                                                                                    (2,1,1,'爱心楼-1层-2房',1,0,1,'2023-01-02 14:25:33',1,'2023-01-02 14:25:38'),
                                                                                                                                    (3,1,1,'爱心楼-1层-3房',1,0,1,'2023-01-02 14:25:33',1,'2023-01-02 14:25:38'),
@@ -1791,7 +1807,7 @@ CREATE TABLE `room_material` (
                                  `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                                  `room_id` bigint(20) unsigned NOT NULL COMMENT '房间id',
                                  `material_type_id` bigint(20) unsigned NOT NULL COMMENT '设施(物资分类)编号，kind=0',
-                                 `del_flag` tinyint NOT NULL DEFAULT 0 COMMENT '删除状态(Y/N)',
+                                 `state` tinyint NOT NULL DEFAULT '1'  DEFAULT 0 COMMENT '删除状态(Y/N)',
                                  `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                  `create_time` datetime NOT NULL COMMENT '创建时间',
                                  `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1804,12 +1820,12 @@ CREATE TABLE `room_material` (
 -- 补充默认数据（方便联调；可按需调整）
 -- ============================================================================
 -- 床型分类项（kind=1）
--- INSERT INTO `material_type`(`tenant_id`,`name`,`kind`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`)
+-- INSERT INTO `material_type`(`tenant_id`,`name`,`kind`,`state`,`create_id`,`create_time`,`update_id`,`update_time`)
 -- VALUES (1,'标准床',1,0,1,NOW(),1,NOW()),
 --        (1,'智能床',1,0,1,NOW(),1,NOW()),
 --        (1,'电动护理床',1,0,1,NOW(),1,NOW());
 -- 设施分类项（kind=0）
--- INSERT INTO `material_type`(`tenant_id`,`name`,`kind`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`)
+-- INSERT INTO `material_type`(`tenant_id`,`name`,`kind`,`state`,`create_id`,`create_time`,`update_id`,`update_time`)
 -- VALUES (1,'餐桌',0,0,1,NOW(),1,NOW()),
 --        (1,'轮椅',0,0,1,NOW(),1,NOW()),
 --        (1,'空调',0,0,1,NOW(),1,NOW()),
@@ -1825,7 +1841,7 @@ CREATE TABLE `room_type` (
                              `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                              `name` varchar(10) NOT NULL COMMENT '房间类型名称',
                              `month_price` bigint(20) NOT NULL COMMENT '月房间费用',
-                             `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                             `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                              `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                              `create_time` datetime NOT NULL COMMENT '创建时间',
                              `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1835,12 +1851,36 @@ CREATE TABLE `room_type` (
 
 /*Data for the table `room_type` */
 
-insert  into `room_type`(`id`,`name`,`month_price`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `room_type`(`id`,`name`,`month_price`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                        (1,'单人间',600.00,0,1,'2023-01-02 14:20:09',1,'2023-01-04 11:47:33'),
                                                                                                                        (2,'双人间',500.00,0,1,'2023-01-04 11:46:31',1,'2023-01-04 11:46:31'),
                                                                                                                        (3,'四人间',120.00,1,1,'2023-04-04 20:07:36',1,'2023-04-04 20:08:08'),
                                                                                                                        (4,'胡图图',1000.00,0,1,'2023-04-14 18:22:33',1,'2023-04-14 18:22:33'),
                                                                                                                        (5,'打答复',100.00,0,1,'2023-04-14 18:24:51',1,'2023-04-14 18:24:51');
+
+/*Table structure for table `room_transfer` */
+CREATE TABLE `room_transfer` (
+                                 `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                                 `tenant_id` bigint NOT NULL COMMENT '租户ID',
+                                 `elder_id` bigint NOT NULL COMMENT '老人ID',
+                                 `from_bed_id` bigint NOT NULL COMMENT '原床位ID',
+                                 `to_bed_id` bigint NOT NULL COMMENT '新床位ID',
+                                 `transfer_date` date NOT NULL COMMENT '转房日期',
+                                 `reason` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '原因',
+                                 `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
+                                 `create_time` datetime NOT NULL COMMENT '创建时间',
+                                 `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
+                                 `update_time` datetime NOT NULL COMMENT '修改时间',
+                                 PRIMARY KEY (`id`),
+                                 KEY `idx_tenant_id` (`tenant_id`),
+  KEY `idx_elder_id` (`elder_id`),
+  KEY `idx_from_bed_id` (`from_bed_id`),
+  KEY `idx_to_bed_id` (`to_bed_id`),
+  CONSTRAINT `fk_room_transfers_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_room_transfers_from_bed` FOREIGN KEY (`from_bed_id`) REFERENCES `bed` (`id`),
+  CONSTRAINT `fk_room_transfers_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`),
+  CONSTRAINT `fk_room_transfers_to_bed` FOREIGN KEY (`to_bed_id`) REFERENCES `bed` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='转房记录表';
 
 /*Table structure for table `service_item` */
 
@@ -1854,7 +1894,7 @@ CREATE TABLE `service_item` (
                                 `charge_method` varchar(3) NOT NULL COMMENT '收费方式',
                                 `price` bigint(20) NOT NULL COMMENT '服务费用',
                                 `need_date` int(11) NOT NULL COMMENT '所需时间(分)',
-                                `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                                `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                 `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                 `create_time` datetime NOT NULL COMMENT '创建时间',
                                 `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1864,7 +1904,7 @@ CREATE TABLE `service_item` (
 
 /*Data for the table `service_item` */
 
-insert  into `service_item`(`id`,`type_id`,`name`,`charge_method`,`price`,`need_date`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `service_item`(`id`,`type_id`,`name`,`charge_method`,`price`,`need_date`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                                           (1,1,'服务1','按月',50.00,5,1,1,'2023-01-10 16:32:27',1,'2023-01-10 17:04:04'),
                                                                                                                                                           (2,2,'心电检测','按次',120.00,30,0,1,'2023-01-10 16:32:36',1,'2023-01-10 16:32:36'),
                                                                                                                                                           (3,1,'服务2','按月',120.00,30,0,1,'2023-01-10 16:33:13',1,'2023-01-10 16:33:13'),
@@ -1892,7 +1932,7 @@ CREATE TABLE `service_type` (
                                 `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
                                 `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                                 `name` varchar(10) NOT NULL COMMENT '服务项目名称',
-                                `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                                `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                 `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                 `create_time` datetime NOT NULL COMMENT '创建时间',
                                 `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1902,7 +1942,7 @@ CREATE TABLE `service_type` (
 
 /*Data for the table `service_type` */
 
-insert  into `service_type`(`id`,`name`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `service_type`(`id`,`name`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                             (1,'饮食服务',0,1,'2023-01-10 16:27:58',1,'2023-04-26 13:23:43'),
                                                                                                             (2,'生活起居服务',0,1,'2023-01-10 16:30:36',1,'2023-04-26 13:23:54'),
                                                                                                             (3,'医疗护理服务',0,1,'2023-01-10 16:43:04',1,'2023-04-26 13:24:05'),
@@ -1955,7 +1995,7 @@ CREATE TABLE `source` (
                           `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
                           `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                           `name` varchar(10) NOT NULL COMMENT '来源渠道名称',
-                          `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                          `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                           `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                           `create_time` datetime NOT NULL COMMENT '创建时间',
                           `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1965,7 +2005,7 @@ CREATE TABLE `source` (
 
 /*Data for the table `source` */
 
-insert  into `source`(`id`,`name`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `source`(`id`,`name`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                       (1,'传单海报',0,1,'2023-01-03 00:18:44',1,'2023-01-04 00:08:57'),
                                                                                                       (3,'老客户',0,1,'2023-01-04 00:07:19',1,'2023-01-04 00:07:19'),
                                                                                                       (4,'电视广播',0,1,'2023-01-04 00:07:46',1,'2023-01-04 00:07:46'),
@@ -1989,7 +2029,7 @@ CREATE TABLE `staff` (
                          `pass` varchar(255) NOT NULL COMMENT '密码',
                          `avator` varchar(255) NOT NULL COMMENT '头像',
                          `address` varchar(50) NOT NULL COMMENT '地址',
-                         `leave_flag` tinyint NOT NULL COMMENT '离职状态（Y/N）',
+                         `status` tinyint NOT NULL COMMENT '状态：0-离职，1-在职',
                          `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                          `create_time` datetime NOT NULL COMMENT '创建时间',
                          `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -1999,7 +2039,7 @@ CREATE TABLE `staff` (
 
 /*Data for the table `staff` */
 
-insert  into `staff`(`id`,`role_id`,`name`,`id_num`,`age`,`sex`,`phone`,`email`,`pass`,`avator`,`address`,`leave_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `staff`(`id`,`role_id`,`name`,`id_num`,`age`,`sex`,`phone`,`email`,`pass`,`avator`,`address`,`status`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                                                                 (1,1,'超级管理员','1',29,'男','13547584400','756932656@qq.com','7217ac017b4fb2352ec9e65576c5c0b1','http://127.0.0.1:9001/upload/img/20230405/1643600038046306304_logo.png','1',0,0,'2022-12-31 12:34:43',1,'2023-04-26 15:48:02'),
                                                                                                                                                                                 (2,2,'小管','230182198012251659',31,'女','13547584401','2175728501@qq.com','7217ac017b4fb2352ec9e65576c5c0b1','http://127.0.0.1:9001/upload/img/20240420/1781361739637297152_1.png','黑龙江哈尔滨',0,0,'2022-12-31 12:34:43',1,'2024-04-20 00:38:31'),
                                                                                                                                                                                 (3,4,'小妹','230182198012251659',30,'女','13547584402','2927803979@qq.com','7217ac017b4fb2352ec9e65576c5c0b1','http://127.0.0.1:9001/upload/img/20240420/1781361825431785472_2.png','黑龙江哈尔滨',0,0,'2022-12-31 12:34:43',1,'2024-04-20 00:39:35'),
@@ -2018,23 +2058,28 @@ CREATE TABLE `visit` (
                          `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                          `elder_id` bigint(20) unsigned NOT NULL COMMENT '老人id',
                          `name` varchar(10) NOT NULL COMMENT '来访者姓名',
+                         `id_card` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '身份证号（加密）',
                          `phone` varchar(11) NOT NULL COMMENT '来访者电话',
                          `relation` varchar(5) NOT NULL COMMENT '与老人关系',
-                         `visit_date` datetime NOT NULL COMMENT '来访时间',
-                         `leave_date` datetime DEFAULT NULL COMMENT '离开时间',
+                         `visit_time` datetime NOT NULL COMMENT '来访时间',
+                         `leave_time` datetime DEFAULT NULL COMMENT '离开时间',
                          `visit_num` int(11) NOT NULL COMMENT '来访者人数',
                          `visit_flag` tinyint NOT NULL COMMENT '来访状态',
-                         `del_flag` tinyint NOT NULL COMMENT '删除状态',
+                         `state` tinyint NOT NULL DEFAULT '1'  COMMENT '删除状态',
                          `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                          `create_time` datetime NOT NULL COMMENT '创建时间',
                          `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
                          `update_time` datetime NOT NULL COMMENT '修改时间',
                          PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='';
+                             KEY `idx_tenant_id` (`tenant_id`),
+                         KEY `idx_elder_id` (`elder_id`),
+  CONSTRAINT `fk_visitors_elder` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_visitors_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='访客记录表';
 
 /*Data for the table `visit` */
 
-insert  into `visit`(`id`,`elder_id`,`name`,`phone`,`relation`,`visit_date`,`leave_date`,`visit_num`,`visit_flag`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `visit`(`id`,`elder_id`,`name`,`phone`,`relation`,`visit_date`,`leave_date`,`visit_num`,`visit_flag`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                                                                       (1,1,'王伍','13647563648','侄子','2022-12-13 00:00:00','2022-12-14 00:00:00',4,1,0,1,'2023-02-04 15:42:16',1,'2023-02-04 15:54:38'),
                                                                                                                                                                                       (2,2,'王氏0','13547584491','侄子','2023-03-31 00:00:00','2023-04-01 00:00:00',11,1,1,1,'2023-04-01 14:19:44',1,'2023-04-01 14:33:13'),
                                                                                                                                                                                       (3,1,'测试','13547563980','父子','2023-04-07 00:00:00',NULL,8,0,0,1,'2023-04-07 17:09:02',1,'2023-04-07 17:09:02'),
@@ -2052,7 +2097,7 @@ CREATE TABLE `visit_plan` (
                               `plan_date` datetime NOT NULL COMMENT '计划回访时间',
                               `content` varchar(255) DEFAULT NULL COMMENT '回访计划内容',
                               `complete_date` datetime DEFAULT NULL COMMENT '计划完成时间',
-                              `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                              `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                               `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                               `create_time` datetime NOT NULL COMMENT '创建时间',
                               `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -2062,7 +2107,7 @@ CREATE TABLE `visit_plan` (
 
 /*Data for the table `visit_plan` */
 
-insert  into `visit_plan`(`id`,`elder_id`,`title`,`plan_date`,`content`,`complete_date`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `visit_plan`(`id`,`elder_id`,`title`,`plan_date`,`content`,`complete_date`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                                             (1,1,'测试','2023-01-02 15:40:41',NULL,NULL,0,1,'2023-01-02 15:40:54',1,'2023-01-05 22:35:05'),
                                                                                                                                                             (2,1,'测试标题','2022-12-13 00:00:00',NULL,NULL,0,1,'2023-01-05 22:29:36',1,'2023-01-05 22:29:36');
 
@@ -2075,7 +2120,7 @@ CREATE TABLE `warehouse` (
                              `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                              `staff_id` bigint(20) unsigned NOT NULL COMMENT '仓库管理员id',
                              `name` varchar(10) NOT NULL COMMENT '仓库名称',
-                             `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                             `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                              `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                              `create_time` datetime NOT NULL COMMENT '创建时间',
                              `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -2085,7 +2130,7 @@ CREATE TABLE `warehouse` (
 
 /*Data for the table `warehouse` */
 
-insert  into `warehouse`(`id`,`staff_id`,`name`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `warehouse`(`id`,`staff_id`,`name`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                     (1,6,'仓库1',0,1,'2023-01-15 22:31:36',1,'2023-01-15 22:32:59'),
                                                                                                                     (2,6,'仓库2',0,1,'2023-01-15 22:31:42',1,'2023-01-15 22:33:51');
 
@@ -2129,7 +2174,7 @@ CREATE TABLE `warehouse_record` (
                                     `source` varchar(5) NOT NULL COMMENT '物资来源',
                                     `warehouse_date` datetime NOT NULL COMMENT '入库时间',
                                     `warehouse_flag` tinyint NOT NULL COMMENT '入库状态',
-                                    `del_flag` tinyint NOT NULL COMMENT '删除状态（Y/N）',
+                                    `state` tinyint NOT NULL DEFAULT '1'  COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                                     `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                     `create_time` datetime NOT NULL COMMENT '创建时间',
                                     `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
@@ -2139,7 +2184,7 @@ CREATE TABLE `warehouse_record` (
 
 /*Data for the table `warehouse_record` */
 
-insert  into `warehouse_record`(`id`,`warehouse_id`,`staff_id`,`source`,`warehouse_date`,`warehouse_flag`,`del_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `warehouse_record`(`id`,`warehouse_id`,`staff_id`,`source`,`warehouse_date`,`warehouse_flag`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                                                               (1,1,6,'购买','2022-12-13 00:00:00',2,0,1,'2023-01-30 11:06:01',1,'2023-01-30 11:33:27'),
                                                                                                                                                                               (2,2,6,'购买','2022-12-13 00:00:00',2,0,1,'2023-01-30 11:08:22',1,'2023-01-30 11:08:22');
 
@@ -2155,18 +2200,17 @@ CREATE TABLE `tenant` (
                           `contact_phone` varchar(11) NOT NULL DEFAULT '' COMMENT '联系电话',
                           `plan` varchar(20) NOT NULL DEFAULT '' COMMENT '套餐',
                           `status` tinyint(4) NOT NULL DEFAULT 0 COMMENT '状态：0试用中 1正式 2锁定',
-                          `trial_start` datetime DEFAULT NULL COMMENT '试用开始',
-                          `trial_end` datetime DEFAULT NULL COMMENT '试用结束',
+                          `expire_time` datetime DEFAULT NULL COMMENT '套餐到期时间',
                           `create_id` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT '创建人id',
                           `create_time` datetime NOT NULL COMMENT '创建时间',
                           `update_id` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT '修改人id',
                           `update_time` datetime NOT NULL COMMENT '修改时间',
-                          `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除状态（Y/N）',
+                          `state` tinyint(4) NOT NULL DEFAULT 0 COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                           PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='租户表';
 /*Data for the table `tenant` */
 
-insert  into `tenant`(`id`,`name`,`logo`,`contact_name`,`contact_phone`,`plan`,`status`,`trial_start`,`trial_end`,`create_id`,`create_time`,`update_id`,`update_time`,`del_flag`) values
+insert  into `tenant`(`id`,`name`,`logo`,`contact_name`,`contact_phone`,`plan`,`status`,`trial_start`,`trial_end`,`create_id`,`create_time`,`update_id`,`update_time`,`state`) values
     (1,'平台租户','','平台','','',1,NULL,NULL,0,'2023-01-01 00:00:00',0,'2023-01-01 00:00:00',0);
 
 /*Table structure for table `user` */
@@ -2183,7 +2227,7 @@ CREATE TABLE `user` (
                         `avator` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
                         `create_time` datetime NOT NULL COMMENT '创建时间',
                         `update_time` datetime NOT NULL COMMENT '更新时间',
-                        `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除状态（Y/N）',
+                        `state` tinyint(4) NOT NULL DEFAULT 0 COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                         PRIMARY KEY (`id`) USING BTREE,
                         UNIQUE KEY `uk_union_id` (`union_id`),
                         UNIQUE KEY `uk_phone` (`phone`)
@@ -2204,7 +2248,7 @@ CREATE TABLE `member` (
                           `create_time` datetime NOT NULL COMMENT '创建时间',
                           `update_id` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT '修改人id',
                           `update_time` datetime NOT NULL COMMENT '修改时间',
-                          `del_flag` tinyint(4) NOT NULL DEFAULT 0 COMMENT '删除状态（Y/N）',
+                          `state` tinyint(4) NOT NULL DEFAULT 0 COMMENT '管理状态：-1=删除，0=禁用，1=可用',
                           PRIMARY KEY (`id`) USING BTREE,
                           UNIQUE KEY `uk_user_tenant` (`user_id`,`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='成员关联表';
@@ -2212,12 +2256,12 @@ CREATE TABLE `member` (
 
 /*Data for the table `user` */
 
-insert  into `user`(`id`,`union_id`,`openid`,`phone`,`pass`,`name`,`avator`,`create_time`,`update_time`,`del_flag`) values
+insert  into `user`(`id`,`union_id`,`openid`,`phone`,`pass`,`name`,`avator`,`create_time`,`update_time`,`state`) values
     (1,'','','13547584400','7217ac017b4fb2352ec9e65576c5c0b1','超级管理员','http://127.0.0.1:9001/upload/img/20230405/1643600038046306304_logo.png','2022-12-31 12:34:43','2023-04-26 15:48:02',0);
 
 /*Data for the table `member` */
 
-insert  into `member`(`id`,`user_id`,`tenant_id`,`role_id`,`permissions`,`status`,`create_id`,`create_time`,`update_id`,`update_time`,`del_flag`) values
+insert  into `member`(`id`,`user_id`,`tenant_id`,`role_id`,`permissions`,`status`,`create_id`,`create_time`,`update_id`,`update_time`,`state`) values
     (1,1,1,1,'',0,0,'2022-12-31 12:34:43',0,'2022-12-31 12:34:43',0);
 
 
@@ -2229,7 +2273,7 @@ CREATE TABLE IF NOT EXISTS `family_account` (
                                                 `openid`      VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '微信 openid（充值支付前置）',
                                                 `create_time` DATETIME     DEFAULT NULL COMMENT '创建时间',
                                                 `update_time` DATETIME     DEFAULT NULL COMMENT '更新时间',
-                                                `del_flag`    TINYINT      NOT NULL DEFAULT 0 COMMENT '逻辑删除',
+                                                `state`    TINYINT      NOT NULL DEFAULT 0 COMMENT '逻辑删除',
                                                 PRIMARY KEY (`id`),
                                                 UNIQUE KEY `uk_phone` (`phone`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='家属账号表';
@@ -2245,7 +2289,7 @@ CREATE TABLE IF NOT EXISTS `family_recharge` (
                                                  `prepay_id`   VARCHAR(64)  NOT NULL DEFAULT '' COMMENT '微信预支付 id',
                                                  `create_time` DATETIME     DEFAULT NULL COMMENT '创建时间',
                                                  `update_time` DATETIME     DEFAULT NULL COMMENT '更新时间',
-                                                 `del_flag`    TINYINT      NOT NULL DEFAULT 0 COMMENT '逻辑删除',
+                                                 `state`    TINYINT      NOT NULL DEFAULT 0 COMMENT '逻辑删除',
                                                  PRIMARY KEY (`id`),
                                                  UNIQUE KEY `uk_order_no` (`order_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='家属充值订单表';

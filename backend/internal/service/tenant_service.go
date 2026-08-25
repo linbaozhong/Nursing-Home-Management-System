@@ -203,8 +203,8 @@ func (t *tenant) Lock(ctx context.Context, in *dto.OpenTenantReq, out *dto.Empty
 	if !has {
 		return constant.ErrTenantNotExist
 	}
-	if tn.Status.Int8() == constant.TenantStatusTrial && !tn.TrialEnd.IsZero() &&
-		tn.TrialEnd.Time.Before(time.Now()) {
+	if tn.Status.Int8() == constant.TenantStatusTrial && !tn.ExpireTime.IsZero() &&
+		tn.ExpireTime.Time.Before(time.Now()) {
 		_, e = dao.Tenant(db).UpdateById(ctx, tenantID,
 			tbltenant.Status.Set(types.Int8(constant.TenantStatusLocked)),
 			tbltenant.UpdateTime.Set(types.Time{Time: time.Now()}),
@@ -245,7 +245,7 @@ func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserT
 			Plan:         tn.Plan.String(),
 			Status:       tn.Status.Int8(),
 			TrialStart:   tn.TrialStart.Time,
-			TrialEnd:     tn.TrialEnd.Time,
+			TrialEnd:     tn.ExpireTime.Time,
 		})
 	}
 	out.Tenants = tenants
@@ -413,7 +413,7 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginReq, out *dto.WxLog
 			Plan:         tn.Plan.String(),
 			Status:       tn.Status.Int8(),
 			TrialStart:   tn.TrialStart.Time,
-			TrialEnd:     tn.TrialEnd.Time,
+			TrialEnd:     tn.ExpireTime.Time,
 		})
 	}
 	out.Tenants = tenants
@@ -500,7 +500,7 @@ func checkTenantUsable(tn *do.Tenant) error {
 		return constant.ErrTenantLocked
 	}
 	if tn.Status.Int8() == constant.TenantStatusTrial &&
-		!tn.TrialEnd.IsZero() && tn.TrialEnd.Time.Before(time.Now()) {
+		!tn.ExpireTime.IsZero() && tn.ExpireTime.Time.Before(time.Now()) {
 		return constant.ErrTenantExpired
 	}
 	return nil

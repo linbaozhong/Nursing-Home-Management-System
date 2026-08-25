@@ -1,7 +1,7 @@
 CREATE TABLE `assessment` (
                               `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                               `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                              `elderly_id` bigint DEFAULT NULL COMMENT '老人ID',
+                              `elder_id` bigint DEFAULT NULL COMMENT '老人ID',
                               `assessment_date` date NOT NULL COMMENT '评估日期',
                               `assessment_type` tinyint NOT NULL COMMENT '评估类型：1-能力评估，2-健康评估',
                               `scale_data` json DEFAULT NULL COMMENT '量表原始数据',
@@ -12,9 +12,9 @@ CREATE TABLE `assessment` (
                               `deleted_at` datetime DEFAULT NULL COMMENT '软删除时间',
                               PRIMARY KEY (`id`),
                               KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_evaluator_id` (`evaluator_id`),
-  CONSTRAINT `fk_assessments_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_assessments_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_assessments_staff` FOREIGN KEY (`evaluator_id`) REFERENCES `staff` (`id`),
   CONSTRAINT `fk_assessments_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='评估记录表';
@@ -40,7 +40,7 @@ CREATE TABLE `bed` (
 CREATE TABLE `bill` (
                         `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                         `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                        `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                        `elder_id` bigint NOT NULL COMMENT '老人ID',
                         `bill_no` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '账单编号',
                         `bill_period` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '账单周期',
                         `total_amount` bigint NOT NULL DEFAULT '0' COMMENT '总金额（分）',
@@ -53,10 +53,10 @@ CREATE TABLE `bill` (
                         PRIMARY KEY (`id`),
                         UNIQUE KEY `uk_bill_no` (`bill_no`),
                         KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_status` (`status`),
   KEY `idx_bill_period` (`bill_period`),
-  CONSTRAINT `fk_bills_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_bills_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_bills_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='账单表';
 
@@ -108,7 +108,7 @@ CREATE TABLE `care_level` (
 CREATE TABLE `care_plan` (
                              `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                              `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                             `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                             `elder_id` bigint NOT NULL COMMENT '老人ID',
                              `care_item_id` bigint NOT NULL COMMENT '护理项目ID',
                              `exec_time` time DEFAULT NULL COMMENT '执行时间',
                              `frequency` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '执行频率（每天/每周几/隔天）',
@@ -120,17 +120,17 @@ CREATE TABLE `care_plan` (
                              `deleted_at` datetime DEFAULT NULL COMMENT '软删除时间',
                              PRIMARY KEY (`id`),
                              KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_care_item_id` (`care_item_id`),
   CONSTRAINT `fk_care_plans_care_item` FOREIGN KEY (`care_item_id`) REFERENCES `care_item` (`id`),
-  CONSTRAINT `fk_care_plans_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_care_plans_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_care_plans_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='护理计划表';
 
 CREATE TABLE `care_task` (
                              `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                              `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                             `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                             `elder_id` bigint NOT NULL COMMENT '老人ID',
                              `care_item_id` bigint NOT NULL COMMENT '护理项目ID',
                              `plan_id` bigint DEFAULT NULL COMMENT '关联的护理计划ID',
                              `scheduled_time` datetime NOT NULL COMMENT '计划执行时间',
@@ -143,14 +143,14 @@ CREATE TABLE `care_task` (
                              `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                              PRIMARY KEY (`id`),
                              KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_plan_id` (`plan_id`),
   KEY `idx_executor_id` (`executor_id`),
   KEY `idx_scheduled_time` (`scheduled_time`),
   KEY `idx_status` (`status`),
   KEY `fk_care_tasks_care_item` (`care_item_id`),
   CONSTRAINT `fk_care_tasks_care_item` FOREIGN KEY (`care_item_id`) REFERENCES `care_item` (`id`),
-  CONSTRAINT `fk_care_tasks_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_care_tasks_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_care_tasks_executor` FOREIGN KEY (`executor_id`) REFERENCES `staff` (`id`),
   CONSTRAINT `fk_care_tasks_plan` FOREIGN KEY (`plan_id`) REFERENCES `care_plan` (`id`),
   CONSTRAINT `fk_care_tasks_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
@@ -159,7 +159,7 @@ CREATE TABLE `care_task` (
 CREATE TABLE `checkout` (
                             `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                             `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                            `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                            `elder_id` bigint NOT NULL COMMENT '老人ID',
                             `checkout_date` date NOT NULL COMMENT '退住日期',
                             `reason` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '原因',
                             `settlement_amount` bigint NOT NULL DEFAULT '0' COMMENT '结算金额（分，正退费，负补缴）',
@@ -168,8 +168,8 @@ CREATE TABLE `checkout` (
                             `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                             PRIMARY KEY (`id`),
                             KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
-  CONSTRAINT `fk_checkouts_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  KEY `idx_elder_id` (`elder_id`),
+  CONSTRAINT `fk_checkouts_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_checkouts_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='退住记录表';
 
@@ -196,7 +196,7 @@ CREATE TABLE `consultation` (
 CREATE TABLE `contract` (
                             `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                             `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                            `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                            `elder_id` bigint NOT NULL COMMENT '老人ID',
                             `contract_no` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '合同编号',
                             `file_url` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '电子合同文件地址',
                             `start_date` date NOT NULL COMMENT '生效日期',
@@ -208,15 +208,15 @@ CREATE TABLE `contract` (
                             PRIMARY KEY (`id`),
                             UNIQUE KEY `uk_contract_no` (`contract_no`),
                             KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
-  CONSTRAINT `fk_contracts_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  KEY `idx_elder_id` (`elder_id`),
+  CONSTRAINT `fk_contracts_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_contracts_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='合同表';
 
 CREATE TABLE `deposit` (
                            `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                            `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                           `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                           `elder_id` bigint NOT NULL COMMENT '老人ID',
                            `amount` bigint NOT NULL DEFAULT '0' COMMENT '押金金额（分）',
                            `balance` bigint NOT NULL DEFAULT '0' COMMENT '当前余额（分）',
                            `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '收取时间',
@@ -224,8 +224,8 @@ CREATE TABLE `deposit` (
                            `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                            PRIMARY KEY (`id`),
                            KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
-  CONSTRAINT `fk_deposits_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  KEY `idx_elder_id` (`elder_id`),
+  CONSTRAINT `fk_deposits_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_deposits_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='押金记录表';
 
@@ -300,7 +300,7 @@ CREATE TABLE `elder` (
 CREATE TABLE `evaluation` (
                               `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                               `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                              `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                              `elder_id` bigint NOT NULL COMMENT '老人ID',
                               `target_type` tinyint NOT NULL COMMENT '评价对象类型：1-护理员，2-餐饮，3-环境',
                               `target_id` bigint NOT NULL COMMENT '具体目标ID',
                               `score` tinyint NOT NULL COMMENT '评分1-5',
@@ -308,9 +308,9 @@ CREATE TABLE `evaluation` (
                               `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                               PRIMARY KEY (`id`),
                               KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_target` (`target_type`,`target_id`),
-  CONSTRAINT `fk_evaluations_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_evaluations_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_evaluations_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='服务评价表';
 
@@ -352,7 +352,7 @@ CREATE TABLE `handover` (
 CREATE TABLE `health_alert` (
                                 `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                 `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                                `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                                `elder_id` bigint NOT NULL COMMENT '老人ID',
                                 `alert_type` tinyint NOT NULL COMMENT '预警类型：1-体征异常，2-用药逾期，3-跌倒报警',
                                 `content` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '预警内容',
                                 `alert_time` datetime NOT NULL COMMENT '预警时间',
@@ -363,10 +363,10 @@ CREATE TABLE `health_alert` (
                                 `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                                 PRIMARY KEY (`id`),
                                 KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_status` (`status`),
   KEY `fk_health_alerts_handler` (`handler_id`),
-  CONSTRAINT `fk_health_alerts_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_health_alerts_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_health_alerts_handler` FOREIGN KEY (`handler_id`) REFERENCES `staff` (`id`),
   CONSTRAINT `fk_health_alerts_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='健康预警表';
@@ -374,7 +374,7 @@ CREATE TABLE `health_alert` (
 CREATE TABLE `health_record` (
                                  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                  `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                                 `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                                 `elder_id` bigint NOT NULL COMMENT '老人ID',
                                  `past_medical_history` text COLLATE utf8mb4_unicode_ci COMMENT '既往病史',
                                  `allergy` text COLLATE utf8mb4_unicode_ci COMMENT '过敏史',
                                  `family_history` text COLLATE utf8mb4_unicode_ci COMMENT '家族史',
@@ -383,8 +383,8 @@ CREATE TABLE `health_record` (
                                  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                                  PRIMARY KEY (`id`),
                                  KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
-  CONSTRAINT `fk_health_records_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  KEY `idx_elder_id` (`elder_id`),
+  CONSTRAINT `fk_health_records_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_health_records_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='健康档案表';
 
@@ -425,7 +425,7 @@ CREATE TABLE `iot_device` (
                               `tenant_id` bigint NOT NULL COMMENT '租户ID',
                               `device_id` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '设备唯一标识',
                               `device_type` tinyint NOT NULL COMMENT '设备类型：1-智能床垫，2-手环，3-跌倒雷达，4-门禁',
-                              `elderly_id` bigint DEFAULT NULL COMMENT '绑定老人ID',
+                              `elder_id` bigint DEFAULT NULL COMMENT '绑定老人ID',
                               `location` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '安装位置',
                               `status` tinyint NOT NULL DEFAULT '0' COMMENT '状态：0-离线，1-在线',
                               `last_online` datetime DEFAULT NULL COMMENT '最后在线时间',
@@ -435,8 +435,8 @@ CREATE TABLE `iot_device` (
                               PRIMARY KEY (`id`),
                               UNIQUE KEY `uk_device_id` (`device_id`),
                               KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
-  CONSTRAINT `fk_iot_devices_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  KEY `idx_elder_id` (`elder_id`),
+  CONSTRAINT `fk_iot_devices_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_iot_devices_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='设备表';
 
@@ -477,7 +477,7 @@ CREATE TABLE `material_usage` (
                                   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                   `tenant_id` bigint NOT NULL COMMENT '租户ID',
                                   `material_id` bigint NOT NULL COMMENT '物资ID',
-                                  `elderly_id` bigint DEFAULT NULL COMMENT '领用老人ID',
+                                  `elder_id` bigint DEFAULT NULL COMMENT '领用老人ID',
                                   `quantity` int NOT NULL COMMENT '数量',
                                   `usage_date` datetime NOT NULL COMMENT '领用时间',
                                   `recipient` bigint DEFAULT NULL COMMENT '领用人（员工）ID',
@@ -486,9 +486,9 @@ CREATE TABLE `material_usage` (
                                   PRIMARY KEY (`id`),
                                   KEY `idx_tenant_id` (`tenant_id`),
   KEY `idx_material_id` (`material_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_recipient` (`recipient`),
-  CONSTRAINT `fk_material_usages_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_material_usages_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_material_usages_material` FOREIGN KEY (`material_id`) REFERENCES `material` (`id`),
   CONSTRAINT `fk_material_usages_staff` FOREIGN KEY (`recipient`) REFERENCES `staff` (`id`),
   CONSTRAINT `fk_material_usages_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
@@ -514,7 +514,7 @@ CREATE TABLE `meal_deliverie` (
 CREATE TABLE `meal_order` (
                               `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                               `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                              `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                              `elder_id` bigint NOT NULL COMMENT '老人ID',
                               `order_date` date NOT NULL COMMENT '订餐日期',
                               `meal_type` tinyint NOT NULL COMMENT '餐次：1-早餐，2-午餐，3-晚餐，4-加餐',
                               `dietary_type` tinyint NOT NULL COMMENT '饮食类型',
@@ -524,16 +524,16 @@ CREATE TABLE `meal_order` (
                               `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                               PRIMARY KEY (`id`),
                               KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_order_date` (`order_date`),
-  CONSTRAINT `fk_meal_orders_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_meal_orders_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_meal_orders_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订餐记录表';
 
 CREATE TABLE `medication_record` (
                                      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                      `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                                     `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                                     `elder_id` bigint NOT NULL COMMENT '老人ID',
                                      `prescription_id` bigint DEFAULT NULL COMMENT '关联处方ID',
                                      `scheduled_time` datetime NOT NULL COMMENT '计划用药时间',
                                      `actual_time` datetime DEFAULT NULL COMMENT '实际用药时间',
@@ -544,11 +544,11 @@ CREATE TABLE `medication_record` (
                                      `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                                      PRIMARY KEY (`id`),
                                      KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_prescription_id` (`prescription_id`),
   KEY `idx_scheduled_time` (`scheduled_time`),
   KEY `idx_executor_id` (`executor_id`),
-  CONSTRAINT `fk_medication_records_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_medication_records_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_medication_records_executor` FOREIGN KEY (`executor_id`) REFERENCES `staff` (`id`),
   CONSTRAINT `fk_medication_records_prescription` FOREIGN KEY (`prescription_id`) REFERENCES `prescription` (`id`),
   CONSTRAINT `fk_medication_records_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
@@ -557,7 +557,7 @@ CREATE TABLE `medication_record` (
 CREATE TABLE `message` (
                            `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                            `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                           `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                           `elder_id` bigint NOT NULL COMMENT '老人ID',
                            `sender_type` tinyint NOT NULL COMMENT '发送者类型：1-家属，2-护理员',
                            `sender_id` bigint NOT NULL COMMENT '发送人ID',
                            `content` text COLLATE utf8mb4_unicode_ci COMMENT '内容',
@@ -566,9 +566,9 @@ CREATE TABLE `message` (
                            `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                            PRIMARY KEY (`id`),
                            KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_parent_id` (`parent_id`),
-  CONSTRAINT `fk_messages_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_messages_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_messages_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='家属留言表';
 
@@ -593,7 +593,7 @@ CREATE TABLE `notification` (
 CREATE TABLE `outgoing_record` (
                                    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                    `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                                   `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                                   `elder_id` bigint NOT NULL COMMENT '老人ID',
                                    `type` tinyint NOT NULL COMMENT '类型：1-请假外出，2-临时外出',
                                    `start_time` datetime NOT NULL COMMENT '外出开始时间',
                                    `end_time` datetime DEFAULT NULL COMMENT '计划返回时间',
@@ -606,11 +606,11 @@ CREATE TABLE `outgoing_record` (
                                    `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                                    PRIMARY KEY (`id`),
                                    KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_status` (`status`),
   KEY `fk_outgoing_records_approver` (`approved_by`),
   CONSTRAINT `fk_outgoing_records_approver` FOREIGN KEY (`approved_by`) REFERENCES `staff` (`id`),
-  CONSTRAINT `fk_outgoing_records_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_outgoing_records_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_outgoing_records_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='出入登记表';
 
@@ -663,7 +663,7 @@ CREATE TABLE `patrol_record` (
 CREATE TABLE `payment` (
                            `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                            `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                           `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                           `elder_id` bigint NOT NULL COMMENT '老人ID',
                            `bill_id` bigint DEFAULT NULL COMMENT '关联账单ID',
                            `amount` bigint NOT NULL DEFAULT '0' COMMENT '缴费金额（分）',
                            `payment_method` tinyint NOT NULL COMMENT '支付方式：1-现金，2-微信，3-支付宝，4-银行转账',
@@ -673,12 +673,12 @@ CREATE TABLE `payment` (
                            `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                            PRIMARY KEY (`id`),
                            KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_bill_id` (`bill_id`),
   KEY `idx_transaction_id` (`transaction_id`),
   KEY `fk_payments_operator` (`operator_id`),
   CONSTRAINT `fk_payments_bill` FOREIGN KEY (`bill_id`) REFERENCES `bill` (`id`),
-  CONSTRAINT `fk_payments_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_payments_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_payments_operator` FOREIGN KEY (`operator_id`) REFERENCES `staff` (`id`),
   CONSTRAINT `fk_payments_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='缴费记录表';
@@ -686,7 +686,7 @@ CREATE TABLE `payment` (
 CREATE TABLE `prescription` (
                                 `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                 `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                                `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                                `elder_id` bigint NOT NULL COMMENT '老人ID',
                                 `drug_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '药品名称',
                                 `dosage` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '每次剂量',
                                 `frequency` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '用法频率',
@@ -699,8 +699,8 @@ CREATE TABLE `prescription` (
                                 `deleted_at` datetime DEFAULT NULL COMMENT '软删除时间',
                                 PRIMARY KEY (`id`),
                                 KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
-  CONSTRAINT `fk_prescriptions_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  KEY `idx_elder_id` (`elder_id`),
+  CONSTRAINT `fk_prescriptions_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_prescriptions_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='处方表';
 
@@ -778,7 +778,7 @@ CREATE TABLE `room` (
 CREATE TABLE `room_transfer` (
                                  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                  `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                                 `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                                 `elder_id` bigint NOT NULL COMMENT '老人ID',
                                  `from_bed_id` bigint NOT NULL COMMENT '原床位ID',
                                  `to_bed_id` bigint NOT NULL COMMENT '新床位ID',
                                  `transfer_date` date NOT NULL COMMENT '转房日期',
@@ -788,10 +788,10 @@ CREATE TABLE `room_transfer` (
                                  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                                  PRIMARY KEY (`id`),
                                  KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_from_bed_id` (`from_bed_id`),
   KEY `idx_to_bed_id` (`to_bed_id`),
-  CONSTRAINT `fk_room_transfers_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_room_transfers_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_room_transfers_from_bed` FOREIGN KEY (`from_bed_id`) REFERENCES `bed` (`id`),
   CONSTRAINT `fk_room_transfers_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`),
   CONSTRAINT `fk_room_transfers_to_bed` FOREIGN KEY (`to_bed_id`) REFERENCES `bed` (`id`)
@@ -862,7 +862,7 @@ CREATE TABLE `tenant` (
 CREATE TABLE `visitor` (
                            `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                            `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                           `elderly_id` bigint NOT NULL COMMENT '被访老人ID',
+                           `elder_id` bigint NOT NULL COMMENT '被访老人ID',
                            `visitor_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '访客姓名',
                            `visitor_id_card` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '身份证号（加密）',
                            `visit_time` datetime DEFAULT NULL COMMENT '进入时间',
@@ -873,15 +873,15 @@ CREATE TABLE `visitor` (
                            `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                            PRIMARY KEY (`id`),
                            KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
-  CONSTRAINT `fk_visitors_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  KEY `idx_elder_id` (`elder_id`),
+  CONSTRAINT `fk_visitors_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_visitors_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='访客记录表';
 
 CREATE TABLE `vital_sign` (
                               `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                               `tenant_id` bigint NOT NULL COMMENT '租户ID',
-                              `elderly_id` bigint NOT NULL COMMENT '老人ID',
+                              `elder_id` bigint NOT NULL COMMENT '老人ID',
                               `record_time` datetime NOT NULL COMMENT '测量时间',
                               `bp_systolic` int DEFAULT NULL COMMENT '收缩压',
                               `bp_diastolic` int DEFAULT NULL COMMENT '舒张压',
@@ -895,10 +895,10 @@ CREATE TABLE `vital_sign` (
                               `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
                               PRIMARY KEY (`id`),
                               KEY `idx_tenant_id` (`tenant_id`),
-  KEY `idx_elderly_id` (`elderly_id`),
+  KEY `idx_elder_id` (`elder_id`),
   KEY `idx_record_time` (`record_time`),
   KEY `idx_recorder_id` (`recorder_id`),
-  CONSTRAINT `fk_vital_signs_elderly` FOREIGN KEY (`elderly_id`) REFERENCES `elder` (`id`),
+  CONSTRAINT `fk_vital_signs_elderly` FOREIGN KEY (`elder_id`) REFERENCES `elder` (`id`),
   CONSTRAINT `fk_vital_signs_recorder` FOREIGN KEY (`recorder_id`) REFERENCES `staff` (`id`),
   CONSTRAINT `fk_vital_signs_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='生命体征记录表';

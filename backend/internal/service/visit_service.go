@@ -81,7 +81,7 @@ func (v *visit) AddVisit(ctx context.Context, in *dto.AddVisitReq, out *dto.Empt
 	bean.Name = types.String(*in.Name)
 	bean.Phone = types.String(*in.Phone)
 	bean.Relation = types.String(*in.Relation)
-	bean.VisitDate = types.Time{Time: *in.VisitDate}
+	bean.VisitTime = types.Time{Time: *in.VisitDate}
 	bean.VisitNum = types.Int32(int32(*in.VisitNum))
 	bean.VisitFlag = types.Int8(constant.VisitStayLeave)
 	bean.DelFlag = types.Int8(constant.YesNoNo)
@@ -103,7 +103,7 @@ func (v *visit) GetVisitById(ctx context.Context, in *dto.IDReq, out *dto.GetVis
 	out.VisitName = obj.Name.String()
 	out.VisitPhone = obj.Phone.String()
 	out.Relation = obj.Relation.String()
-	out.VisitDate = obj.VisitDate.Time
+	out.VisitDate = obj.VisitTime.Time
 	out.VisitNum = int64(obj.VisitNum)
 	elder, hasE, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Eq(obj.ElderId)))
 	if e != nil {
@@ -130,7 +130,7 @@ func (v *visit) EditVisit(ctx context.Context, in *dto.EditVisitReq, out *dto.Em
 	bean.Name = types.String(*in.Name)
 	bean.Phone = types.String(*in.Phone)
 	bean.Relation = types.String(*in.Relation)
-	bean.VisitDate = types.Time{Time: *in.VisitDate}
+	bean.VisitTime = types.Time{Time: *in.VisitDate}
 	bean.VisitNum = types.Int32(int32(*in.VisitNum))
 	_, e = dao.Visit(db).UpdateOne(ctx, bean,
 		tblvisit.Name,
@@ -154,7 +154,7 @@ func (v *visit) RecordLeave(ctx context.Context, in *dto.RecordLeaveReq, out *dt
 	}
 	bean := do.NewVisit()
 	bean.Id = types.BigInt(*in.ID)
-	bean.LeaveDate = types.Time{Time: *in.LeaveDate}
+	bean.LeaveTime = types.Time{Time: *in.LeaveDate}
 	bean.VisitFlag = types.Int8(constant.VisitAlreadyLeave)
 	_, e = dao.Visit(db).UpdateOne(ctx, bean,
 		tblvisit.LeaveDate,
