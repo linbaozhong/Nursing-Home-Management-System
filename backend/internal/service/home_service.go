@@ -153,7 +153,7 @@ func (h *home) AvailableBed(ctx context.Context, in *dto.EmptyReq, out *dto.Avai
 			statByRoom[bed.RoomId] = st
 		}
 		st.total++
-		switch int8(bed.BedFlag) {
+		switch int8(bed.Status) {
 		case int8(constant.BedIdle):
 			st.idle++
 			idleBedNum++

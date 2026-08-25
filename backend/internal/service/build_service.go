@@ -121,7 +121,7 @@ func (b *build) hasOccupiedBed(ctx context.Context, scope string, id int64) (boo
 		return false, e
 	}
 	for _, bed := range beds {
-		if bed.BedFlag != types.Int8(constant.BedIdle) {
+		if bed.Status != types.Int8(constant.BedIdle) {
 			return true, nil
 		}
 	}
@@ -169,7 +169,7 @@ func (b *build) buildTree(buildings []*do.Building, floors []*do.Floor, rooms []
 					ri.BedList = append(ri.BedList, dto.RoomItemResp{
 						ID:      types.BigInt(bd2.Id),
 						Name:    string(bd2.Name),
-						BedFlag: constant.YesNo(bd2.BedFlag).String(),
+						BedFlag: constant.YesNo(bd2.Status).String(),
 					})
 				}
 				fi.RoomList = append(fi.RoomList, ri)
@@ -642,12 +642,12 @@ func (b *build) replaceRoomBeds(ctx context.Context, roomID int64, beds []dto.Op
 		if bd.Name != nil {
 			bean.Name = types.String(*bd.Name)
 		}
-		bean.BedTypeID = types.BigInt(0)
+		bean.TypeID = types.BigInt(0)
 		if bd.BedTypeID != nil {
-			bean.BedTypeID = types.BigInt(*bd.BedTypeID)
+			bean.TypeID = types.BigInt(*bd.BedTypeID)
 		}
-		bean.BedFlag = types.Int8(constant.BedIdle)
-		bean.DelFlag = types.Int8(constant.YesNoNo)
+		bean.Status = types.Int8(constant.BedIdle)
+		bean.State = types.Int8(constant.YesNoNo)
 		if _, e := dao.Bed(db).InsertOne(ctx, bean, tblbed.Name, tblbed.RoomId, tblbed.BedTypeID, tblbed.BedFlag, tblbed.DelFlag, tblbed.TenantId); e != nil {
 			return e
 		}
@@ -688,8 +688,8 @@ func (b *build) fillRoomBedsAndFacilities(ctx context.Context, out *dto.OperateR
 	}
 	tyIDs := make([]any, 0, len(beds))
 	for _, bd := range beds {
-		if bd.BedTypeID != 0 {
-			tyIDs = append(tyIDs, int64(bd.BedTypeID))
+		if bd.TypeID != 0 {
+			tyIDs = append(tyIDs, int64(bd.TypeID))
 		}
 	}
 	tyMap := map[int64]string{}
@@ -707,8 +707,8 @@ func (b *build) fillRoomBedsAndFacilities(ctx context.Context, out *dto.OperateR
 		out.Beds = append(out.Beds, dto.OperateBedResp{
 			ID:          types.BigInt(bd.Id),
 			Name:        bd.Name.String(),
-			BedTypeId:   types.BigInt(bd.BedTypeID),
-			BedTypeName: tyMap[int64(bd.BedTypeID)],
+			BedTypeId:   types.BigInt(bd.TypeID),
+			BedTypeName: tyMap[int64(bd.TypeID)],
 		})
 	}
 	// 设施
@@ -757,7 +757,7 @@ func (b *build) PageBedByKey(ctx context.Context, in *dto.PageBedByKeyReq, out *
 	}
 	filtered := make([]wrapped, 0, len(beds))
 	for _, bed := range beds {
-		if in.BedFlag != nil && bed.BedFlag.String() != *in.BedFlag {
+		if in.BedFlag != nil && bed.Status.String() != *in.BedFlag {
 			continue
 		}
 		room, ok := roomMap[int64(bed.RoomId)]
@@ -800,8 +800,8 @@ func (b *build) PageBedByKey(ctx context.Context, in *dto.PageBedByKeyReq, out *
 	*out = make([]dto.PageBedByKeyResp, 0, len(pageItems))
 	bedTypeID := make([]any, 0, len(pageItems))
 	for _, item := range pageItems {
-		if item.bed.BedTypeID != 0 {
-			bedTypeID = append(bedTypeID, int64(item.bed.BedTypeID))
+		if item.bed.TypeID != 0 {
+			bedTypeID = append(bedTypeID, int64(item.bed.TypeID))
 		}
 	}
 	tyMap := map[int64]string{}
@@ -818,9 +818,9 @@ func (b *build) PageBedByKey(ctx context.Context, in *dto.PageBedByKeyReq, out *
 		*out = append(*out, dto.PageBedByKeyResp{
 			ID:          types.BigInt(item.bed.Id),
 			Name:        item.bed.Name.String(),
-			BedFlag:     item.bed.BedFlag.String(),
-			BedTypeId:   types.BigInt(item.bed.BedTypeID),
-			BedTypeName: tyMap[int64(item.bed.BedTypeID)],
+			BedFlag:     item.bed.Status.String(),
+			BedTypeId:   types.BigInt(item.bed.TypeID),
+			BedTypeName: tyMap[int64(item.bed.TypeID)],
 		})
 	}
 	return nil
@@ -843,10 +843,10 @@ func (b *build) AddBed(ctx context.Context, in *dto.OperateBedReq, out *dto.Empt
 		bean.Name = types.String(*in.Name)
 	}
 	if in.BedTypeID != nil {
-		bean.BedTypeID = types.BigInt(*in.BedTypeID)
+		bean.TypeID = types.BigInt(*in.BedTypeID)
 	}
-	bean.BedFlag = types.Int8(constant.BedIdle)
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.Status = types.Int8(constant.BedIdle)
+	bean.State = types.Int8(constant.YesNoNo)
 	_, e := dao.Bed(db).InsertOne(ctx, bean)
 	return e
 }
@@ -864,9 +864,9 @@ func (b *build) GetBedById(ctx context.Context, in *dto.IDReq, out *dto.OperateB
 	out.ID = types.BigInt(obj.Id)
 	out.RoomId = types.BigInt(obj.RoomId)
 	out.Name = obj.Name.String()
-	out.BedTypeId = types.BigInt(obj.BedTypeID)
-	if obj.BedTypeID != 0 {
-		t, has2, e2 := dao.MaterialType(db).Get(ctx, ace.Where(tblmaterialtype.Id.Eq(types.BigInt(obj.BedTypeID)), tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterialtype.DelFlag.Eq(constant.YesNoNo)))
+	out.BedTypeId = types.BigInt(obj.TypeID)
+	if obj.TypeID != 0 {
+		t, has2, e2 := dao.MaterialType(db).Get(ctx, ace.Where(tblmaterialtype.Id.Eq(types.BigInt(obj.TypeID)), tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterialtype.DelFlag.Eq(constant.YesNoNo)))
 		if e2 != nil {
 			return e2
 		}
@@ -910,7 +910,7 @@ func (b *build) DeleteBed(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp
 	if !has {
 		return errors.New("床位不存在")
 	}
-	if bed.BedFlag != types.Int8(constant.BedIdle) {
+	if bed.Status != types.Int8(constant.BedIdle) {
 		return errors.New("该床位被占用，删除失败")
 	}
 	_, e = dao.Bed(db).UpdateById(ctx, types.BigInt(*in.ID), tblbed.DelFlag.Set(constant.YesNoYes))

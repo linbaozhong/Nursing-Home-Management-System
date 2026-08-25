@@ -145,7 +145,7 @@ func (b *bedpanorama) ListRoomByKey(ctx context.Context, in *dto.ListRoomByKeyRe
 				bedVO := dto.RoomItemResp{
 					ID:      types.BigInt(bed.Id),
 					Name:    bed.Name.String(),
-					BedFlag: bed.BedFlag.String(),
+					BedFlag: bed.Status.String(),
 				}
 				if ed, ok := elderByBed[bed.Id]; ok {
 					bedVO.ElderName = ed.Name.String()

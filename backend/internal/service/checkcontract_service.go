@@ -37,7 +37,7 @@ var CheckContract = &checkcontract{}
 func (c *checkcontract) PageCheckContractByKey(ctx context.Context, in *dto.PageCheckContractByKeyReq, out *[]dto.PageCheckContractByKeyResp) error {
 	q := db.Table(tblelder.TableName).
 		Where(
-			// tblelder.DelFlag.Eq(constant.YesNoNo),
+			// tblelder.State.Eq(constant.YesNoNo),
 			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblelder.CheckFlag.In(
 				constant.CheckEnter,
@@ -71,7 +71,7 @@ func (c *checkcontract) PageCheckContractByKey(ctx context.Context, in *dto.Page
 func (c *checkcontract) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchElderByKeyReq, out *[]dto.PageSearchElderByKeyResp) error {
 	q := db.Table(tblelder.TableName).
 		Where(
-			// tblelder.DelFlag.Eq(constant.YesNoNo),
+			// tblelder.State.Eq(constant.YesNoNo),
 			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblelder.CheckFlag.In(
 				types.Int8(constant.CheckConsult),
@@ -244,7 +244,7 @@ func (c *checkcontract) AddCheckContract(ctx context.Context, in *dto.OperateChe
 	if !has {
 		return errors.New("床位不存在")
 	}
-	if bed.BedFlag != types.Int8(constant.BedIdle) {
+	if bed.Status != types.Int8(constant.BedIdle) {
 		return errors.New("床位已被占用")
 	}
 	// 校验客户姓名+电话是否已存在
