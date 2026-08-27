@@ -28,14 +28,11 @@ func NewHealthInfo() *HealthInfo {
 // MarshalJSON
 func (p *HealthInfo) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(16 * 50)
-	if p.SelfCare != "" {
-		write.WriteRaw("self_care", types.Marshal(p.SelfCare))
+	if p.AllergyDrug != "" {
+		write.WriteRaw("allergy_drug", types.Marshal(p.AllergyDrug))
 	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.Vision != "" {
-		write.WriteRaw("vision", types.Marshal(p.Vision))
+	if p.Doctor != "" {
+		write.WriteRaw("doctor", types.Marshal(p.Doctor))
 	}
 	if p.Hearing != "" {
 		write.WriteRaw("hearing", types.Marshal(p.Hearing))
@@ -43,32 +40,35 @@ func (p *HealthInfo) MarshalJSON() ([]byte, error) {
 	if p.Hospital != "" {
 		write.WriteRaw("hospital", types.Marshal(p.Hospital))
 	}
-	if p.Doctor != "" {
-		write.WriteRaw("doctor", types.Marshal(p.Doctor))
-	}
-	if p.Phone != "" {
-		write.WriteRaw("phone", types.Marshal(p.Phone))
-	}
-	if p.AllergyDrug != "" {
-		write.WriteRaw("allergy_drug", types.Marshal(p.AllergyDrug))
+	if p.MajorDisease != "" {
+		write.WriteRaw("major_disease", types.Marshal(p.MajorDisease))
 	}
 	if p.MedicalHistory != "" {
 		write.WriteRaw("medical_history", types.Marshal(p.MedicalHistory))
 	}
-	if p.MajorDisease != "" {
-		write.WriteRaw("major_disease", types.Marshal(p.MajorDisease))
+	if p.Phone != "" {
+		write.WriteRaw("phone", types.Marshal(p.Phone))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
+	if p.SelfCare != "" {
+		write.WriteRaw("self_care", types.Marshal(p.SelfCare))
 	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	if p.Vision != "" {
+		write.WriteRaw("vision", types.Marshal(p.Vision))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -89,34 +89,34 @@ func (p *HealthInfo) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "self_care":
-			p.SelfCare = types.String(value.Str)
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "vision":
-			p.Vision = types.String(value.Str)
+		case "allergy_drug":
+			p.AllergyDrug = types.String(value.Str)
+		case "doctor":
+			p.Doctor = types.String(value.Str)
 		case "hearing":
 			p.Hearing = types.String(value.Str)
 		case "hospital":
 			p.Hospital = types.String(value.Str)
-		case "doctor":
-			p.Doctor = types.String(value.Str)
-		case "phone":
-			p.Phone = types.String(value.Str)
-		case "allergy_drug":
-			p.AllergyDrug = types.String(value.Str)
-		case "medical_history":
-			p.MedicalHistory = types.String(value.Str)
 		case "major_disease":
 			p.MajorDisease = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
+		case "medical_history":
+			p.MedicalHistory = types.String(value.Str)
+		case "phone":
+			p.Phone = types.String(value.Str)
+		case "self_care":
+			p.SelfCare = types.String(value.Str)
+		case "vision":
+			p.Vision = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -142,20 +142,20 @@ func (p *HealthInfo) Free() {
 
 // Reset
 func (p *HealthInfo) Reset() {
-	p.SelfCare = ""
-	p.TenantId = 0
-	p.Vision = ""
+	p.AllergyDrug = ""
+	p.Doctor = ""
 	p.Hearing = ""
 	p.Hospital = ""
-	p.Doctor = ""
-	p.Phone = ""
-	p.AllergyDrug = ""
-	p.MedicalHistory = ""
 	p.MajorDisease = ""
-	p.Id = 0
-	p.ElderId = 0
+	p.MedicalHistory = ""
+	p.Phone = ""
+	p.SelfCare = ""
+	p.Vision = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 
@@ -167,20 +167,20 @@ func (p *HealthInfo) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var healthinfoFieldToPtrFunc = map[string]func(*HealthInfo) any{
-	tblhealthinfo.SelfCare.Name:       func(p *HealthInfo) any { return &p.SelfCare },
-	tblhealthinfo.TenantId.Name:       func(p *HealthInfo) any { return &p.TenantId },
-	tblhealthinfo.Vision.Name:         func(p *HealthInfo) any { return &p.Vision },
+	tblhealthinfo.AllergyDrug.Name:    func(p *HealthInfo) any { return &p.AllergyDrug },
+	tblhealthinfo.Doctor.Name:         func(p *HealthInfo) any { return &p.Doctor },
 	tblhealthinfo.Hearing.Name:        func(p *HealthInfo) any { return &p.Hearing },
 	tblhealthinfo.Hospital.Name:       func(p *HealthInfo) any { return &p.Hospital },
-	tblhealthinfo.Doctor.Name:         func(p *HealthInfo) any { return &p.Doctor },
-	tblhealthinfo.Phone.Name:          func(p *HealthInfo) any { return &p.Phone },
-	tblhealthinfo.AllergyDrug.Name:    func(p *HealthInfo) any { return &p.AllergyDrug },
-	tblhealthinfo.MedicalHistory.Name: func(p *HealthInfo) any { return &p.MedicalHistory },
 	tblhealthinfo.MajorDisease.Name:   func(p *HealthInfo) any { return &p.MajorDisease },
-	tblhealthinfo.Id.Name:             func(p *HealthInfo) any { return &p.Id },
-	tblhealthinfo.ElderId.Name:        func(p *HealthInfo) any { return &p.ElderId },
+	tblhealthinfo.MedicalHistory.Name: func(p *HealthInfo) any { return &p.MedicalHistory },
+	tblhealthinfo.Phone.Name:          func(p *HealthInfo) any { return &p.Phone },
+	tblhealthinfo.SelfCare.Name:       func(p *HealthInfo) any { return &p.SelfCare },
+	tblhealthinfo.Vision.Name:         func(p *HealthInfo) any { return &p.Vision },
 	tblhealthinfo.CreateId.Name:       func(p *HealthInfo) any { return &p.CreateId },
 	tblhealthinfo.CreateTime.Name:     func(p *HealthInfo) any { return &p.CreateTime },
+	tblhealthinfo.ElderId.Name:        func(p *HealthInfo) any { return &p.ElderId },
+	tblhealthinfo.Id.Name:             func(p *HealthInfo) any { return &p.Id },
+	tblhealthinfo.TenantId.Name:       func(p *HealthInfo) any { return &p.TenantId },
 	tblhealthinfo.UpdateId.Name:       func(p *HealthInfo) any { return &p.UpdateId },
 	tblhealthinfo.UpdateTime.Name:     func(p *HealthInfo) any { return &p.UpdateTime },
 }
@@ -272,14 +272,11 @@ func (p *HealthInfo) RawAssignValues(d dialect.Dialect, args ...dialect.Field) (
 
 // 定义字段到值检查和获取函数的映射
 var healthinfoFieldToValueFunc = map[dialect.Field]func(*HealthInfo) (any, bool){
-	tblhealthinfo.SelfCare: func(p *HealthInfo) (any, bool) {
-		return p.SelfCare, p.SelfCare == ""
+	tblhealthinfo.AllergyDrug: func(p *HealthInfo) (any, bool) {
+		return p.AllergyDrug, p.AllergyDrug == ""
 	},
-	tblhealthinfo.TenantId: func(p *HealthInfo) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblhealthinfo.Vision: func(p *HealthInfo) (any, bool) {
-		return p.Vision, p.Vision == ""
+	tblhealthinfo.Doctor: func(p *HealthInfo) (any, bool) {
+		return p.Doctor, p.Doctor == ""
 	},
 	tblhealthinfo.Hearing: func(p *HealthInfo) (any, bool) {
 		return p.Hearing, p.Hearing == ""
@@ -287,32 +284,35 @@ var healthinfoFieldToValueFunc = map[dialect.Field]func(*HealthInfo) (any, bool)
 	tblhealthinfo.Hospital: func(p *HealthInfo) (any, bool) {
 		return p.Hospital, p.Hospital == ""
 	},
-	tblhealthinfo.Doctor: func(p *HealthInfo) (any, bool) {
-		return p.Doctor, p.Doctor == ""
-	},
-	tblhealthinfo.Phone: func(p *HealthInfo) (any, bool) {
-		return p.Phone, p.Phone == ""
-	},
-	tblhealthinfo.AllergyDrug: func(p *HealthInfo) (any, bool) {
-		return p.AllergyDrug, p.AllergyDrug == ""
+	tblhealthinfo.MajorDisease: func(p *HealthInfo) (any, bool) {
+		return p.MajorDisease, p.MajorDisease == ""
 	},
 	tblhealthinfo.MedicalHistory: func(p *HealthInfo) (any, bool) {
 		return p.MedicalHistory, p.MedicalHistory == ""
 	},
-	tblhealthinfo.MajorDisease: func(p *HealthInfo) (any, bool) {
-		return p.MajorDisease, p.MajorDisease == ""
+	tblhealthinfo.Phone: func(p *HealthInfo) (any, bool) {
+		return p.Phone, p.Phone == ""
 	},
-	tblhealthinfo.Id: func(p *HealthInfo) (any, bool) {
-		return p.Id, p.Id == 0
+	tblhealthinfo.SelfCare: func(p *HealthInfo) (any, bool) {
+		return p.SelfCare, p.SelfCare == ""
 	},
-	tblhealthinfo.ElderId: func(p *HealthInfo) (any, bool) {
-		return p.ElderId, p.ElderId == 0
+	tblhealthinfo.Vision: func(p *HealthInfo) (any, bool) {
+		return p.Vision, p.Vision == ""
 	},
 	tblhealthinfo.CreateId: func(p *HealthInfo) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblhealthinfo.CreateTime: func(p *HealthInfo) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblhealthinfo.ElderId: func(p *HealthInfo) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblhealthinfo.Id: func(p *HealthInfo) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblhealthinfo.TenantId: func(p *HealthInfo) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblhealthinfo.UpdateId: func(p *HealthInfo) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

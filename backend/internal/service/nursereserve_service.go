@@ -65,7 +65,7 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 			tblnursereserve.Frequency,
 			tblnursereserve.PayAmount,
 			tblnursereserve.NurseDate,
-			tblnursereserve.OrderFlag,
+			tblnursereserve.Status,
 			tblelder.Name.As("elder_name"),
 			tblbed.Name.As("bed_name"),
 		).
@@ -116,7 +116,7 @@ func (s *nurseReserveService) GetNurseReserveByReserveIdAndElderId(ctx context.C
 	out.Frequency = int(nr.Frequency)
 	out.PayAmount = nr.PayAmount
 	out.NurseDate = nr.NurseDate.Time
-	out.OrderFlag = constant.YesNo(nr.OrderFlag).String()
+	out.OrderFlag = constant.YesNo(nr.Status).String()
 	// 老人姓名、床位名
 	if el, eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(nr.ElderId))); ee == nil && eh {
 		out.ElderName = el.Name.String()
@@ -193,7 +193,7 @@ func (s *nurseReserveService) PageSearchElderByKey(ctx context.Context, in *dto.
 	}
 	var elders []do.Elder
 	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
-		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.CheckFlag, tblelder.BedId).
+		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.Status, tblelder.BedId).
 		Desc(tblelder.Id).
 		Select().Gets(ctx, &elders)
 	if e != nil {

@@ -9,64 +9,64 @@ import (
 const TableName = "staff"
 
 var (
-	Name       = dialect.Field{Name: "name", Json: "name", Table: "staff", Type: "types.String", IsRelation: false}
-	IdNum      = dialect.Field{Name: "id_num", Json: "id_num", Table: "staff", Type: "types.String", IsRelation: false}
-	Sex        = dialect.Field{Name: "sex", Json: "sex", Table: "staff", Type: "types.String", IsRelation: false}
-	Phone      = dialect.Field{Name: "phone", Json: "phone", Table: "staff", Type: "types.String", IsRelation: false}
-	Email      = dialect.Field{Name: "email", Json: "email", Table: "staff", Type: "types.String", IsRelation: false}
-	Pass       = dialect.Field{Name: "pass", Json: "pass", Table: "staff", Type: "types.String", IsRelation: false}
-	Avator     = dialect.Field{Name: "avator", Json: "avator", Table: "staff", Type: "types.String", IsRelation: false}
 	Address    = dialect.Field{Name: "address", Json: "address", Table: "staff", Type: "types.String", IsRelation: false}
-	Id         = dialect.Field{Name: "id", Json: "id", Table: "staff", Type: "types.BigInt", IsRelation: false}
-	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
-	RoleId     = dialect.Field{Name: "role_id", Json: "role_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
+	Avator     = dialect.Field{Name: "avator", Json: "avator", Table: "staff", Type: "types.String", IsRelation: false}
+	Email      = dialect.Field{Name: "email", Json: "email", Table: "staff", Type: "types.String", IsRelation: false}
+	IdNum      = dialect.Field{Name: "id_num", Json: "id_num", Table: "staff", Type: "types.String", IsRelation: false}
+	Name       = dialect.Field{Name: "name", Json: "name", Table: "staff", Type: "types.String", IsRelation: false}
+	Pass       = dialect.Field{Name: "pass", Json: "pass", Table: "staff", Type: "types.String", IsRelation: false}
+	Phone      = dialect.Field{Name: "phone", Json: "phone", Table: "staff", Type: "types.String", IsRelation: false}
+	Sex        = dialect.Field{Name: "sex", Json: "sex", Table: "staff", Type: "types.String", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "staff", Type: "types.Time", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "staff", Type: "types.BigInt", IsRelation: false}
+	RoleId     = dialect.Field{Name: "role_id", Json: "role_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "staff", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "staff", Type: "types.Time", IsRelation: false}
 	Age        = dialect.Field{Name: "age", Json: "age", Table: "staff", Type: "types.Int32", IsRelation: false}
-	LeaveFlag  = dialect.Field{Name: "leave_flag", Json: "leave_flag", Table: "staff", Type: "types.Int8", IsRelation: false}
+	Status     = dialect.Field{Name: "status", Json: "status", Table: "staff", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Name,
-		IdNum,
-		Sex,
-		Phone,
-		Email,
-		Pass,
-		Avator,
 		Address,
-		Id,
-		TenantId,
-		RoleId,
+		Avator,
+		Email,
+		IdNum,
+		Name,
+		Pass,
+		Phone,
+		Sex,
 		CreateId,
 		CreateTime,
+		Id,
+		RoleId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 		Age,
-		LeaveFlag,
+		Status,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Name,
-		IdNum,
-		Sex,
-		Phone,
-		Email,
-		Pass,
-		Avator,
 		Address,
-		Id,
-		TenantId,
-		RoleId,
+		Avator,
+		Email,
+		IdNum,
+		Name,
+		Pass,
+		Phone,
+		Sex,
 		CreateId,
 		CreateTime,
+		Id,
+		RoleId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 		Age,
-		LeaveFlag,
+		Status,
 	}
 )

@@ -67,7 +67,7 @@ func (t *tenant) Register(ctx context.Context, in *dto.RegisterTenantReq, out *d
 	}
 	// 校验企业名称唯一
 	if has, e := dao.Tenant(db).Exists(ctx,
-		tbltenant.Name.Eq(types.String(*in.Name)), tbltenant.DelFlag.Eq(0)); e != nil {
+		tbltenant.Name.Eq(types.String(*in.Name)), tbltenant.State.NotEq(types.Int8(constant.StateDeleted))); e != nil {
 		return e
 	} else if has {
 		return constant.ErrTenantNameRepeat
@@ -78,7 +78,7 @@ func (t *tenant) Register(ctx context.Context, in *dto.RegisterTenantReq, out *d
 	// 查找或创建全局 User
 	var userID int64
 	user, has, e := dao.User(db).Get(ctx, db.Table(tbluser.TableName).
-		Where(tbluser.Phone.Eq(types.String(*in.ContactPhone)), tbluser.DelFlag.Eq(0)))
+		Where(tbluser.Phone.Eq(types.String(*in.ContactPhone)), tbluser.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}
@@ -95,7 +95,7 @@ func (t *tenant) Register(ctx context.Context, in *dto.RegisterTenantReq, out *d
 			unionID = unionID2
 			// 尝试按 unionID 匹配已有用户（同一微信已注册）
 			if u, ok, e3 := dao.User(db).Get(ctx, db.Table(tbluser.TableName).
-				Where(tbluser.UnionId.Eq(types.String(unionID)), tbluser.DelFlag.Eq(0))); e3 != nil {
+				Where(tbluser.UnionId.Eq(types.String(unionID)), tbluser.State.NotEq(types.Int8(constant.StateDeleted)))); e3 != nil {
 				return e3
 			} else if ok {
 				user = u
@@ -112,7 +112,7 @@ func (t *tenant) Register(ctx context.Context, in *dto.RegisterTenantReq, out *d
 				tbluser.UnionId.Set(types.String(unionID)),
 				tbluser.CreateTime.Set(types.Time{Time: time.Now()}),
 				tbluser.UpdateTime.Set(types.Time{Time: time.Now()}),
-				tbluser.DelFlag.Set(types.Int8(0)),
+				tbluser.State.Set(types.Int8(0)),
 			)
 			if e2 != nil {
 				return e2
@@ -131,13 +131,13 @@ func (t *tenant) Register(ctx context.Context, in *dto.RegisterTenantReq, out *d
 		tbltenant.ContactPhone.Set(types.String(*in.ContactPhone)),
 		tbltenant.Plan.Set(types.String("trial")),
 		tbltenant.Status.Set(types.Int8(constant.TenantStatusTrial)),
-		tbltenant.TrialStart.Set(types.Time{Time: now}),
-		tbltenant.TrialEnd.Set(types.Time{Time: trialEnd}),
+		tbltenant.ExpireTime.Set(types.Time{Time: now}),
+		tbltenant.ExpireTime.Set(types.Time{Time: trialEnd}),
 		tbltenant.CreateId.Set(types.BigInt(userID)),
 		tbltenant.CreateTime.Set(types.Time{Time: now}),
 		tbltenant.UpdateId.Set(types.BigInt(userID)),
 		tbltenant.UpdateTime.Set(types.Time{Time: now}),
-		tbltenant.DelFlag.Set(types.Int8(0)),
+		tbltenant.State.Set(types.Int8(0)),
 	)
 	if e != nil {
 		return e
@@ -153,7 +153,7 @@ func (t *tenant) Register(ctx context.Context, in *dto.RegisterTenantReq, out *d
 		tblmember.CreateTime.Set(types.Time{Time: now}),
 		tblmember.UpdateId.Set(types.BigInt(userID)),
 		tblmember.UpdateTime.Set(types.Time{Time: now}),
-		tblmember.DelFlag.Set(types.Int8(0)),
+		tblmember.State.Set(types.Int8(0)),
 	)
 	if e != nil {
 		return e
@@ -172,7 +172,7 @@ func (t *tenant) Open(ctx context.Context, in *dto.OpenTenantReq, out *dto.Empty
 	}
 	tenantID := types.BigInt(*in.ID)
 	_, has, e := dao.Tenant(db).GetByID(ctx, tenantID,
-		tbltenant.Id, tbltenant.Status, tbltenant.TrialStart, tbltenant.TrialEnd)
+		tbltenant.Id, tbltenant.Status, tbltenant.ExpireTime, tbltenant.ExpireTime)
 	if e != nil {
 		return e
 	}
@@ -183,8 +183,8 @@ func (t *tenant) Open(ctx context.Context, in *dto.OpenTenantReq, out *dto.Empty
 	now := time.Now()
 	_, e = dao.Tenant(db).UpdateById(ctx, tenantID,
 		tbltenant.Status.Set(types.Int8(constant.TenantStatusTrial)),
-		tbltenant.TrialStart.Set(types.Time{Time: now}),
-		tbltenant.TrialEnd.Set(types.Time{Time: now.AddDate(0, 0, constant.TrialDays)}),
+		tbltenant.ExpireTime.Set(types.Time{Time: now}),
+		tbltenant.ExpireTime.Set(types.Time{Time: now.AddDate(0, 0, constant.TrialDays)}),
 		tbltenant.UpdateTime.Set(types.Time{Time: now}),
 	)
 	return e
@@ -196,7 +196,7 @@ func (t *tenant) Lock(ctx context.Context, in *dto.OpenTenantReq, out *dto.Empty
 		return constant.ErrParamError
 	}
 	tenantID := types.BigInt(*in.ID)
-	tn, has, e := dao.Tenant(db).GetByID(ctx, tenantID, tbltenant.Id, tbltenant.Status, tbltenant.TrialEnd)
+	tn, has, e := dao.Tenant(db).GetByID(ctx, tenantID, tbltenant.Id, tbltenant.Status, tbltenant.ExpireTime)
 	if e != nil {
 		return e
 	}
@@ -220,7 +220,7 @@ func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserT
 	memberList, _, e := dao.Member(db).List(ctx, db.Table(tblmember.TableName).
 		Where(tblmember.UserId.Eq(types.BigInt(userID)),
 			tblmember.Status.Eq(types.Int8(constant.MemberStatusActive)),
-			tblmember.DelFlag.Eq(0)))
+			tblmember.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}
@@ -229,7 +229,7 @@ func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserT
 		tn, has, e2 := dao.Tenant(db).GetByID(ctx, m.TenantId,
 			tbltenant.Id, tbltenant.Name, tbltenant.Logo, tbltenant.ContactName,
 			tbltenant.ContactPhone, tbltenant.Plan, tbltenant.Status,
-			tbltenant.TrialStart, tbltenant.TrialEnd)
+			tbltenant.ExpireTime, tbltenant.ExpireTime)
 		if e2 != nil {
 			return e2
 		}
@@ -244,7 +244,7 @@ func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserT
 			ContactPhone: tn.ContactPhone.String(),
 			Plan:         tn.Plan.String(),
 			Status:       tn.Status.Int8(),
-			TrialStart:   tn.TrialStart.Time,
+			TrialStart:   tn.ExpireTime.Time,
 			TrialEnd:     tn.ExpireTime.Time,
 		})
 	}
@@ -262,7 +262,7 @@ func (t *tenant) SwitchTenant(ctx context.Context, in *dto.SwitchTenantReq, out 
 	member, has, e := dao.Member(db).Get(ctx, db.Table(tblmember.TableName).
 		Where(tblmember.UserId.Eq(types.BigInt(userID)),
 			tblmember.TenantId.Eq(types.BigInt(*in.TenantID)),
-			tblmember.DelFlag.Eq(0)))
+			tblmember.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}
@@ -270,7 +270,7 @@ func (t *tenant) SwitchTenant(ctx context.Context, in *dto.SwitchTenantReq, out 
 		return constant.ErrMemberNotExist
 	}
 	tn, has, e := dao.Tenant(db).GetByID(ctx, member.TenantId,
-		tbltenant.Id, tbltenant.Status, tbltenant.TrialEnd)
+		tbltenant.Id, tbltenant.Status, tbltenant.ExpireTime)
 	if e != nil {
 		return e
 	}
@@ -293,7 +293,7 @@ func (t *tenant) InviteMember(ctx context.Context, in *dto.InviteMemberReq, out 
 		return constant.ErrNotTenantAdmin
 	}
 	user, has, e := dao.User(db).Get(ctx, db.Table(tbluser.TableName).
-		Where(tbluser.Phone.Eq(types.String(*in.Phone)), tbluser.DelFlag.Eq(0)))
+		Where(tbluser.Phone.Eq(types.String(*in.Phone)), tbluser.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}
@@ -305,7 +305,7 @@ func (t *tenant) InviteMember(ctx context.Context, in *dto.InviteMemberReq, out 
 			tbluser.Phone.Set(types.String(*in.Phone)),
 			tbluser.CreateTime.Set(types.Time{Time: time.Now()}),
 			tbluser.UpdateTime.Set(types.Time{Time: time.Now()}),
-			tbluser.DelFlag.Set(types.Int8(0)),
+			tbluser.State.Set(types.Int8(0)),
 		)
 		if e2 != nil {
 			return e2
@@ -315,7 +315,7 @@ func (t *tenant) InviteMember(ctx context.Context, in *dto.InviteMemberReq, out 
 	if hasMember, e := dao.Member(db).Exists(ctx,
 		tblmember.UserId.Eq(types.BigInt(userID)),
 		tblmember.TenantId.Eq(tenantID),
-		tblmember.DelFlag.Eq(0)); e != nil {
+		tblmember.State.NotEq(types.Int8(constant.StateDeleted))); e != nil {
 		return e
 	} else if hasMember {
 		return constant.ErrMemberAlreadyExist
@@ -330,7 +330,7 @@ func (t *tenant) InviteMember(ctx context.Context, in *dto.InviteMemberReq, out 
 		tblmember.CreateTime.Set(types.Time{Time: now}),
 		tblmember.UpdateId.Set(types.BigInt(lib.UserID(ctx))),
 		tblmember.UpdateTime.Set(types.Time{Time: now}),
-		tblmember.DelFlag.Set(types.Int8(0)),
+		tblmember.State.Set(types.Int8(0)),
 	)
 	if e != nil {
 		return e
@@ -357,14 +357,14 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginReq, out *dto.WxLog
 	var has bool
 	if unionID != "" {
 		user, has, e = dao.User(db).Get(ctx, db.Table(tbluser.TableName).
-			Where(tbluser.UnionId.Eq(types.String(unionID)), tbluser.DelFlag.Eq(0)))
+			Where(tbluser.UnionId.Eq(types.String(unionID)), tbluser.State.NotEq(types.Int8(constant.StateDeleted))))
 		if e != nil {
 			return e
 		}
 	}
 	if !has && openID != "" {
 		user, has, e = dao.User(db).Get(ctx, db.Table(tbluser.TableName).
-			Where(tbluser.Openid.Eq(types.String(openID)), tbluser.DelFlag.Eq(0)))
+			Where(tbluser.Openid.Eq(types.String(openID)), tbluser.State.NotEq(types.Int8(constant.StateDeleted))))
 		if e != nil {
 			return e
 		}
@@ -379,7 +379,7 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginReq, out *dto.WxLog
 	memberList, _, e := dao.Member(db).List(ctx, db.Table(tblmember.TableName).
 		Where(tblmember.UserId.Eq(types.BigInt(userID)),
 			tblmember.Status.Eq(types.Int8(constant.MemberStatusActive)),
-			tblmember.DelFlag.Eq(0)))
+			tblmember.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}
@@ -394,7 +394,7 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginReq, out *dto.WxLog
 		tn, hasT, e2 := dao.Tenant(db).GetByID(ctx, m.TenantId,
 			tbltenant.Id, tbltenant.Name, tbltenant.Logo, tbltenant.ContactName,
 			tbltenant.ContactPhone, tbltenant.Plan, tbltenant.Status,
-			tbltenant.TrialStart, tbltenant.TrialEnd)
+			tbltenant.ExpireTime, tbltenant.ExpireTime)
 		if e2 != nil {
 			return e2
 		}
@@ -412,7 +412,7 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginReq, out *dto.WxLog
 			ContactPhone: tn.ContactPhone.String(),
 			Plan:         tn.Plan.String(),
 			Status:       tn.Status.Int8(),
-			TrialStart:   tn.TrialStart.Time,
+			TrialStart:   tn.ExpireTime.Time,
 			TrialEnd:     tn.ExpireTime.Time,
 		})
 	}
@@ -452,7 +452,7 @@ func (a *account) fillUserByMember(ctx context.Context, userID, tenantID, member
 		return e
 	}
 	tk, e := token.GenToken(
-		strconv.FormatInt(userID, 10)+"_"+strconv.FormatInt(tenantID, 10)+"_"+strconv.FormatInt(memberID, 10),
+		strconv.FormatInt(userID, 10)+"_"+strconv.FormatInt(tenantID, 10)+"_"+strconv.FormatInt(memberID, 10)+"_"+user.Name.String(),
 		constant.TenantRole)
 	if e != nil {
 		return e
@@ -512,7 +512,7 @@ func isTenantAdmin(ctx context.Context, tenantID int64) bool {
 	member, has, e := dao.Member(db).Get(ctx, db.Table(tblmember.TableName).
 		Where(tblmember.UserId.Eq(types.BigInt(userID)),
 			tblmember.TenantId.Eq(types.BigInt(tenantID)),
-			tblmember.DelFlag.Eq(0)))
+			tblmember.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil || !has {
 		return false
 	}

@@ -31,8 +31,17 @@ func (p *Dishes) MarshalJSON() ([]byte, error) {
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
+	if p.CreateId != 0 {
+		write.WriteRaw("create_id", types.Marshal(p.CreateId))
+	}
+	if !p.CreateTime.IsZero() {
+		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.Price != 0 {
+		write.WriteRaw("price", types.Marshal(p.Price))
 	}
 	if p.TenantId != 0 {
 		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
@@ -40,23 +49,14 @@ func (p *Dishes) MarshalJSON() ([]byte, error) {
 	if p.TypeId != 0 {
 		write.WriteRaw("type_id", types.Marshal(p.TypeId))
 	}
-	if p.Price != 0 {
-		write.WriteRaw("price", types.Marshal(p.Price))
-	}
-	if p.CreateId != 0 {
-		write.WriteRaw("create_id", types.Marshal(p.CreateId))
-	}
-	if !p.CreateTime.IsZero() {
-		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
-	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -73,24 +73,24 @@ func (p *Dishes) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "type_id":
-			p.TypeId = types.BigInt(value.Uint())
-		case "price":
-			e = types.Unmarshal(value, &p.Price)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "price":
+			e = types.Unmarshal(value, &p.Price)
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
+		case "type_id":
+			p.TypeId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -113,15 +113,15 @@ func (p *Dishes) Free() {
 // Reset
 func (p *Dishes) Reset() {
 	p.Name = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.TypeId = 0
-	p.Price = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.Price = 0
+	p.TenantId = 0
+	p.TypeId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -132,15 +132,15 @@ func (p *Dishes) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var dishesFieldToPtrFunc = map[string]func(*Dishes) any{
 	tbldishes.Name.Name:       func(p *Dishes) any { return &p.Name },
-	tbldishes.Id.Name:         func(p *Dishes) any { return &p.Id },
-	tbldishes.TenantId.Name:   func(p *Dishes) any { return &p.TenantId },
-	tbldishes.TypeId.Name:     func(p *Dishes) any { return &p.TypeId },
-	tbldishes.Price.Name:      func(p *Dishes) any { return &p.Price },
 	tbldishes.CreateId.Name:   func(p *Dishes) any { return &p.CreateId },
 	tbldishes.CreateTime.Name: func(p *Dishes) any { return &p.CreateTime },
+	tbldishes.Id.Name:         func(p *Dishes) any { return &p.Id },
+	tbldishes.Price.Name:      func(p *Dishes) any { return &p.Price },
+	tbldishes.TenantId.Name:   func(p *Dishes) any { return &p.TenantId },
+	tbldishes.TypeId.Name:     func(p *Dishes) any { return &p.TypeId },
 	tbldishes.UpdateId.Name:   func(p *Dishes) any { return &p.UpdateId },
 	tbldishes.UpdateTime.Name: func(p *Dishes) any { return &p.UpdateTime },
-	tbldishes.DelFlag.Name:    func(p *Dishes) any { return &p.DelFlag },
+	tbldishes.State.Name:      func(p *Dishes) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -233,8 +233,17 @@ var dishesFieldToValueFunc = map[dialect.Field]func(*Dishes) (any, bool){
 	tbldishes.Name: func(p *Dishes) (any, bool) {
 		return p.Name, p.Name == ""
 	},
+	tbldishes.CreateId: func(p *Dishes) (any, bool) {
+		return p.CreateId, p.CreateId == 0
+	},
+	tbldishes.CreateTime: func(p *Dishes) (any, bool) {
+		return p.CreateTime, p.CreateTime.IsZero()
+	},
 	tbldishes.Id: func(p *Dishes) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tbldishes.Price: func(p *Dishes) (any, bool) {
+		return p.Price, p.Price == 0
 	},
 	tbldishes.TenantId: func(p *Dishes) (any, bool) {
 		return p.TenantId, p.TenantId == 0
@@ -242,23 +251,14 @@ var dishesFieldToValueFunc = map[dialect.Field]func(*Dishes) (any, bool){
 	tbldishes.TypeId: func(p *Dishes) (any, bool) {
 		return p.TypeId, p.TypeId == 0
 	},
-	tbldishes.Price: func(p *Dishes) (any, bool) {
-		return p.Price, p.Price == 0
-	},
-	tbldishes.CreateId: func(p *Dishes) (any, bool) {
-		return p.CreateId, p.CreateId == 0
-	},
-	tbldishes.CreateTime: func(p *Dishes) (any, bool) {
-		return p.CreateTime, p.CreateTime.IsZero()
-	},
 	tbldishes.UpdateId: func(p *Dishes) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tbldishes.UpdateTime: func(p *Dishes) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tbldishes.DelFlag: func(p *Dishes) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tbldishes.State: func(p *Dishes) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

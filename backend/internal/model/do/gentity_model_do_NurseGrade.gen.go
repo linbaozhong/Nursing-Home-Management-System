@@ -34,20 +34,20 @@ func (p *NurseGrade) MarshalJSON() ([]byte, error) {
 	if p.Type != "" {
 		write.WriteRaw("type", types.Marshal(p.Type))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.MonthPrice != 0 {
-		write.WriteRaw("month_price", types.Marshal(p.MonthPrice))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.MonthPrice != 0 {
+		write.WriteRaw("month_price", types.Marshal(p.MonthPrice))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -55,8 +55,8 @@ func (p *NurseGrade) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -75,22 +75,22 @@ func (p *NurseGrade) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "type":
 			p.Type = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "month_price":
+			e = types.Unmarshal(value, &p.MonthPrice)
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -114,14 +114,14 @@ func (p *NurseGrade) Free() {
 func (p *NurseGrade) Reset() {
 	p.Name = ""
 	p.Type = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.MonthPrice = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.MonthPrice = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -133,14 +133,14 @@ func (p *NurseGrade) TableName() string {
 var nursegradeFieldToPtrFunc = map[string]func(*NurseGrade) any{
 	tblnursegrade.Name.Name:       func(p *NurseGrade) any { return &p.Name },
 	tblnursegrade.Type.Name:       func(p *NurseGrade) any { return &p.Type },
-	tblnursegrade.Id.Name:         func(p *NurseGrade) any { return &p.Id },
-	tblnursegrade.TenantId.Name:   func(p *NurseGrade) any { return &p.TenantId },
-	tblnursegrade.MonthPrice.Name: func(p *NurseGrade) any { return &p.MonthPrice },
 	tblnursegrade.CreateId.Name:   func(p *NurseGrade) any { return &p.CreateId },
 	tblnursegrade.CreateTime.Name: func(p *NurseGrade) any { return &p.CreateTime },
+	tblnursegrade.Id.Name:         func(p *NurseGrade) any { return &p.Id },
+	tblnursegrade.MonthPrice.Name: func(p *NurseGrade) any { return &p.MonthPrice },
+	tblnursegrade.TenantId.Name:   func(p *NurseGrade) any { return &p.TenantId },
 	tblnursegrade.UpdateId.Name:   func(p *NurseGrade) any { return &p.UpdateId },
 	tblnursegrade.UpdateTime.Name: func(p *NurseGrade) any { return &p.UpdateTime },
-	tblnursegrade.DelFlag.Name:    func(p *NurseGrade) any { return &p.DelFlag },
+	tblnursegrade.State.Name:      func(p *NurseGrade) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -236,20 +236,20 @@ var nursegradeFieldToValueFunc = map[dialect.Field]func(*NurseGrade) (any, bool)
 	tblnursegrade.Type: func(p *NurseGrade) (any, bool) {
 		return p.Type, p.Type == ""
 	},
-	tblnursegrade.Id: func(p *NurseGrade) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblnursegrade.TenantId: func(p *NurseGrade) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblnursegrade.MonthPrice: func(p *NurseGrade) (any, bool) {
-		return p.MonthPrice, p.MonthPrice == 0
-	},
 	tblnursegrade.CreateId: func(p *NurseGrade) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblnursegrade.CreateTime: func(p *NurseGrade) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblnursegrade.Id: func(p *NurseGrade) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblnursegrade.MonthPrice: func(p *NurseGrade) (any, bool) {
+		return p.MonthPrice, p.MonthPrice == 0
+	},
+	tblnursegrade.TenantId: func(p *NurseGrade) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblnursegrade.UpdateId: func(p *NurseGrade) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -257,8 +257,8 @@ var nursegradeFieldToValueFunc = map[dialect.Field]func(*NurseGrade) (any, bool)
 	tblnursegrade.UpdateTime: func(p *NurseGrade) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblnursegrade.DelFlag: func(p *NurseGrade) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblnursegrade.State: func(p *NurseGrade) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

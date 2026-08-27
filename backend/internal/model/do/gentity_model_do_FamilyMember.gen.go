@@ -28,32 +28,23 @@ func NewFamilyMember() *FamilyMember {
 // MarshalJSON
 func (p *FamilyMember) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(15 * 50)
-	if p.Name != "" {
-		write.WriteRaw("name", types.Marshal(p.Name))
-	}
-	if p.IdNum != "" {
-		write.WriteRaw("id_num", types.Marshal(p.IdNum))
-	}
-	if p.Phone != "" {
-		write.WriteRaw("phone", types.Marshal(p.Phone))
+	if p.Address != "" {
+		write.WriteRaw("address", types.Marshal(p.Address))
 	}
 	if p.Email != "" {
 		write.WriteRaw("email", types.Marshal(p.Email))
 	}
-	if p.Address != "" {
-		write.WriteRaw("address", types.Marshal(p.Address))
+	if p.IdNum != "" {
+		write.WriteRaw("id_num", types.Marshal(p.IdNum))
+	}
+	if p.Name != "" {
+		write.WriteRaw("name", types.Marshal(p.Name))
+	}
+	if p.Phone != "" {
+		write.WriteRaw("phone", types.Marshal(p.Phone))
 	}
 	if p.Relation != "" {
 		write.WriteRaw("relation", types.Marshal(p.Relation))
-	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -61,17 +52,26 @@ func (p *FamilyMember) MarshalJSON() ([]byte, error) {
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
-	if p.ReceiveFlag != 0 {
-		write.WriteRaw("receive_flag", types.Marshal(p.ReceiveFlag))
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -86,36 +86,36 @@ func (p *FamilyMember) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "name":
-			p.Name = types.String(value.Str)
-		case "id_num":
-			p.IdNum = types.String(value.Str)
-		case "phone":
-			p.Phone = types.String(value.Str)
-		case "email":
-			p.Email = types.String(value.Str)
 		case "address":
 			p.Address = types.String(value.Str)
+		case "email":
+			p.Email = types.String(value.Str)
+		case "id_num":
+			p.IdNum = types.String(value.Str)
+		case "name":
+			p.Name = types.String(value.Str)
+		case "phone":
+			p.Phone = types.String(value.Str)
 		case "relation":
 			p.Relation = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
-		case "receive_flag":
-			p.ReceiveFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -137,21 +137,21 @@ func (p *FamilyMember) Free() {
 
 // Reset
 func (p *FamilyMember) Reset() {
-	p.Name = ""
-	p.IdNum = ""
-	p.Phone = ""
-	p.Email = ""
 	p.Address = ""
+	p.Email = ""
+	p.IdNum = ""
+	p.Name = ""
+	p.Phone = ""
 	p.Relation = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
-	p.ReceiveFlag = 0
+	p.State = 0
+	p.Status = 0
 
 }
 
@@ -161,21 +161,21 @@ func (p *FamilyMember) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var familymemberFieldToPtrFunc = map[string]func(*FamilyMember) any{
-	tblfamilymember.Name.Name:        func(p *FamilyMember) any { return &p.Name },
-	tblfamilymember.IdNum.Name:       func(p *FamilyMember) any { return &p.IdNum },
-	tblfamilymember.Phone.Name:       func(p *FamilyMember) any { return &p.Phone },
-	tblfamilymember.Email.Name:       func(p *FamilyMember) any { return &p.Email },
-	tblfamilymember.Address.Name:     func(p *FamilyMember) any { return &p.Address },
-	tblfamilymember.Relation.Name:    func(p *FamilyMember) any { return &p.Relation },
-	tblfamilymember.Id.Name:          func(p *FamilyMember) any { return &p.Id },
-	tblfamilymember.TenantId.Name:    func(p *FamilyMember) any { return &p.TenantId },
-	tblfamilymember.ElderId.Name:     func(p *FamilyMember) any { return &p.ElderId },
-	tblfamilymember.CreateId.Name:    func(p *FamilyMember) any { return &p.CreateId },
-	tblfamilymember.CreateTime.Name:  func(p *FamilyMember) any { return &p.CreateTime },
-	tblfamilymember.UpdateId.Name:    func(p *FamilyMember) any { return &p.UpdateId },
-	tblfamilymember.UpdateTime.Name:  func(p *FamilyMember) any { return &p.UpdateTime },
-	tblfamilymember.DelFlag.Name:     func(p *FamilyMember) any { return &p.DelFlag },
-	tblfamilymember.ReceiveFlag.Name: func(p *FamilyMember) any { return &p.ReceiveFlag },
+	tblfamilymember.Address.Name:    func(p *FamilyMember) any { return &p.Address },
+	tblfamilymember.Email.Name:      func(p *FamilyMember) any { return &p.Email },
+	tblfamilymember.IdNum.Name:      func(p *FamilyMember) any { return &p.IdNum },
+	tblfamilymember.Name.Name:       func(p *FamilyMember) any { return &p.Name },
+	tblfamilymember.Phone.Name:      func(p *FamilyMember) any { return &p.Phone },
+	tblfamilymember.Relation.Name:   func(p *FamilyMember) any { return &p.Relation },
+	tblfamilymember.CreateId.Name:   func(p *FamilyMember) any { return &p.CreateId },
+	tblfamilymember.CreateTime.Name: func(p *FamilyMember) any { return &p.CreateTime },
+	tblfamilymember.ElderId.Name:    func(p *FamilyMember) any { return &p.ElderId },
+	tblfamilymember.Id.Name:         func(p *FamilyMember) any { return &p.Id },
+	tblfamilymember.TenantId.Name:   func(p *FamilyMember) any { return &p.TenantId },
+	tblfamilymember.UpdateId.Name:   func(p *FamilyMember) any { return &p.UpdateId },
+	tblfamilymember.UpdateTime.Name: func(p *FamilyMember) any { return &p.UpdateTime },
+	tblfamilymember.State.Name:      func(p *FamilyMember) any { return &p.State },
+	tblfamilymember.Status.Name:     func(p *FamilyMember) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -265,32 +265,23 @@ func (p *FamilyMember) RawAssignValues(d dialect.Dialect, args ...dialect.Field)
 
 // 定义字段到值检查和获取函数的映射
 var familymemberFieldToValueFunc = map[dialect.Field]func(*FamilyMember) (any, bool){
-	tblfamilymember.Name: func(p *FamilyMember) (any, bool) {
-		return p.Name, p.Name == ""
-	},
-	tblfamilymember.IdNum: func(p *FamilyMember) (any, bool) {
-		return p.IdNum, p.IdNum == ""
-	},
-	tblfamilymember.Phone: func(p *FamilyMember) (any, bool) {
-		return p.Phone, p.Phone == ""
+	tblfamilymember.Address: func(p *FamilyMember) (any, bool) {
+		return p.Address, p.Address == ""
 	},
 	tblfamilymember.Email: func(p *FamilyMember) (any, bool) {
 		return p.Email, p.Email == ""
 	},
-	tblfamilymember.Address: func(p *FamilyMember) (any, bool) {
-		return p.Address, p.Address == ""
+	tblfamilymember.IdNum: func(p *FamilyMember) (any, bool) {
+		return p.IdNum, p.IdNum == ""
+	},
+	tblfamilymember.Name: func(p *FamilyMember) (any, bool) {
+		return p.Name, p.Name == ""
+	},
+	tblfamilymember.Phone: func(p *FamilyMember) (any, bool) {
+		return p.Phone, p.Phone == ""
 	},
 	tblfamilymember.Relation: func(p *FamilyMember) (any, bool) {
 		return p.Relation, p.Relation == ""
-	},
-	tblfamilymember.Id: func(p *FamilyMember) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblfamilymember.TenantId: func(p *FamilyMember) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblfamilymember.ElderId: func(p *FamilyMember) (any, bool) {
-		return p.ElderId, p.ElderId == 0
 	},
 	tblfamilymember.CreateId: func(p *FamilyMember) (any, bool) {
 		return p.CreateId, p.CreateId == 0
@@ -298,17 +289,26 @@ var familymemberFieldToValueFunc = map[dialect.Field]func(*FamilyMember) (any, b
 	tblfamilymember.CreateTime: func(p *FamilyMember) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tblfamilymember.ElderId: func(p *FamilyMember) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblfamilymember.Id: func(p *FamilyMember) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblfamilymember.TenantId: func(p *FamilyMember) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
 	tblfamilymember.UpdateId: func(p *FamilyMember) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tblfamilymember.UpdateTime: func(p *FamilyMember) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblfamilymember.DelFlag: func(p *FamilyMember) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblfamilymember.State: func(p *FamilyMember) (any, bool) {
+		return p.State, p.State == 0
 	},
-	tblfamilymember.ReceiveFlag: func(p *FamilyMember) (any, bool) {
-		return p.ReceiveFlag, p.ReceiveFlag == 0
+	tblfamilymember.Status: func(p *FamilyMember) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

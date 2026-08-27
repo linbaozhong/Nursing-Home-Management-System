@@ -28,17 +28,39 @@ func NewMember() *Member {
 // MarshalJSON
 func (p *Member) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(11 * 50)
-	write.WriteRaw("id", types.Marshal(p.Id))
-	write.WriteRaw("user_id", types.Marshal(p.UserId))
-	write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	write.WriteRaw("role_id", types.Marshal(p.RoleId))
-	write.WriteRaw("permissions", types.Marshal(p.Permissions))
-	write.WriteRaw("status", types.Marshal(p.Status))
-	write.WriteRaw("create_id", types.Marshal(p.CreateId))
-	write.WriteRaw("create_time", types.Marshal(p.CreateTime))
-	write.WriteRaw("update_id", types.Marshal(p.UpdateId))
-	write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
-	write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.Permissions != "" {
+		write.WriteRaw("permissions", types.Marshal(p.Permissions))
+	}
+	if p.CreateId != 0 {
+		write.WriteRaw("create_id", types.Marshal(p.CreateId))
+	}
+	if !p.CreateTime.IsZero() {
+		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.RoleId != 0 {
+		write.WriteRaw("role_id", types.Marshal(p.RoleId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
+	if p.UpdateId != 0 {
+		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
+	}
+	if !p.UpdateTime.IsZero() {
+		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.UserId != 0 {
+		write.WriteRaw("user_id", types.Marshal(p.UserId))
+	}
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
+	}
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
+	}
 	return write.Bytes(), nil
 }
 
@@ -52,28 +74,28 @@ func (p *Member) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "user_id":
-			p.UserId = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "role_id":
-			p.RoleId = types.BigInt(value.Uint())
 		case "permissions":
 			p.Permissions = types.String(value.Str)
-		case "status":
-			p.Status = types.Int8(value.Int())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "role_id":
+			p.RoleId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "user_id":
+			p.UserId = types.BigInt(value.Uint())
+		case "state":
+			p.State = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -95,17 +117,17 @@ func (p *Member) Free() {
 
 // Reset
 func (p *Member) Reset() {
-	p.Id = 0
-	p.UserId = 0
-	p.TenantId = 0
-	p.RoleId = 0
 	p.Permissions = ""
-	p.Status = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.RoleId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.UserId = 0
+	p.State = 0
+	p.Status = 0
 
 }
 
@@ -115,17 +137,17 @@ func (p *Member) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var memberFieldToPtrFunc = map[string]func(*Member) any{
-	tblmember.Id.Name:          func(p *Member) any { return &p.Id },
-	tblmember.UserId.Name:      func(p *Member) any { return &p.UserId },
-	tblmember.TenantId.Name:    func(p *Member) any { return &p.TenantId },
-	tblmember.RoleId.Name:      func(p *Member) any { return &p.RoleId },
 	tblmember.Permissions.Name: func(p *Member) any { return &p.Permissions },
-	tblmember.Status.Name:      func(p *Member) any { return &p.Status },
 	tblmember.CreateId.Name:    func(p *Member) any { return &p.CreateId },
 	tblmember.CreateTime.Name:  func(p *Member) any { return &p.CreateTime },
+	tblmember.Id.Name:          func(p *Member) any { return &p.Id },
+	tblmember.RoleId.Name:      func(p *Member) any { return &p.RoleId },
+	tblmember.TenantId.Name:    func(p *Member) any { return &p.TenantId },
 	tblmember.UpdateId.Name:    func(p *Member) any { return &p.UpdateId },
 	tblmember.UpdateTime.Name:  func(p *Member) any { return &p.UpdateTime },
-	tblmember.DelFlag.Name:     func(p *Member) any { return &p.DelFlag },
+	tblmember.UserId.Name:      func(p *Member) any { return &p.UserId },
+	tblmember.State.Name:       func(p *Member) any { return &p.State },
+	tblmember.Status.Name:      func(p *Member) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -215,23 +237,8 @@ func (p *Member) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]st
 
 // 定义字段到值检查和获取函数的映射
 var memberFieldToValueFunc = map[dialect.Field]func(*Member) (any, bool){
-	tblmember.Id: func(p *Member) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblmember.UserId: func(p *Member) (any, bool) {
-		return p.UserId, p.UserId == 0
-	},
-	tblmember.TenantId: func(p *Member) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblmember.RoleId: func(p *Member) (any, bool) {
-		return p.RoleId, p.RoleId == 0
-	},
 	tblmember.Permissions: func(p *Member) (any, bool) {
 		return p.Permissions, p.Permissions == ""
-	},
-	tblmember.Status: func(p *Member) (any, bool) {
-		return p.Status, p.Status == 0
 	},
 	tblmember.CreateId: func(p *Member) (any, bool) {
 		return p.CreateId, p.CreateId == 0
@@ -239,14 +246,29 @@ var memberFieldToValueFunc = map[dialect.Field]func(*Member) (any, bool){
 	tblmember.CreateTime: func(p *Member) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tblmember.Id: func(p *Member) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblmember.RoleId: func(p *Member) (any, bool) {
+		return p.RoleId, p.RoleId == 0
+	},
+	tblmember.TenantId: func(p *Member) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
 	tblmember.UpdateId: func(p *Member) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tblmember.UpdateTime: func(p *Member) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblmember.DelFlag: func(p *Member) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblmember.UserId: func(p *Member) (any, bool) {
+		return p.UserId, p.UserId == 0
+	},
+	tblmember.State: func(p *Member) (any, bool) {
+		return p.State, p.State == 0
+	},
+	tblmember.Status: func(p *Member) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

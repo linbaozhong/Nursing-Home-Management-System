@@ -28,23 +28,11 @@ func NewVisitPlan() *VisitPlan {
 // MarshalJSON
 func (p *VisitPlan) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(12 * 50)
-	if p.Title != "" {
-		write.WriteRaw("title", types.Marshal(p.Title))
-	}
 	if p.Content != "" {
 		write.WriteRaw("content", types.Marshal(p.Content))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
-	if !p.PlanDate.IsZero() {
-		write.WriteRaw("plan_date", types.Marshal(p.PlanDate))
+	if p.Title != "" {
+		write.WriteRaw("title", types.Marshal(p.Title))
 	}
 	if !p.CompleteDate.IsZero() {
 		write.WriteRaw("complete_date", types.Marshal(p.CompleteDate))
@@ -55,14 +43,26 @@ func (p *VisitPlan) MarshalJSON() ([]byte, error) {
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.PlanDate.IsZero() {
+		write.WriteRaw("plan_date", types.Marshal(p.PlanDate))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -77,30 +77,30 @@ func (p *VisitPlan) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "title":
-			p.Title = types.String(value.Str)
 		case "content":
 			p.Content = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "plan_date":
-			p.PlanDate = types.Time{Time: value.Time()}
+		case "title":
+			p.Title = types.String(value.Str)
 		case "complete_date":
 			p.CompleteDate = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "plan_date":
+			p.PlanDate = types.Time{Time: value.Time()}
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -122,18 +122,18 @@ func (p *VisitPlan) Free() {
 
 // Reset
 func (p *VisitPlan) Reset() {
-	p.Title = ""
 	p.Content = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
-	p.PlanDate = types.Time{}
+	p.Title = ""
 	p.CompleteDate = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.PlanDate = types.Time{}
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -143,18 +143,18 @@ func (p *VisitPlan) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var visitplanFieldToPtrFunc = map[string]func(*VisitPlan) any{
-	tblvisitplan.Title.Name:        func(p *VisitPlan) any { return &p.Title },
 	tblvisitplan.Content.Name:      func(p *VisitPlan) any { return &p.Content },
-	tblvisitplan.Id.Name:           func(p *VisitPlan) any { return &p.Id },
-	tblvisitplan.TenantId.Name:     func(p *VisitPlan) any { return &p.TenantId },
-	tblvisitplan.ElderId.Name:      func(p *VisitPlan) any { return &p.ElderId },
-	tblvisitplan.PlanDate.Name:     func(p *VisitPlan) any { return &p.PlanDate },
+	tblvisitplan.Title.Name:        func(p *VisitPlan) any { return &p.Title },
 	tblvisitplan.CompleteDate.Name: func(p *VisitPlan) any { return &p.CompleteDate },
 	tblvisitplan.CreateId.Name:     func(p *VisitPlan) any { return &p.CreateId },
 	tblvisitplan.CreateTime.Name:   func(p *VisitPlan) any { return &p.CreateTime },
+	tblvisitplan.ElderId.Name:      func(p *VisitPlan) any { return &p.ElderId },
+	tblvisitplan.Id.Name:           func(p *VisitPlan) any { return &p.Id },
+	tblvisitplan.PlanDate.Name:     func(p *VisitPlan) any { return &p.PlanDate },
+	tblvisitplan.TenantId.Name:     func(p *VisitPlan) any { return &p.TenantId },
 	tblvisitplan.UpdateId.Name:     func(p *VisitPlan) any { return &p.UpdateId },
 	tblvisitplan.UpdateTime.Name:   func(p *VisitPlan) any { return &p.UpdateTime },
-	tblvisitplan.DelFlag.Name:      func(p *VisitPlan) any { return &p.DelFlag },
+	tblvisitplan.State.Name:        func(p *VisitPlan) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -244,23 +244,11 @@ func (p *VisitPlan) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([
 
 // 定义字段到值检查和获取函数的映射
 var visitplanFieldToValueFunc = map[dialect.Field]func(*VisitPlan) (any, bool){
-	tblvisitplan.Title: func(p *VisitPlan) (any, bool) {
-		return p.Title, p.Title == ""
-	},
 	tblvisitplan.Content: func(p *VisitPlan) (any, bool) {
 		return p.Content, p.Content == ""
 	},
-	tblvisitplan.Id: func(p *VisitPlan) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblvisitplan.TenantId: func(p *VisitPlan) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblvisitplan.ElderId: func(p *VisitPlan) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
-	tblvisitplan.PlanDate: func(p *VisitPlan) (any, bool) {
-		return p.PlanDate, p.PlanDate.IsZero()
+	tblvisitplan.Title: func(p *VisitPlan) (any, bool) {
+		return p.Title, p.Title == ""
 	},
 	tblvisitplan.CompleteDate: func(p *VisitPlan) (any, bool) {
 		return p.CompleteDate, p.CompleteDate.IsZero()
@@ -271,14 +259,26 @@ var visitplanFieldToValueFunc = map[dialect.Field]func(*VisitPlan) (any, bool){
 	tblvisitplan.CreateTime: func(p *VisitPlan) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tblvisitplan.ElderId: func(p *VisitPlan) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblvisitplan.Id: func(p *VisitPlan) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblvisitplan.PlanDate: func(p *VisitPlan) (any, bool) {
+		return p.PlanDate, p.PlanDate.IsZero()
+	},
+	tblvisitplan.TenantId: func(p *VisitPlan) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
 	tblvisitplan.UpdateId: func(p *VisitPlan) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tblvisitplan.UpdateTime: func(p *VisitPlan) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblvisitplan.DelFlag: func(p *VisitPlan) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblvisitplan.State: func(p *VisitPlan) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

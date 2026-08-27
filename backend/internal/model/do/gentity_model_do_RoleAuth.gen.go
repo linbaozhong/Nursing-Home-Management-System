@@ -28,12 +28,6 @@ func NewRoleAuth() *RoleAuth {
 // MarshalJSON
 func (p *RoleAuth) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.RoleId != 0 {
-		write.WriteRaw("role_id", types.Marshal(p.RoleId))
-	}
 	if p.AuthId != 0 {
 		write.WriteRaw("auth_id", types.Marshal(p.AuthId))
 	}
@@ -42,6 +36,12 @@ func (p *RoleAuth) MarshalJSON() ([]byte, error) {
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.RoleId != 0 {
+		write.WriteRaw("role_id", types.Marshal(p.RoleId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -62,16 +62,16 @@ func (p *RoleAuth) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "role_id":
-			p.RoleId = types.BigInt(value.Uint())
 		case "auth_id":
 			p.AuthId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "role_id":
+			p.RoleId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -97,11 +97,11 @@ func (p *RoleAuth) Free() {
 
 // Reset
 func (p *RoleAuth) Reset() {
-	p.Id = 0
-	p.RoleId = 0
 	p.AuthId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.RoleId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 
@@ -113,11 +113,11 @@ func (p *RoleAuth) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var roleauthFieldToPtrFunc = map[string]func(*RoleAuth) any{
-	tblroleauth.Id.Name:         func(p *RoleAuth) any { return &p.Id },
-	tblroleauth.RoleId.Name:     func(p *RoleAuth) any { return &p.RoleId },
 	tblroleauth.AuthId.Name:     func(p *RoleAuth) any { return &p.AuthId },
 	tblroleauth.CreateId.Name:   func(p *RoleAuth) any { return &p.CreateId },
 	tblroleauth.CreateTime.Name: func(p *RoleAuth) any { return &p.CreateTime },
+	tblroleauth.Id.Name:         func(p *RoleAuth) any { return &p.Id },
+	tblroleauth.RoleId.Name:     func(p *RoleAuth) any { return &p.RoleId },
 	tblroleauth.UpdateId.Name:   func(p *RoleAuth) any { return &p.UpdateId },
 	tblroleauth.UpdateTime.Name: func(p *RoleAuth) any { return &p.UpdateTime },
 }
@@ -209,12 +209,6 @@ func (p *RoleAuth) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]
 
 // 定义字段到值检查和获取函数的映射
 var roleauthFieldToValueFunc = map[dialect.Field]func(*RoleAuth) (any, bool){
-	tblroleauth.Id: func(p *RoleAuth) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblroleauth.RoleId: func(p *RoleAuth) (any, bool) {
-		return p.RoleId, p.RoleId == 0
-	},
 	tblroleauth.AuthId: func(p *RoleAuth) (any, bool) {
 		return p.AuthId, p.AuthId == 0
 	},
@@ -223,6 +217,12 @@ var roleauthFieldToValueFunc = map[dialect.Field]func(*RoleAuth) (any, bool){
 	},
 	tblroleauth.CreateTime: func(p *RoleAuth) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblroleauth.Id: func(p *RoleAuth) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblroleauth.RoleId: func(p *RoleAuth) (any, bool) {
+		return p.RoleId, p.RoleId == 0
 	},
 	tblroleauth.UpdateId: func(p *RoleAuth) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

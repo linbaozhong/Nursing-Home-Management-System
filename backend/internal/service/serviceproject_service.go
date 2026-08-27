@@ -28,7 +28,7 @@ var ServiceProject = &serviceproject{}
 func (s *serviceproject) ListServiceType(ctx context.Context, in *dto.OperateServiceTypeReq, out *[]dto.DropDown) error {
 	list, _, e := dao.ServiceType(db).List(ctx,
 		db.Table(tblservicetype.TableName).
-			Where(tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblservicetype.DelFlag.Eq(constant.YesNoNo)),
+			Where(tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblservicetype.State.NotEq(types.Int8(constant.StateDeleted))),
 	)
 	if e != nil {
 		return e
@@ -48,7 +48,7 @@ func (s *serviceproject) ListServiceType(ctx context.Context, in *dto.OperateSer
 func (s *serviceproject) PageServiceByKey(ctx context.Context, in *dto.PageServiceByKeyReq, out *[]dto.PageServiceByKeyResp) error {
 	q := db.Table(tblserviceitem.TableName).
 		LeftJoin(tblserviceitem.TypeId, tblservicetype.Id).
-		Where(tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblserviceitem.DelFlag.Eq(constant.YesNoNo))
+		Where(tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblserviceitem.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.ServiceName != nil && *in.ServiceName != "" {
 		q.And(tblserviceitem.Name.Like(*in.ServiceName))
 	}
@@ -95,7 +95,7 @@ func (s *serviceproject) AddService(ctx context.Context, in *dto.OperateServiceR
 		tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tblserviceitem.Name.Eq(*in.Name),
-		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblserviceitem.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -106,7 +106,7 @@ func (s *serviceproject) AddService(ctx context.Context, in *dto.OperateServiceR
 	total, e := dao.ServiceItem(db).Count(ctx,
 		tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
-		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblserviceitem.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -121,7 +121,7 @@ func (s *serviceproject) AddService(ctx context.Context, in *dto.OperateServiceR
 	bean.ChargeMethod = types.String(*in.ChargeMethod)
 	bean.Price = types.Money(*in.Price)
 	bean.NeedDate = types.Int32(*in.NeedDate)
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.State = types.Int8(constant.StateEnabled)
 	_, e = dao.ServiceItem(db).InsertOne(ctx, bean)
 	return e
 }
@@ -133,7 +133,7 @@ func (s *serviceproject) EditService(ctx context.Context, in *dto.OperateService
 		tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tblserviceitem.Name.Eq(*in.Name),
-		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblserviceitem.State.NotEq(types.Int8(constant.StateDeleted)),
 		tblserviceitem.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -145,7 +145,7 @@ func (s *serviceproject) EditService(ctx context.Context, in *dto.OperateService
 	total, e := dao.ServiceItem(db).Count(ctx,
 		tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblserviceitem.TypeId.Eq(types.BigInt(*in.TypeID)),
-		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblserviceitem.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -169,7 +169,7 @@ func (s *serviceproject) EditService(ctx context.Context, in *dto.OperateService
 func (s *serviceproject) DeleteService(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	bean := do.NewServiceItem()
 	bean.Id = types.BigInt(*in.ID)
-	bean.DelFlag = types.Int8(constant.YesNoYes)
+	bean.State = types.Int8(constant.StateDeleted)
 	_, e := dao.ServiceItem(db).UpdateOne(ctx, bean)
 	return e
 }
@@ -180,7 +180,7 @@ func (s *serviceproject) AddServiceType(ctx context.Context, in *dto.OperateServ
 	repeat, e := dao.ServiceType(db).Exists(ctx,
 		tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblservicetype.Name.Eq(*in.Name),
-		tblservicetype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblservicetype.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -190,7 +190,7 @@ func (s *serviceproject) AddServiceType(ctx context.Context, in *dto.OperateServ
 	}
 	total, e := dao.ServiceType(db).Count(ctx,
 		tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
-		tblservicetype.DelFlag.Eq(constant.YesNoNo),
+		tblservicetype.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -201,7 +201,7 @@ func (s *serviceproject) AddServiceType(ctx context.Context, in *dto.OperateServ
 	bean := do.NewServiceType()
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.State = types.Int8(constant.StateEnabled)
 	_, e = dao.ServiceType(db).InsertOne(ctx, bean)
 	return e
 }
@@ -227,7 +227,7 @@ func (s *serviceproject) EditServiceType(ctx context.Context, in *dto.OperateSer
 	repeat, e := dao.ServiceType(db).Exists(ctx,
 		tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblservicetype.Name.Eq(*in.Name),
-		tblservicetype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblservicetype.State.NotEq(types.Int8(constant.StateDeleted)),
 		tblservicetype.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -238,7 +238,7 @@ func (s *serviceproject) EditServiceType(ctx context.Context, in *dto.OperateSer
 	}
 	total, e := dao.ServiceType(db).Count(ctx,
 		tblservicetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
-		tblservicetype.DelFlag.Eq(constant.YesNoNo),
+		tblservicetype.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -259,7 +259,7 @@ func (s *serviceproject) DeleteServiceType(ctx context.Context, in *dto.IDReq, o
 	hasChild, e := dao.ServiceItem(db).Exists(ctx,
 		tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblserviceitem.TypeId.Eq(types.BigInt(*in.ID)),
-		tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblserviceitem.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -269,7 +269,7 @@ func (s *serviceproject) DeleteServiceType(ctx context.Context, in *dto.IDReq, o
 	}
 	bean := do.NewServiceType()
 	bean.Id = types.BigInt(*in.ID)
-	bean.DelFlag = types.Int8(constant.YesNoYes)
+	bean.State = types.Int8(constant.StateDeleted)
 	_, e = dao.ServiceType(db).UpdateOne(ctx, bean)
 	return e
 }

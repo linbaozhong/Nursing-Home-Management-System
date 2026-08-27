@@ -10,51 +10,51 @@ const TableName = "order_dishes"
 
 var (
 	DishesName   = dialect.Field{Name: "dishes_name", Json: "dishes_name", Table: "order_dishes", Type: "types.String", IsRelation: false}
-	Id           = dialect.Field{Name: "id", Json: "id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
-	TenantId     = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
-	OrderId      = dialect.Field{Name: "order_id", Json: "order_id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
-	DishesPrice  = dialect.Field{Name: "dishes_price", Json: "dishes_price", Table: "order_dishes", Type: "types.Money", IsRelation: false}
-	TotalAmount  = dialect.Field{Name: "total_amount", Json: "total_amount", Table: "order_dishes", Type: "types.Money", IsRelation: false}
-	ReallyAmount = dialect.Field{Name: "really_amount", Json: "really_amount", Table: "order_dishes", Type: "types.Money", IsRelation: false}
 	CreateId     = dialect.Field{Name: "create_id", Json: "create_id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
 	CreateTime   = dialect.Field{Name: "create_time", Json: "create_time", Table: "order_dishes", Type: "types.Time", IsRelation: false}
+	DishesPrice  = dialect.Field{Name: "dishes_price", Json: "dishes_price", Table: "order_dishes", Type: "types.Money", IsRelation: false}
+	Id           = dialect.Field{Name: "id", Json: "id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
+	OrderId      = dialect.Field{Name: "order_id", Json: "order_id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
+	ReallyAmount = dialect.Field{Name: "really_amount", Json: "really_amount", Table: "order_dishes", Type: "types.Money", IsRelation: false}
+	TenantId     = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
+	TotalAmount  = dialect.Field{Name: "total_amount", Json: "total_amount", Table: "order_dishes", Type: "types.Money", IsRelation: false}
 	UpdateId     = dialect.Field{Name: "update_id", Json: "update_id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
 	UpdateTime   = dialect.Field{Name: "update_time", Json: "update_time", Table: "order_dishes", Type: "types.Time", IsRelation: false}
 	OrderNum     = dialect.Field{Name: "order_num", Json: "order_num", Table: "order_dishes", Type: "types.Int32", IsRelation: false}
-	SetFlag      = dialect.Field{Name: "set_flag", Json: "set_flag", Table: "order_dishes", Type: "types.Int8", IsRelation: false}
+	Status       = dialect.Field{Name: "status", Json: "status", Table: "order_dishes", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
 		DishesName,
-		Id,
-		TenantId,
-		OrderId,
-		DishesPrice,
-		TotalAmount,
-		ReallyAmount,
 		CreateId,
 		CreateTime,
+		DishesPrice,
+		Id,
+		OrderId,
+		ReallyAmount,
+		TenantId,
+		TotalAmount,
 		UpdateId,
 		UpdateTime,
 		OrderNum,
-		SetFlag,
+		Status,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		DishesName,
-		Id,
-		TenantId,
-		OrderId,
-		DishesPrice,
-		TotalAmount,
-		ReallyAmount,
 		CreateId,
 		CreateTime,
+		DishesPrice,
+		Id,
+		OrderId,
+		ReallyAmount,
+		TenantId,
+		TotalAmount,
 		UpdateId,
 		UpdateTime,
 		OrderNum,
-		SetFlag,
+		Status,
 	}
 )

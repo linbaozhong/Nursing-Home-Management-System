@@ -37,14 +37,17 @@ func (p *Outward) MarshalJSON() ([]byte, error) {
 	if p.ChaperoneType != "" {
 		write.WriteRaw("chaperone_type", types.Marshal(p.ChaperoneType))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
+	if p.CreateId != 0 {
+		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	if !p.CreateTime.IsZero() {
+		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
 	}
 	if !p.OutwardDate.IsZero() {
 		write.WriteRaw("outward_date", types.Marshal(p.OutwardDate))
@@ -55,11 +58,8 @@ func (p *Outward) MarshalJSON() ([]byte, error) {
 	if !p.RealReturnDate.IsZero() {
 		write.WriteRaw("real_return_date", types.Marshal(p.RealReturnDate))
 	}
-	if p.CreateId != 0 {
-		write.WriteRaw("create_id", types.Marshal(p.CreateId))
-	}
-	if !p.CreateTime.IsZero() {
-		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -67,8 +67,8 @@ func (p *Outward) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -89,28 +89,28 @@ func (p *Outward) UnmarshalJSON(data []byte) error {
 			p.ChaperonePhone = types.String(value.Str)
 		case "chaperone_type":
 			p.ChaperoneType = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
+		case "create_id":
+			p.CreateId = types.BigInt(value.Uint())
+		case "create_time":
+			p.CreateTime = types.Time{Time: value.Time()}
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
 		case "outward_date":
 			p.OutwardDate = types.Time{Time: value.Time()}
 		case "plan_return_date":
 			p.PlanReturnDate = types.Time{Time: value.Time()}
 		case "real_return_date":
 			p.RealReturnDate = types.Time{Time: value.Time()}
-		case "create_id":
-			p.CreateId = types.BigInt(value.Uint())
-		case "create_time":
-			p.CreateTime = types.Time{Time: value.Time()}
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -135,17 +135,17 @@ func (p *Outward) Reset() {
 	p.ChaperoneName = ""
 	p.ChaperonePhone = ""
 	p.ChaperoneType = ""
-	p.Id = 0
-	p.TenantId = 0
+	p.CreateId = 0
+	p.CreateTime = types.Time{}
 	p.ElderId = 0
+	p.Id = 0
 	p.OutwardDate = types.Time{}
 	p.PlanReturnDate = types.Time{}
 	p.RealReturnDate = types.Time{}
-	p.CreateId = 0
-	p.CreateTime = types.Time{}
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -158,17 +158,17 @@ var outwardFieldToPtrFunc = map[string]func(*Outward) any{
 	tbloutward.ChaperoneName.Name:  func(p *Outward) any { return &p.ChaperoneName },
 	tbloutward.ChaperonePhone.Name: func(p *Outward) any { return &p.ChaperonePhone },
 	tbloutward.ChaperoneType.Name:  func(p *Outward) any { return &p.ChaperoneType },
-	tbloutward.Id.Name:             func(p *Outward) any { return &p.Id },
-	tbloutward.TenantId.Name:       func(p *Outward) any { return &p.TenantId },
+	tbloutward.CreateId.Name:       func(p *Outward) any { return &p.CreateId },
+	tbloutward.CreateTime.Name:     func(p *Outward) any { return &p.CreateTime },
 	tbloutward.ElderId.Name:        func(p *Outward) any { return &p.ElderId },
+	tbloutward.Id.Name:             func(p *Outward) any { return &p.Id },
 	tbloutward.OutwardDate.Name:    func(p *Outward) any { return &p.OutwardDate },
 	tbloutward.PlanReturnDate.Name: func(p *Outward) any { return &p.PlanReturnDate },
 	tbloutward.RealReturnDate.Name: func(p *Outward) any { return &p.RealReturnDate },
-	tbloutward.CreateId.Name:       func(p *Outward) any { return &p.CreateId },
-	tbloutward.CreateTime.Name:     func(p *Outward) any { return &p.CreateTime },
+	tbloutward.TenantId.Name:       func(p *Outward) any { return &p.TenantId },
 	tbloutward.UpdateId.Name:       func(p *Outward) any { return &p.UpdateId },
 	tbloutward.UpdateTime.Name:     func(p *Outward) any { return &p.UpdateTime },
-	tbloutward.DelFlag.Name:        func(p *Outward) any { return &p.DelFlag },
+	tbloutward.State.Name:          func(p *Outward) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -267,14 +267,17 @@ var outwardFieldToValueFunc = map[dialect.Field]func(*Outward) (any, bool){
 	tbloutward.ChaperoneType: func(p *Outward) (any, bool) {
 		return p.ChaperoneType, p.ChaperoneType == ""
 	},
-	tbloutward.Id: func(p *Outward) (any, bool) {
-		return p.Id, p.Id == 0
+	tbloutward.CreateId: func(p *Outward) (any, bool) {
+		return p.CreateId, p.CreateId == 0
 	},
-	tbloutward.TenantId: func(p *Outward) (any, bool) {
-		return p.TenantId, p.TenantId == 0
+	tbloutward.CreateTime: func(p *Outward) (any, bool) {
+		return p.CreateTime, p.CreateTime.IsZero()
 	},
 	tbloutward.ElderId: func(p *Outward) (any, bool) {
 		return p.ElderId, p.ElderId == 0
+	},
+	tbloutward.Id: func(p *Outward) (any, bool) {
+		return p.Id, p.Id == 0
 	},
 	tbloutward.OutwardDate: func(p *Outward) (any, bool) {
 		return p.OutwardDate, p.OutwardDate.IsZero()
@@ -285,11 +288,8 @@ var outwardFieldToValueFunc = map[dialect.Field]func(*Outward) (any, bool){
 	tbloutward.RealReturnDate: func(p *Outward) (any, bool) {
 		return p.RealReturnDate, p.RealReturnDate.IsZero()
 	},
-	tbloutward.CreateId: func(p *Outward) (any, bool) {
-		return p.CreateId, p.CreateId == 0
-	},
-	tbloutward.CreateTime: func(p *Outward) (any, bool) {
-		return p.CreateTime, p.CreateTime.IsZero()
+	tbloutward.TenantId: func(p *Outward) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tbloutward.UpdateId: func(p *Outward) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -297,8 +297,8 @@ var outwardFieldToValueFunc = map[dialect.Field]func(*Outward) (any, bool){
 	tbloutward.UpdateTime: func(p *Outward) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tbloutward.DelFlag: func(p *Outward) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tbloutward.State: func(p *Outward) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

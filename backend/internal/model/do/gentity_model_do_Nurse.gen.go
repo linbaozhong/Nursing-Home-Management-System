@@ -28,29 +28,14 @@ func NewNurse() *Nurse {
 // MarshalJSON
 func (p *Nurse) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(14 * 50)
+	if p.Active != "" {
+		write.WriteRaw("active", types.Marshal(p.Active))
+	}
 	if p.Rest != "" {
 		write.WriteRaw("rest", types.Marshal(p.Rest))
 	}
 	if p.TakeMedicine != "" {
 		write.WriteRaw("take_medicine", types.Marshal(p.TakeMedicine))
-	}
-	if p.Active != "" {
-		write.WriteRaw("active", types.Marshal(p.Active))
-	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
-	if p.StaffId != 0 {
-		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
-	}
-	if !p.NurseDate.IsZero() {
-		write.WriteRaw("nurse_date", types.Marshal(p.NurseDate))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -58,17 +43,32 @@ func (p *Nurse) MarshalJSON() ([]byte, error) {
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.NurseDate.IsZero() {
+		write.WriteRaw("nurse_date", types.Marshal(p.NurseDate))
+	}
+	if p.StaffId != 0 {
+		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.CompleteFlag != 0 {
-		write.WriteRaw("complete_flag", types.Marshal(p.CompleteFlag))
+	if p.CompleteStatus != 0 {
+		write.WriteRaw("complete_status", types.Marshal(p.CompleteStatus))
 	}
-	if p.DineFlag != 0 {
-		write.WriteRaw("dine_flag", types.Marshal(p.DineFlag))
+	if p.DineStatus != 0 {
+		write.WriteRaw("dine_status", types.Marshal(p.DineStatus))
 	}
 	return write.Bytes(), nil
 }
@@ -83,34 +83,34 @@ func (p *Nurse) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
+		case "active":
+			p.Active = types.String(value.Str)
 		case "rest":
 			p.Rest = types.String(value.Str)
 		case "take_medicine":
 			p.TakeMedicine = types.String(value.Str)
-		case "active":
-			p.Active = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "staff_id":
-			p.StaffId = types.BigInt(value.Uint())
-		case "nurse_date":
-			p.NurseDate = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "nurse_date":
+			p.NurseDate = types.Time{Time: value.Time()}
+		case "staff_id":
+			p.StaffId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "complete_flag":
-			p.CompleteFlag = types.Int8(value.Int())
-		case "dine_flag":
-			p.DineFlag = types.Int8(value.Int())
+		case "complete_status":
+			p.CompleteStatus = types.Int8(value.Int())
+		case "dine_status":
+			p.DineStatus = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -132,20 +132,20 @@ func (p *Nurse) Free() {
 
 // Reset
 func (p *Nurse) Reset() {
+	p.Active = ""
 	p.Rest = ""
 	p.TakeMedicine = ""
-	p.Active = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
-	p.StaffId = 0
-	p.NurseDate = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.NurseDate = types.Time{}
+	p.StaffId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.CompleteFlag = 0
-	p.DineFlag = 0
+	p.CompleteStatus = 0
+	p.DineStatus = 0
 
 }
 
@@ -155,20 +155,20 @@ func (p *Nurse) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var nurseFieldToPtrFunc = map[string]func(*Nurse) any{
-	tblnurse.Rest.Name:         func(p *Nurse) any { return &p.Rest },
-	tblnurse.TakeMedicine.Name: func(p *Nurse) any { return &p.TakeMedicine },
-	tblnurse.Active.Name:       func(p *Nurse) any { return &p.Active },
-	tblnurse.Id.Name:           func(p *Nurse) any { return &p.Id },
-	tblnurse.TenantId.Name:     func(p *Nurse) any { return &p.TenantId },
-	tblnurse.ElderId.Name:      func(p *Nurse) any { return &p.ElderId },
-	tblnurse.StaffId.Name:      func(p *Nurse) any { return &p.StaffId },
-	tblnurse.NurseDate.Name:    func(p *Nurse) any { return &p.NurseDate },
-	tblnurse.CreateId.Name:     func(p *Nurse) any { return &p.CreateId },
-	tblnurse.CreateTime.Name:   func(p *Nurse) any { return &p.CreateTime },
-	tblnurse.UpdateId.Name:     func(p *Nurse) any { return &p.UpdateId },
-	tblnurse.UpdateTime.Name:   func(p *Nurse) any { return &p.UpdateTime },
-	tblnurse.CompleteFlag.Name: func(p *Nurse) any { return &p.CompleteFlag },
-	tblnurse.DineFlag.Name:     func(p *Nurse) any { return &p.DineFlag },
+	tblnurse.Active.Name:         func(p *Nurse) any { return &p.Active },
+	tblnurse.Rest.Name:           func(p *Nurse) any { return &p.Rest },
+	tblnurse.TakeMedicine.Name:   func(p *Nurse) any { return &p.TakeMedicine },
+	tblnurse.CreateId.Name:       func(p *Nurse) any { return &p.CreateId },
+	tblnurse.CreateTime.Name:     func(p *Nurse) any { return &p.CreateTime },
+	tblnurse.ElderId.Name:        func(p *Nurse) any { return &p.ElderId },
+	tblnurse.Id.Name:             func(p *Nurse) any { return &p.Id },
+	tblnurse.NurseDate.Name:      func(p *Nurse) any { return &p.NurseDate },
+	tblnurse.StaffId.Name:        func(p *Nurse) any { return &p.StaffId },
+	tblnurse.TenantId.Name:       func(p *Nurse) any { return &p.TenantId },
+	tblnurse.UpdateId.Name:       func(p *Nurse) any { return &p.UpdateId },
+	tblnurse.UpdateTime.Name:     func(p *Nurse) any { return &p.UpdateTime },
+	tblnurse.CompleteStatus.Name: func(p *Nurse) any { return &p.CompleteStatus },
+	tblnurse.DineStatus.Name:     func(p *Nurse) any { return &p.DineStatus },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -258,29 +258,14 @@ func (p *Nurse) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 
 // 定义字段到值检查和获取函数的映射
 var nurseFieldToValueFunc = map[dialect.Field]func(*Nurse) (any, bool){
+	tblnurse.Active: func(p *Nurse) (any, bool) {
+		return p.Active, p.Active == ""
+	},
 	tblnurse.Rest: func(p *Nurse) (any, bool) {
 		return p.Rest, p.Rest == ""
 	},
 	tblnurse.TakeMedicine: func(p *Nurse) (any, bool) {
 		return p.TakeMedicine, p.TakeMedicine == ""
-	},
-	tblnurse.Active: func(p *Nurse) (any, bool) {
-		return p.Active, p.Active == ""
-	},
-	tblnurse.Id: func(p *Nurse) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblnurse.TenantId: func(p *Nurse) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblnurse.ElderId: func(p *Nurse) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
-	tblnurse.StaffId: func(p *Nurse) (any, bool) {
-		return p.StaffId, p.StaffId == 0
-	},
-	tblnurse.NurseDate: func(p *Nurse) (any, bool) {
-		return p.NurseDate, p.NurseDate.IsZero()
 	},
 	tblnurse.CreateId: func(p *Nurse) (any, bool) {
 		return p.CreateId, p.CreateId == 0
@@ -288,17 +273,32 @@ var nurseFieldToValueFunc = map[dialect.Field]func(*Nurse) (any, bool){
 	tblnurse.CreateTime: func(p *Nurse) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tblnurse.ElderId: func(p *Nurse) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblnurse.Id: func(p *Nurse) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblnurse.NurseDate: func(p *Nurse) (any, bool) {
+		return p.NurseDate, p.NurseDate.IsZero()
+	},
+	tblnurse.StaffId: func(p *Nurse) (any, bool) {
+		return p.StaffId, p.StaffId == 0
+	},
+	tblnurse.TenantId: func(p *Nurse) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
 	tblnurse.UpdateId: func(p *Nurse) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tblnurse.UpdateTime: func(p *Nurse) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblnurse.CompleteFlag: func(p *Nurse) (any, bool) {
-		return p.CompleteFlag, p.CompleteFlag == 0
+	tblnurse.CompleteStatus: func(p *Nurse) (any, bool) {
+		return p.CompleteStatus, p.CompleteStatus == 0
 	},
-	tblnurse.DineFlag: func(p *Nurse) (any, bool) {
-		return p.DineFlag, p.DineFlag == 0
+	tblnurse.DineStatus: func(p *Nurse) (any, bool) {
+		return p.DineStatus, p.DineStatus == 0
 	},
 }
 

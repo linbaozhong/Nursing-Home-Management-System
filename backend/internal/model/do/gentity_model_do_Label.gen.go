@@ -28,11 +28,17 @@ func NewLabel() *Label {
 // MarshalJSON
 func (p *Label) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(10 * 50)
+	if p.Color != "" {
+		write.WriteRaw("color", types.Marshal(p.Color))
+	}
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.Color != "" {
-		write.WriteRaw("color", types.Marshal(p.Color))
+	if p.CreateId != 0 {
+		write.WriteRaw("create_id", types.Marshal(p.CreateId))
+	}
+	if !p.CreateTime.IsZero() {
+		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
@@ -43,20 +49,14 @@ func (p *Label) MarshalJSON() ([]byte, error) {
 	if p.TypeId != 0 {
 		write.WriteRaw("type_id", types.Marshal(p.TypeId))
 	}
-	if p.CreateId != 0 {
-		write.WriteRaw("create_id", types.Marshal(p.CreateId))
-	}
-	if !p.CreateTime.IsZero() {
-		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
-	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -71,26 +71,26 @@ func (p *Label) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "name":
-			p.Name = types.String(value.Str)
 		case "color":
 			p.Color = types.String(value.Str)
+		case "name":
+			p.Name = types.String(value.Str)
+		case "create_id":
+			p.CreateId = types.BigInt(value.Uint())
+		case "create_time":
+			p.CreateTime = types.Time{Time: value.Time()}
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "tenant_id":
 			p.TenantId = types.BigInt(value.Uint())
 		case "type_id":
 			p.TypeId = types.BigInt(value.Uint())
-		case "create_id":
-			p.CreateId = types.BigInt(value.Uint())
-		case "create_time":
-			p.CreateTime = types.Time{Time: value.Time()}
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -112,16 +112,16 @@ func (p *Label) Free() {
 
 // Reset
 func (p *Label) Reset() {
-	p.Name = ""
 	p.Color = ""
+	p.Name = ""
+	p.CreateId = 0
+	p.CreateTime = types.Time{}
 	p.Id = 0
 	p.TenantId = 0
 	p.TypeId = 0
-	p.CreateId = 0
-	p.CreateTime = types.Time{}
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -131,16 +131,16 @@ func (p *Label) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var labelFieldToPtrFunc = map[string]func(*Label) any{
-	tbllabel.Name.Name:       func(p *Label) any { return &p.Name },
 	tbllabel.Color.Name:      func(p *Label) any { return &p.Color },
+	tbllabel.Name.Name:       func(p *Label) any { return &p.Name },
+	tbllabel.CreateId.Name:   func(p *Label) any { return &p.CreateId },
+	tbllabel.CreateTime.Name: func(p *Label) any { return &p.CreateTime },
 	tbllabel.Id.Name:         func(p *Label) any { return &p.Id },
 	tbllabel.TenantId.Name:   func(p *Label) any { return &p.TenantId },
 	tbllabel.TypeId.Name:     func(p *Label) any { return &p.TypeId },
-	tbllabel.CreateId.Name:   func(p *Label) any { return &p.CreateId },
-	tbllabel.CreateTime.Name: func(p *Label) any { return &p.CreateTime },
 	tbllabel.UpdateId.Name:   func(p *Label) any { return &p.UpdateId },
 	tbllabel.UpdateTime.Name: func(p *Label) any { return &p.UpdateTime },
-	tbllabel.DelFlag.Name:    func(p *Label) any { return &p.DelFlag },
+	tbllabel.State.Name:      func(p *Label) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -230,11 +230,17 @@ func (p *Label) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 
 // 定义字段到值检查和获取函数的映射
 var labelFieldToValueFunc = map[dialect.Field]func(*Label) (any, bool){
+	tbllabel.Color: func(p *Label) (any, bool) {
+		return p.Color, p.Color == ""
+	},
 	tbllabel.Name: func(p *Label) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tbllabel.Color: func(p *Label) (any, bool) {
-		return p.Color, p.Color == ""
+	tbllabel.CreateId: func(p *Label) (any, bool) {
+		return p.CreateId, p.CreateId == 0
+	},
+	tbllabel.CreateTime: func(p *Label) (any, bool) {
+		return p.CreateTime, p.CreateTime.IsZero()
 	},
 	tbllabel.Id: func(p *Label) (any, bool) {
 		return p.Id, p.Id == 0
@@ -245,20 +251,14 @@ var labelFieldToValueFunc = map[dialect.Field]func(*Label) (any, bool){
 	tbllabel.TypeId: func(p *Label) (any, bool) {
 		return p.TypeId, p.TypeId == 0
 	},
-	tbllabel.CreateId: func(p *Label) (any, bool) {
-		return p.CreateId, p.CreateId == 0
-	},
-	tbllabel.CreateTime: func(p *Label) (any, bool) {
-		return p.CreateTime, p.CreateTime.IsZero()
-	},
 	tbllabel.UpdateId: func(p *Label) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tbllabel.UpdateTime: func(p *Label) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tbllabel.DelFlag: func(p *Label) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tbllabel.State: func(p *Label) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

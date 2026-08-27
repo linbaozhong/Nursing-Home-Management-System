@@ -71,7 +71,7 @@ func (r *retreatApply) PageSearchElderByKey(ctx context.Context, in *dto.PageSea
 
 	q := db.Table(tblelder.TableName).
 		LeftJoin(tblelder.BedId, tblbed.Id).
-		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.CheckFlag.Eq(types.Int8(constant.CheckEnter)))
+		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Status.Eq(types.Int8(constant.CheckEnter)))
 	if in.Name != nil && *in.Name != "" {
 		q.And(tblelder.Name.Like(*in.Name))
 	}
@@ -101,7 +101,7 @@ func (r *retreatApply) AddRetreatApply(ctx context.Context, in *dto.AddRetreatAp
 	if !has {
 		return errors.New("老人不存在")
 	}
-	if elder.CheckFlag != types.Int8(constant.CheckEnter) {
+	if elder.Status != types.Int8(constant.CheckEnter) {
 		return errors.New("老人不是入住状态，无法申请退住")
 	}
 	// 已存在未审核的退住申请则拦截
@@ -131,14 +131,14 @@ func (r *retreatApply) AddRetreatApply(ctx context.Context, in *dto.AddRetreatAp
 	}
 	// 老人置退住审核状态
 	if _, e = dao.Elder(db).UpdateById(ctx, types.BigInt(*in.ElderID),
-		tblelder.CheckFlag.Set(types.Int8(constant.CheckExitAudit)),
+		tblelder.Status.Set(types.Int8(constant.CheckExitAudit)),
 	); e != nil {
 		return e
 	}
 	// 床位置退住审核
 	if int64(elder.BedId) > 0 {
 		if _, e = dao.Bed(db).UpdateById(ctx, elder.BedId,
-			tblbed.BedFlag.Set(types.Int8(constant.BedExitAudit)),
+			tblbed.Status.Set(types.Int8(constant.BedExitAudit)),
 		); e != nil {
 			return e
 		}
@@ -206,14 +206,14 @@ func (r *retreatApply) DeleteRetreatApply(ctx context.Context, in *dto.IDReq, ou
 	}
 	// 还原老人为入住状态
 	if _, e = dao.Elder(db).UpdateById(ctx, obj.ElderId,
-		tblelder.CheckFlag.Set(types.Int8(constant.CheckEnter)),
+		tblelder.Status.Set(types.Int8(constant.CheckEnter)),
 	); e != nil {
 		return e
 	}
 	// 还原床位为入住状态
 	if hasE && int64(elder.BedId) > 0 {
 		if _, e = dao.Bed(db).UpdateById(ctx, elder.BedId,
-			tblbed.BedFlag.Set(types.Int8(constant.BedEnter)),
+			tblbed.Status.Set(types.Int8(constant.BedEnter)),
 		); e != nil {
 			return e
 		}

@@ -9,61 +9,61 @@ import (
 const TableName = "active"
 
 var (
-	Theme         = dialect.Field{Name: "theme", Json: "theme", Table: "active", Type: "types.String", IsRelation: false}
-	Name          = dialect.Field{Name: "name", Json: "name", Table: "active", Type: "types.String", IsRelation: false}
-	Content       = dialect.Field{Name: "content", Json: "content", Table: "active", Type: "types.String", IsRelation: false}
+	ActivePicture = dialect.Field{Name: "active_picture", Json: "active_picture", Table: "active", Type: "types.String", IsRelation: false}
 	Address       = dialect.Field{Name: "address", Json: "address", Table: "active", Type: "types.String", IsRelation: false}
+	Content       = dialect.Field{Name: "content", Json: "content", Table: "active", Type: "types.String", IsRelation: false}
+	Name          = dialect.Field{Name: "name", Json: "name", Table: "active", Type: "types.String", IsRelation: false}
 	Organizer     = dialect.Field{Name: "organizer", Json: "organizer", Table: "active", Type: "types.String", IsRelation: false}
 	Phone         = dialect.Field{Name: "phone", Json: "phone", Table: "active", Type: "types.String", IsRelation: false}
-	ActivePicture = dialect.Field{Name: "active_picture", Json: "active_picture", Table: "active", Type: "types.String", IsRelation: false}
-	Id            = dialect.Field{Name: "id", Json: "id", Table: "active", Type: "types.BigInt", IsRelation: false}
-	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "active", Type: "types.BigInt", IsRelation: false}
-	TypeId        = dialect.Field{Name: "type_id", Json: "type_id", Table: "active", Type: "types.BigInt", IsRelation: false}
+	Theme         = dialect.Field{Name: "theme", Json: "theme", Table: "active", Type: "types.String", IsRelation: false}
 	ActiveDate    = dialect.Field{Name: "active_date", Json: "active_date", Table: "active", Type: "types.Time", IsRelation: false}
 	CreateId      = dialect.Field{Name: "create_id", Json: "create_id", Table: "active", Type: "types.BigInt", IsRelation: false}
 	CreateTime    = dialect.Field{Name: "create_time", Json: "create_time", Table: "active", Type: "types.Time", IsRelation: false}
+	Id            = dialect.Field{Name: "id", Json: "id", Table: "active", Type: "types.BigInt", IsRelation: false}
+	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "active", Type: "types.BigInt", IsRelation: false}
+	TypeId        = dialect.Field{Name: "type_id", Json: "type_id", Table: "active", Type: "types.BigInt", IsRelation: false}
 	UpdateId      = dialect.Field{Name: "update_id", Json: "update_id", Table: "active", Type: "types.BigInt", IsRelation: false}
 	UpdateTime    = dialect.Field{Name: "update_time", Json: "update_time", Table: "active", Type: "types.Time", IsRelation: false}
-	DelFlag       = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "active", Type: "types.Int8", IsRelation: false}
+	State         = dialect.Field{Name: "state", Json: "state", Table: "active", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Theme,
-		Name,
-		Content,
+		ActivePicture,
 		Address,
+		Content,
+		Name,
 		Organizer,
 		Phone,
-		ActivePicture,
-		Id,
-		TenantId,
-		TypeId,
+		Theme,
 		ActiveDate,
 		CreateId,
 		CreateTime,
+		Id,
+		TenantId,
+		TypeId,
 		UpdateId,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Theme,
-		Name,
-		Content,
+		ActivePicture,
 		Address,
+		Content,
+		Name,
 		Organizer,
 		Phone,
-		ActivePicture,
-		Id,
-		TenantId,
-		TypeId,
+		Theme,
 		ActiveDate,
 		CreateId,
 		CreateTime,
+		Id,
+		TenantId,
+		TypeId,
 		UpdateId,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 )

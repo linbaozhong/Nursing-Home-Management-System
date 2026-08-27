@@ -27,7 +27,7 @@ func (v *visit) PageVisitByKey(ctx context.Context, in *dto.PageVisitByKeyReq, o
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tblvisit.TableName).
 		LeftJoin(tblvisit.ElderId, tblelder.Id).
-		Where(tblvisit.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblvisit.DelFlag.Eq(constant.YesNoNo))
+		Where(tblvisit.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblvisit.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.ElderName != nil && *in.ElderName != "" {
 		q.And(tblelder.Name.Like(*in.ElderName))
 	}
@@ -38,7 +38,7 @@ func (v *visit) PageVisitByKey(ctx context.Context, in *dto.PageVisitByKeyReq, o
 		q.And(tblvisit.Phone.Like(*in.VisitPhone))
 	}
 	if in.VisitFlag != nil && *in.VisitFlag != "" {
-		q.And(tblvisit.VisitFlag.Eq(types.Int8(parseVisitFlag(*in.VisitFlag))))
+		q.And(tblvisit.Status.Eq(types.Int8(parseVisitFlag(*in.VisitFlag))))
 	}
 	return q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
@@ -50,7 +50,7 @@ func (v *visit) PageVisitByKey(ctx context.Context, in *dto.PageVisitByKeyReq, o
 			tblvisit.VisitDate.AsName("visit_date"),
 			tblvisit.LeaveDate.AsName("leave_date"),
 			tblvisit.VisitNum.AsName("visit_num"),
-			tblvisit.VisitFlag.AsName("visit_flag"),
+			tblvisit.Status.AsName("visit_flag"),
 		).
 		Desc(tblvisit.CreateTime).
 		Select().
@@ -83,8 +83,8 @@ func (v *visit) AddVisit(ctx context.Context, in *dto.AddVisitReq, out *dto.Empt
 	bean.Relation = types.String(*in.Relation)
 	bean.VisitTime = types.Time{Time: *in.VisitDate}
 	bean.VisitNum = types.Int32(int32(*in.VisitNum))
-	bean.VisitFlag = types.Int8(constant.VisitStayLeave)
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.Status = types.Int8(constant.VisitStayLeave)
+	bean.State = types.Int8(constant.StateEnabled)
 	_, e = dao.Visit(db).InsertOne(ctx, bean)
 	return e
 }
@@ -155,10 +155,10 @@ func (v *visit) RecordLeave(ctx context.Context, in *dto.RecordLeaveReq, out *dt
 	bean := do.NewVisit()
 	bean.Id = types.BigInt(*in.ID)
 	bean.LeaveTime = types.Time{Time: *in.LeaveDate}
-	bean.VisitFlag = types.Int8(constant.VisitAlreadyLeave)
+	bean.Status = types.Int8(constant.VisitAlreadyLeave)
 	_, e = dao.Visit(db).UpdateOne(ctx, bean,
 		tblvisit.LeaveDate,
-		tblvisit.VisitFlag,
+		tblvisit.Status,
 	)
 	return e
 }
@@ -167,7 +167,7 @@ func (v *visit) RecordLeave(ctx context.Context, in *dto.RecordLeaveReq, out *dt
 // 对应 Java: VisitServiceImpl.deleteVisit
 func (v *visit) DeleteVisit(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	sets := []dialect.Setter{
-		tblvisit.DelFlag.Set(types.Int8(constant.YesNoYes)),
+		tblvisit.State.Set(types.Int8(constant.StateDeleted)),
 	}
 	_, e := dao.Visit(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
 	return e

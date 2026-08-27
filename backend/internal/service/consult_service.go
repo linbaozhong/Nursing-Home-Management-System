@@ -113,7 +113,7 @@ func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultReq, out *dt
 	repeat, e := dao.Elder(db).Exists(ctx,
 		tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblelder.IdNum.Eq(*in.IDNum),
-		tblelder.CheckFlag.NotEq(types.Int8(constant.CheckFailure)),
+		tblelder.Status.NotEq(types.Int8(constant.CheckFailure)),
 	)
 	if e != nil {
 		return e
@@ -131,7 +131,7 @@ func (c *consult) AddConsult(ctx context.Context, in *dto.AddConsultReq, out *dt
 	elder.Phone = types.String(*in.ElderPhone)
 	elder.Address = types.String(*in.Address)
 	elder.Balance = types.Money(0)
-	elder.CheckFlag = types.Int8(constant.CheckConsult)
+	elder.Status = types.Int8(constant.CheckConsult)
 	_, e = dao.Elder(db).InsertOne(ctx, elder)
 	if e != nil {
 		return e
@@ -170,7 +170,7 @@ func (c *consult) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchEl
 			tblelder.Sex,
 			tblelder.Phone,
 			tblelder.Address,
-			tblelder.CheckFlag,
+			tblelder.Status,
 		).
 		Desc(tblelder.CreateTime).
 		Select().
@@ -183,7 +183,7 @@ func (c *consult) PageIntentByKey(ctx context.Context, in *dto.PageIntentByKeyRe
 	q := db.Table(tblelder.TableName).
 		Where(
 			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
-			tblelder.CheckFlag.Eq(types.Int8(constant.CheckIntention)),
+			tblelder.Status.Eq(types.Int8(constant.CheckIntention)),
 		)
 	if in.Key != nil {
 		q.AndOr(tblelder.Name.Like(*in.Key), tblelder.Phone.Like(*in.Key))

@@ -39,7 +39,7 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 	q := db.Table(tblwarehouserecord.TableName).
 		InnerJoin(tblwarehouserecord.WarehouseId, tblwarehouse.Id).
 		InnerJoin(tblwarehouserecord.StaffId, tblstaff.Id).
-		Where(tblwarehouserecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouserecord.DelFlag.Eq(types.Int8(constant.YesNoNo)))
+		Where(tblwarehouserecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouserecord.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.WarehouseName != nil {
 		q = q.And(tblwarehouse.Name.Like(*in.WarehouseName))
 	}
@@ -58,7 +58,7 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 			tblwarehouserecord.Id,
 			tblwarehouserecord.WarehouseDate,
 			tblwarehouserecord.Source,
-			tblwarehouserecord.WarehouseFlag,
+			tblwarehouserecord.Status,
 			tblwarehouse.Name.AsName("warehouse_name"),
 			tblstaff.Name.AsName("staff_name"),
 		).
@@ -85,7 +85,7 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 	if len(materialIds) > 0 {
 		ms, _, e := dao.Material(db).List(ctx,
 			ace.Where(tblmaterial.Id.In(materialIds...)).
-				And(tblmaterial.DelFlag.Eq(types.Int8(constant.YesNoNo))).
+				And(tblmaterial.State.NotEq(types.Int8(constant.StateDeleted))).
 				Cols(tblmaterial.Id, tblmaterial.Name))
 		if e != nil {
 			return e
@@ -122,7 +122,7 @@ func (s *warehouseRecordService) PageWarehouseRecordByKey(ctx context.Context, i
 
 // ListWarehouse 仓库下拉
 func (s *warehouseRecordService) ListWarehouse(ctx context.Context, in *dto.EmptyReq, out *[]dto.DropDown) error {
-	list, _, e := dao.Warehouse(db).List(ctx, ace.Where(tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouse.DelFlag.Eq(types.Int8(constant.YesNoNo))).Cols(tblwarehouse.Id, tblwarehouse.Name))
+	list, _, e := dao.Warehouse(db).List(ctx, ace.Where(tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouse.State.NotEq(types.Int8(constant.StateDeleted))).Cols(tblwarehouse.Id, tblwarehouse.Name))
 	if e != nil {
 		return e
 	}
@@ -167,11 +167,11 @@ func (s *warehouseRecordService) AddWarehouseRecord(ctx context.Context, in *dto
 	record.StaffId = types.BigInt(*in.StaffID)
 	record.Source = types.String(*in.Source)
 	record.WarehouseDate = types.Time{*in.WarehouseDate}
-	record.WarehouseFlag = types.Int8(constant.AuditStay)
-	record.DelFlag = types.Int8(constant.YesNoNo)
+	record.Status = types.Int8(constant.AuditStay)
+	record.State = types.Int8(constant.StateEnabled)
 	if _, e := dao.WarehouseRecord(db).InsertOne(ctx, record,
 		tblwarehouserecord.TenantId, tblwarehouserecord.WarehouseId, tblwarehouserecord.StaffId, tblwarehouserecord.Source,
-		tblwarehouserecord.WarehouseDate, tblwarehouserecord.WarehouseFlag, tblwarehouserecord.DelFlag,
+		tblwarehouserecord.WarehouseDate, tblwarehouserecord.Status, tblwarehouserecord.State,
 		tblwarehouserecord.CreateId, tblwarehouserecord.CreateTime); e != nil {
 		return e
 	}
@@ -261,7 +261,7 @@ func (s *warehouseRecordService) AuditWarehouseRecord(ctx context.Context, in *d
 			).
 				Cols(
 					tblwarehouserecord.Id,
-					tblwarehouserecord.WarehouseFlag,
+					tblwarehouserecord.Status,
 				))
 	if e != nil {
 		return e
@@ -269,7 +269,7 @@ func (s *warehouseRecordService) AuditWarehouseRecord(ctx context.Context, in *d
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	if record.WarehouseFlag != types.Int8(constant.AuditStay) {
+	if record.Status != types.Int8(constant.AuditStay) {
 		return constant.ErrAuditRepeat
 	}
 	flag := constant.AuditNotPass
@@ -277,7 +277,7 @@ func (s *warehouseRecordService) AuditWarehouseRecord(ctx context.Context, in *d
 		flag = constant.AuditPass
 	}
 	_, e = dao.WarehouseRecord(db).UpdateById(ctx, types.BigInt(*in.WarehouseRecordID),
-		tblwarehouserecord.WarehouseFlag.Set(types.Int8(flag)),
+		tblwarehouserecord.Status.Set(types.Int8(flag)),
 	)
 	if e != nil {
 		return e
@@ -288,7 +288,7 @@ func (s *warehouseRecordService) AuditWarehouseRecord(ctx context.Context, in *d
 // DeleteWarehouseRecord 删除入库记录（逻辑删除）
 func (s *warehouseRecordService) DeleteWarehouseRecord(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	_, e := dao.WarehouseRecord(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tblwarehouserecord.DelFlag.Set(types.Int8(constant.YesNoYes)),
+		tblwarehouserecord.State.Set(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e

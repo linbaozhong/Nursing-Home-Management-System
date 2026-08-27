@@ -134,7 +134,7 @@ func (h *home) TodayOverview(ctx context.Context, in *dto.EmptyReq, out *dto.Tod
 // 返回: 空闲房间数（房间内有床位且全部空闲）、空闲床位数、已登记退床数
 func (h *home) AvailableBed(ctx context.Context, in *dto.EmptyReq, out *dto.AvailableBedResp) error {
 	// 获取所有未被删除床位
-	bedList, _, e := dao.Bed(db).List(ctx, ace.Where(tblbed.DelFlag.Eq(constant.YesNoNo)))
+	bedList, _, e := dao.Bed(db).List(ctx, ace.Where(tblbed.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}
@@ -163,7 +163,7 @@ func (h *home) AvailableBed(ctx context.Context, in *dto.EmptyReq, out *dto.Avai
 	}
 
 	// 获取所有未被删除房间, 统计空闲房间（房间内有床位且都是空闲状态）
-	roomList, _, e := dao.Room(db).List(ctx, ace.Where(tblroom.DelFlag.Eq(constant.YesNoNo)))
+	roomList, _, e := dao.Room(db).List(ctx, ace.Where(tblroom.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}
@@ -187,7 +187,7 @@ func (h *home) TodaySaleFollow(ctx context.Context, in *dto.EmptyReq, out *dto.T
 	start, end := dayRange(time.Now())
 
 	// 获取所有未被删除回访计划
-	planList, _, e := dao.VisitPlan(db).List(ctx, ace.Where(tblvisitplan.DelFlag.Eq(constant.YesNoNo)))
+	planList, _, e := dao.VisitPlan(db).List(ctx, ace.Where(tblvisitplan.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}
@@ -336,7 +336,7 @@ func (h *home) ClientSource(ctx context.Context, in *dto.ClientSourceReq, out *[
 	}
 
 	// 获取来源渠道列表
-	sourceList, _, e := dao.Source(db).List(ctx, ace.Where(tblsource.DelFlag.Eq(constant.YesNoNo)))
+	sourceList, _, e := dao.Source(db).List(ctx, ace.Where(tblsource.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}

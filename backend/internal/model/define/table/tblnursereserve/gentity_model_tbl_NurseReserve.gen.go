@@ -9,61 +9,61 @@ import (
 const TableName = "nurse_reserve"
 
 var (
-	ServiceName  = dialect.Field{Name: "service_name", Json: "service_name", Table: "nurse_reserve", Type: "types.String", IsRelation: false}
 	ChargeMethod = dialect.Field{Name: "charge_method", Json: "charge_method", Table: "nurse_reserve", Type: "types.String", IsRelation: false}
-	Id           = dialect.Field{Name: "id", Json: "id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
-	TenantId     = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
-	ElderId      = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
-	StaffId      = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
-	ServicePrice = dialect.Field{Name: "service_price", Json: "service_price", Table: "nurse_reserve", Type: "types.Money", IsRelation: false}
-	PayAmount    = dialect.Field{Name: "pay_amount", Json: "pay_amount", Table: "nurse_reserve", Type: "types.Money", IsRelation: false}
-	NurseDate    = dialect.Field{Name: "nurse_date", Json: "nurse_date", Table: "nurse_reserve", Type: "types.Time", IsRelation: false}
+	ServiceName  = dialect.Field{Name: "service_name", Json: "service_name", Table: "nurse_reserve", Type: "types.String", IsRelation: false}
 	CreateId     = dialect.Field{Name: "create_id", Json: "create_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
 	CreateTime   = dialect.Field{Name: "create_time", Json: "create_time", Table: "nurse_reserve", Type: "types.Time", IsRelation: false}
+	ElderId      = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
+	Id           = dialect.Field{Name: "id", Json: "id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
+	NurseDate    = dialect.Field{Name: "nurse_date", Json: "nurse_date", Table: "nurse_reserve", Type: "types.Time", IsRelation: false}
+	PayAmount    = dialect.Field{Name: "pay_amount", Json: "pay_amount", Table: "nurse_reserve", Type: "types.Money", IsRelation: false}
+	ServicePrice = dialect.Field{Name: "service_price", Json: "service_price", Table: "nurse_reserve", Type: "types.Money", IsRelation: false}
+	StaffId      = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
+	TenantId     = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
 	UpdateId     = dialect.Field{Name: "update_id", Json: "update_id", Table: "nurse_reserve", Type: "types.BigInt", IsRelation: false}
 	UpdateTime   = dialect.Field{Name: "update_time", Json: "update_time", Table: "nurse_reserve", Type: "types.Time", IsRelation: false}
-	NeedDate     = dialect.Field{Name: "need_date", Json: "need_date", Table: "nurse_reserve", Type: "types.Int32", IsRelation: false}
 	Frequency    = dialect.Field{Name: "frequency", Json: "frequency", Table: "nurse_reserve", Type: "types.Int32", IsRelation: false}
-	OrderFlag    = dialect.Field{Name: "order_flag", Json: "order_flag", Table: "nurse_reserve", Type: "types.Int8", IsRelation: false}
+	NeedDate     = dialect.Field{Name: "need_date", Json: "need_date", Table: "nurse_reserve", Type: "types.Int32", IsRelation: false}
+	Status       = dialect.Field{Name: "status", Json: "status", Table: "nurse_reserve", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		ServiceName,
 		ChargeMethod,
-		Id,
-		TenantId,
-		ElderId,
-		StaffId,
-		ServicePrice,
-		PayAmount,
-		NurseDate,
+		ServiceName,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		NurseDate,
+		PayAmount,
+		ServicePrice,
+		StaffId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		NeedDate,
 		Frequency,
-		OrderFlag,
+		NeedDate,
+		Status,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		ServiceName,
 		ChargeMethod,
-		Id,
-		TenantId,
-		ElderId,
-		StaffId,
-		ServicePrice,
-		PayAmount,
-		NurseDate,
+		ServiceName,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		NurseDate,
+		PayAmount,
+		ServicePrice,
+		StaffId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		NeedDate,
 		Frequency,
-		OrderFlag,
+		NeedDate,
+		Status,
 	}
 )

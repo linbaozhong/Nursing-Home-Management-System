@@ -30,7 +30,7 @@ var Material = &material{}
 func (m *material) PageMaterialByKey(ctx context.Context, in *dto.PageMaterialByKeyReq, out *[]dto.PageMaterialByKeyResp) error {
 	q := db.Table(tblmaterial.TableName).
 		LeftJoin(tblmaterial.TypeId, tblmaterialtype.Id).
-		Where(tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterial.DelFlag.Eq(constant.YesNoNo))
+		Where(tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterial.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.MaterialName != nil && *in.MaterialName != "" {
 		q.And(tblmaterial.Name.Like(*in.MaterialName))
 	}
@@ -73,7 +73,7 @@ func (m *material) AddMaterial(ctx context.Context, in *dto.AddMaterialReq, out 
 		tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterial.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tblmaterial.Name.Eq(*in.Name),
-		tblmaterial.DelFlag.Eq(constant.YesNoNo),
+		tblmaterial.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -84,7 +84,7 @@ func (m *material) AddMaterial(ctx context.Context, in *dto.AddMaterialReq, out 
 	total, e := dao.Material(db).Count(ctx,
 		tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterial.TypeId.Eq(types.BigInt(*in.TypeID)),
-		tblmaterial.DelFlag.Eq(constant.YesNoNo),
+		tblmaterial.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -97,7 +97,7 @@ func (m *material) AddMaterial(ctx context.Context, in *dto.AddMaterialReq, out 
 	bean.TypeId = types.BigInt(*in.TypeID)
 	bean.Name = types.String(*in.Name)
 	bean.Price = types.Money(*in.Price)
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.State = types.Int8(constant.StateEnabled)
 	_, e = dao.Material(db).InsertOne(ctx, bean)
 	return e
 }
@@ -109,7 +109,7 @@ func (m *material) EditMaterial(ctx context.Context, in *dto.EditMaterialReq, ou
 		tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterial.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tblmaterial.Name.Eq(*in.Name),
-		tblmaterial.DelFlag.Eq(constant.YesNoNo),
+		tblmaterial.State.NotEq(types.Int8(constant.StateDeleted)),
 		tblmaterial.Id.NotEq(*in.ID),
 	)
 	if e != nil {
@@ -132,7 +132,7 @@ func (m *material) EditMaterial(ctx context.Context, in *dto.EditMaterialReq, ou
 func (m *material) DeleteMaterial(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	bean := do.NewMaterial()
 	bean.Id = types.BigInt(*in.ID)
-	bean.DelFlag = types.Int8(constant.YesNoYes)
+	bean.State = types.Int8(constant.StateDeleted)
 	_, e := dao.Material(db).UpdateOne(ctx, bean)
 	return e
 }
@@ -141,7 +141,7 @@ func (m *material) DeleteMaterial(ctx context.Context, in *dto.IDReq, out *dto.E
 // 对应 Java: MaterialServiceImpl.getMaterialType -> MaterialTypeFunc.listNotDelMaerialType
 func (m *material) PageMaterialTypeByKey(ctx context.Context, in *dto.PageMaterialTypeByKeyReq, out *[]dto.PageMaterialTypeResp) error {
 	q := db.Table(tblmaterial.TableName).
-		Where(tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterialtype.DelFlag.Eq(constant.YesNoNo))
+		Where(tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblmaterialtype.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.Name != nil && *in.Name != "" {
 		q.And(tblmaterialtype.Name.Like(*in.Name))
 	}
@@ -182,7 +182,7 @@ func (m *material) AddMaterialType(ctx context.Context, in *dto.AddMaterialTypeR
 	repeat, e := dao.MaterialType(db).Exists(ctx,
 		tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterialtype.Name.Eq(*in.Name),
-		tblmaterialtype.DelFlag.Eq(constant.YesNoNo),
+		tblmaterialtype.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -192,7 +192,7 @@ func (m *material) AddMaterialType(ctx context.Context, in *dto.AddMaterialTypeR
 	}
 	total, e := dao.MaterialType(db).Count(ctx,
 		tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
-		tblmaterialtype.DelFlag.Eq(constant.YesNoNo),
+		tblmaterialtype.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -209,7 +209,7 @@ func (m *material) AddMaterialType(ctx context.Context, in *dto.AddMaterialTypeR
 		// 默认归为设施/其他
 		bean.Kind = types.Int8(constant.KindFacility)
 	}
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.State = types.Int8(constant.StateEnabled)
 	_, e = dao.MaterialType(db).InsertOne(ctx, bean)
 	return e
 }
@@ -220,7 +220,7 @@ func (m *material) EditMaterialType(ctx context.Context, in *dto.EditMaterialTyp
 	repeat, e := dao.MaterialType(db).Exists(ctx,
 		tblmaterialtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterialtype.Name.Eq(*in.Name),
-		tblmaterialtype.DelFlag.Eq(constant.YesNoNo),
+		tblmaterialtype.State.NotEq(types.Int8(constant.StateDeleted)),
 		tblmaterialtype.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -245,7 +245,7 @@ func (m *material) DeleteMaterialType(ctx context.Context, in *dto.IDReq, out *d
 	hasChild, e := dao.Material(db).Exists(ctx,
 		tblmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblmaterial.TypeId.Eq(types.BigInt(*in.ID)),
-		tblmaterial.DelFlag.Eq(constant.YesNoNo),
+		tblmaterial.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -255,7 +255,7 @@ func (m *material) DeleteMaterialType(ctx context.Context, in *dto.IDReq, out *d
 	}
 	bean := do.NewMaterialType()
 	bean.Id = types.BigInt(*in.ID)
-	bean.DelFlag = types.Int8(constant.YesNoYes)
+	bean.State = types.Int8(constant.StateDeleted)
 	_, e = dao.MaterialType(db).UpdateOne(ctx, bean)
 	return e
 }

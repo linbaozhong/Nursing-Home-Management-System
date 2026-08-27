@@ -25,7 +25,7 @@ var Dishes = &dishes{}
 func (d *dishes) PageDishesByKey(ctx context.Context, in *dto.PageDishesByKeyReq, out *[]dto.PageDishesByKeyResp) error {
 	q := db.Table(tbldishes.TableName).
 		LeftJoin(tbldishes.TypeId, tbldishestype.Id).
-		Where(tbldishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbldishes.DelFlag.Eq(constant.YesNoNo))
+		Where(tbldishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbldishes.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.TypeID != nil {
 		q.And(tbldishes.TypeId.Eq(types.BigInt(*in.TypeID)))
 	}
@@ -71,7 +71,7 @@ func (d *dishes) AddDishes(ctx context.Context, in *dto.OperateDishesReq, out *d
 		tbldishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbldishes.Name.Eq(*in.Name),
 		tbldishes.TypeId.Eq(types.BigInt(*in.TypeID)),
-		tbldishes.DelFlag.Eq(constant.YesNoNo),
+		tbldishes.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -94,7 +94,7 @@ func (d *dishes) EditDishes(ctx context.Context, in *dto.OperateDishesReq, out *
 		tbldishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbldishes.Name.Eq(*in.Name),
 		tbldishes.TypeId.Eq(types.BigInt(*in.TypeID)),
-		tbldishes.DelFlag.Eq(constant.YesNoNo),
+		tbldishes.State.NotEq(types.Int8(constant.StateDeleted)),
 		tbldishes.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -114,7 +114,7 @@ func (d *dishes) EditDishes(ctx context.Context, in *dto.OperateDishesReq, out *
 // DeleteDishes 删除菜品（逻辑删除）
 func (d *dishes) DeleteDishes(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	_, e := dao.Dishes(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tbldishes.DelFlag.Set(constant.YesNoYes),
+		tbldishes.State.Set(constant.StateDeleted),
 	)
 	return e
 }
@@ -123,7 +123,7 @@ func (d *dishes) DeleteDishes(ctx context.Context, in *dto.IDReq, out *dto.Empty
 // 对应 Java: DishesServiceImpl.pageDishesTypeByKey -> DishesTypeFunc.listDishesType
 func (d *dishes) PageDishesTypeByKey(ctx context.Context, in *dto.PageDishesTypeByKeyReq, out *[]dto.DropDown) error {
 	q := db.Table(tbldishestype.TableName).
-		Where(tbldishestype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbldishestype.DelFlag.Eq(constant.YesNoNo))
+		Where(tbldishestype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbldishestype.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.Name != nil && *in.Name != "" {
 		q.And(tbldishestype.Name.Like(*in.Name))
 	}
@@ -155,7 +155,7 @@ func (d *dishes) GetDishesTypeById(ctx context.Context, in *dto.IDReq, out *dto.
 func (d *dishes) AddDishesType(ctx context.Context, in *dto.OperateDishesTypeReq, out *dto.EmptyResp) error {
 	total, e := dao.DishesType(db).Count(ctx,
 		tbldishestype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
-		tbldishestype.DelFlag.Eq(constant.YesNoNo),
+		tbldishestype.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -166,7 +166,7 @@ func (d *dishes) AddDishesType(ctx context.Context, in *dto.OperateDishesTypeReq
 	repeat, e := dao.DishesType(db).Exists(ctx,
 		tbldishestype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbldishestype.Name.Eq(*in.Name),
-		tbldishestype.DelFlag.Eq(constant.YesNoNo),
+		tbldishestype.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -186,7 +186,7 @@ func (d *dishes) EditDishesType(ctx context.Context, in *dto.OperateDishesTypeRe
 	repeat, e := dao.DishesType(db).Exists(ctx,
 		tbldishestype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbldishestype.Name.Eq(*in.Name),
-		tbldishestype.DelFlag.Eq(constant.YesNoNo),
+		tbldishestype.State.NotEq(types.Int8(constant.StateDeleted)),
 		tbldishestype.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -206,7 +206,7 @@ func (d *dishes) DeleteDishesType(ctx context.Context, in *dto.IDReq, out *dto.E
 	hasChild, e := dao.Dishes(db).Exists(ctx,
 		tbldishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbldishes.TypeId.Eq(types.BigInt(*in.ID)),
-		tbldishes.DelFlag.Eq(constant.YesNoNo),
+		tbldishes.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -215,7 +215,7 @@ func (d *dishes) DeleteDishesType(ctx context.Context, in *dto.IDReq, out *dto.E
 		return errors.New("该类别存在菜品，无法删除")
 	}
 	_, e = dao.DishesType(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tbldishestype.DelFlag.Set(constant.YesNoYes),
+		tbldishestype.State.Set(constant.StateDeleted),
 	)
 	return e
 }

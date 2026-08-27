@@ -28,32 +28,17 @@ func NewConsult() *Consult {
 // MarshalJSON
 func (p *Consult) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(14 * 50)
+	if p.ConsultContent != "" {
+		write.WriteRaw("consult_content", types.Marshal(p.ConsultContent))
+	}
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.Phone != "" {
 		write.WriteRaw("phone", types.Marshal(p.Phone))
 	}
 	if p.Relation != "" {
 		write.WriteRaw("relation", types.Marshal(p.Relation))
-	}
-	if p.ConsultContent != "" {
-		write.WriteRaw("consult_content", types.Marshal(p.ConsultContent))
-	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
-	if p.SourceId != 0 {
-		write.WriteRaw("source_id", types.Marshal(p.SourceId))
-	}
-	if p.StaffId != 0 {
-		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
 	}
 	if !p.ConsultDate.IsZero() {
 		write.WriteRaw("consult_date", types.Marshal(p.ConsultDate))
@@ -63,6 +48,21 @@ func (p *Consult) MarshalJSON() ([]byte, error) {
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.SourceId != 0 {
+		write.WriteRaw("source_id", types.Marshal(p.SourceId))
+	}
+	if p.StaffId != 0 {
+		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -83,30 +83,30 @@ func (p *Consult) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
+		case "consult_content":
+			p.ConsultContent = types.String(value.Str)
 		case "name":
 			p.Name = types.String(value.Str)
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
 		case "phone":
 			p.Phone = types.String(value.Str)
 		case "relation":
 			p.Relation = types.String(value.Str)
-		case "consult_content":
-			p.ConsultContent = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "source_id":
-			p.SourceId = types.BigInt(value.Uint())
-		case "staff_id":
-			p.StaffId = types.BigInt(value.Uint())
 		case "consult_date":
 			p.ConsultDate = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "source_id":
+			p.SourceId = types.BigInt(value.Uint())
+		case "staff_id":
+			p.StaffId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -132,18 +132,18 @@ func (p *Consult) Free() {
 
 // Reset
 func (p *Consult) Reset() {
+	p.ConsultContent = ""
 	p.Name = ""
-	p.TenantId = 0
 	p.Phone = ""
 	p.Relation = ""
-	p.ConsultContent = ""
-	p.Id = 0
-	p.ElderId = 0
-	p.SourceId = 0
-	p.StaffId = 0
 	p.ConsultDate = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.SourceId = 0
+	p.StaffId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 
@@ -155,18 +155,18 @@ func (p *Consult) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var consultFieldToPtrFunc = map[string]func(*Consult) any{
+	tblconsult.ConsultContent.Name: func(p *Consult) any { return &p.ConsultContent },
 	tblconsult.Name.Name:           func(p *Consult) any { return &p.Name },
-	tblconsult.TenantId.Name:       func(p *Consult) any { return &p.TenantId },
 	tblconsult.Phone.Name:          func(p *Consult) any { return &p.Phone },
 	tblconsult.Relation.Name:       func(p *Consult) any { return &p.Relation },
-	tblconsult.ConsultContent.Name: func(p *Consult) any { return &p.ConsultContent },
-	tblconsult.Id.Name:             func(p *Consult) any { return &p.Id },
-	tblconsult.ElderId.Name:        func(p *Consult) any { return &p.ElderId },
-	tblconsult.SourceId.Name:       func(p *Consult) any { return &p.SourceId },
-	tblconsult.StaffId.Name:        func(p *Consult) any { return &p.StaffId },
 	tblconsult.ConsultDate.Name:    func(p *Consult) any { return &p.ConsultDate },
 	tblconsult.CreateId.Name:       func(p *Consult) any { return &p.CreateId },
 	tblconsult.CreateTime.Name:     func(p *Consult) any { return &p.CreateTime },
+	tblconsult.ElderId.Name:        func(p *Consult) any { return &p.ElderId },
+	tblconsult.Id.Name:             func(p *Consult) any { return &p.Id },
+	tblconsult.SourceId.Name:       func(p *Consult) any { return &p.SourceId },
+	tblconsult.StaffId.Name:        func(p *Consult) any { return &p.StaffId },
+	tblconsult.TenantId.Name:       func(p *Consult) any { return &p.TenantId },
 	tblconsult.UpdateId.Name:       func(p *Consult) any { return &p.UpdateId },
 	tblconsult.UpdateTime.Name:     func(p *Consult) any { return &p.UpdateTime },
 }
@@ -258,32 +258,17 @@ func (p *Consult) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]s
 
 // 定义字段到值检查和获取函数的映射
 var consultFieldToValueFunc = map[dialect.Field]func(*Consult) (any, bool){
+	tblconsult.ConsultContent: func(p *Consult) (any, bool) {
+		return p.ConsultContent, p.ConsultContent == ""
+	},
 	tblconsult.Name: func(p *Consult) (any, bool) {
 		return p.Name, p.Name == ""
-	},
-	tblconsult.TenantId: func(p *Consult) (any, bool) {
-		return p.TenantId, p.TenantId == 0
 	},
 	tblconsult.Phone: func(p *Consult) (any, bool) {
 		return p.Phone, p.Phone == ""
 	},
 	tblconsult.Relation: func(p *Consult) (any, bool) {
 		return p.Relation, p.Relation == ""
-	},
-	tblconsult.ConsultContent: func(p *Consult) (any, bool) {
-		return p.ConsultContent, p.ConsultContent == ""
-	},
-	tblconsult.Id: func(p *Consult) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblconsult.ElderId: func(p *Consult) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
-	tblconsult.SourceId: func(p *Consult) (any, bool) {
-		return p.SourceId, p.SourceId == 0
-	},
-	tblconsult.StaffId: func(p *Consult) (any, bool) {
-		return p.StaffId, p.StaffId == 0
 	},
 	tblconsult.ConsultDate: func(p *Consult) (any, bool) {
 		return p.ConsultDate, p.ConsultDate.IsZero()
@@ -293,6 +278,21 @@ var consultFieldToValueFunc = map[dialect.Field]func(*Consult) (any, bool){
 	},
 	tblconsult.CreateTime: func(p *Consult) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblconsult.ElderId: func(p *Consult) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblconsult.Id: func(p *Consult) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblconsult.SourceId: func(p *Consult) (any, bool) {
+		return p.SourceId, p.SourceId == 0
+	},
+	tblconsult.StaffId: func(p *Consult) (any, bool) {
+		return p.StaffId, p.StaffId == 0
+	},
+	tblconsult.TenantId: func(p *Consult) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblconsult.UpdateId: func(p *Consult) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

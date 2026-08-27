@@ -28,26 +28,26 @@ func NewRetreat() *Retreat {
 // MarshalJSON
 func (p *Retreat) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(10 * 50)
-	if p.RetreatForm != "" {
-		write.WriteRaw("retreat_form", types.Marshal(p.RetreatForm))
-	}
 	if p.RetreatCause != "" {
 		write.WriteRaw("retreat_cause", types.Marshal(p.RetreatCause))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	if p.RetreatForm != "" {
+		write.WriteRaw("retreat_form", types.Marshal(p.RetreatForm))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -71,20 +71,20 @@ func (p *Retreat) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "retreat_form":
-			p.RetreatForm = types.String(value.Str)
 		case "retreat_cause":
 			p.RetreatCause = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
+		case "retreat_form":
+			p.RetreatForm = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -112,13 +112,13 @@ func (p *Retreat) Free() {
 
 // Reset
 func (p *Retreat) Reset() {
-	p.RetreatForm = ""
 	p.RetreatCause = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
+	p.RetreatForm = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.Evaluate = 0
@@ -131,13 +131,13 @@ func (p *Retreat) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var retreatFieldToPtrFunc = map[string]func(*Retreat) any{
-	tblretreat.RetreatForm.Name:  func(p *Retreat) any { return &p.RetreatForm },
 	tblretreat.RetreatCause.Name: func(p *Retreat) any { return &p.RetreatCause },
-	tblretreat.Id.Name:           func(p *Retreat) any { return &p.Id },
-	tblretreat.TenantId.Name:     func(p *Retreat) any { return &p.TenantId },
-	tblretreat.ElderId.Name:      func(p *Retreat) any { return &p.ElderId },
+	tblretreat.RetreatForm.Name:  func(p *Retreat) any { return &p.RetreatForm },
 	tblretreat.CreateId.Name:     func(p *Retreat) any { return &p.CreateId },
 	tblretreat.CreateTime.Name:   func(p *Retreat) any { return &p.CreateTime },
+	tblretreat.ElderId.Name:      func(p *Retreat) any { return &p.ElderId },
+	tblretreat.Id.Name:           func(p *Retreat) any { return &p.Id },
+	tblretreat.TenantId.Name:     func(p *Retreat) any { return &p.TenantId },
 	tblretreat.UpdateId.Name:     func(p *Retreat) any { return &p.UpdateId },
 	tblretreat.UpdateTime.Name:   func(p *Retreat) any { return &p.UpdateTime },
 	tblretreat.Evaluate.Name:     func(p *Retreat) any { return &p.Evaluate },
@@ -230,26 +230,26 @@ func (p *Retreat) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]s
 
 // 定义字段到值检查和获取函数的映射
 var retreatFieldToValueFunc = map[dialect.Field]func(*Retreat) (any, bool){
-	tblretreat.RetreatForm: func(p *Retreat) (any, bool) {
-		return p.RetreatForm, p.RetreatForm == ""
-	},
 	tblretreat.RetreatCause: func(p *Retreat) (any, bool) {
 		return p.RetreatCause, p.RetreatCause == ""
 	},
-	tblretreat.Id: func(p *Retreat) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblretreat.TenantId: func(p *Retreat) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblretreat.ElderId: func(p *Retreat) (any, bool) {
-		return p.ElderId, p.ElderId == 0
+	tblretreat.RetreatForm: func(p *Retreat) (any, bool) {
+		return p.RetreatForm, p.RetreatForm == ""
 	},
 	tblretreat.CreateId: func(p *Retreat) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblretreat.CreateTime: func(p *Retreat) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblretreat.ElderId: func(p *Retreat) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblretreat.Id: func(p *Retreat) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblretreat.TenantId: func(p *Retreat) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblretreat.UpdateId: func(p *Retreat) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

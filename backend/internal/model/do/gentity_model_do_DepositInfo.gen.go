@@ -28,23 +28,23 @@ func NewDepositInfo() *DepositInfo {
 // MarshalJSON
 func (p *DepositInfo) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(11 * 50)
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.DepositId != 0 {
-		write.WriteRaw("deposit_id", types.Marshal(p.DepositId))
-	}
-	if p.MedicineId != 0 {
-		write.WriteRaw("medicine_id", types.Marshal(p.MedicineId))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.DepositId != 0 {
+		write.WriteRaw("deposit_id", types.Marshal(p.DepositId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.MedicineId != 0 {
+		write.WriteRaw("medicine_id", types.Marshal(p.MedicineId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -74,18 +74,18 @@ func (p *DepositInfo) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "deposit_id":
-			p.DepositId = types.BigInt(value.Uint())
-		case "medicine_id":
-			p.MedicineId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "deposit_id":
+			p.DepositId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "medicine_id":
+			p.MedicineId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -117,12 +117,12 @@ func (p *DepositInfo) Free() {
 
 // Reset
 func (p *DepositInfo) Reset() {
-	p.Id = 0
-	p.TenantId = 0
-	p.DepositId = 0
-	p.MedicineId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.DepositId = 0
+	p.Id = 0
+	p.MedicineId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.DepositNum = 0
@@ -137,12 +137,12 @@ func (p *DepositInfo) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var depositinfoFieldToPtrFunc = map[string]func(*DepositInfo) any{
-	tbldepositinfo.Id.Name:         func(p *DepositInfo) any { return &p.Id },
-	tbldepositinfo.TenantId.Name:   func(p *DepositInfo) any { return &p.TenantId },
-	tbldepositinfo.DepositId.Name:  func(p *DepositInfo) any { return &p.DepositId },
-	tbldepositinfo.MedicineId.Name: func(p *DepositInfo) any { return &p.MedicineId },
 	tbldepositinfo.CreateId.Name:   func(p *DepositInfo) any { return &p.CreateId },
 	tbldepositinfo.CreateTime.Name: func(p *DepositInfo) any { return &p.CreateTime },
+	tbldepositinfo.DepositId.Name:  func(p *DepositInfo) any { return &p.DepositId },
+	tbldepositinfo.Id.Name:         func(p *DepositInfo) any { return &p.Id },
+	tbldepositinfo.MedicineId.Name: func(p *DepositInfo) any { return &p.MedicineId },
+	tbldepositinfo.TenantId.Name:   func(p *DepositInfo) any { return &p.TenantId },
 	tbldepositinfo.UpdateId.Name:   func(p *DepositInfo) any { return &p.UpdateId },
 	tbldepositinfo.UpdateTime.Name: func(p *DepositInfo) any { return &p.UpdateTime },
 	tbldepositinfo.DepositNum.Name: func(p *DepositInfo) any { return &p.DepositNum },
@@ -237,23 +237,23 @@ func (p *DepositInfo) RawAssignValues(d dialect.Dialect, args ...dialect.Field) 
 
 // 定义字段到值检查和获取函数的映射
 var depositinfoFieldToValueFunc = map[dialect.Field]func(*DepositInfo) (any, bool){
-	tbldepositinfo.Id: func(p *DepositInfo) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tbldepositinfo.TenantId: func(p *DepositInfo) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tbldepositinfo.DepositId: func(p *DepositInfo) (any, bool) {
-		return p.DepositId, p.DepositId == 0
-	},
-	tbldepositinfo.MedicineId: func(p *DepositInfo) (any, bool) {
-		return p.MedicineId, p.MedicineId == 0
-	},
 	tbldepositinfo.CreateId: func(p *DepositInfo) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tbldepositinfo.CreateTime: func(p *DepositInfo) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tbldepositinfo.DepositId: func(p *DepositInfo) (any, bool) {
+		return p.DepositId, p.DepositId == 0
+	},
+	tbldepositinfo.Id: func(p *DepositInfo) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tbldepositinfo.MedicineId: func(p *DepositInfo) (any, bool) {
+		return p.MedicineId, p.MedicineId == 0
+	},
+	tbldepositinfo.TenantId: func(p *DepositInfo) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tbldepositinfo.UpdateId: func(p *DepositInfo) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

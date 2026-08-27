@@ -9,43 +9,43 @@ import (
 const TableName = "drug_deposit"
 
 var (
-	Mode        = dialect.Field{Name: "mode", Json: "mode", Table: "drug_deposit", Type: "types.String", IsRelation: false}
-	Id          = dialect.Field{Name: "id", Json: "id", Table: "drug_deposit", Type: "types.BigInt", IsRelation: false}
-	TenantId    = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "drug_deposit", Type: "types.BigInt", IsRelation: false}
-	ElderId     = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "drug_deposit", Type: "types.BigInt", IsRelation: false}
-	CreateId    = dialect.Field{Name: "create_id", Json: "create_id", Table: "drug_deposit", Type: "types.BigInt", IsRelation: false}
-	CreateTime  = dialect.Field{Name: "create_time", Json: "create_time", Table: "drug_deposit", Type: "types.Time", IsRelation: false}
-	UpdateId    = dialect.Field{Name: "update_id", Json: "update_id", Table: "drug_deposit", Type: "types.BigInt", IsRelation: false}
-	UpdateTime  = dialect.Field{Name: "update_time", Json: "update_time", Table: "drug_deposit", Type: "types.Time", IsRelation: false}
-	DepositFlag = dialect.Field{Name: "deposit_flag", Json: "deposit_flag", Table: "drug_deposit", Type: "types.Int8", IsRelation: false}
-	DelFlag     = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "drug_deposit", Type: "types.Int8", IsRelation: false}
+	Mode       = dialect.Field{Name: "mode", Json: "mode", Table: "drug_deposit", Type: "types.String", IsRelation: false}
+	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "drug_deposit", Type: "types.BigInt", IsRelation: false}
+	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "drug_deposit", Type: "types.Time", IsRelation: false}
+	ElderId    = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "drug_deposit", Type: "types.BigInt", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "drug_deposit", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "drug_deposit", Type: "types.BigInt", IsRelation: false}
+	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "drug_deposit", Type: "types.BigInt", IsRelation: false}
+	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "drug_deposit", Type: "types.Time", IsRelation: false}
+	State      = dialect.Field{Name: "state", Json: "state", Table: "drug_deposit", Type: "types.Int8", IsRelation: false}
+	Status     = dialect.Field{Name: "status", Json: "status", Table: "drug_deposit", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
 		Mode,
-		Id,
-		TenantId,
-		ElderId,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		DepositFlag,
-		DelFlag,
+		State,
+		Status,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Mode,
-		Id,
-		TenantId,
-		ElderId,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		DepositFlag,
-		DelFlag,
+		State,
+		Status,
 	}
 )

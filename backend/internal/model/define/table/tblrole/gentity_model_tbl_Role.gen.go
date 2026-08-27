@@ -9,31 +9,40 @@ import (
 const TableName = "role"
 
 var (
-	Name       = dialect.Field{Name: "name", Json: "name", Table: "role", Type: "types.String", IsRelation: false}
-	Id         = dialect.Field{Name: "id", Json: "id", Table: "role", Type: "types.BigInt", IsRelation: false}
-	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "role", Type: "types.BigInt", IsRelation: false}
-	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "role", Type: "types.Time", IsRelation: false}
-	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "role", Type: "types.BigInt", IsRelation: false}
-	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "role", Type: "types.Time", IsRelation: false}
+	Name        = dialect.Field{Name: "name", Json: "name", Table: "role", Type: "types.String", IsRelation: false}
+	Permissions = dialect.Field{Name: "permissions", Json: "permissions", Table: "role", Type: "types.String", IsRelation: false}
+	CreateId    = dialect.Field{Name: "create_id", Json: "create_id", Table: "role", Type: "types.BigInt", IsRelation: false}
+	CreateTime  = dialect.Field{Name: "create_time", Json: "create_time", Table: "role", Type: "types.Time", IsRelation: false}
+	Id          = dialect.Field{Name: "id", Json: "id", Table: "role", Type: "types.BigInt", IsRelation: false}
+	TenantId    = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "role", Type: "types.Money", IsRelation: false}
+	UpdateId    = dialect.Field{Name: "update_id", Json: "update_id", Table: "role", Type: "types.BigInt", IsRelation: false}
+	UpdateTime  = dialect.Field{Name: "update_time", Json: "update_time", Table: "role", Type: "types.Time", IsRelation: false}
+	IsSystem    = dialect.Field{Name: "is_system", Json: "is_system", Table: "role", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
 		Name,
-		Id,
+		Permissions,
 		CreateId,
 		CreateTime,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
+		IsSystem,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Name,
-		Id,
+		Permissions,
 		CreateId,
 		CreateTime,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
+		IsSystem,
 	}
 )

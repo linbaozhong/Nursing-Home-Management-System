@@ -9,12 +9,12 @@ import (
 const TableName = "set_dishes"
 
 var (
-	Id         = dialect.Field{Name: "id", Json: "id", Table: "set_dishes", Type: "types.BigInt", IsRelation: false}
-	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "set_dishes", Type: "types.BigInt", IsRelation: false}
-	SetId      = dialect.Field{Name: "set_id", Json: "set_id", Table: "set_dishes", Type: "types.BigInt", IsRelation: false}
-	DishesId   = dialect.Field{Name: "dishes_id", Json: "dishes_id", Table: "set_dishes", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "set_dishes", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "set_dishes", Type: "types.Time", IsRelation: false}
+	DishesId   = dialect.Field{Name: "dishes_id", Json: "dishes_id", Table: "set_dishes", Type: "types.BigInt", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "set_dishes", Type: "types.BigInt", IsRelation: false}
+	SetId      = dialect.Field{Name: "set_id", Json: "set_id", Table: "set_dishes", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "set_dishes", Type: "types.BigInt", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "set_dishes", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "set_dishes", Type: "types.Time", IsRelation: false}
 	// 主键
@@ -22,23 +22,23 @@ var (
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Id,
-		TenantId,
-		SetId,
-		DishesId,
 		CreateId,
 		CreateTime,
+		DishesId,
+		Id,
+		SetId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Id,
-		TenantId,
-		SetId,
-		DishesId,
 		CreateId,
 		CreateTime,
+		DishesId,
+		Id,
+		SetId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 	}

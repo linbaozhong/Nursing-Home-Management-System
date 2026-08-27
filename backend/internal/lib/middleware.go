@@ -18,7 +18,8 @@ const (
 	ctxUserID   ctxKey = iota // 全局用户编号
 	ctxTenantID               // 租户编号
 	ctxMemberID               // 成员编号
-	ctxRole                   // 角色标识
+	ctxUserName
+	ctxRole // 角色标识
 )
 
 // AuthMiddleware 登录鉴权中间件：
@@ -36,11 +37,12 @@ func AuthMiddleware() ack.Handler {
 			ack.Fail(c, constant.ErrTokenError)
 			return
 		}
-		userID, tenantID, memberID := parseTokenID(id)
+		userID, tenantID, memberID, userName := parseTokenID(id)
 
 		ctx := context.WithValue(c.Request().Context(), ctxUserID, userID)
 		ctx = context.WithValue(ctx, ctxTenantID, tenantID)
 		ctx = context.WithValue(ctx, ctxMemberID, memberID)
+		ctx = context.WithValue(ctx, ctxUserName, userName)
 		ctx = context.WithValue(ctx, ctxRole, role)
 		c.ResetRequest(c.Request().WithContext(ctx))
 		c.Next()
@@ -49,7 +51,7 @@ func AuthMiddleware() ack.Handler {
 
 // parseTokenID 解析 token 中的 id 段：格式为 userID[_tenantID[_memberID]]
 // 旧 token 为纯 staff id（单段），无租户信息。
-func parseTokenID(id string) (userID, tenantID, memberID int64) {
+func parseTokenID(id string) (userID, tenantID, memberID int64, userName string) {
 	parts := strings.Split(id, "_")
 	userID = atoi64(parts[0])
 	if len(parts) > 1 {
@@ -57,6 +59,9 @@ func parseTokenID(id string) (userID, tenantID, memberID int64) {
 	}
 	if len(parts) > 2 {
 		memberID = atoi64(parts[2])
+	}
+	if len(parts) > 3 {
+		userName = parts[3]
 	}
 	return
 }
@@ -81,6 +86,12 @@ func TenantID(ctx context.Context) int64 {
 // MemberID 从 context 读取当前成员编号
 func MemberID(ctx context.Context) int64 {
 	v, _ := ctx.Value(ctxMemberID).(int64)
+	return v
+}
+
+// UserName 从 context 读取当前用户姓名
+func UserName(ctx context.Context) string {
+	v, _ := ctx.Value(ctxUserName).(string)
 	return v
 }
 

@@ -10,45 +10,47 @@ const TableName = "bed"
 
 var (
 	Name       = dialect.Field{Name: "name", Json: "name", Table: "bed", Type: "types.String", IsRelation: false}
-	Id         = dialect.Field{Name: "id", Json: "id", Table: "bed", Type: "types.BigInt", IsRelation: false}
-	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
-	RoomId     = dialect.Field{Name: "room_id", Json: "room_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
-	BedTypeID  = dialect.Field{Name: "bed_type_id", Json: "bed_type_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "bed", Type: "types.Time", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "bed", Type: "types.BigInt", IsRelation: false}
+	Price      = dialect.Field{Name: "price", Json: "price", Table: "bed", Type: "types.Money", IsRelation: false}
+	RoomId     = dialect.Field{Name: "room_id", Json: "room_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
+	TypeId     = dialect.Field{Name: "type_id", Json: "type_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "bed", Type: "types.Time", IsRelation: false}
-	DelFlag    = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "bed", Type: "types.Int8", IsRelation: false}
-	BedFlag    = dialect.Field{Name: "bed_flag", Json: "bed_flag", Table: "bed", Type: "types.Int8", IsRelation: false}
+	State      = dialect.Field{Name: "state", Json: "state", Table: "bed", Type: "types.Int8", IsRelation: false}
+	Status     = dialect.Field{Name: "status", Json: "status", Table: "bed", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
 		Name,
-		Id,
-		TenantId,
-		RoomId,
-		BedTypeID,
 		CreateId,
 		CreateTime,
+		Id,
+		Price,
+		RoomId,
+		TenantId,
+		TypeId,
 		UpdateId,
-		UpdateTime,
-		DelFlag,
-		BedFlag,
+		State,
+		Status,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Name,
-		Id,
-		TenantId,
-		RoomId,
-		BedTypeID,
 		CreateId,
 		CreateTime,
+		Id,
+		Price,
+		RoomId,
+		TenantId,
+		TypeId,
 		UpdateId,
 		UpdateTime,
-		DelFlag,
-		BedFlag,
+		State,
+		Status,
 	}
 )

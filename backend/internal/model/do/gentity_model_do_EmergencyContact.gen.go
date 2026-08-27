@@ -28,26 +28,17 @@ func NewEmergencyContact() *EmergencyContact {
 // MarshalJSON
 func (p *EmergencyContact) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(12 * 50)
+	if p.Email != "" {
+		write.WriteRaw("email", types.Marshal(p.Email))
+	}
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Phone != "" {
 		write.WriteRaw("phone", types.Marshal(p.Phone))
 	}
-	if p.Email != "" {
-		write.WriteRaw("email", types.Marshal(p.Email))
-	}
 	if p.Relation != "" {
 		write.WriteRaw("relation", types.Marshal(p.Relation))
-	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -55,14 +46,23 @@ func (p *EmergencyContact) MarshalJSON() ([]byte, error) {
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.ReceiveFlag != 0 {
-		write.WriteRaw("receive_flag", types.Marshal(p.ReceiveFlag))
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -77,30 +77,30 @@ func (p *EmergencyContact) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
+		case "email":
+			p.Email = types.String(value.Str)
 		case "name":
 			p.Name = types.String(value.Str)
 		case "phone":
 			p.Phone = types.String(value.Str)
-		case "email":
-			p.Email = types.String(value.Str)
 		case "relation":
 			p.Relation = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "receive_flag":
-			p.ReceiveFlag = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -122,18 +122,18 @@ func (p *EmergencyContact) Free() {
 
 // Reset
 func (p *EmergencyContact) Reset() {
+	p.Email = ""
 	p.Name = ""
 	p.Phone = ""
-	p.Email = ""
 	p.Relation = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.ReceiveFlag = 0
+	p.Status = 0
 
 }
 
@@ -143,18 +143,18 @@ func (p *EmergencyContact) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var emergencycontactFieldToPtrFunc = map[string]func(*EmergencyContact) any{
-	tblemergencycontact.Name.Name:        func(p *EmergencyContact) any { return &p.Name },
-	tblemergencycontact.Phone.Name:       func(p *EmergencyContact) any { return &p.Phone },
-	tblemergencycontact.Email.Name:       func(p *EmergencyContact) any { return &p.Email },
-	tblemergencycontact.Relation.Name:    func(p *EmergencyContact) any { return &p.Relation },
-	tblemergencycontact.Id.Name:          func(p *EmergencyContact) any { return &p.Id },
-	tblemergencycontact.TenantId.Name:    func(p *EmergencyContact) any { return &p.TenantId },
-	tblemergencycontact.ElderId.Name:     func(p *EmergencyContact) any { return &p.ElderId },
-	tblemergencycontact.CreateId.Name:    func(p *EmergencyContact) any { return &p.CreateId },
-	tblemergencycontact.CreateTime.Name:  func(p *EmergencyContact) any { return &p.CreateTime },
-	tblemergencycontact.UpdateId.Name:    func(p *EmergencyContact) any { return &p.UpdateId },
-	tblemergencycontact.UpdateTime.Name:  func(p *EmergencyContact) any { return &p.UpdateTime },
-	tblemergencycontact.ReceiveFlag.Name: func(p *EmergencyContact) any { return &p.ReceiveFlag },
+	tblemergencycontact.Email.Name:      func(p *EmergencyContact) any { return &p.Email },
+	tblemergencycontact.Name.Name:       func(p *EmergencyContact) any { return &p.Name },
+	tblemergencycontact.Phone.Name:      func(p *EmergencyContact) any { return &p.Phone },
+	tblemergencycontact.Relation.Name:   func(p *EmergencyContact) any { return &p.Relation },
+	tblemergencycontact.CreateId.Name:   func(p *EmergencyContact) any { return &p.CreateId },
+	tblemergencycontact.CreateTime.Name: func(p *EmergencyContact) any { return &p.CreateTime },
+	tblemergencycontact.ElderId.Name:    func(p *EmergencyContact) any { return &p.ElderId },
+	tblemergencycontact.Id.Name:         func(p *EmergencyContact) any { return &p.Id },
+	tblemergencycontact.TenantId.Name:   func(p *EmergencyContact) any { return &p.TenantId },
+	tblemergencycontact.UpdateId.Name:   func(p *EmergencyContact) any { return &p.UpdateId },
+	tblemergencycontact.UpdateTime.Name: func(p *EmergencyContact) any { return &p.UpdateTime },
+	tblemergencycontact.Status.Name:     func(p *EmergencyContact) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -244,26 +244,17 @@ func (p *EmergencyContact) RawAssignValues(d dialect.Dialect, args ...dialect.Fi
 
 // 定义字段到值检查和获取函数的映射
 var emergencycontactFieldToValueFunc = map[dialect.Field]func(*EmergencyContact) (any, bool){
+	tblemergencycontact.Email: func(p *EmergencyContact) (any, bool) {
+		return p.Email, p.Email == ""
+	},
 	tblemergencycontact.Name: func(p *EmergencyContact) (any, bool) {
 		return p.Name, p.Name == ""
 	},
 	tblemergencycontact.Phone: func(p *EmergencyContact) (any, bool) {
 		return p.Phone, p.Phone == ""
 	},
-	tblemergencycontact.Email: func(p *EmergencyContact) (any, bool) {
-		return p.Email, p.Email == ""
-	},
 	tblemergencycontact.Relation: func(p *EmergencyContact) (any, bool) {
 		return p.Relation, p.Relation == ""
-	},
-	tblemergencycontact.Id: func(p *EmergencyContact) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblemergencycontact.TenantId: func(p *EmergencyContact) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblemergencycontact.ElderId: func(p *EmergencyContact) (any, bool) {
-		return p.ElderId, p.ElderId == 0
 	},
 	tblemergencycontact.CreateId: func(p *EmergencyContact) (any, bool) {
 		return p.CreateId, p.CreateId == 0
@@ -271,14 +262,23 @@ var emergencycontactFieldToValueFunc = map[dialect.Field]func(*EmergencyContact)
 	tblemergencycontact.CreateTime: func(p *EmergencyContact) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tblemergencycontact.ElderId: func(p *EmergencyContact) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblemergencycontact.Id: func(p *EmergencyContact) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblemergencycontact.TenantId: func(p *EmergencyContact) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
 	tblemergencycontact.UpdateId: func(p *EmergencyContact) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tblemergencycontact.UpdateTime: func(p *EmergencyContact) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblemergencycontact.ReceiveFlag: func(p *EmergencyContact) (any, bool) {
-		return p.ReceiveFlag, p.ReceiveFlag == 0
+	tblemergencycontact.Status: func(p *EmergencyContact) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

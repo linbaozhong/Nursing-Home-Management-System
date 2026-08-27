@@ -10,48 +10,48 @@ const TableName = "warehouse_record"
 
 var (
 	Source        = dialect.Field{Name: "source", Json: "source", Table: "warehouse_record", Type: "types.String", IsRelation: false}
-	Id            = dialect.Field{Name: "id", Json: "id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
-	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
-	WarehouseId   = dialect.Field{Name: "warehouse_id", Json: "warehouse_id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
-	StaffId       = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
-	WarehouseDate = dialect.Field{Name: "warehouse_date", Json: "warehouse_date", Table: "warehouse_record", Type: "types.Time", IsRelation: false}
 	CreateId      = dialect.Field{Name: "create_id", Json: "create_id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
 	CreateTime    = dialect.Field{Name: "create_time", Json: "create_time", Table: "warehouse_record", Type: "types.Time", IsRelation: false}
+	Id            = dialect.Field{Name: "id", Json: "id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
+	StaffId       = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
+	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
 	UpdateId      = dialect.Field{Name: "update_id", Json: "update_id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
 	UpdateTime    = dialect.Field{Name: "update_time", Json: "update_time", Table: "warehouse_record", Type: "types.Time", IsRelation: false}
-	WarehouseFlag = dialect.Field{Name: "warehouse_flag", Json: "warehouse_flag", Table: "warehouse_record", Type: "types.Int8", IsRelation: false}
-	DelFlag       = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "warehouse_record", Type: "types.Int8", IsRelation: false}
+	WarehouseDate = dialect.Field{Name: "warehouse_date", Json: "warehouse_date", Table: "warehouse_record", Type: "types.Time", IsRelation: false}
+	WarehouseId   = dialect.Field{Name: "warehouse_id", Json: "warehouse_id", Table: "warehouse_record", Type: "types.BigInt", IsRelation: false}
+	State         = dialect.Field{Name: "state", Json: "state", Table: "warehouse_record", Type: "types.Int8", IsRelation: false}
+	Status        = dialect.Field{Name: "status", Json: "status", Table: "warehouse_record", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
 		Source,
-		Id,
-		TenantId,
-		WarehouseId,
-		StaffId,
-		WarehouseDate,
 		CreateId,
 		CreateTime,
+		Id,
+		StaffId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		WarehouseFlag,
-		DelFlag,
+		WarehouseDate,
+		WarehouseId,
+		State,
+		Status,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Source,
-		Id,
-		TenantId,
-		WarehouseId,
-		StaffId,
-		WarehouseDate,
 		CreateId,
 		CreateTime,
+		Id,
+		StaffId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		WarehouseFlag,
-		DelFlag,
+		WarehouseDate,
+		WarehouseId,
+		State,
+		Status,
 	}
 )

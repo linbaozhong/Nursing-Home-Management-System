@@ -27,21 +27,21 @@ func NewRetreatApply() *RetreatApply {
 
 // MarshalJSON
 func (p *RetreatApply) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(8 * 50)
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
+	write := types.NewJsonWriter(9 * 50)
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -49,8 +49,11 @@ func (p *RetreatApply) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.ApplyFlag != 0 {
-		write.WriteRaw("apply_flag", types.Marshal(p.ApplyFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
+	}
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -65,22 +68,24 @@ func (p *RetreatApply) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "apply_flag":
-			p.ApplyFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -102,14 +107,15 @@ func (p *RetreatApply) Free() {
 
 // Reset
 func (p *RetreatApply) Reset() {
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.ApplyFlag = 0
+	p.State = 0
+	p.Status = 0
 
 }
 
@@ -119,14 +125,15 @@ func (p *RetreatApply) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var retreatapplyFieldToPtrFunc = map[string]func(*RetreatApply) any{
-	tblretreatapply.Id.Name:         func(p *RetreatApply) any { return &p.Id },
-	tblretreatapply.TenantId.Name:   func(p *RetreatApply) any { return &p.TenantId },
-	tblretreatapply.ElderId.Name:    func(p *RetreatApply) any { return &p.ElderId },
 	tblretreatapply.CreateId.Name:   func(p *RetreatApply) any { return &p.CreateId },
 	tblretreatapply.CreateTime.Name: func(p *RetreatApply) any { return &p.CreateTime },
+	tblretreatapply.ElderId.Name:    func(p *RetreatApply) any { return &p.ElderId },
+	tblretreatapply.Id.Name:         func(p *RetreatApply) any { return &p.Id },
+	tblretreatapply.TenantId.Name:   func(p *RetreatApply) any { return &p.TenantId },
 	tblretreatapply.UpdateId.Name:   func(p *RetreatApply) any { return &p.UpdateId },
 	tblretreatapply.UpdateTime.Name: func(p *RetreatApply) any { return &p.UpdateTime },
-	tblretreatapply.ApplyFlag.Name:  func(p *RetreatApply) any { return &p.ApplyFlag },
+	tblretreatapply.State.Name:      func(p *RetreatApply) any { return &p.State },
+	tblretreatapply.Status.Name:     func(p *RetreatApply) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -216,20 +223,20 @@ func (p *RetreatApply) RawAssignValues(d dialect.Dialect, args ...dialect.Field)
 
 // 定义字段到值检查和获取函数的映射
 var retreatapplyFieldToValueFunc = map[dialect.Field]func(*RetreatApply) (any, bool){
-	tblretreatapply.Id: func(p *RetreatApply) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblretreatapply.TenantId: func(p *RetreatApply) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblretreatapply.ElderId: func(p *RetreatApply) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
 	tblretreatapply.CreateId: func(p *RetreatApply) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblretreatapply.CreateTime: func(p *RetreatApply) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblretreatapply.ElderId: func(p *RetreatApply) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblretreatapply.Id: func(p *RetreatApply) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblretreatapply.TenantId: func(p *RetreatApply) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblretreatapply.UpdateId: func(p *RetreatApply) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -237,8 +244,11 @@ var retreatapplyFieldToValueFunc = map[dialect.Field]func(*RetreatApply) (any, b
 	tblretreatapply.UpdateTime: func(p *RetreatApply) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblretreatapply.ApplyFlag: func(p *RetreatApply) (any, bool) {
-		return p.ApplyFlag, p.ApplyFlag == 0
+	tblretreatapply.State: func(p *RetreatApply) (any, bool) {
+		return p.State, p.State == 0
+	},
+	tblretreatapply.Status: func(p *RetreatApply) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

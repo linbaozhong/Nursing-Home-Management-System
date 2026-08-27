@@ -9,46 +9,46 @@ import (
 const TableName = "member"
 
 var (
-	Id          = dialect.Field{Name: "id", Json: "id", Table: "member", Type: "types.BigInt", IsRelation: false}
-	UserId      = dialect.Field{Name: "user_id", Json: "user_id", Table: "member", Type: "types.BigInt", IsRelation: false}
-	TenantId    = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "member", Type: "types.BigInt", IsRelation: false}
-	RoleId      = dialect.Field{Name: "role_id", Json: "role_id", Table: "member", Type: "types.BigInt", IsRelation: false}
 	Permissions = dialect.Field{Name: "permissions", Json: "permissions", Table: "member", Type: "types.String", IsRelation: false}
-	Status      = dialect.Field{Name: "status", Json: "status", Table: "member", Type: "types.Int8", IsRelation: false}
 	CreateId    = dialect.Field{Name: "create_id", Json: "create_id", Table: "member", Type: "types.BigInt", IsRelation: false}
 	CreateTime  = dialect.Field{Name: "create_time", Json: "create_time", Table: "member", Type: "types.Time", IsRelation: false}
+	Id          = dialect.Field{Name: "id", Json: "id", Table: "member", Type: "types.BigInt", IsRelation: false}
+	RoleId      = dialect.Field{Name: "role_id", Json: "role_id", Table: "member", Type: "types.BigInt", IsRelation: false}
+	TenantId    = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "member", Type: "types.BigInt", IsRelation: false}
 	UpdateId    = dialect.Field{Name: "update_id", Json: "update_id", Table: "member", Type: "types.BigInt", IsRelation: false}
 	UpdateTime  = dialect.Field{Name: "update_time", Json: "update_time", Table: "member", Type: "types.Time", IsRelation: false}
-	DelFlag     = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "member", Type: "types.Int8", IsRelation: false}
+	UserId      = dialect.Field{Name: "user_id", Json: "user_id", Table: "member", Type: "types.BigInt", IsRelation: false}
+	State       = dialect.Field{Name: "state", Json: "state", Table: "member", Type: "types.Int8", IsRelation: false}
+	Status      = dialect.Field{Name: "status", Json: "status", Table: "member", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Id,
-		UserId,
-		TenantId,
-		RoleId,
 		Permissions,
-		Status,
 		CreateId,
 		CreateTime,
+		Id,
+		RoleId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		DelFlag,
+		UserId,
+		State,
+		Status,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Id,
-		UserId,
-		TenantId,
-		RoleId,
 		Permissions,
-		Status,
 		CreateId,
 		CreateTime,
+		Id,
+		RoleId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		DelFlag,
+		UserId,
+		State,
+		Status,
 	}
 )

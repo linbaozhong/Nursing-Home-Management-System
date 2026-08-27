@@ -56,7 +56,7 @@ func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKe
 			tblorder.DineType,
 			tblorder.DeliverDishesDate,
 			tblorder.PayAmount,
-			tblorder.OrderFlag,
+			tblorder.Status,
 			tblelder.Name.As("elder_name"),
 			tblelder.Phone.As("elder_phone"),
 			tblstaff.Name.As("staff_name"),
@@ -187,7 +187,7 @@ func (s *orderService) SendOrder(ctx context.Context, in *dto.SendOrderReq, out 
 		return constant.ErrDataNotExist
 	}
 	if _, e = dao.Order(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tblorder.OrderFlag.Set(types.Int8(constant.YesNoYes)),
+		tblorder.Status.Set(types.Int8(constant.YesNoYes)),
 		tblorder.StaffId.Set(types.BigInt(*in.StaffID)),
 		tblorder.DeliverDishesDate.Set(types.Time{Time: *in.DeliverDishesDate}),
 	); e != nil {

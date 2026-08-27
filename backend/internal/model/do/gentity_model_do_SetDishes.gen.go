@@ -28,23 +28,23 @@ func NewSetDishes() *SetDishes {
 // MarshalJSON
 func (p *SetDishes) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(8 * 50)
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.SetId != 0 {
-		write.WriteRaw("set_id", types.Marshal(p.SetId))
-	}
-	if p.DishesId != 0 {
-		write.WriteRaw("dishes_id", types.Marshal(p.DishesId))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.DishesId != 0 {
+		write.WriteRaw("dishes_id", types.Marshal(p.DishesId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.SetId != 0 {
+		write.WriteRaw("set_id", types.Marshal(p.SetId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -65,18 +65,18 @@ func (p *SetDishes) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "set_id":
-			p.SetId = types.BigInt(value.Uint())
-		case "dishes_id":
-			p.DishesId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "dishes_id":
+			p.DishesId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "set_id":
+			p.SetId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -102,12 +102,12 @@ func (p *SetDishes) Free() {
 
 // Reset
 func (p *SetDishes) Reset() {
-	p.Id = 0
-	p.TenantId = 0
-	p.SetId = 0
-	p.DishesId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.DishesId = 0
+	p.Id = 0
+	p.SetId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 
@@ -119,12 +119,12 @@ func (p *SetDishes) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var setdishesFieldToPtrFunc = map[string]func(*SetDishes) any{
-	tblsetdishes.Id.Name:         func(p *SetDishes) any { return &p.Id },
-	tblsetdishes.TenantId.Name:   func(p *SetDishes) any { return &p.TenantId },
-	tblsetdishes.SetId.Name:      func(p *SetDishes) any { return &p.SetId },
-	tblsetdishes.DishesId.Name:   func(p *SetDishes) any { return &p.DishesId },
 	tblsetdishes.CreateId.Name:   func(p *SetDishes) any { return &p.CreateId },
 	tblsetdishes.CreateTime.Name: func(p *SetDishes) any { return &p.CreateTime },
+	tblsetdishes.DishesId.Name:   func(p *SetDishes) any { return &p.DishesId },
+	tblsetdishes.Id.Name:         func(p *SetDishes) any { return &p.Id },
+	tblsetdishes.SetId.Name:      func(p *SetDishes) any { return &p.SetId },
+	tblsetdishes.TenantId.Name:   func(p *SetDishes) any { return &p.TenantId },
 	tblsetdishes.UpdateId.Name:   func(p *SetDishes) any { return &p.UpdateId },
 	tblsetdishes.UpdateTime.Name: func(p *SetDishes) any { return &p.UpdateTime },
 }
@@ -216,23 +216,23 @@ func (p *SetDishes) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([
 
 // 定义字段到值检查和获取函数的映射
 var setdishesFieldToValueFunc = map[dialect.Field]func(*SetDishes) (any, bool){
-	tblsetdishes.Id: func(p *SetDishes) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblsetdishes.TenantId: func(p *SetDishes) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblsetdishes.SetId: func(p *SetDishes) (any, bool) {
-		return p.SetId, p.SetId == 0
-	},
-	tblsetdishes.DishesId: func(p *SetDishes) (any, bool) {
-		return p.DishesId, p.DishesId == 0
-	},
 	tblsetdishes.CreateId: func(p *SetDishes) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblsetdishes.CreateTime: func(p *SetDishes) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblsetdishes.DishesId: func(p *SetDishes) (any, bool) {
+		return p.DishesId, p.DishesId == 0
+	},
+	tblsetdishes.Id: func(p *SetDishes) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblsetdishes.SetId: func(p *SetDishes) (any, bool) {
+		return p.SetId, p.SetId == 0
+	},
+	tblsetdishes.TenantId: func(p *SetDishes) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblsetdishes.UpdateId: func(p *SetDishes) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

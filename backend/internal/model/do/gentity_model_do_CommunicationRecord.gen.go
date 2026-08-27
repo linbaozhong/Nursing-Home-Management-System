@@ -31,23 +31,23 @@ func (p *CommunicationRecord) MarshalJSON() ([]byte, error) {
 	if p.CommunicationRecord != "" {
 		write.WriteRaw("communication_record", types.Marshal(p.CommunicationRecord))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
-	if !p.RecordDate.IsZero() {
-		write.WriteRaw("record_date", types.Marshal(p.RecordDate))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.RecordDate.IsZero() {
+		write.WriteRaw("record_date", types.Marshal(p.RecordDate))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -55,8 +55,8 @@ func (p *CommunicationRecord) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -73,24 +73,24 @@ func (p *CommunicationRecord) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "communication_record":
 			p.CommunicationRecord = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "record_date":
-			p.RecordDate = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "record_date":
+			p.RecordDate = types.Time{Time: value.Time()}
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -113,15 +113,15 @@ func (p *CommunicationRecord) Free() {
 // Reset
 func (p *CommunicationRecord) Reset() {
 	p.CommunicationRecord = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
-	p.RecordDate = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.RecordDate = types.Time{}
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -132,15 +132,15 @@ func (p *CommunicationRecord) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var communicationrecordFieldToPtrFunc = map[string]func(*CommunicationRecord) any{
 	tblcommunicationrecord.CommunicationRecord.Name: func(p *CommunicationRecord) any { return &p.CommunicationRecord },
-	tblcommunicationrecord.Id.Name:                  func(p *CommunicationRecord) any { return &p.Id },
-	tblcommunicationrecord.TenantId.Name:            func(p *CommunicationRecord) any { return &p.TenantId },
-	tblcommunicationrecord.ElderId.Name:             func(p *CommunicationRecord) any { return &p.ElderId },
-	tblcommunicationrecord.RecordDate.Name:          func(p *CommunicationRecord) any { return &p.RecordDate },
 	tblcommunicationrecord.CreateId.Name:            func(p *CommunicationRecord) any { return &p.CreateId },
 	tblcommunicationrecord.CreateTime.Name:          func(p *CommunicationRecord) any { return &p.CreateTime },
+	tblcommunicationrecord.ElderId.Name:             func(p *CommunicationRecord) any { return &p.ElderId },
+	tblcommunicationrecord.Id.Name:                  func(p *CommunicationRecord) any { return &p.Id },
+	tblcommunicationrecord.RecordDate.Name:          func(p *CommunicationRecord) any { return &p.RecordDate },
+	tblcommunicationrecord.TenantId.Name:            func(p *CommunicationRecord) any { return &p.TenantId },
 	tblcommunicationrecord.UpdateId.Name:            func(p *CommunicationRecord) any { return &p.UpdateId },
 	tblcommunicationrecord.UpdateTime.Name:          func(p *CommunicationRecord) any { return &p.UpdateTime },
-	tblcommunicationrecord.DelFlag.Name:             func(p *CommunicationRecord) any { return &p.DelFlag },
+	tblcommunicationrecord.State.Name:               func(p *CommunicationRecord) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -233,23 +233,23 @@ var communicationrecordFieldToValueFunc = map[dialect.Field]func(*CommunicationR
 	tblcommunicationrecord.CommunicationRecord: func(p *CommunicationRecord) (any, bool) {
 		return p.CommunicationRecord, p.CommunicationRecord == ""
 	},
-	tblcommunicationrecord.Id: func(p *CommunicationRecord) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblcommunicationrecord.TenantId: func(p *CommunicationRecord) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblcommunicationrecord.ElderId: func(p *CommunicationRecord) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
-	tblcommunicationrecord.RecordDate: func(p *CommunicationRecord) (any, bool) {
-		return p.RecordDate, p.RecordDate.IsZero()
-	},
 	tblcommunicationrecord.CreateId: func(p *CommunicationRecord) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblcommunicationrecord.CreateTime: func(p *CommunicationRecord) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblcommunicationrecord.ElderId: func(p *CommunicationRecord) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblcommunicationrecord.Id: func(p *CommunicationRecord) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblcommunicationrecord.RecordDate: func(p *CommunicationRecord) (any, bool) {
+		return p.RecordDate, p.RecordDate.IsZero()
+	},
+	tblcommunicationrecord.TenantId: func(p *CommunicationRecord) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblcommunicationrecord.UpdateId: func(p *CommunicationRecord) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -257,8 +257,8 @@ var communicationrecordFieldToValueFunc = map[dialect.Field]func(*CommunicationR
 	tblcommunicationrecord.UpdateTime: func(p *CommunicationRecord) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblcommunicationrecord.DelFlag: func(p *CommunicationRecord) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblcommunicationrecord.State: func(p *CommunicationRecord) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

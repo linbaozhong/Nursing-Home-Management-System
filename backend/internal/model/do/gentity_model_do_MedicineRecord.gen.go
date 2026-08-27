@@ -31,26 +31,26 @@ func (p *MedicineRecord) MarshalJSON() ([]byte, error) {
 	if p.MedicineTime != "" {
 		write.WriteRaw("medicine_time", types.Marshal(p.MedicineTime))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
-	if p.DepositInfoId != 0 {
-		write.WriteRaw("deposit_info_id", types.Marshal(p.DepositInfoId))
-	}
-	if !p.MedicineDate.IsZero() {
-		write.WriteRaw("medicine_date", types.Marshal(p.MedicineDate))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.DepositInfoId != 0 {
+		write.WriteRaw("deposit_info_id", types.Marshal(p.DepositInfoId))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.MedicineDate.IsZero() {
+		write.WriteRaw("medicine_date", types.Marshal(p.MedicineDate))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -73,20 +73,20 @@ func (p *MedicineRecord) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "medicine_time":
 			p.MedicineTime = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "deposit_info_id":
-			p.DepositInfoId = types.BigInt(value.Uint())
-		case "medicine_date":
-			p.MedicineDate = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "deposit_info_id":
+			p.DepositInfoId = types.BigInt(value.Uint())
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "medicine_date":
+			p.MedicineDate = types.Time{Time: value.Time()}
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -113,13 +113,13 @@ func (p *MedicineRecord) Free() {
 // Reset
 func (p *MedicineRecord) Reset() {
 	p.MedicineTime = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
-	p.DepositInfoId = 0
-	p.MedicineDate = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.DepositInfoId = 0
+	p.ElderId = 0
+	p.Id = 0
+	p.MedicineDate = types.Time{}
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 
@@ -132,13 +132,13 @@ func (p *MedicineRecord) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var medicinerecordFieldToPtrFunc = map[string]func(*MedicineRecord) any{
 	tblmedicinerecord.MedicineTime.Name:  func(p *MedicineRecord) any { return &p.MedicineTime },
-	tblmedicinerecord.Id.Name:            func(p *MedicineRecord) any { return &p.Id },
-	tblmedicinerecord.TenantId.Name:      func(p *MedicineRecord) any { return &p.TenantId },
-	tblmedicinerecord.ElderId.Name:       func(p *MedicineRecord) any { return &p.ElderId },
-	tblmedicinerecord.DepositInfoId.Name: func(p *MedicineRecord) any { return &p.DepositInfoId },
-	tblmedicinerecord.MedicineDate.Name:  func(p *MedicineRecord) any { return &p.MedicineDate },
 	tblmedicinerecord.CreateId.Name:      func(p *MedicineRecord) any { return &p.CreateId },
 	tblmedicinerecord.CreateTime.Name:    func(p *MedicineRecord) any { return &p.CreateTime },
+	tblmedicinerecord.DepositInfoId.Name: func(p *MedicineRecord) any { return &p.DepositInfoId },
+	tblmedicinerecord.ElderId.Name:       func(p *MedicineRecord) any { return &p.ElderId },
+	tblmedicinerecord.Id.Name:            func(p *MedicineRecord) any { return &p.Id },
+	tblmedicinerecord.MedicineDate.Name:  func(p *MedicineRecord) any { return &p.MedicineDate },
+	tblmedicinerecord.TenantId.Name:      func(p *MedicineRecord) any { return &p.TenantId },
 	tblmedicinerecord.UpdateId.Name:      func(p *MedicineRecord) any { return &p.UpdateId },
 	tblmedicinerecord.UpdateTime.Name:    func(p *MedicineRecord) any { return &p.UpdateTime },
 }
@@ -233,26 +233,26 @@ var medicinerecordFieldToValueFunc = map[dialect.Field]func(*MedicineRecord) (an
 	tblmedicinerecord.MedicineTime: func(p *MedicineRecord) (any, bool) {
 		return p.MedicineTime, p.MedicineTime == ""
 	},
-	tblmedicinerecord.Id: func(p *MedicineRecord) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblmedicinerecord.TenantId: func(p *MedicineRecord) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblmedicinerecord.ElderId: func(p *MedicineRecord) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
-	tblmedicinerecord.DepositInfoId: func(p *MedicineRecord) (any, bool) {
-		return p.DepositInfoId, p.DepositInfoId == 0
-	},
-	tblmedicinerecord.MedicineDate: func(p *MedicineRecord) (any, bool) {
-		return p.MedicineDate, p.MedicineDate.IsZero()
-	},
 	tblmedicinerecord.CreateId: func(p *MedicineRecord) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblmedicinerecord.CreateTime: func(p *MedicineRecord) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblmedicinerecord.DepositInfoId: func(p *MedicineRecord) (any, bool) {
+		return p.DepositInfoId, p.DepositInfoId == 0
+	},
+	tblmedicinerecord.ElderId: func(p *MedicineRecord) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblmedicinerecord.Id: func(p *MedicineRecord) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblmedicinerecord.MedicineDate: func(p *MedicineRecord) (any, bool) {
+		return p.MedicineDate, p.MedicineDate.IsZero()
+	},
+	tblmedicinerecord.TenantId: func(p *MedicineRecord) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblmedicinerecord.UpdateId: func(p *MedicineRecord) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

@@ -31,17 +31,17 @@ func (p *ServiceType) MarshalJSON() ([]byte, error) {
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -49,8 +49,8 @@ func (p *ServiceType) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -67,20 +67,20 @@ func (p *ServiceType) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -103,13 +103,13 @@ func (p *ServiceType) Free() {
 // Reset
 func (p *ServiceType) Reset() {
 	p.Name = ""
-	p.Id = 0
-	p.TenantId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -120,13 +120,13 @@ func (p *ServiceType) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var servicetypeFieldToPtrFunc = map[string]func(*ServiceType) any{
 	tblservicetype.Name.Name:       func(p *ServiceType) any { return &p.Name },
-	tblservicetype.Id.Name:         func(p *ServiceType) any { return &p.Id },
-	tblservicetype.TenantId.Name:   func(p *ServiceType) any { return &p.TenantId },
 	tblservicetype.CreateId.Name:   func(p *ServiceType) any { return &p.CreateId },
 	tblservicetype.CreateTime.Name: func(p *ServiceType) any { return &p.CreateTime },
+	tblservicetype.Id.Name:         func(p *ServiceType) any { return &p.Id },
+	tblservicetype.TenantId.Name:   func(p *ServiceType) any { return &p.TenantId },
 	tblservicetype.UpdateId.Name:   func(p *ServiceType) any { return &p.UpdateId },
 	tblservicetype.UpdateTime.Name: func(p *ServiceType) any { return &p.UpdateTime },
-	tblservicetype.DelFlag.Name:    func(p *ServiceType) any { return &p.DelFlag },
+	tblservicetype.State.Name:      func(p *ServiceType) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -219,17 +219,17 @@ var servicetypeFieldToValueFunc = map[dialect.Field]func(*ServiceType) (any, boo
 	tblservicetype.Name: func(p *ServiceType) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tblservicetype.Id: func(p *ServiceType) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblservicetype.TenantId: func(p *ServiceType) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
 	tblservicetype.CreateId: func(p *ServiceType) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblservicetype.CreateTime: func(p *ServiceType) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblservicetype.Id: func(p *ServiceType) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblservicetype.TenantId: func(p *ServiceType) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblservicetype.UpdateId: func(p *ServiceType) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -237,8 +237,8 @@ var servicetypeFieldToValueFunc = map[dialect.Field]func(*ServiceType) (any, boo
 	tblservicetype.UpdateTime: func(p *ServiceType) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblservicetype.DelFlag: func(p *ServiceType) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblservicetype.State: func(p *ServiceType) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

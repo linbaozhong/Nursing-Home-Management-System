@@ -22,7 +22,7 @@ var RoomType = &roomtype{}
 // 对应 Java: RoomTypeServiceImpl.pageRoomTypeByKey -> RoomTypeFunc.listNotDelRoomType
 func (r *roomtype) PageRoomTypeByKey(ctx context.Context, in *dto.PageRoomTypeByKeyReq, out *[]dto.PageRoomTypeByKeyResp) error {
 	q := db.Table(tblroomtype.TableName).
-		Where(tblroomtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblroomtype.DelFlag.Eq(constant.YesNoNo))
+		Where(tblroomtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblroomtype.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.RoomTypeName != nil && *in.RoomTypeName != "" {
 		q.And(tblroomtype.Name.Like(*in.RoomTypeName))
 	}
@@ -59,7 +59,7 @@ func (r *roomtype) AddRoomType(ctx context.Context, in *dto.OperateRoomTypeReq, 
 	repeat, e := dao.RoomType(db).Exists(ctx,
 		tblroomtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblroomtype.Name.Eq(*in.Name),
-		tblroomtype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblroomtype.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -71,7 +71,7 @@ func (r *roomtype) AddRoomType(ctx context.Context, in *dto.OperateRoomTypeReq, 
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
 	bean.MonthPrice = types.Money(*in.MonthPrice)
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.State = types.Int8(constant.StateEnabled)
 	_, e = dao.RoomType(db).InsertOne(ctx, bean)
 	return e
 }
@@ -82,7 +82,7 @@ func (r *roomtype) EditRoomType(ctx context.Context, in *dto.OperateRoomTypeReq,
 	repeat, e := dao.RoomType(db).Exists(ctx,
 		tblroomtype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblroomtype.Name.Eq(*in.Name),
-		tblroomtype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblroomtype.State.NotEq(types.Int8(constant.StateDeleted)),
 		tblroomtype.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -104,7 +104,7 @@ func (r *roomtype) EditRoomType(ctx context.Context, in *dto.OperateRoomTypeReq,
 func (r *roomtype) DeleteRoomType(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	bean := do.NewRoomType()
 	bean.Id = types.BigInt(*in.ID)
-	bean.DelFlag = types.Int8(constant.YesNoYes)
+	bean.State = types.Int8(constant.StateDeleted)
 	_, e := dao.RoomType(db).UpdateOne(ctx, bean)
 	return e
 }

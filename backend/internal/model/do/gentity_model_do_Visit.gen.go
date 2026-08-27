@@ -27,7 +27,10 @@ func NewVisit() *Visit {
 
 // MarshalJSON
 func (p *Visit) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(15 * 50)
+	write := types.NewJsonWriter(16 * 50)
+	if p.IdCard != "" {
+		write.WriteRaw("id_card", types.Marshal(p.IdCard))
+	}
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
@@ -37,26 +40,23 @@ func (p *Visit) MarshalJSON() ([]byte, error) {
 	if p.Relation != "" {
 		write.WriteRaw("relation", types.Marshal(p.Relation))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
-	if !p.VisitTime.IsZero() {
-		write.WriteRaw("visit_date", types.Marshal(p.VisitTime))
-	}
-	if !p.LeaveTime.IsZero() {
-		write.WriteRaw("leave_date", types.Marshal(p.LeaveTime))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.LeaveTime.IsZero() {
+		write.WriteRaw("leave_time", types.Marshal(p.LeaveTime))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -64,14 +64,17 @@ func (p *Visit) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if !p.VisitTime.IsZero() {
+		write.WriteRaw("visit_time", types.Marshal(p.VisitTime))
+	}
 	if p.VisitNum != 0 {
 		write.WriteRaw("visit_num", types.Marshal(p.VisitNum))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
-	if p.VisitFlag != 0 {
-		write.WriteRaw("visit_flag", types.Marshal(p.VisitFlag))
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -86,36 +89,38 @@ func (p *Visit) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
+		case "id_card":
+			p.IdCard = types.String(value.Str)
 		case "name":
 			p.Name = types.String(value.Str)
 		case "phone":
 			p.Phone = types.String(value.Str)
 		case "relation":
 			p.Relation = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "visit_date":
-			p.VisitTime = types.Time{Time: value.Time()}
-		case "leave_date":
-			p.LeaveTime = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "leave_time":
+			p.LeaveTime = types.Time{Time: value.Time()}
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "visit_time":
+			p.VisitTime = types.Time{Time: value.Time()}
 		case "visit_num":
 			p.VisitNum = types.Int32(value.Int())
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
-		case "visit_flag":
-			p.VisitFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -137,21 +142,22 @@ func (p *Visit) Free() {
 
 // Reset
 func (p *Visit) Reset() {
+	p.IdCard = ""
 	p.Name = ""
 	p.Phone = ""
 	p.Relation = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
-	p.VisitTime = types.Time{}
-	p.LeaveTime = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.LeaveTime = types.Time{}
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.VisitTime = types.Time{}
 	p.VisitNum = 0
-	p.DelFlag = 0
-	p.VisitFlag = 0
+	p.State = 0
+	p.Status = 0
 
 }
 
@@ -161,21 +167,22 @@ func (p *Visit) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var visitFieldToPtrFunc = map[string]func(*Visit) any{
+	tblvisit.IdCard.Name:     func(p *Visit) any { return &p.IdCard },
 	tblvisit.Name.Name:       func(p *Visit) any { return &p.Name },
 	tblvisit.Phone.Name:      func(p *Visit) any { return &p.Phone },
 	tblvisit.Relation.Name:   func(p *Visit) any { return &p.Relation },
-	tblvisit.Id.Name:         func(p *Visit) any { return &p.Id },
-	tblvisit.TenantId.Name:   func(p *Visit) any { return &p.TenantId },
-	tblvisit.ElderId.Name:    func(p *Visit) any { return &p.ElderId },
-	tblvisit.VisitDate.Name:  func(p *Visit) any { return &p.VisitTime },
-	tblvisit.LeaveDate.Name:  func(p *Visit) any { return &p.LeaveTime },
 	tblvisit.CreateId.Name:   func(p *Visit) any { return &p.CreateId },
 	tblvisit.CreateTime.Name: func(p *Visit) any { return &p.CreateTime },
+	tblvisit.ElderId.Name:    func(p *Visit) any { return &p.ElderId },
+	tblvisit.Id.Name:         func(p *Visit) any { return &p.Id },
+	tblvisit.LeaveTime.Name:  func(p *Visit) any { return &p.LeaveTime },
+	tblvisit.TenantId.Name:   func(p *Visit) any { return &p.TenantId },
 	tblvisit.UpdateId.Name:   func(p *Visit) any { return &p.UpdateId },
 	tblvisit.UpdateTime.Name: func(p *Visit) any { return &p.UpdateTime },
+	tblvisit.VisitTime.Name:  func(p *Visit) any { return &p.VisitTime },
 	tblvisit.VisitNum.Name:   func(p *Visit) any { return &p.VisitNum },
-	tblvisit.DelFlag.Name:    func(p *Visit) any { return &p.DelFlag },
-	tblvisit.VisitFlag.Name:  func(p *Visit) any { return &p.VisitFlag },
+	tblvisit.State.Name:      func(p *Visit) any { return &p.State },
+	tblvisit.Status.Name:     func(p *Visit) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -265,6 +272,9 @@ func (p *Visit) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 
 // 定义字段到值检查和获取函数的映射
 var visitFieldToValueFunc = map[dialect.Field]func(*Visit) (any, bool){
+	tblvisit.IdCard: func(p *Visit) (any, bool) {
+		return p.IdCard, p.IdCard == ""
+	},
 	tblvisit.Name: func(p *Visit) (any, bool) {
 		return p.Name, p.Name == ""
 	},
@@ -274,26 +284,23 @@ var visitFieldToValueFunc = map[dialect.Field]func(*Visit) (any, bool){
 	tblvisit.Relation: func(p *Visit) (any, bool) {
 		return p.Relation, p.Relation == ""
 	},
-	tblvisit.Id: func(p *Visit) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblvisit.TenantId: func(p *Visit) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblvisit.ElderId: func(p *Visit) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
-	tblvisit.VisitDate: func(p *Visit) (any, bool) {
-		return p.VisitTime, p.VisitTime.IsZero()
-	},
-	tblvisit.LeaveDate: func(p *Visit) (any, bool) {
-		return p.LeaveTime, p.LeaveTime.IsZero()
-	},
 	tblvisit.CreateId: func(p *Visit) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblvisit.CreateTime: func(p *Visit) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblvisit.ElderId: func(p *Visit) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblvisit.Id: func(p *Visit) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblvisit.LeaveTime: func(p *Visit) (any, bool) {
+		return p.LeaveTime, p.LeaveTime.IsZero()
+	},
+	tblvisit.TenantId: func(p *Visit) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblvisit.UpdateId: func(p *Visit) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -301,14 +308,17 @@ var visitFieldToValueFunc = map[dialect.Field]func(*Visit) (any, bool){
 	tblvisit.UpdateTime: func(p *Visit) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
+	tblvisit.VisitTime: func(p *Visit) (any, bool) {
+		return p.VisitTime, p.VisitTime.IsZero()
+	},
 	tblvisit.VisitNum: func(p *Visit) (any, bool) {
 		return p.VisitNum, p.VisitNum == 0
 	},
-	tblvisit.DelFlag: func(p *Visit) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblvisit.State: func(p *Visit) (any, bool) {
+		return p.State, p.State == 0
 	},
-	tblvisit.VisitFlag: func(p *Visit) (any, bool) {
-		return p.VisitFlag, p.VisitFlag == 0
+	tblvisit.Status: func(p *Visit) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

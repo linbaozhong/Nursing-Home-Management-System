@@ -31,17 +31,17 @@ func (p *LabelType) MarshalJSON() ([]byte, error) {
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -49,8 +49,8 @@ func (p *LabelType) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -67,20 +67,20 @@ func (p *LabelType) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -103,13 +103,13 @@ func (p *LabelType) Free() {
 // Reset
 func (p *LabelType) Reset() {
 	p.Name = ""
-	p.Id = 0
-	p.TenantId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -120,13 +120,13 @@ func (p *LabelType) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var labeltypeFieldToPtrFunc = map[string]func(*LabelType) any{
 	tbllabeltype.Name.Name:       func(p *LabelType) any { return &p.Name },
-	tbllabeltype.Id.Name:         func(p *LabelType) any { return &p.Id },
-	tbllabeltype.TenantId.Name:   func(p *LabelType) any { return &p.TenantId },
 	tbllabeltype.CreateId.Name:   func(p *LabelType) any { return &p.CreateId },
 	tbllabeltype.CreateTime.Name: func(p *LabelType) any { return &p.CreateTime },
+	tbllabeltype.Id.Name:         func(p *LabelType) any { return &p.Id },
+	tbllabeltype.TenantId.Name:   func(p *LabelType) any { return &p.TenantId },
 	tbllabeltype.UpdateId.Name:   func(p *LabelType) any { return &p.UpdateId },
 	tbllabeltype.UpdateTime.Name: func(p *LabelType) any { return &p.UpdateTime },
-	tbllabeltype.DelFlag.Name:    func(p *LabelType) any { return &p.DelFlag },
+	tbllabeltype.State.Name:      func(p *LabelType) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -219,17 +219,17 @@ var labeltypeFieldToValueFunc = map[dialect.Field]func(*LabelType) (any, bool){
 	tbllabeltype.Name: func(p *LabelType) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tbllabeltype.Id: func(p *LabelType) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tbllabeltype.TenantId: func(p *LabelType) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
 	tbllabeltype.CreateId: func(p *LabelType) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tbllabeltype.CreateTime: func(p *LabelType) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tbllabeltype.Id: func(p *LabelType) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tbllabeltype.TenantId: func(p *LabelType) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tbllabeltype.UpdateId: func(p *LabelType) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -237,8 +237,8 @@ var labeltypeFieldToValueFunc = map[dialect.Field]func(*LabelType) (any, bool){
 	tbllabeltype.UpdateTime: func(p *LabelType) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tbllabeltype.DelFlag: func(p *LabelType) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tbllabeltype.State: func(p *LabelType) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

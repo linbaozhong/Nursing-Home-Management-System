@@ -9,55 +9,55 @@ import (
 const TableName = "nurse"
 
 var (
-	Rest         = dialect.Field{Name: "rest", Json: "rest", Table: "nurse", Type: "types.String", IsRelation: false}
-	TakeMedicine = dialect.Field{Name: "take_medicine", Json: "take_medicine", Table: "nurse", Type: "types.String", IsRelation: false}
-	Active       = dialect.Field{Name: "active", Json: "active", Table: "nurse", Type: "types.String", IsRelation: false}
-	Id           = dialect.Field{Name: "id", Json: "id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
-	TenantId     = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
-	ElderId      = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
-	StaffId      = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
-	NurseDate    = dialect.Field{Name: "nurse_date", Json: "nurse_date", Table: "nurse", Type: "types.Time", IsRelation: false}
-	CreateId     = dialect.Field{Name: "create_id", Json: "create_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
-	CreateTime   = dialect.Field{Name: "create_time", Json: "create_time", Table: "nurse", Type: "types.Time", IsRelation: false}
-	UpdateId     = dialect.Field{Name: "update_id", Json: "update_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
-	UpdateTime   = dialect.Field{Name: "update_time", Json: "update_time", Table: "nurse", Type: "types.Time", IsRelation: false}
-	CompleteFlag = dialect.Field{Name: "complete_flag", Json: "complete_flag", Table: "nurse", Type: "types.Int8", IsRelation: false}
-	DineFlag     = dialect.Field{Name: "dine_flag", Json: "dine_flag", Table: "nurse", Type: "types.Int8", IsRelation: false}
+	Active         = dialect.Field{Name: "active", Json: "active", Table: "nurse", Type: "types.String", IsRelation: false}
+	Rest           = dialect.Field{Name: "rest", Json: "rest", Table: "nurse", Type: "types.String", IsRelation: false}
+	TakeMedicine   = dialect.Field{Name: "take_medicine", Json: "take_medicine", Table: "nurse", Type: "types.String", IsRelation: false}
+	CreateId       = dialect.Field{Name: "create_id", Json: "create_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
+	CreateTime     = dialect.Field{Name: "create_time", Json: "create_time", Table: "nurse", Type: "types.Time", IsRelation: false}
+	ElderId        = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
+	Id             = dialect.Field{Name: "id", Json: "id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
+	NurseDate      = dialect.Field{Name: "nurse_date", Json: "nurse_date", Table: "nurse", Type: "types.Time", IsRelation: false}
+	StaffId        = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
+	TenantId       = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
+	UpdateId       = dialect.Field{Name: "update_id", Json: "update_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
+	UpdateTime     = dialect.Field{Name: "update_time", Json: "update_time", Table: "nurse", Type: "types.Time", IsRelation: false}
+	CompleteStatus = dialect.Field{Name: "complete_status", Json: "complete_status", Table: "nurse", Type: "types.Int8", IsRelation: false}
+	DineStatus     = dialect.Field{Name: "dine_status", Json: "dine_status", Table: "nurse", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
+		Active,
 		Rest,
 		TakeMedicine,
-		Active,
-		Id,
-		TenantId,
-		ElderId,
-		StaffId,
-		NurseDate,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		NurseDate,
+		StaffId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		CompleteFlag,
-		DineFlag,
+		CompleteStatus,
+		DineStatus,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
+		Active,
 		Rest,
 		TakeMedicine,
-		Active,
-		Id,
-		TenantId,
-		ElderId,
-		StaffId,
-		NurseDate,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		NurseDate,
+		StaffId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		CompleteFlag,
-		DineFlag,
+		CompleteStatus,
+		DineStatus,
 	}
 )

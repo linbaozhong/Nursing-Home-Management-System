@@ -31,20 +31,20 @@ func (p *DrugDeposit) MarshalJSON() ([]byte, error) {
 	if p.Mode != "" {
 		write.WriteRaw("mode", types.Marshal(p.Mode))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -52,11 +52,11 @@ func (p *DrugDeposit) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DepositFlag != 0 {
-		write.WriteRaw("deposit_flag", types.Marshal(p.DepositFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -73,24 +73,24 @@ func (p *DrugDeposit) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "mode":
 			p.Mode = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "deposit_flag":
-			p.DepositFlag = types.Int8(value.Int())
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -113,15 +113,15 @@ func (p *DrugDeposit) Free() {
 // Reset
 func (p *DrugDeposit) Reset() {
 	p.Mode = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DepositFlag = 0
-	p.DelFlag = 0
+	p.State = 0
+	p.Status = 0
 
 }
 
@@ -131,16 +131,16 @@ func (p *DrugDeposit) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var drugdepositFieldToPtrFunc = map[string]func(*DrugDeposit) any{
-	tbldrugdeposit.Mode.Name:        func(p *DrugDeposit) any { return &p.Mode },
-	tbldrugdeposit.Id.Name:          func(p *DrugDeposit) any { return &p.Id },
-	tbldrugdeposit.TenantId.Name:    func(p *DrugDeposit) any { return &p.TenantId },
-	tbldrugdeposit.ElderId.Name:     func(p *DrugDeposit) any { return &p.ElderId },
-	tbldrugdeposit.CreateId.Name:    func(p *DrugDeposit) any { return &p.CreateId },
-	tbldrugdeposit.CreateTime.Name:  func(p *DrugDeposit) any { return &p.CreateTime },
-	tbldrugdeposit.UpdateId.Name:    func(p *DrugDeposit) any { return &p.UpdateId },
-	tbldrugdeposit.UpdateTime.Name:  func(p *DrugDeposit) any { return &p.UpdateTime },
-	tbldrugdeposit.DepositFlag.Name: func(p *DrugDeposit) any { return &p.DepositFlag },
-	tbldrugdeposit.DelFlag.Name:     func(p *DrugDeposit) any { return &p.DelFlag },
+	tbldrugdeposit.Mode.Name:       func(p *DrugDeposit) any { return &p.Mode },
+	tbldrugdeposit.CreateId.Name:   func(p *DrugDeposit) any { return &p.CreateId },
+	tbldrugdeposit.CreateTime.Name: func(p *DrugDeposit) any { return &p.CreateTime },
+	tbldrugdeposit.ElderId.Name:    func(p *DrugDeposit) any { return &p.ElderId },
+	tbldrugdeposit.Id.Name:         func(p *DrugDeposit) any { return &p.Id },
+	tbldrugdeposit.TenantId.Name:   func(p *DrugDeposit) any { return &p.TenantId },
+	tbldrugdeposit.UpdateId.Name:   func(p *DrugDeposit) any { return &p.UpdateId },
+	tbldrugdeposit.UpdateTime.Name: func(p *DrugDeposit) any { return &p.UpdateTime },
+	tbldrugdeposit.State.Name:      func(p *DrugDeposit) any { return &p.State },
+	tbldrugdeposit.Status.Name:     func(p *DrugDeposit) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -233,20 +233,20 @@ var drugdepositFieldToValueFunc = map[dialect.Field]func(*DrugDeposit) (any, boo
 	tbldrugdeposit.Mode: func(p *DrugDeposit) (any, bool) {
 		return p.Mode, p.Mode == ""
 	},
-	tbldrugdeposit.Id: func(p *DrugDeposit) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tbldrugdeposit.TenantId: func(p *DrugDeposit) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tbldrugdeposit.ElderId: func(p *DrugDeposit) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
 	tbldrugdeposit.CreateId: func(p *DrugDeposit) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tbldrugdeposit.CreateTime: func(p *DrugDeposit) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tbldrugdeposit.ElderId: func(p *DrugDeposit) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tbldrugdeposit.Id: func(p *DrugDeposit) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tbldrugdeposit.TenantId: func(p *DrugDeposit) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tbldrugdeposit.UpdateId: func(p *DrugDeposit) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -254,11 +254,11 @@ var drugdepositFieldToValueFunc = map[dialect.Field]func(*DrugDeposit) (any, boo
 	tbldrugdeposit.UpdateTime: func(p *DrugDeposit) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tbldrugdeposit.DepositFlag: func(p *DrugDeposit) (any, bool) {
-		return p.DepositFlag, p.DepositFlag == 0
+	tbldrugdeposit.State: func(p *DrugDeposit) (any, bool) {
+		return p.State, p.State == 0
 	},
-	tbldrugdeposit.DelFlag: func(p *DrugDeposit) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tbldrugdeposit.Status: func(p *DrugDeposit) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

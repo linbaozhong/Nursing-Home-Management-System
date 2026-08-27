@@ -28,26 +28,20 @@ func NewMedicine() *Medicine {
 // MarshalJSON
 func (p *Medicine) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(12 * 50)
-	if p.Name != "" {
-		write.WriteRaw("name", types.Marshal(p.Name))
-	}
-	if p.Type != "" {
-		write.WriteRaw("type", types.Marshal(p.Type))
-	}
-	if p.Specification != "" {
-		write.WriteRaw("specification", types.Marshal(p.Specification))
-	}
 	if p.DosageForm != "" {
 		write.WriteRaw("dosage_form", types.Marshal(p.DosageForm))
 	}
 	if p.Manufacturer != "" {
 		write.WriteRaw("manufacturer", types.Marshal(p.Manufacturer))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
+	if p.Name != "" {
+		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	if p.Specification != "" {
+		write.WriteRaw("specification", types.Marshal(p.Specification))
+	}
+	if p.Type != "" {
+		write.WriteRaw("type", types.Marshal(p.Type))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -55,14 +49,20 @@ func (p *Medicine) MarshalJSON() ([]byte, error) {
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -77,30 +77,30 @@ func (p *Medicine) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "name":
-			p.Name = types.String(value.Str)
-		case "type":
-			p.Type = types.String(value.Str)
-		case "specification":
-			p.Specification = types.String(value.Str)
 		case "dosage_form":
 			p.DosageForm = types.String(value.Str)
 		case "manufacturer":
 			p.Manufacturer = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
+		case "name":
+			p.Name = types.String(value.Str)
+		case "specification":
+			p.Specification = types.String(value.Str)
+		case "type":
+			p.Type = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -122,18 +122,18 @@ func (p *Medicine) Free() {
 
 // Reset
 func (p *Medicine) Reset() {
-	p.Name = ""
-	p.Type = ""
-	p.Specification = ""
 	p.DosageForm = ""
 	p.Manufacturer = ""
-	p.Id = 0
-	p.TenantId = 0
+	p.Name = ""
+	p.Specification = ""
+	p.Type = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -143,18 +143,18 @@ func (p *Medicine) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var medicineFieldToPtrFunc = map[string]func(*Medicine) any{
-	tblmedicine.Name.Name:          func(p *Medicine) any { return &p.Name },
-	tblmedicine.Type.Name:          func(p *Medicine) any { return &p.Type },
-	tblmedicine.Specification.Name: func(p *Medicine) any { return &p.Specification },
 	tblmedicine.DosageForm.Name:    func(p *Medicine) any { return &p.DosageForm },
 	tblmedicine.Manufacturer.Name:  func(p *Medicine) any { return &p.Manufacturer },
-	tblmedicine.Id.Name:            func(p *Medicine) any { return &p.Id },
-	tblmedicine.TenantId.Name:      func(p *Medicine) any { return &p.TenantId },
+	tblmedicine.Name.Name:          func(p *Medicine) any { return &p.Name },
+	tblmedicine.Specification.Name: func(p *Medicine) any { return &p.Specification },
+	tblmedicine.Type.Name:          func(p *Medicine) any { return &p.Type },
 	tblmedicine.CreateId.Name:      func(p *Medicine) any { return &p.CreateId },
 	tblmedicine.CreateTime.Name:    func(p *Medicine) any { return &p.CreateTime },
+	tblmedicine.Id.Name:            func(p *Medicine) any { return &p.Id },
+	tblmedicine.TenantId.Name:      func(p *Medicine) any { return &p.TenantId },
 	tblmedicine.UpdateId.Name:      func(p *Medicine) any { return &p.UpdateId },
 	tblmedicine.UpdateTime.Name:    func(p *Medicine) any { return &p.UpdateTime },
-	tblmedicine.DelFlag.Name:       func(p *Medicine) any { return &p.DelFlag },
+	tblmedicine.State.Name:         func(p *Medicine) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -244,26 +244,20 @@ func (p *Medicine) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]
 
 // 定义字段到值检查和获取函数的映射
 var medicineFieldToValueFunc = map[dialect.Field]func(*Medicine) (any, bool){
-	tblmedicine.Name: func(p *Medicine) (any, bool) {
-		return p.Name, p.Name == ""
-	},
-	tblmedicine.Type: func(p *Medicine) (any, bool) {
-		return p.Type, p.Type == ""
-	},
-	tblmedicine.Specification: func(p *Medicine) (any, bool) {
-		return p.Specification, p.Specification == ""
-	},
 	tblmedicine.DosageForm: func(p *Medicine) (any, bool) {
 		return p.DosageForm, p.DosageForm == ""
 	},
 	tblmedicine.Manufacturer: func(p *Medicine) (any, bool) {
 		return p.Manufacturer, p.Manufacturer == ""
 	},
-	tblmedicine.Id: func(p *Medicine) (any, bool) {
-		return p.Id, p.Id == 0
+	tblmedicine.Name: func(p *Medicine) (any, bool) {
+		return p.Name, p.Name == ""
 	},
-	tblmedicine.TenantId: func(p *Medicine) (any, bool) {
-		return p.TenantId, p.TenantId == 0
+	tblmedicine.Specification: func(p *Medicine) (any, bool) {
+		return p.Specification, p.Specification == ""
+	},
+	tblmedicine.Type: func(p *Medicine) (any, bool) {
+		return p.Type, p.Type == ""
 	},
 	tblmedicine.CreateId: func(p *Medicine) (any, bool) {
 		return p.CreateId, p.CreateId == 0
@@ -271,14 +265,20 @@ var medicineFieldToValueFunc = map[dialect.Field]func(*Medicine) (any, bool){
 	tblmedicine.CreateTime: func(p *Medicine) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tblmedicine.Id: func(p *Medicine) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblmedicine.TenantId: func(p *Medicine) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
 	tblmedicine.UpdateId: func(p *Medicine) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tblmedicine.UpdateTime: func(p *Medicine) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblmedicine.DelFlag: func(p *Medicine) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblmedicine.State: func(p *Medicine) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

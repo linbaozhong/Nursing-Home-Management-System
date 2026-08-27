@@ -28,32 +28,11 @@ func NewNurseReserve() *NurseReserve {
 // MarshalJSON
 func (p *NurseReserve) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(16 * 50)
-	if p.ServiceName != "" {
-		write.WriteRaw("service_name", types.Marshal(p.ServiceName))
-	}
 	if p.ChargeMethod != "" {
 		write.WriteRaw("charge_method", types.Marshal(p.ChargeMethod))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
-	if p.StaffId != 0 {
-		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
-	}
-	if p.ServicePrice != 0 {
-		write.WriteRaw("service_price", types.Marshal(p.ServicePrice))
-	}
-	if p.PayAmount != 0 {
-		write.WriteRaw("pay_amount", types.Marshal(p.PayAmount))
-	}
-	if !p.NurseDate.IsZero() {
-		write.WriteRaw("nurse_date", types.Marshal(p.NurseDate))
+	if p.ServiceName != "" {
+		write.WriteRaw("service_name", types.Marshal(p.ServiceName))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -61,20 +40,41 @@ func (p *NurseReserve) MarshalJSON() ([]byte, error) {
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.NurseDate.IsZero() {
+		write.WriteRaw("nurse_date", types.Marshal(p.NurseDate))
+	}
+	if p.PayAmount != 0 {
+		write.WriteRaw("pay_amount", types.Marshal(p.PayAmount))
+	}
+	if p.ServicePrice != 0 {
+		write.WriteRaw("service_price", types.Marshal(p.ServicePrice))
+	}
+	if p.StaffId != 0 {
+		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.NeedDate != 0 {
-		write.WriteRaw("need_date", types.Marshal(p.NeedDate))
-	}
 	if p.Frequency != 0 {
 		write.WriteRaw("frequency", types.Marshal(p.Frequency))
 	}
-	if p.OrderFlag != 0 {
-		write.WriteRaw("order_flag", types.Marshal(p.OrderFlag))
+	if p.NeedDate != 0 {
+		write.WriteRaw("need_date", types.Marshal(p.NeedDate))
+	}
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -89,38 +89,38 @@ func (p *NurseReserve) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "service_name":
-			p.ServiceName = types.String(value.Str)
 		case "charge_method":
 			p.ChargeMethod = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "staff_id":
-			p.StaffId = types.BigInt(value.Uint())
-		case "service_price":
-			e = types.Unmarshal(value, &p.ServicePrice)
-		case "pay_amount":
-			e = types.Unmarshal(value, &p.PayAmount)
-		case "nurse_date":
-			p.NurseDate = types.Time{Time: value.Time()}
+		case "service_name":
+			p.ServiceName = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "nurse_date":
+			p.NurseDate = types.Time{Time: value.Time()}
+		case "pay_amount":
+			e = types.Unmarshal(value, &p.PayAmount)
+		case "service_price":
+			e = types.Unmarshal(value, &p.ServicePrice)
+		case "staff_id":
+			p.StaffId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "need_date":
-			p.NeedDate = types.Int32(value.Int())
 		case "frequency":
 			p.Frequency = types.Int32(value.Int())
-		case "order_flag":
-			p.OrderFlag = types.Int8(value.Int())
+		case "need_date":
+			p.NeedDate = types.Int32(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -142,22 +142,22 @@ func (p *NurseReserve) Free() {
 
 // Reset
 func (p *NurseReserve) Reset() {
-	p.ServiceName = ""
 	p.ChargeMethod = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
-	p.StaffId = 0
-	p.ServicePrice = 0
-	p.PayAmount = 0
-	p.NurseDate = types.Time{}
+	p.ServiceName = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.NurseDate = types.Time{}
+	p.PayAmount = 0
+	p.ServicePrice = 0
+	p.StaffId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.NeedDate = 0
 	p.Frequency = 0
-	p.OrderFlag = 0
+	p.NeedDate = 0
+	p.Status = 0
 
 }
 
@@ -167,22 +167,22 @@ func (p *NurseReserve) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var nursereserveFieldToPtrFunc = map[string]func(*NurseReserve) any{
-	tblnursereserve.ServiceName.Name:  func(p *NurseReserve) any { return &p.ServiceName },
 	tblnursereserve.ChargeMethod.Name: func(p *NurseReserve) any { return &p.ChargeMethod },
-	tblnursereserve.Id.Name:           func(p *NurseReserve) any { return &p.Id },
-	tblnursereserve.TenantId.Name:     func(p *NurseReserve) any { return &p.TenantId },
-	tblnursereserve.ElderId.Name:      func(p *NurseReserve) any { return &p.ElderId },
-	tblnursereserve.StaffId.Name:      func(p *NurseReserve) any { return &p.StaffId },
-	tblnursereserve.ServicePrice.Name: func(p *NurseReserve) any { return &p.ServicePrice },
-	tblnursereserve.PayAmount.Name:    func(p *NurseReserve) any { return &p.PayAmount },
-	tblnursereserve.NurseDate.Name:    func(p *NurseReserve) any { return &p.NurseDate },
+	tblnursereserve.ServiceName.Name:  func(p *NurseReserve) any { return &p.ServiceName },
 	tblnursereserve.CreateId.Name:     func(p *NurseReserve) any { return &p.CreateId },
 	tblnursereserve.CreateTime.Name:   func(p *NurseReserve) any { return &p.CreateTime },
+	tblnursereserve.ElderId.Name:      func(p *NurseReserve) any { return &p.ElderId },
+	tblnursereserve.Id.Name:           func(p *NurseReserve) any { return &p.Id },
+	tblnursereserve.NurseDate.Name:    func(p *NurseReserve) any { return &p.NurseDate },
+	tblnursereserve.PayAmount.Name:    func(p *NurseReserve) any { return &p.PayAmount },
+	tblnursereserve.ServicePrice.Name: func(p *NurseReserve) any { return &p.ServicePrice },
+	tblnursereserve.StaffId.Name:      func(p *NurseReserve) any { return &p.StaffId },
+	tblnursereserve.TenantId.Name:     func(p *NurseReserve) any { return &p.TenantId },
 	tblnursereserve.UpdateId.Name:     func(p *NurseReserve) any { return &p.UpdateId },
 	tblnursereserve.UpdateTime.Name:   func(p *NurseReserve) any { return &p.UpdateTime },
-	tblnursereserve.NeedDate.Name:     func(p *NurseReserve) any { return &p.NeedDate },
 	tblnursereserve.Frequency.Name:    func(p *NurseReserve) any { return &p.Frequency },
-	tblnursereserve.OrderFlag.Name:    func(p *NurseReserve) any { return &p.OrderFlag },
+	tblnursereserve.NeedDate.Name:     func(p *NurseReserve) any { return &p.NeedDate },
+	tblnursereserve.Status.Name:       func(p *NurseReserve) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -272,32 +272,11 @@ func (p *NurseReserve) RawAssignValues(d dialect.Dialect, args ...dialect.Field)
 
 // 定义字段到值检查和获取函数的映射
 var nursereserveFieldToValueFunc = map[dialect.Field]func(*NurseReserve) (any, bool){
-	tblnursereserve.ServiceName: func(p *NurseReserve) (any, bool) {
-		return p.ServiceName, p.ServiceName == ""
-	},
 	tblnursereserve.ChargeMethod: func(p *NurseReserve) (any, bool) {
 		return p.ChargeMethod, p.ChargeMethod == ""
 	},
-	tblnursereserve.Id: func(p *NurseReserve) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblnursereserve.TenantId: func(p *NurseReserve) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblnursereserve.ElderId: func(p *NurseReserve) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
-	tblnursereserve.StaffId: func(p *NurseReserve) (any, bool) {
-		return p.StaffId, p.StaffId == 0
-	},
-	tblnursereserve.ServicePrice: func(p *NurseReserve) (any, bool) {
-		return p.ServicePrice, p.ServicePrice == 0
-	},
-	tblnursereserve.PayAmount: func(p *NurseReserve) (any, bool) {
-		return p.PayAmount, p.PayAmount == 0
-	},
-	tblnursereserve.NurseDate: func(p *NurseReserve) (any, bool) {
-		return p.NurseDate, p.NurseDate.IsZero()
+	tblnursereserve.ServiceName: func(p *NurseReserve) (any, bool) {
+		return p.ServiceName, p.ServiceName == ""
 	},
 	tblnursereserve.CreateId: func(p *NurseReserve) (any, bool) {
 		return p.CreateId, p.CreateId == 0
@@ -305,20 +284,41 @@ var nursereserveFieldToValueFunc = map[dialect.Field]func(*NurseReserve) (any, b
 	tblnursereserve.CreateTime: func(p *NurseReserve) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tblnursereserve.ElderId: func(p *NurseReserve) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblnursereserve.Id: func(p *NurseReserve) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblnursereserve.NurseDate: func(p *NurseReserve) (any, bool) {
+		return p.NurseDate, p.NurseDate.IsZero()
+	},
+	tblnursereserve.PayAmount: func(p *NurseReserve) (any, bool) {
+		return p.PayAmount, p.PayAmount == 0
+	},
+	tblnursereserve.ServicePrice: func(p *NurseReserve) (any, bool) {
+		return p.ServicePrice, p.ServicePrice == 0
+	},
+	tblnursereserve.StaffId: func(p *NurseReserve) (any, bool) {
+		return p.StaffId, p.StaffId == 0
+	},
+	tblnursereserve.TenantId: func(p *NurseReserve) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
 	tblnursereserve.UpdateId: func(p *NurseReserve) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tblnursereserve.UpdateTime: func(p *NurseReserve) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblnursereserve.NeedDate: func(p *NurseReserve) (any, bool) {
-		return p.NeedDate, p.NeedDate == 0
-	},
 	tblnursereserve.Frequency: func(p *NurseReserve) (any, bool) {
 		return p.Frequency, p.Frequency == 0
 	},
-	tblnursereserve.OrderFlag: func(p *NurseReserve) (any, bool) {
-		return p.OrderFlag, p.OrderFlag == 0
+	tblnursereserve.NeedDate: func(p *NurseReserve) (any, bool) {
+		return p.NeedDate, p.NeedDate == 0
+	},
+	tblnursereserve.Status: func(p *NurseReserve) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

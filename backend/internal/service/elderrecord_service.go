@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"time"
 
 	"api/internal/constant"
 	"api/internal/lib"
@@ -49,7 +50,7 @@ func (e *elderrecord) PageElderRecordByKey(ctx context.Context, in *dto.PageElde
 			tblelder.Sex,
 			tblelder.Phone,
 			tblelder.Address,
-			tblelder.CheckFlag,
+			tblelder.Status,
 		).
 		Desc(tblelder.CreateTime).
 		Select().
@@ -85,7 +86,7 @@ func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out
 			tblemergencycontact.Phone,
 			tblemergencycontact.Email,
 			tblemergencycontact.Relation,
-			tblemergencycontact.ReceiveFlag,
+			tblemergencycontact.Status,
 		).
 		Where(tblemergencycontact.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblemergencycontact.ElderId.Eq(types.BigInt(*in.ID))).
 		Select().
@@ -100,7 +101,7 @@ func (e *elderrecord) GetElderRecordById(ctx context.Context, in *dto.IDReq, out
 			Phone:       conv.Ptr(ct.Phone.String()),
 			Email:       conv.Ptr(ct.Email.String()),
 			Relation:    conv.Ptr(ct.Relation.String()),
-			ReceiveFlag: conv.Ptr(ct.ReceiveFlag),
+			ReceiveFlag: conv.Ptr(ct.Status.Int8()),
 		})
 	}
 	return nil
@@ -117,7 +118,7 @@ func (e *elderrecord) AddElderRecord(ctx context.Context, in *dto.AddElderRecord
 	bean.Age = types.Int32(int32(*in.Age))
 	bean.Phone = types.String(*in.Phone)
 	bean.Address = types.String(*in.Address)
-	bean.CheckFlag = types.Int8(constant.ElderCheckEntered)
+	bean.Status = types.Int8(constant.ElderCheckEntered)
 	_, e2 := dao.Elder(db).InsertOne(ctx, bean)
 	if e2 != nil {
 		return e2
@@ -136,10 +137,10 @@ func (e *elderrecord) EditElderRecord(ctx context.Context, in *dto.EditElderReco
 	sets = append(sets, tblelder.Phone.Set(*in.Phone))
 	sets = append(sets, tblelder.Address.Set(*in.Address))
 	if in.NurseLevel != nil {
-		sets = append(sets, tblelder.NurseGradeId.Set(*in.NurseLevel))
+		sets = append(sets, tblelder.NursingGradeId.Set(*in.NurseLevel))
 	}
 	if in.CheckFlag != nil {
-		sets = append(sets, tblelder.CheckFlag.Set(*in.CheckFlag))
+		sets = append(sets, tblelder.Status.Set(*in.CheckFlag))
 	}
 	_, e2 := dao.Elder(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
 	return e2
@@ -164,31 +165,22 @@ func (e *elderrecord) AddEmergencyContact(ctx context.Context, in *dto.AddEmerge
 // EditEmergencyContact 编辑紧急联系人
 func (e *elderrecord) EditEmergencyContact(ctx context.Context, in *dto.EditEmergencyContactReq, out *dto.EmptyResp) error {
 	id := types.BigInt(*in.ID)
-	sets := make([]dialect.Field, 0, 3)
+	sets := make([]dialect.Setter, 0, 4)
 	if in.Name != nil {
-		sets = append(sets, tblemergencycontact.Name)
+		sets = append(sets, tblemergencycontact.Name.Set(types.String(*in.Name)))
 	}
 	if in.Phone != nil {
-		sets = append(sets, tblemergencycontact.Phone)
+		sets = append(sets, tblemergencycontact.Phone.Set(types.String(*in.Phone)))
 	}
 	if in.Relation != nil {
-		sets = append(sets, tblemergencycontact.Relation)
+		sets = append(sets, tblemergencycontact.Relation.Set(types.String(*in.Relation)))
 	}
 	if len(sets) == 0 {
 		return nil
 	}
-	bean := do.NewEmergencyContact()
-	if in.Name != nil {
-		bean.Name = types.String(*in.Name)
-	}
-	if in.Phone != nil {
-		bean.Phone = types.String(*in.Phone)
-	}
-	if in.Relation != nil {
-		bean.Relation = types.String(*in.Relation)
-	}
-	bean.UpdateId = types.BigInt(ctxUserID(ctx))
-	_, e2 := dao.EmergencyContact(db).UpdateById(ctx, id, sets, bean)
+	sets = append(sets, tblemergencycontact.UpdateId.Set(types.BigInt(ctxUserID(ctx))))
+	sets = append(sets, tblemergencycontact.UpdateTime.Set(types.Time{Time: time.Now()}))
+	_, e2 := dao.EmergencyContact(db).UpdateById(ctx, id, sets...)
 	return e2
 }
 
@@ -236,7 +228,7 @@ func (e *elderrecord) PageSearchElderByKey(ctx context.Context, in *dto.PageSear
 			tblelder.Sex,
 			tblelder.Phone,
 			tblelder.Address,
-			tblelder.CheckFlag,
+			tblelder.Status,
 		).
 		Desc(tblelder.CreateTime).
 		Select().
@@ -269,7 +261,7 @@ func (e *elderrecord) PageSearchEmergencyContactByKey(ctx context.Context, in *d
 func (e *elderrecord) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyReq, out *[]dto.ListLabelResp) error {
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tbllabel.TableName).
-		Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)))
+		Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.Key != nil && *in.Key != "" {
 		q.And(tbllabel.Name.Like(*in.Key))
 	}

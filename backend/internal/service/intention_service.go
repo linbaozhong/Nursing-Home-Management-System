@@ -23,7 +23,7 @@ type intentionService struct{}
 // PageIntentionByKey 分页查询意向客户（elder 表中 check_flag=意向）
 func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageIntentionByKeyReq, out *[]dto.PageIntentionByKeyResp) error {
 	q := db.Table(tblelder.TableName).
-		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.CheckFlag.Eq(types.Int8(constant.CheckIntention)))
+		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Status.Eq(types.Int8(constant.CheckIntention)))
 	if in.ElderName != nil {
 		q = q.And(tblelder.Name.Like(*in.ElderName))
 	}
@@ -59,7 +59,7 @@ func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageI
 	}
 	labelNameMap := make(map[int64]dto.IntentionLabelResp)
 	if len(allLabelIds) > 0 {
-		lbs, _, e := dao.Label(db).List(ctx, ace.Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.Id.In(allLabelIds...).And(tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)))).Cols(tbllabel.Id, tbllabel.Name, tbllabel.Color))
+		lbs, _, e := dao.Label(db).List(ctx, ace.Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.Id.In(allLabelIds...).And(tbllabel.State.NotEq(types.Int8(constant.StateDeleted)))).Cols(tbllabel.Id, tbllabel.Name, tbllabel.Color))
 		if e != nil {
 			return e
 		}
@@ -89,7 +89,7 @@ func (s *intentionService) PageIntentionByKey(ctx context.Context, in *dto.PageI
 
 // AddIntention 新增意向客户（写入 elder 表，check_flag=意向）
 func (s *intentionService) AddIntention(ctx context.Context, in *dto.AddIntentReq, out *dto.EmptyResp) error {
-	exist, has, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.IdNum.Eq(types.String(*in.IDNum))).Cols(tblelder.Id, tblelder.CheckFlag))
+	exist, has, e := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.IdNum.Eq(types.String(*in.IDNum))).Cols(tblelder.Id, tblelder.Status))
 	if e != nil {
 		return e
 	}
@@ -103,10 +103,10 @@ func (s *intentionService) AddIntention(ctx context.Context, in *dto.AddIntentRe
 		bean.Phone = types.String(*in.Phone)
 		bean.Address = types.String(*in.Address)
 		bean.Balance = types.Money(0)
-		bean.CheckFlag = types.Int8(constant.CheckIntention)
+		bean.Status = types.Int8(constant.CheckIntention)
 		_, e = dao.Elder(db).InsertOne(ctx, bean,
 			tblelder.TenantId, tblelder.Name, tblelder.IdNum, tblelder.Age, tblelder.Sex, tblelder.Phone,
-			tblelder.Address, tblelder.Balance, tblelder.CheckFlag, tblelder.CreateId, tblelder.CreateTime)
+			tblelder.Address, tblelder.Balance, tblelder.Status, tblelder.CreateId, tblelder.CreateTime)
 		if e != nil {
 			return e
 		}
@@ -155,7 +155,7 @@ func (s *intentionService) GetIntentById(ctx context.Context, in *dto.IDReq, out
 	for _, l := range labels {
 		ids = append(ids, l.LabelId)
 	}
-	lbs, _, e := dao.Label(db).List(ctx, ace.Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.Id.In(ids...).And(tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)))).Cols(tbllabel.Id, tbllabel.Name, tbllabel.Color))
+	lbs, _, e := dao.Label(db).List(ctx, ace.Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.Id.In(ids...).And(tbllabel.State.NotEq(types.Int8(constant.StateDeleted)))).Cols(tbllabel.Id, tbllabel.Name, tbllabel.Color))
 	if e != nil {
 		return e
 	}

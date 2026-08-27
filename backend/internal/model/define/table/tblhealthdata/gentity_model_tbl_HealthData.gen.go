@@ -11,31 +11,31 @@ const TableName = "health_data"
 var (
 	LeftEar                  = dialect.Field{Name: "left_ear", Json: "left_ear", Table: "health_data", Type: "types.String", IsRelation: false}
 	RightEar                 = dialect.Field{Name: "right_ear", Json: "right_ear", Table: "health_data", Type: "types.String", IsRelation: false}
-	Id                       = dialect.Field{Name: "id", Json: "id", Table: "health_data", Type: "types.BigInt", IsRelation: false}
-	TenantId                 = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "health_data", Type: "types.BigInt", IsRelation: false}
-	ElderId                  = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "health_data", Type: "types.BigInt", IsRelation: false}
-	Weight                   = dialect.Field{Name: "weight", Json: "weight", Table: "health_data", Type: "types.Float64", IsRelation: false}
-	Temperature              = dialect.Field{Name: "temperature", Json: "temperature", Table: "health_data", Type: "types.Float64", IsRelation: false}
-	LeftEye                  = dialect.Field{Name: "left_eye", Json: "left_eye", Table: "health_data", Type: "types.Float64", IsRelation: false}
-	RightEye                 = dialect.Field{Name: "right_eye", Json: "right_eye", Table: "health_data", Type: "types.Float64", IsRelation: false}
 	CreateId                 = dialect.Field{Name: "create_id", Json: "create_id", Table: "health_data", Type: "types.BigInt", IsRelation: false}
 	CreateTime               = dialect.Field{Name: "create_time", Json: "create_time", Table: "health_data", Type: "types.Time", IsRelation: false}
+	ElderId                  = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "health_data", Type: "types.BigInt", IsRelation: false}
+	Id                       = dialect.Field{Name: "id", Json: "id", Table: "health_data", Type: "types.BigInt", IsRelation: false}
+	LeftEye                  = dialect.Field{Name: "left_eye", Json: "left_eye", Table: "health_data", Type: "types.Float64", IsRelation: false}
+	RightEye                 = dialect.Field{Name: "right_eye", Json: "right_eye", Table: "health_data", Type: "types.Float64", IsRelation: false}
+	Temperature              = dialect.Field{Name: "temperature", Json: "temperature", Table: "health_data", Type: "types.Float64", IsRelation: false}
+	TenantId                 = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "health_data", Type: "types.BigInt", IsRelation: false}
 	UpdateId                 = dialect.Field{Name: "update_id", Json: "update_id", Table: "health_data", Type: "types.BigInt", IsRelation: false}
 	UpdateTime               = dialect.Field{Name: "update_time", Json: "update_time", Table: "health_data", Type: "types.Time", IsRelation: false}
-	Height                   = dialect.Field{Name: "height", Json: "height", Table: "health_data", Type: "types.Int32", IsRelation: false}
-	HeartRate                = dialect.Field{Name: "heart_rate", Json: "heart_rate", Table: "health_data", Type: "types.Int32", IsRelation: false}
-	SystolicBloodPressure    = dialect.Field{Name: "systolic_blood_pressure", Json: "systolic_blood_pressure", Table: "health_data", Type: "types.Int32", IsRelation: false}
+	Weight                   = dialect.Field{Name: "weight", Json: "weight", Table: "health_data", Type: "types.Float64", IsRelation: false}
+	BloodOxygenSaturation    = dialect.Field{Name: "blood_oxygen_saturation", Json: "blood_oxygen_saturation", Table: "health_data", Type: "types.Int32", IsRelation: false}
+	BodyFatPercentage        = dialect.Field{Name: "body_fat_percentage", Json: "body_fat_percentage", Table: "health_data", Type: "types.Int32", IsRelation: false}
+	Cholesterol              = dialect.Field{Name: "cholesterol", Json: "cholesterol", Table: "health_data", Type: "types.Int32", IsRelation: false}
 	DiastolicBloodPressure   = dialect.Field{Name: "diastolic_blood_pressure", Json: "diastolic_blood_pressure", Table: "health_data", Type: "types.Int32", IsRelation: false}
 	FastingBloodGlucose      = dialect.Field{Name: "fasting_blood_glucose", Json: "fasting_blood_glucose", Table: "health_data", Type: "types.Int32", IsRelation: false}
-	PostprandialBloodGlucose = dialect.Field{Name: "postprandial_blood_glucose", Json: "postprandial_blood_glucose", Table: "health_data", Type: "types.Int32", IsRelation: false}
-	BloodOxygenSaturation    = dialect.Field{Name: "blood_oxygen_saturation", Json: "blood_oxygen_saturation", Table: "health_data", Type: "types.Int32", IsRelation: false}
-	Cholesterol              = dialect.Field{Name: "cholesterol", Json: "cholesterol", Table: "health_data", Type: "types.Int32", IsRelation: false}
-	UricAcid                 = dialect.Field{Name: "uric_acid", Json: "uric_acid", Table: "health_data", Type: "types.Int32", IsRelation: false}
-	MusclePercentage         = dialect.Field{Name: "muscle_percentage", Json: "muscle_percentage", Table: "health_data", Type: "types.Int32", IsRelation: false}
-	BodyFatPercentage        = dialect.Field{Name: "body_fat_percentage", Json: "body_fat_percentage", Table: "health_data", Type: "types.Int32", IsRelation: false}
-	WaistCircumference       = dialect.Field{Name: "waist_circumference", Json: "waist_circumference", Table: "health_data", Type: "types.Int32", IsRelation: false}
+	HeartRate                = dialect.Field{Name: "heart_rate", Json: "heart_rate", Table: "health_data", Type: "types.Int32", IsRelation: false}
+	Height                   = dialect.Field{Name: "height", Json: "height", Table: "health_data", Type: "types.Int32", IsRelation: false}
 	HipCircumference         = dialect.Field{Name: "hip_circumference", Json: "hip_circumference", Table: "health_data", Type: "types.Int32", IsRelation: false}
 	MoistureContent          = dialect.Field{Name: "moisture_content", Json: "moisture_content", Table: "health_data", Type: "types.Int32", IsRelation: false}
+	MusclePercentage         = dialect.Field{Name: "muscle_percentage", Json: "muscle_percentage", Table: "health_data", Type: "types.Int32", IsRelation: false}
+	PostprandialBloodGlucose = dialect.Field{Name: "postprandial_blood_glucose", Json: "postprandial_blood_glucose", Table: "health_data", Type: "types.Int32", IsRelation: false}
+	SystolicBloodPressure    = dialect.Field{Name: "systolic_blood_pressure", Json: "systolic_blood_pressure", Table: "health_data", Type: "types.Int32", IsRelation: false}
+	UricAcid                 = dialect.Field{Name: "uric_acid", Json: "uric_acid", Table: "health_data", Type: "types.Int32", IsRelation: false}
+	WaistCircumference       = dialect.Field{Name: "waist_circumference", Json: "waist_circumference", Table: "health_data", Type: "types.Int32", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -43,60 +43,60 @@ var (
 	WritableFields = []dialect.Field{
 		LeftEar,
 		RightEar,
-		Id,
-		TenantId,
-		ElderId,
-		Weight,
-		Temperature,
-		LeftEye,
-		RightEye,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		LeftEye,
+		RightEye,
+		Temperature,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		Height,
-		HeartRate,
-		SystolicBloodPressure,
+		Weight,
+		BloodOxygenSaturation,
+		BodyFatPercentage,
+		Cholesterol,
 		DiastolicBloodPressure,
 		FastingBloodGlucose,
-		PostprandialBloodGlucose,
-		BloodOxygenSaturation,
-		Cholesterol,
-		UricAcid,
-		MusclePercentage,
-		BodyFatPercentage,
-		WaistCircumference,
+		HeartRate,
+		Height,
 		HipCircumference,
 		MoistureContent,
+		MusclePercentage,
+		PostprandialBloodGlucose,
+		SystolicBloodPressure,
+		UricAcid,
+		WaistCircumference,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		LeftEar,
 		RightEar,
-		Id,
-		TenantId,
-		ElderId,
-		Weight,
-		Temperature,
-		LeftEye,
-		RightEye,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		LeftEye,
+		RightEye,
+		Temperature,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		Height,
-		HeartRate,
-		SystolicBloodPressure,
+		Weight,
+		BloodOxygenSaturation,
+		BodyFatPercentage,
+		Cholesterol,
 		DiastolicBloodPressure,
 		FastingBloodGlucose,
-		PostprandialBloodGlucose,
-		BloodOxygenSaturation,
-		Cholesterol,
-		UricAcid,
-		MusclePercentage,
-		BodyFatPercentage,
-		WaistCircumference,
+		HeartRate,
+		Height,
 		HipCircumference,
 		MoistureContent,
+		MusclePercentage,
+		PostprandialBloodGlucose,
+		SystolicBloodPressure,
+		UricAcid,
+		WaistCircumference,
 	}
 )

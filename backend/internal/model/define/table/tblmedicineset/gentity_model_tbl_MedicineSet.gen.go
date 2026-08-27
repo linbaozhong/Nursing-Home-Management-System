@@ -10,11 +10,11 @@ const TableName = "medicine_set"
 
 var (
 	MedicineTime  = dialect.Field{Name: "medicine_time", Json: "medicine_time", Table: "medicine_set", Type: "types.String", IsRelation: false}
-	Id            = dialect.Field{Name: "id", Json: "id", Table: "medicine_set", Type: "types.BigInt", IsRelation: false}
-	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "medicine_set", Type: "types.BigInt", IsRelation: false}
-	DepositInfoId = dialect.Field{Name: "deposit_info_id", Json: "deposit_info_id", Table: "medicine_set", Type: "types.BigInt", IsRelation: false}
 	CreateId      = dialect.Field{Name: "create_id", Json: "create_id", Table: "medicine_set", Type: "types.BigInt", IsRelation: false}
 	CreateTime    = dialect.Field{Name: "create_time", Json: "create_time", Table: "medicine_set", Type: "types.Time", IsRelation: false}
+	DepositInfoId = dialect.Field{Name: "deposit_info_id", Json: "deposit_info_id", Table: "medicine_set", Type: "types.BigInt", IsRelation: false}
+	Id            = dialect.Field{Name: "id", Json: "id", Table: "medicine_set", Type: "types.BigInt", IsRelation: false}
+	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "medicine_set", Type: "types.BigInt", IsRelation: false}
 	UpdateId      = dialect.Field{Name: "update_id", Json: "update_id", Table: "medicine_set", Type: "types.BigInt", IsRelation: false}
 	UpdateTime    = dialect.Field{Name: "update_time", Json: "update_time", Table: "medicine_set", Type: "types.Time", IsRelation: false}
 	DayFrequency  = dialect.Field{Name: "day_frequency", Json: "day_frequency", Table: "medicine_set", Type: "types.Int32", IsRelation: false}
@@ -24,11 +24,11 @@ var (
 	// 可写列
 	WritableFields = []dialect.Field{
 		MedicineTime,
-		Id,
-		TenantId,
-		DepositInfoId,
 		CreateId,
 		CreateTime,
+		DepositInfoId,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 		DayFrequency,
@@ -36,11 +36,11 @@ var (
 	// 可读列
 	ReadableFields = []dialect.Field{
 		MedicineTime,
-		Id,
-		TenantId,
-		DepositInfoId,
 		CreateId,
 		CreateTime,
+		DepositInfoId,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 		DayFrequency,

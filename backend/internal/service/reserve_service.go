@@ -52,7 +52,7 @@ func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReser
 			tblreserve.ElderId,
 			tblreserve.Deposit,
 			tblreserve.DueDate,
-			tblreserve.ReserveFlag,
+			tblreserve.Status,
 			tblelder.Name.As("elder_name"),
 			tblstaff.Name.As("staff_name"),
 		).
@@ -91,7 +91,7 @@ func (s *reserveService) GetReserveById(ctx context.Context, in *dto.IDReq, out 
 	out.DueDate = rec.DueDate.Time()
 	out.Deposit = rec.Deposit.Float64()
 	out.Remark = rec.Remark.String()
-	out.ReserveFlag = constant.YesNo(rec.ReserveFlag).String()
+	out.ReserveFlag = constant.YesNo(rec.Status).String()
 	return nil
 }
 
@@ -120,7 +120,7 @@ func (s *reserveService) AddReserve(ctx context.Context, in *dto.AddReserveReq, 
 	}
 	// 预留床位
 	if in.BedID != nil {
-		_, _ = dao.Bed(db).UpdateById(ctx, types.BigInt(*in.BedID), tblbed.BedFlag.Set(types.Int8(constant.BedReserve)))
+		_, _ = dao.Bed(db).UpdateById(ctx, types.BigInt(*in.BedID), tblbed.Status.Set(types.Int8(constant.BedReserve)))
 		_, _ = dao.Elder(db).UpdateById(ctx, elderId, tblelder.BedId.Set(types.BigInt(*in.BedID)))
 	}
 	rec := &do.Reserve{
@@ -140,7 +140,7 @@ func (s *reserveService) AddReserve(ctx context.Context, in *dto.AddReserveReq, 
 		return e
 	}
 	// 老人状态置为预定
-	if _, e = dao.Elder(db).UpdateById(ctx, elderId, tblelder.CheckFlag.Set(types.Int8(constant.CheckReserve))); e != nil {
+	if _, e = dao.Elder(db).UpdateById(ctx, elderId, tblelder.Status.Set(types.Int8(constant.CheckReserve))); e != nil {
 		return e
 	}
 	return nil
@@ -190,7 +190,7 @@ func (s *reserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageS
 	}
 	var elders []do.Elder
 	has, e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
-		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.CheckFlag).
+		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.Status).
 		Desc(tblelder.Id).
 		Select().Gets(ctx, &elders)
 	if e != nil {
@@ -208,7 +208,7 @@ func (s *reserveService) PageSearchElderByKey(ctx context.Context, in *dto.PageS
 			Sex:       el.Sex.String(),
 			Phone:     el.Phone.String(),
 			Address:   el.Address.String(),
-			CheckFlag: constant.CheckStatus(el.CheckFlag).String(),
+			CheckFlag: constant.CheckStatus(el.Status).String(),
 		})
 	}
 	*out = res
@@ -254,7 +254,7 @@ func (s *reserveService) PageSearchStaffByKey(ctx context.Context, in *dto.PageS
 // GetBuildTree 查询楼栋-房间-床位树（供预定选择床位）
 func (s *reserveService) GetBuildTree(ctx context.Context, in *dto.IDReq, out *[]dto.BuildingResp) error {
 	buildings := make([]do.Building, 0)
-	has, e := dao.Building(db).List(ctx, ace.Where(tblbuilding.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblbuilding.DelFlag.Eq(types.Int8(constant.YesNoNo))))
+	has, e := dao.Building(db).List(ctx, ace.Where(tblbuilding.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblbuilding.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}
@@ -292,7 +292,7 @@ func (s *reserveService) GetReserveByReserveIdAndElderId(ctx context.Context, in
 	out.DueDate = rec.DueDate.Time()
 	out.Deposit = rec.Deposit.Float64()
 	out.Remark = rec.Remark.String()
-	out.ReserveFlag = constant.YesNo(rec.ReserveFlag).String()
+	out.ReserveFlag = constant.YesNo(rec.Status).String()
 	return nil
 }
 
@@ -306,7 +306,7 @@ func (s *reserveService) Refund(ctx context.Context, in *dto.IDReq, out *dto.Emp
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	if _, e = dao.Reserve(db).UpdateById(ctx, types.BigInt(*in.ID), tblreserve.ReserveFlag.Set(types.Int8(constant.YesNoYes))); e != nil {
+	if _, e = dao.Reserve(db).UpdateById(ctx, types.BigInt(*in.ID), tblreserve.Status.Set(types.Int8(constant.YesNoYes))); e != nil {
 		return e
 	}
 	// 释放老人床位并回退状态
@@ -314,10 +314,10 @@ func (s *reserveService) Refund(ctx context.Context, in *dto.IDReq, out *dto.Emp
 		el, found, eerr := dao.Elder(db).Get(ctx, ace.Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblelder.Id.Eq(rec.ElderId)))
 		if eerr == nil && found {
 			if el.BedId != 0 {
-				_, _ = dao.Bed(db).UpdateById(ctx, types.BigInt(el.BedId), tblbed.BedFlag.Set(types.Int8(constant.BedIdle)))
+				_, _ = dao.Bed(db).UpdateById(ctx, types.BigInt(el.BedId), tblbed.Status.Set(types.Int8(constant.BedIdle)))
 				_, _ = dao.Elder(db).UpdateById(ctx, types.BigInt(rec.ElderId), tblelder.BedId.Set(types.BigInt(0)))
 			}
-			_, _ = dao.Elder(db).UpdateById(ctx, types.BigInt(rec.ElderId), tblelder.CheckFlag.Set(types.Int8(constant.CheckIntention)))
+			_, _ = dao.Elder(db).UpdateById(ctx, types.BigInt(rec.ElderId), tblelder.Status.Set(types.Int8(constant.CheckIntention)))
 		}
 	}
 	return nil
@@ -326,9 +326,9 @@ func (s *reserveService) Refund(ctx context.Context, in *dto.IDReq, out *dto.Emp
 // ReserveExpireJob 预定到期定时任务（将到期未付的预定标记退款）
 func (s *reserveService) ReserveExpireJob(ctx context.Context, in *dto.EmptyReq, out *dto.EmptyResp) error {
 	now := time.Now()
-	_, e := dao.Reserve(db).Update(ctx, ace.Where(tblreserve.ReserveFlag.Eq(types.Int8(constant.YesNoNo))).
+	_, e := dao.Reserve(db).Update(ctx, ace.Where(tblreserve.Status.Eq(types.Int8(constant.YesNoNo))).
 		And(tblreserve.DueDate.Lte(types.Time{Time: now})).
-		Assign(ace.NewUpdateBuilder().Set(tblreserve.ReserveFlag.Set(types.Int8(constant.YesNoYes)))))
+		Assign(ace.NewUpdateBuilder().Set(tblreserve.Status.Set(types.Int8(constant.YesNoYes)))))
 	return e
 }
 

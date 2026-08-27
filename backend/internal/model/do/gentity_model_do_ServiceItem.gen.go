@@ -28,29 +28,29 @@ func NewServiceItem() *ServiceItem {
 // MarshalJSON
 func (p *ServiceItem) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(12 * 50)
-	if p.Name != "" {
-		write.WriteRaw("name", types.Marshal(p.Name))
-	}
 	if p.ChargeMethod != "" {
 		write.WriteRaw("charge_method", types.Marshal(p.ChargeMethod))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.TypeId != 0 {
-		write.WriteRaw("type_id", types.Marshal(p.TypeId))
-	}
-	if p.Price != 0 {
-		write.WriteRaw("price", types.Marshal(p.Price))
+	if p.Name != "" {
+		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.Price != 0 {
+		write.WriteRaw("price", types.Marshal(p.Price))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
+	if p.TypeId != 0 {
+		write.WriteRaw("type_id", types.Marshal(p.TypeId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -61,8 +61,8 @@ func (p *ServiceItem) MarshalJSON() ([]byte, error) {
 	if p.NeedDate != 0 {
 		write.WriteRaw("need_date", types.Marshal(p.NeedDate))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -77,30 +77,30 @@ func (p *ServiceItem) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "name":
-			p.Name = types.String(value.Str)
 		case "charge_method":
 			p.ChargeMethod = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "type_id":
-			p.TypeId = types.BigInt(value.Uint())
-		case "price":
-			e = types.Unmarshal(value, &p.Price)
+		case "name":
+			p.Name = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "price":
+			e = types.Unmarshal(value, &p.Price)
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
+		case "type_id":
+			p.TypeId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "need_date":
 			p.NeedDate = types.Int32(value.Int())
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -122,18 +122,18 @@ func (p *ServiceItem) Free() {
 
 // Reset
 func (p *ServiceItem) Reset() {
-	p.Name = ""
 	p.ChargeMethod = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.TypeId = 0
-	p.Price = 0
+	p.Name = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.Price = 0
+	p.TenantId = 0
+	p.TypeId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.NeedDate = 0
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -143,18 +143,18 @@ func (p *ServiceItem) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var serviceitemFieldToPtrFunc = map[string]func(*ServiceItem) any{
-	tblserviceitem.Name.Name:         func(p *ServiceItem) any { return &p.Name },
 	tblserviceitem.ChargeMethod.Name: func(p *ServiceItem) any { return &p.ChargeMethod },
-	tblserviceitem.Id.Name:           func(p *ServiceItem) any { return &p.Id },
-	tblserviceitem.TenantId.Name:     func(p *ServiceItem) any { return &p.TenantId },
-	tblserviceitem.TypeId.Name:       func(p *ServiceItem) any { return &p.TypeId },
-	tblserviceitem.Price.Name:        func(p *ServiceItem) any { return &p.Price },
+	tblserviceitem.Name.Name:         func(p *ServiceItem) any { return &p.Name },
 	tblserviceitem.CreateId.Name:     func(p *ServiceItem) any { return &p.CreateId },
 	tblserviceitem.CreateTime.Name:   func(p *ServiceItem) any { return &p.CreateTime },
+	tblserviceitem.Id.Name:           func(p *ServiceItem) any { return &p.Id },
+	tblserviceitem.Price.Name:        func(p *ServiceItem) any { return &p.Price },
+	tblserviceitem.TenantId.Name:     func(p *ServiceItem) any { return &p.TenantId },
+	tblserviceitem.TypeId.Name:       func(p *ServiceItem) any { return &p.TypeId },
 	tblserviceitem.UpdateId.Name:     func(p *ServiceItem) any { return &p.UpdateId },
 	tblserviceitem.UpdateTime.Name:   func(p *ServiceItem) any { return &p.UpdateTime },
 	tblserviceitem.NeedDate.Name:     func(p *ServiceItem) any { return &p.NeedDate },
-	tblserviceitem.DelFlag.Name:      func(p *ServiceItem) any { return &p.DelFlag },
+	tblserviceitem.State.Name:        func(p *ServiceItem) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -244,29 +244,29 @@ func (p *ServiceItem) RawAssignValues(d dialect.Dialect, args ...dialect.Field) 
 
 // 定义字段到值检查和获取函数的映射
 var serviceitemFieldToValueFunc = map[dialect.Field]func(*ServiceItem) (any, bool){
-	tblserviceitem.Name: func(p *ServiceItem) (any, bool) {
-		return p.Name, p.Name == ""
-	},
 	tblserviceitem.ChargeMethod: func(p *ServiceItem) (any, bool) {
 		return p.ChargeMethod, p.ChargeMethod == ""
 	},
-	tblserviceitem.Id: func(p *ServiceItem) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblserviceitem.TenantId: func(p *ServiceItem) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblserviceitem.TypeId: func(p *ServiceItem) (any, bool) {
-		return p.TypeId, p.TypeId == 0
-	},
-	tblserviceitem.Price: func(p *ServiceItem) (any, bool) {
-		return p.Price, p.Price == 0
+	tblserviceitem.Name: func(p *ServiceItem) (any, bool) {
+		return p.Name, p.Name == ""
 	},
 	tblserviceitem.CreateId: func(p *ServiceItem) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblserviceitem.CreateTime: func(p *ServiceItem) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblserviceitem.Id: func(p *ServiceItem) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblserviceitem.Price: func(p *ServiceItem) (any, bool) {
+		return p.Price, p.Price == 0
+	},
+	tblserviceitem.TenantId: func(p *ServiceItem) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
+	tblserviceitem.TypeId: func(p *ServiceItem) (any, bool) {
+		return p.TypeId, p.TypeId == 0
 	},
 	tblserviceitem.UpdateId: func(p *ServiceItem) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -277,8 +277,8 @@ var serviceitemFieldToValueFunc = map[dialect.Field]func(*ServiceItem) (any, boo
 	tblserviceitem.NeedDate: func(p *ServiceItem) (any, bool) {
 		return p.NeedDate, p.NeedDate == 0
 	},
-	tblserviceitem.DelFlag: func(p *ServiceItem) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblserviceitem.State: func(p *ServiceItem) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

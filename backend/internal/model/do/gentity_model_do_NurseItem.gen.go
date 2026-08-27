@@ -28,23 +28,23 @@ func NewNurseItem() *NurseItem {
 // MarshalJSON
 func (p *NurseItem) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(8 * 50)
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.GradeId != 0 {
-		write.WriteRaw("grade_id", types.Marshal(p.GradeId))
-	}
-	if p.ServiceId != 0 {
-		write.WriteRaw("service_id", types.Marshal(p.ServiceId))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.GradeId != 0 {
+		write.WriteRaw("grade_id", types.Marshal(p.GradeId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.ServiceId != 0 {
+		write.WriteRaw("service_id", types.Marshal(p.ServiceId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -65,18 +65,18 @@ func (p *NurseItem) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "grade_id":
-			p.GradeId = types.BigInt(value.Uint())
-		case "service_id":
-			p.ServiceId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "grade_id":
+			p.GradeId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "service_id":
+			p.ServiceId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -102,12 +102,12 @@ func (p *NurseItem) Free() {
 
 // Reset
 func (p *NurseItem) Reset() {
-	p.Id = 0
-	p.TenantId = 0
-	p.GradeId = 0
-	p.ServiceId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.GradeId = 0
+	p.Id = 0
+	p.ServiceId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 
@@ -119,12 +119,12 @@ func (p *NurseItem) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var nurseitemFieldToPtrFunc = map[string]func(*NurseItem) any{
-	tblnurseitem.Id.Name:         func(p *NurseItem) any { return &p.Id },
-	tblnurseitem.TenantId.Name:   func(p *NurseItem) any { return &p.TenantId },
-	tblnurseitem.GradeId.Name:    func(p *NurseItem) any { return &p.GradeId },
-	tblnurseitem.ServiceId.Name:  func(p *NurseItem) any { return &p.ServiceId },
 	tblnurseitem.CreateId.Name:   func(p *NurseItem) any { return &p.CreateId },
 	tblnurseitem.CreateTime.Name: func(p *NurseItem) any { return &p.CreateTime },
+	tblnurseitem.GradeId.Name:    func(p *NurseItem) any { return &p.GradeId },
+	tblnurseitem.Id.Name:         func(p *NurseItem) any { return &p.Id },
+	tblnurseitem.ServiceId.Name:  func(p *NurseItem) any { return &p.ServiceId },
+	tblnurseitem.TenantId.Name:   func(p *NurseItem) any { return &p.TenantId },
 	tblnurseitem.UpdateId.Name:   func(p *NurseItem) any { return &p.UpdateId },
 	tblnurseitem.UpdateTime.Name: func(p *NurseItem) any { return &p.UpdateTime },
 }
@@ -216,23 +216,23 @@ func (p *NurseItem) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([
 
 // 定义字段到值检查和获取函数的映射
 var nurseitemFieldToValueFunc = map[dialect.Field]func(*NurseItem) (any, bool){
-	tblnurseitem.Id: func(p *NurseItem) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblnurseitem.TenantId: func(p *NurseItem) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblnurseitem.GradeId: func(p *NurseItem) (any, bool) {
-		return p.GradeId, p.GradeId == 0
-	},
-	tblnurseitem.ServiceId: func(p *NurseItem) (any, bool) {
-		return p.ServiceId, p.ServiceId == 0
-	},
 	tblnurseitem.CreateId: func(p *NurseItem) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblnurseitem.CreateTime: func(p *NurseItem) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblnurseitem.GradeId: func(p *NurseItem) (any, bool) {
+		return p.GradeId, p.GradeId == 0
+	},
+	tblnurseitem.Id: func(p *NurseItem) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblnurseitem.ServiceId: func(p *NurseItem) (any, bool) {
+		return p.ServiceId, p.ServiceId == 0
+	},
+	tblnurseitem.TenantId: func(p *NurseItem) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblnurseitem.UpdateId: func(p *NurseItem) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

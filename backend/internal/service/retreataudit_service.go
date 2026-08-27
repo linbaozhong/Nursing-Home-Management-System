@@ -112,7 +112,7 @@ func (s *retreatAuditService) AuditRetreat(ctx context.Context, in *dto.AuditRet
 		return e
 	}
 	// 同步老人状态为退住审核
-	if _, e = dao.Elder(db).UpdateById(ctx, int64(apply.ElderId), tblelder.CheckFlag.Set(types.Int8(constant.CheckExitAudit))); e != nil {
+	if _, e = dao.Elder(db).UpdateById(ctx, int64(apply.ElderId), tblelder.Status.Set(types.Int8(constant.CheckExitAudit))); e != nil {
 		return e
 	}
 	return nil

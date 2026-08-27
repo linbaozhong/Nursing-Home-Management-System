@@ -9,20 +9,20 @@ import (
 const TableName = "health_info"
 
 var (
-	SelfCare       = dialect.Field{Name: "self_care", Json: "self_care", Table: "health_info", Type: "types.String", IsRelation: false}
-	TenantId       = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "health_info", Type: "types.BigInt", IsRelation: false}
-	Vision         = dialect.Field{Name: "vision", Json: "vision", Table: "health_info", Type: "types.String", IsRelation: false}
+	AllergyDrug    = dialect.Field{Name: "allergy_drug", Json: "allergy_drug", Table: "health_info", Type: "types.String", IsRelation: false}
+	Doctor         = dialect.Field{Name: "doctor", Json: "doctor", Table: "health_info", Type: "types.String", IsRelation: false}
 	Hearing        = dialect.Field{Name: "hearing", Json: "hearing", Table: "health_info", Type: "types.String", IsRelation: false}
 	Hospital       = dialect.Field{Name: "hospital", Json: "hospital", Table: "health_info", Type: "types.String", IsRelation: false}
-	Doctor         = dialect.Field{Name: "doctor", Json: "doctor", Table: "health_info", Type: "types.String", IsRelation: false}
-	Phone          = dialect.Field{Name: "phone", Json: "phone", Table: "health_info", Type: "types.String", IsRelation: false}
-	AllergyDrug    = dialect.Field{Name: "allergy_drug", Json: "allergy_drug", Table: "health_info", Type: "types.String", IsRelation: false}
-	MedicalHistory = dialect.Field{Name: "medical_history", Json: "medical_history", Table: "health_info", Type: "types.String", IsRelation: false}
 	MajorDisease   = dialect.Field{Name: "major_disease", Json: "major_disease", Table: "health_info", Type: "types.String", IsRelation: false}
-	Id             = dialect.Field{Name: "id", Json: "id", Table: "health_info", Type: "types.BigInt", IsRelation: false}
-	ElderId        = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "health_info", Type: "types.BigInt", IsRelation: false}
+	MedicalHistory = dialect.Field{Name: "medical_history", Json: "medical_history", Table: "health_info", Type: "types.String", IsRelation: false}
+	Phone          = dialect.Field{Name: "phone", Json: "phone", Table: "health_info", Type: "types.String", IsRelation: false}
+	SelfCare       = dialect.Field{Name: "self_care", Json: "self_care", Table: "health_info", Type: "types.String", IsRelation: false}
+	Vision         = dialect.Field{Name: "vision", Json: "vision", Table: "health_info", Type: "types.String", IsRelation: false}
 	CreateId       = dialect.Field{Name: "create_id", Json: "create_id", Table: "health_info", Type: "types.BigInt", IsRelation: false}
 	CreateTime     = dialect.Field{Name: "create_time", Json: "create_time", Table: "health_info", Type: "types.Time", IsRelation: false}
+	ElderId        = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "health_info", Type: "types.BigInt", IsRelation: false}
+	Id             = dialect.Field{Name: "id", Json: "id", Table: "health_info", Type: "types.BigInt", IsRelation: false}
+	TenantId       = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "health_info", Type: "types.BigInt", IsRelation: false}
 	UpdateId       = dialect.Field{Name: "update_id", Json: "update_id", Table: "health_info", Type: "types.BigInt", IsRelation: false}
 	UpdateTime     = dialect.Field{Name: "update_time", Json: "update_time", Table: "health_info", Type: "types.Time", IsRelation: false}
 	// 主键
@@ -30,39 +30,39 @@ var (
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		SelfCare,
-		TenantId,
-		Vision,
+		AllergyDrug,
+		Doctor,
 		Hearing,
 		Hospital,
-		Doctor,
-		Phone,
-		AllergyDrug,
-		MedicalHistory,
 		MajorDisease,
-		Id,
-		ElderId,
+		MedicalHistory,
+		Phone,
+		SelfCare,
+		Vision,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		SelfCare,
-		TenantId,
-		Vision,
+		AllergyDrug,
+		Doctor,
 		Hearing,
 		Hospital,
-		Doctor,
-		Phone,
-		AllergyDrug,
-		MedicalHistory,
 		MajorDisease,
-		Id,
-		ElderId,
+		MedicalHistory,
+		Phone,
+		SelfCare,
+		Vision,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 	}

@@ -27,12 +27,12 @@ func NewRole() *Role {
 
 // MarshalJSON
 func (p *Role) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(6 * 50)
+	write := types.NewJsonWriter(9 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
+	if p.Permissions != "" {
+		write.WriteRaw("permissions", types.Marshal(p.Permissions))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -40,11 +40,20 @@ func (p *Role) MarshalJSON() ([]byte, error) {
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.IsSystem != 0 {
+		write.WriteRaw("is_system", types.Marshal(p.IsSystem))
 	}
 	return write.Bytes(), nil
 }
@@ -61,16 +70,22 @@ func (p *Role) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
+		case "permissions":
+			p.Permissions = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			e = types.Unmarshal(value, &p.TenantId)
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "is_system":
+			p.IsSystem = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -93,11 +108,14 @@ func (p *Role) Free() {
 // Reset
 func (p *Role) Reset() {
 	p.Name = ""
-	p.Id = 0
+	p.Permissions = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.IsSystem = 0
 
 }
 
@@ -107,12 +125,15 @@ func (p *Role) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var roleFieldToPtrFunc = map[string]func(*Role) any{
-	tblrole.Name.Name:       func(p *Role) any { return &p.Name },
-	tblrole.Id.Name:         func(p *Role) any { return &p.Id },
-	tblrole.CreateId.Name:   func(p *Role) any { return &p.CreateId },
-	tblrole.CreateTime.Name: func(p *Role) any { return &p.CreateTime },
-	tblrole.UpdateId.Name:   func(p *Role) any { return &p.UpdateId },
-	tblrole.UpdateTime.Name: func(p *Role) any { return &p.UpdateTime },
+	tblrole.Name.Name:        func(p *Role) any { return &p.Name },
+	tblrole.Permissions.Name: func(p *Role) any { return &p.Permissions },
+	tblrole.CreateId.Name:    func(p *Role) any { return &p.CreateId },
+	tblrole.CreateTime.Name:  func(p *Role) any { return &p.CreateTime },
+	tblrole.Id.Name:          func(p *Role) any { return &p.Id },
+	tblrole.TenantId.Name:    func(p *Role) any { return &p.TenantId },
+	tblrole.UpdateId.Name:    func(p *Role) any { return &p.UpdateId },
+	tblrole.UpdateTime.Name:  func(p *Role) any { return &p.UpdateTime },
+	tblrole.IsSystem.Name:    func(p *Role) any { return &p.IsSystem },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -205,8 +226,8 @@ var roleFieldToValueFunc = map[dialect.Field]func(*Role) (any, bool){
 	tblrole.Name: func(p *Role) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tblrole.Id: func(p *Role) (any, bool) {
-		return p.Id, p.Id == 0
+	tblrole.Permissions: func(p *Role) (any, bool) {
+		return p.Permissions, p.Permissions == ""
 	},
 	tblrole.CreateId: func(p *Role) (any, bool) {
 		return p.CreateId, p.CreateId == 0
@@ -214,11 +235,20 @@ var roleFieldToValueFunc = map[dialect.Field]func(*Role) (any, bool){
 	tblrole.CreateTime: func(p *Role) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tblrole.Id: func(p *Role) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblrole.TenantId: func(p *Role) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
 	tblrole.UpdateId: func(p *Role) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tblrole.UpdateTime: func(p *Role) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblrole.IsSystem: func(p *Role) (any, bool) {
+		return p.IsSystem, p.IsSystem == 0
 	},
 }
 

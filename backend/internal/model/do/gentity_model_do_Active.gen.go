@@ -28,17 +28,17 @@ func NewActive() *Active {
 // MarshalJSON
 func (p *Active) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(16 * 50)
-	if p.Theme != "" {
-		write.WriteRaw("theme", types.Marshal(p.Theme))
+	if p.ActivePicture != "" {
+		write.WriteRaw("active_picture", types.Marshal(p.ActivePicture))
 	}
-	if p.Name != "" {
-		write.WriteRaw("name", types.Marshal(p.Name))
+	if p.Address != "" {
+		write.WriteRaw("address", types.Marshal(p.Address))
 	}
 	if p.Content != "" {
 		write.WriteRaw("content", types.Marshal(p.Content))
 	}
-	if p.Address != "" {
-		write.WriteRaw("address", types.Marshal(p.Address))
+	if p.Name != "" {
+		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Organizer != "" {
 		write.WriteRaw("organizer", types.Marshal(p.Organizer))
@@ -46,17 +46,8 @@ func (p *Active) MarshalJSON() ([]byte, error) {
 	if p.Phone != "" {
 		write.WriteRaw("phone", types.Marshal(p.Phone))
 	}
-	if p.ActivePicture != "" {
-		write.WriteRaw("active_picture", types.Marshal(p.ActivePicture))
-	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.TypeId != 0 {
-		write.WriteRaw("type_id", types.Marshal(p.TypeId))
+	if p.Theme != "" {
+		write.WriteRaw("theme", types.Marshal(p.Theme))
 	}
 	if !p.ActiveDate.IsZero() {
 		write.WriteRaw("active_date", types.Marshal(p.ActiveDate))
@@ -67,14 +58,23 @@ func (p *Active) MarshalJSON() ([]byte, error) {
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
+	if p.TypeId != 0 {
+		write.WriteRaw("type_id", types.Marshal(p.TypeId))
+	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -89,38 +89,38 @@ func (p *Active) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "theme":
-			p.Theme = types.String(value.Str)
-		case "name":
-			p.Name = types.String(value.Str)
-		case "content":
-			p.Content = types.String(value.Str)
+		case "active_picture":
+			p.ActivePicture = types.String(value.Str)
 		case "address":
 			p.Address = types.String(value.Str)
+		case "content":
+			p.Content = types.String(value.Str)
+		case "name":
+			p.Name = types.String(value.Str)
 		case "organizer":
 			p.Organizer = types.String(value.Str)
 		case "phone":
 			p.Phone = types.String(value.Str)
-		case "active_picture":
-			p.ActivePicture = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "type_id":
-			p.TypeId = types.BigInt(value.Uint())
+		case "theme":
+			p.Theme = types.String(value.Str)
 		case "active_date":
 			p.ActiveDate = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
+		case "type_id":
+			p.TypeId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -142,22 +142,22 @@ func (p *Active) Free() {
 
 // Reset
 func (p *Active) Reset() {
-	p.Theme = ""
-	p.Name = ""
-	p.Content = ""
+	p.ActivePicture = ""
 	p.Address = ""
+	p.Content = ""
+	p.Name = ""
 	p.Organizer = ""
 	p.Phone = ""
-	p.ActivePicture = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.TypeId = 0
+	p.Theme = ""
 	p.ActiveDate = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.TenantId = 0
+	p.TypeId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -167,22 +167,22 @@ func (p *Active) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var activeFieldToPtrFunc = map[string]func(*Active) any{
-	tblactive.Theme.Name:         func(p *Active) any { return &p.Theme },
-	tblactive.Name.Name:          func(p *Active) any { return &p.Name },
-	tblactive.Content.Name:       func(p *Active) any { return &p.Content },
+	tblactive.ActivePicture.Name: func(p *Active) any { return &p.ActivePicture },
 	tblactive.Address.Name:       func(p *Active) any { return &p.Address },
+	tblactive.Content.Name:       func(p *Active) any { return &p.Content },
+	tblactive.Name.Name:          func(p *Active) any { return &p.Name },
 	tblactive.Organizer.Name:     func(p *Active) any { return &p.Organizer },
 	tblactive.Phone.Name:         func(p *Active) any { return &p.Phone },
-	tblactive.ActivePicture.Name: func(p *Active) any { return &p.ActivePicture },
-	tblactive.Id.Name:            func(p *Active) any { return &p.Id },
-	tblactive.TenantId.Name:      func(p *Active) any { return &p.TenantId },
-	tblactive.TypeId.Name:        func(p *Active) any { return &p.TypeId },
+	tblactive.Theme.Name:         func(p *Active) any { return &p.Theme },
 	tblactive.ActiveDate.Name:    func(p *Active) any { return &p.ActiveDate },
 	tblactive.CreateId.Name:      func(p *Active) any { return &p.CreateId },
 	tblactive.CreateTime.Name:    func(p *Active) any { return &p.CreateTime },
+	tblactive.Id.Name:            func(p *Active) any { return &p.Id },
+	tblactive.TenantId.Name:      func(p *Active) any { return &p.TenantId },
+	tblactive.TypeId.Name:        func(p *Active) any { return &p.TypeId },
 	tblactive.UpdateId.Name:      func(p *Active) any { return &p.UpdateId },
 	tblactive.UpdateTime.Name:    func(p *Active) any { return &p.UpdateTime },
-	tblactive.DelFlag.Name:       func(p *Active) any { return &p.DelFlag },
+	tblactive.State.Name:         func(p *Active) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -272,17 +272,17 @@ func (p *Active) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]st
 
 // 定义字段到值检查和获取函数的映射
 var activeFieldToValueFunc = map[dialect.Field]func(*Active) (any, bool){
-	tblactive.Theme: func(p *Active) (any, bool) {
-		return p.Theme, p.Theme == ""
+	tblactive.ActivePicture: func(p *Active) (any, bool) {
+		return p.ActivePicture, p.ActivePicture == ""
 	},
-	tblactive.Name: func(p *Active) (any, bool) {
-		return p.Name, p.Name == ""
+	tblactive.Address: func(p *Active) (any, bool) {
+		return p.Address, p.Address == ""
 	},
 	tblactive.Content: func(p *Active) (any, bool) {
 		return p.Content, p.Content == ""
 	},
-	tblactive.Address: func(p *Active) (any, bool) {
-		return p.Address, p.Address == ""
+	tblactive.Name: func(p *Active) (any, bool) {
+		return p.Name, p.Name == ""
 	},
 	tblactive.Organizer: func(p *Active) (any, bool) {
 		return p.Organizer, p.Organizer == ""
@@ -290,17 +290,8 @@ var activeFieldToValueFunc = map[dialect.Field]func(*Active) (any, bool){
 	tblactive.Phone: func(p *Active) (any, bool) {
 		return p.Phone, p.Phone == ""
 	},
-	tblactive.ActivePicture: func(p *Active) (any, bool) {
-		return p.ActivePicture, p.ActivePicture == ""
-	},
-	tblactive.Id: func(p *Active) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblactive.TenantId: func(p *Active) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblactive.TypeId: func(p *Active) (any, bool) {
-		return p.TypeId, p.TypeId == 0
+	tblactive.Theme: func(p *Active) (any, bool) {
+		return p.Theme, p.Theme == ""
 	},
 	tblactive.ActiveDate: func(p *Active) (any, bool) {
 		return p.ActiveDate, p.ActiveDate.IsZero()
@@ -311,14 +302,23 @@ var activeFieldToValueFunc = map[dialect.Field]func(*Active) (any, bool){
 	tblactive.CreateTime: func(p *Active) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tblactive.Id: func(p *Active) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblactive.TenantId: func(p *Active) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
+	tblactive.TypeId: func(p *Active) (any, bool) {
+		return p.TypeId, p.TypeId == 0
+	},
 	tblactive.UpdateId: func(p *Active) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tblactive.UpdateTime: func(p *Active) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblactive.DelFlag: func(p *Active) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblactive.State: func(p *Active) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

@@ -27,27 +27,30 @@ func NewBed() *Bed {
 
 // MarshalJSON
 func (p *Bed) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(11 * 50)
+	write := types.NewJsonWriter(12 * 50)
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
-	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.RoomId != 0 {
-		write.WriteRaw("room_id", types.Marshal(p.RoomId))
-	}
-	if p.TypeID != 0 {
-		write.WriteRaw("bed_type_id", types.Marshal(p.TypeID))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.Price != 0 {
+		write.WriteRaw("price", types.Marshal(p.Price))
+	}
+	if p.RoomId != 0 {
+		write.WriteRaw("room_id", types.Marshal(p.RoomId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
+	if p.TypeId != 0 {
+		write.WriteRaw("type_id", types.Marshal(p.TypeId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -56,10 +59,10 @@ func (p *Bed) MarshalJSON() ([]byte, error) {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
 	if p.State != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.State))
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	if p.Status != 0 {
-		write.WriteRaw("bed_flag", types.Marshal(p.Status))
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -76,25 +79,27 @@ func (p *Bed) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "room_id":
-			p.RoomId = types.BigInt(value.Uint())
-		case "bed_type_id":
-			p.TypeID = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "price":
+			e = types.Unmarshal(value, &p.Price)
+		case "room_id":
+			p.RoomId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
+		case "type_id":
+			p.TypeId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
+		case "state":
 			p.State = types.Int8(value.Int())
-		case "bed_flag":
+		case "status":
 			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
@@ -118,12 +123,13 @@ func (p *Bed) Free() {
 // Reset
 func (p *Bed) Reset() {
 	p.Name = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.RoomId = 0
-	p.TypeID = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.Price = 0
+	p.RoomId = 0
+	p.TenantId = 0
+	p.TypeId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.State = 0
@@ -138,16 +144,17 @@ func (p *Bed) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var bedFieldToPtrFunc = map[string]func(*Bed) any{
 	tblbed.Name.Name:       func(p *Bed) any { return &p.Name },
-	tblbed.Id.Name:         func(p *Bed) any { return &p.Id },
-	tblbed.TenantId.Name:   func(p *Bed) any { return &p.TenantId },
-	tblbed.RoomId.Name:     func(p *Bed) any { return &p.RoomId },
-	tblbed.BedTypeID.Name:  func(p *Bed) any { return &p.TypeID },
 	tblbed.CreateId.Name:   func(p *Bed) any { return &p.CreateId },
 	tblbed.CreateTime.Name: func(p *Bed) any { return &p.CreateTime },
+	tblbed.Id.Name:         func(p *Bed) any { return &p.Id },
+	tblbed.Price.Name:      func(p *Bed) any { return &p.Price },
+	tblbed.RoomId.Name:     func(p *Bed) any { return &p.RoomId },
+	tblbed.TenantId.Name:   func(p *Bed) any { return &p.TenantId },
+	tblbed.TypeId.Name:     func(p *Bed) any { return &p.TypeId },
 	tblbed.UpdateId.Name:   func(p *Bed) any { return &p.UpdateId },
 	tblbed.UpdateTime.Name: func(p *Bed) any { return &p.UpdateTime },
-	tblbed.DelFlag.Name:    func(p *Bed) any { return &p.State },
-	tblbed.BedFlag.Name:    func(p *Bed) any { return &p.Status },
+	tblbed.State.Name:      func(p *Bed) any { return &p.State },
+	tblbed.Status.Name:     func(p *Bed) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -240,23 +247,26 @@ var bedFieldToValueFunc = map[dialect.Field]func(*Bed) (any, bool){
 	tblbed.Name: func(p *Bed) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tblbed.Id: func(p *Bed) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblbed.TenantId: func(p *Bed) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblbed.RoomId: func(p *Bed) (any, bool) {
-		return p.RoomId, p.RoomId == 0
-	},
-	tblbed.BedTypeID: func(p *Bed) (any, bool) {
-		return p.TypeID, p.TypeID == 0
-	},
 	tblbed.CreateId: func(p *Bed) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblbed.CreateTime: func(p *Bed) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblbed.Id: func(p *Bed) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblbed.Price: func(p *Bed) (any, bool) {
+		return p.Price, p.Price == 0
+	},
+	tblbed.RoomId: func(p *Bed) (any, bool) {
+		return p.RoomId, p.RoomId == 0
+	},
+	tblbed.TenantId: func(p *Bed) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
+	tblbed.TypeId: func(p *Bed) (any, bool) {
+		return p.TypeId, p.TypeId == 0
 	},
 	tblbed.UpdateId: func(p *Bed) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -264,10 +274,10 @@ var bedFieldToValueFunc = map[dialect.Field]func(*Bed) (any, bool){
 	tblbed.UpdateTime: func(p *Bed) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblbed.DelFlag: func(p *Bed) (any, bool) {
+	tblbed.State: func(p *Bed) (any, bool) {
 		return p.State, p.State == 0
 	},
-	tblbed.BedFlag: func(p *Bed) (any, bool) {
+	tblbed.Status: func(p *Bed) (any, bool) {
 		return p.Status, p.Status == 0
 	},
 }

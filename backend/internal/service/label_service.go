@@ -29,7 +29,7 @@ var Label = &label{}
 func (l *label) PageLabelByKey(ctx context.Context, in *dto.PageLabelByKeyReq, out *[]dto.PageLabelByKeyResp) error {
 	q := db.Table(tbllabel.TableName).
 		LeftJoin(tbllabel.TypeId, tbllabeltype.Id).
-		Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.DelFlag.Eq(constant.YesNoNo))
+		Where(tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.Key != nil && *in.Key != "" {
 		q.And(tbllabel.Name.Like(*in.Key))
 		q.Or(tbllabeltype.Name.Like(*in.Key))
@@ -80,7 +80,7 @@ func (l *label) AddLabel(ctx context.Context, in *dto.AddLabelReq, out *dto.Empt
 		tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbllabel.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tbllabel.Name.Eq(*in.Name),
-		tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tbllabel.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -89,7 +89,7 @@ func (l *label) AddLabel(ctx context.Context, in *dto.AddLabelReq, out *dto.Empt
 		return errors.New("标签名称已存在")
 	}
 	// 校验总数不超上限
-	total, e := dao.Label(db).Count(ctx, tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.DelFlag.Eq(constant.YesNoNo))
+	total, e := dao.Label(db).Count(ctx, tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.State.NotEq(types.Int8(constant.StateDeleted)))
 	if e != nil {
 		return e
 	}
@@ -119,7 +119,7 @@ func (l *label) EditLabel(ctx context.Context, in *dto.EditLabelReq, out *dto.Em
 		tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbllabel.TypeId.Eq(types.BigInt(*in.TypeID)),
 		tbllabel.Name.Eq(*in.Name),
-		tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tbllabel.State.NotEq(types.Int8(constant.StateDeleted)),
 		tbllabel.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -128,7 +128,7 @@ func (l *label) EditLabel(ctx context.Context, in *dto.EditLabelReq, out *dto.Em
 	if repeat {
 		return errors.New("标签名称已存在")
 	}
-	total, e := dao.Label(db).Count(ctx, tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.DelFlag.Eq(constant.YesNoNo))
+	total, e := dao.Label(db).Count(ctx, tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabel.State.NotEq(types.Int8(constant.StateDeleted)))
 	if e != nil {
 		return e
 	}
@@ -155,7 +155,7 @@ func (l *label) DeleteLabel(ctx context.Context, in *dto.IDReq, out *dto.EmptyRe
 // 对应 Java: LabelServiceImpl.pageLabelTypeByKey -> LabelTypeFunc.listLabelTypeByKey
 func (l *label) PageLabelType(ctx context.Context, in *dto.PageLabelTypeByKeyReq, out *[]dto.PageLabelTypeResp) error {
 	q := db.Table(tbllabeltype.TableName).
-		Where(tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabeltype.DelFlag.Eq(constant.YesNoNo))
+		Where(tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabeltype.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.Name != nil && *in.Name != "" {
 		q.And(tbllabeltype.Name.Like(*in.Name))
 	}
@@ -192,7 +192,7 @@ func (l *label) AddLabelType(ctx context.Context, in *dto.AddLabelTypeReq, out *
 	repeat, e := dao.LabelType(db).Exists(ctx,
 		tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbllabeltype.Name.Eq(*in.Name),
-		tbllabeltype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tbllabeltype.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -200,7 +200,7 @@ func (l *label) AddLabelType(ctx context.Context, in *dto.AddLabelTypeReq, out *
 	if repeat {
 		return errors.New("标签类型名称已存在")
 	}
-	total, e := dao.LabelType(db).Count(ctx, tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabeltype.DelFlag.Eq(constant.YesNoNo))
+	total, e := dao.LabelType(db).Count(ctx, tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabeltype.State.NotEq(types.Int8(constant.StateDeleted)))
 	if e != nil {
 		return e
 	}
@@ -220,7 +220,7 @@ func (l *label) EditLabelType(ctx context.Context, in *dto.EditLabelTypeReq, out
 	repeat, e := dao.LabelType(db).Exists(ctx,
 		tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbllabeltype.Name.Eq(*in.Name),
-		tbllabeltype.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tbllabeltype.State.NotEq(types.Int8(constant.StateDeleted)),
 		tbllabeltype.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -229,7 +229,7 @@ func (l *label) EditLabelType(ctx context.Context, in *dto.EditLabelTypeReq, out
 	if repeat {
 		return errors.New("标签类型名称已存在")
 	}
-	total, e := dao.LabelType(db).Count(ctx, tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabeltype.DelFlag.Eq(constant.YesNoNo))
+	total, e := dao.LabelType(db).Count(ctx, tbllabeltype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbllabeltype.State.NotEq(types.Int8(constant.StateDeleted)))
 	if e != nil {
 		return e
 	}
@@ -249,7 +249,7 @@ func (l *label) DeleteLabelType(ctx context.Context, in *dto.IDReq, out *dto.Emp
 	hasChild, e := dao.Label(db).Exists(ctx,
 		tbllabel.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tbllabel.TypeId.Eq(types.BigInt(*in.ID)),
-		tbllabel.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tbllabel.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e

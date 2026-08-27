@@ -28,32 +28,32 @@ func NewOutboundMaterial() *OutboundMaterial {
 // MarshalJSON
 func (p *OutboundMaterial) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(10 * 50)
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.OutboundRecordId != 0 {
-		write.WriteRaw("outbound_record_id", types.Marshal(p.OutboundRecordId))
-	}
-	if p.WarehouseMaterialId != 0 {
-		write.WriteRaw("warehouse_material_id", types.Marshal(p.WarehouseMaterialId))
-	}
-	if p.MaterialId != 0 {
-		write.WriteRaw("material_id", types.Marshal(p.MaterialId))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.MaterialId != 0 {
+		write.WriteRaw("material_id", types.Marshal(p.MaterialId))
+	}
+	if p.OutboundRecordId != 0 {
+		write.WriteRaw("outbound_record_id", types.Marshal(p.OutboundRecordId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.WarehouseMaterialId != 0 {
+		write.WriteRaw("warehouse_material_id", types.Marshal(p.WarehouseMaterialId))
 	}
 	if p.OutboundNum != 0 {
 		write.WriteRaw("outbound_num", types.Marshal(p.OutboundNum))
@@ -71,24 +71,24 @@ func (p *OutboundMaterial) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "outbound_record_id":
-			p.OutboundRecordId = types.BigInt(value.Uint())
-		case "warehouse_material_id":
-			p.WarehouseMaterialId = types.BigInt(value.Uint())
-		case "material_id":
-			p.MaterialId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "material_id":
+			p.MaterialId = types.BigInt(value.Uint())
+		case "outbound_record_id":
+			p.OutboundRecordId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "warehouse_material_id":
+			p.WarehouseMaterialId = types.BigInt(value.Uint())
 		case "outbound_num":
 			p.OutboundNum = types.Int32(value.Int())
 		}
@@ -112,15 +112,15 @@ func (p *OutboundMaterial) Free() {
 
 // Reset
 func (p *OutboundMaterial) Reset() {
-	p.Id = 0
-	p.TenantId = 0
-	p.OutboundRecordId = 0
-	p.WarehouseMaterialId = 0
-	p.MaterialId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.MaterialId = 0
+	p.OutboundRecordId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.WarehouseMaterialId = 0
 	p.OutboundNum = 0
 
 }
@@ -131,15 +131,15 @@ func (p *OutboundMaterial) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var outboundmaterialFieldToPtrFunc = map[string]func(*OutboundMaterial) any{
-	tbloutboundmaterial.Id.Name:                  func(p *OutboundMaterial) any { return &p.Id },
-	tbloutboundmaterial.TenantId.Name:            func(p *OutboundMaterial) any { return &p.TenantId },
-	tbloutboundmaterial.OutboundRecordId.Name:    func(p *OutboundMaterial) any { return &p.OutboundRecordId },
-	tbloutboundmaterial.WarehouseMaterialId.Name: func(p *OutboundMaterial) any { return &p.WarehouseMaterialId },
-	tbloutboundmaterial.MaterialId.Name:          func(p *OutboundMaterial) any { return &p.MaterialId },
 	tbloutboundmaterial.CreateId.Name:            func(p *OutboundMaterial) any { return &p.CreateId },
 	tbloutboundmaterial.CreateTime.Name:          func(p *OutboundMaterial) any { return &p.CreateTime },
+	tbloutboundmaterial.Id.Name:                  func(p *OutboundMaterial) any { return &p.Id },
+	tbloutboundmaterial.MaterialId.Name:          func(p *OutboundMaterial) any { return &p.MaterialId },
+	tbloutboundmaterial.OutboundRecordId.Name:    func(p *OutboundMaterial) any { return &p.OutboundRecordId },
+	tbloutboundmaterial.TenantId.Name:            func(p *OutboundMaterial) any { return &p.TenantId },
 	tbloutboundmaterial.UpdateId.Name:            func(p *OutboundMaterial) any { return &p.UpdateId },
 	tbloutboundmaterial.UpdateTime.Name:          func(p *OutboundMaterial) any { return &p.UpdateTime },
+	tbloutboundmaterial.WarehouseMaterialId.Name: func(p *OutboundMaterial) any { return &p.WarehouseMaterialId },
 	tbloutboundmaterial.OutboundNum.Name:         func(p *OutboundMaterial) any { return &p.OutboundNum },
 }
 
@@ -230,32 +230,32 @@ func (p *OutboundMaterial) RawAssignValues(d dialect.Dialect, args ...dialect.Fi
 
 // 定义字段到值检查和获取函数的映射
 var outboundmaterialFieldToValueFunc = map[dialect.Field]func(*OutboundMaterial) (any, bool){
-	tbloutboundmaterial.Id: func(p *OutboundMaterial) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tbloutboundmaterial.TenantId: func(p *OutboundMaterial) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tbloutboundmaterial.OutboundRecordId: func(p *OutboundMaterial) (any, bool) {
-		return p.OutboundRecordId, p.OutboundRecordId == 0
-	},
-	tbloutboundmaterial.WarehouseMaterialId: func(p *OutboundMaterial) (any, bool) {
-		return p.WarehouseMaterialId, p.WarehouseMaterialId == 0
-	},
-	tbloutboundmaterial.MaterialId: func(p *OutboundMaterial) (any, bool) {
-		return p.MaterialId, p.MaterialId == 0
-	},
 	tbloutboundmaterial.CreateId: func(p *OutboundMaterial) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tbloutboundmaterial.CreateTime: func(p *OutboundMaterial) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tbloutboundmaterial.Id: func(p *OutboundMaterial) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tbloutboundmaterial.MaterialId: func(p *OutboundMaterial) (any, bool) {
+		return p.MaterialId, p.MaterialId == 0
+	},
+	tbloutboundmaterial.OutboundRecordId: func(p *OutboundMaterial) (any, bool) {
+		return p.OutboundRecordId, p.OutboundRecordId == 0
+	},
+	tbloutboundmaterial.TenantId: func(p *OutboundMaterial) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
 	tbloutboundmaterial.UpdateId: func(p *OutboundMaterial) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tbloutboundmaterial.UpdateTime: func(p *OutboundMaterial) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tbloutboundmaterial.WarehouseMaterialId: func(p *OutboundMaterial) (any, bool) {
+		return p.WarehouseMaterialId, p.WarehouseMaterialId == 0
 	},
 	tbloutboundmaterial.OutboundNum: func(p *OutboundMaterial) (any, bool) {
 		return p.OutboundNum, p.OutboundNum == 0

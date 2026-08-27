@@ -9,11 +9,11 @@ import (
 const TableName = "role_auth"
 
 var (
-	Id         = dialect.Field{Name: "id", Json: "id", Table: "role_auth", Type: "types.BigInt", IsRelation: false}
-	RoleId     = dialect.Field{Name: "role_id", Json: "role_id", Table: "role_auth", Type: "types.BigInt", IsRelation: false}
 	AuthId     = dialect.Field{Name: "auth_id", Json: "auth_id", Table: "role_auth", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "role_auth", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "role_auth", Type: "types.Time", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "role_auth", Type: "types.BigInt", IsRelation: false}
+	RoleId     = dialect.Field{Name: "role_id", Json: "role_id", Table: "role_auth", Type: "types.BigInt", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "role_auth", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "role_auth", Type: "types.Time", IsRelation: false}
 	// 主键
@@ -21,21 +21,21 @@ var (
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Id,
-		RoleId,
 		AuthId,
 		CreateId,
 		CreateTime,
+		Id,
+		RoleId,
 		UpdateId,
 		UpdateTime,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Id,
-		RoleId,
 		AuthId,
 		CreateId,
 		CreateTime,
+		Id,
+		RoleId,
 		UpdateId,
 		UpdateTime,
 	}

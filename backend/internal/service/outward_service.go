@@ -26,7 +26,7 @@ func (o *outward) PageOutwardByKey(ctx context.Context, in *dto.PageOutwardByKey
 	clampPage(in.PageNum, in.PageSize)
 	q := db.Table(tbloutward.TableName).
 		RightJoin(tbloutward.ElderId, tblelder.Id).
-		Where(tbloutward.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutward.DelFlag.Eq(constant.YesNoNo))
+		Where(tbloutward.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutward.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.ElderName != nil && *in.ElderName != "" {
 		q.And(tblelder.Name.Like(*in.ElderName))
 	}
@@ -85,7 +85,7 @@ func (o *outward) AddOutward(ctx context.Context, in *dto.AddOutwardReq, out *dt
 		ace.Where(
 			tbloutward.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tbloutward.ElderId.Eq(types.BigInt(*in.ElderID))).
-			And(tbloutward.DelFlag.Eq(constant.YesNoNo)),
+			And(tbloutward.State.NotEq(types.Int8(constant.StateDeleted))),
 	)
 	if e != nil {
 		return e
@@ -101,7 +101,7 @@ func (o *outward) AddOutward(ctx context.Context, in *dto.AddOutwardReq, out *dt
 	bean.ChaperoneType = types.String(*in.ChaperoneType)
 	bean.OutwardDate = types.Time{Time: *in.OutwardDate}
 	bean.PlanReturnDate = types.Time{Time: *in.PlanReturnDate}
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.State = types.Int8(constant.StateEnabled)
 	_, e = dao.Outward(db).InsertOne(ctx, bean)
 	return e
 }
@@ -139,7 +139,7 @@ func (o *outward) EditOutward(ctx context.Context, in *dto.EditOutwardReq, out *
 // 对应 Java: OutwardServiceImpl.deleteOutward
 func (o *outward) DeleteOutward(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	_, e := dao.Outward(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tbloutward.DelFlag.Set(types.Int8(constant.YesNoYes)),
+		tbloutward.State.Set(types.Int8(constant.StateDeleted)),
 	)
 	return e
 }
@@ -153,7 +153,7 @@ func (o *outward) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchEl
 		db.Table(tbloutward.TableName).
 			Cols(tbloutward.ElderId).
 			Where(tbloutward.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
-				tbloutward.DelFlag.Eq(constant.YesNoNo)),
+				tbloutward.State.NotEq(types.Int8(constant.StateDeleted))),
 	)
 	if e != nil {
 		return e
@@ -164,7 +164,7 @@ func (o *outward) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchEl
 
 	q := db.Table(tblelder.TableName).
 		Where(tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
-			tblelder.CheckFlag.In(
+			tblelder.Status.In(
 				types.Int8(constant.CheckEnter),
 				types.Int8(constant.CheckExitAudit),
 			))

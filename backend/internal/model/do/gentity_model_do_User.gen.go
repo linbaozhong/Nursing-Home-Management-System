@@ -28,16 +28,36 @@ func NewUser() *User {
 // MarshalJSON
 func (p *User) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(10 * 50)
-	write.WriteRaw("id", types.Marshal(p.Id))
-	write.WriteRaw("union_id", types.Marshal(p.UnionId))
-	write.WriteRaw("openid", types.Marshal(p.Openid))
-	write.WriteRaw("phone", types.Marshal(p.Phone))
-	write.WriteRaw("pass", types.Marshal(p.Pass))
-	write.WriteRaw("name", types.Marshal(p.Name))
-	write.WriteRaw("avator", types.Marshal(p.Avator))
-	write.WriteRaw("create_time", types.Marshal(p.CreateTime))
-	write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
-	write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.Avator != "" {
+		write.WriteRaw("avator", types.Marshal(p.Avator))
+	}
+	if p.Name != "" {
+		write.WriteRaw("name", types.Marshal(p.Name))
+	}
+	if p.Openid != "" {
+		write.WriteRaw("openid", types.Marshal(p.Openid))
+	}
+	if p.Pass != "" {
+		write.WriteRaw("pass", types.Marshal(p.Pass))
+	}
+	if p.Phone != "" {
+		write.WriteRaw("phone", types.Marshal(p.Phone))
+	}
+	if p.UnionId != "" {
+		write.WriteRaw("union_id", types.Marshal(p.UnionId))
+	}
+	if !p.CreateTime.IsZero() {
+		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.UpdateTime.IsZero() {
+		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
+	}
 	return write.Bytes(), nil
 }
 
@@ -51,26 +71,26 @@ func (p *User) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "union_id":
-			p.UnionId = types.String(value.Str)
-		case "openid":
-			p.Openid = types.String(value.Str)
-		case "phone":
-			p.Phone = types.String(value.Str)
-		case "pass":
-			p.Pass = types.String(value.Str)
-		case "name":
-			p.Name = types.String(value.Str)
 		case "avator":
 			p.Avator = types.String(value.Str)
+		case "name":
+			p.Name = types.String(value.Str)
+		case "openid":
+			p.Openid = types.String(value.Str)
+		case "pass":
+			p.Pass = types.String(value.Str)
+		case "phone":
+			p.Phone = types.String(value.Str)
+		case "union_id":
+			p.UnionId = types.String(value.Str)
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -92,16 +112,16 @@ func (p *User) Free() {
 
 // Reset
 func (p *User) Reset() {
-	p.Id = 0
-	p.UnionId = ""
-	p.Openid = ""
-	p.Phone = ""
-	p.Pass = ""
-	p.Name = ""
 	p.Avator = ""
+	p.Name = ""
+	p.Openid = ""
+	p.Pass = ""
+	p.Phone = ""
+	p.UnionId = ""
 	p.CreateTime = types.Time{}
+	p.Id = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -111,16 +131,16 @@ func (p *User) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var userFieldToPtrFunc = map[string]func(*User) any{
-	tbluser.Id.Name:         func(p *User) any { return &p.Id },
-	tbluser.UnionId.Name:    func(p *User) any { return &p.UnionId },
-	tbluser.Openid.Name:     func(p *User) any { return &p.Openid },
-	tbluser.Phone.Name:      func(p *User) any { return &p.Phone },
-	tbluser.Pass.Name:       func(p *User) any { return &p.Pass },
-	tbluser.Name.Name:       func(p *User) any { return &p.Name },
 	tbluser.Avator.Name:     func(p *User) any { return &p.Avator },
+	tbluser.Name.Name:       func(p *User) any { return &p.Name },
+	tbluser.Openid.Name:     func(p *User) any { return &p.Openid },
+	tbluser.Pass.Name:       func(p *User) any { return &p.Pass },
+	tbluser.Phone.Name:      func(p *User) any { return &p.Phone },
+	tbluser.UnionId.Name:    func(p *User) any { return &p.UnionId },
 	tbluser.CreateTime.Name: func(p *User) any { return &p.CreateTime },
+	tbluser.Id.Name:         func(p *User) any { return &p.Id },
 	tbluser.UpdateTime.Name: func(p *User) any { return &p.UpdateTime },
-	tbluser.DelFlag.Name:    func(p *User) any { return &p.DelFlag },
+	tbluser.State.Name:      func(p *User) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -210,35 +230,35 @@ func (p *User) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]stri
 
 // 定义字段到值检查和获取函数的映射
 var userFieldToValueFunc = map[dialect.Field]func(*User) (any, bool){
-	tbluser.Id: func(p *User) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tbluser.UnionId: func(p *User) (any, bool) {
-		return p.UnionId, p.UnionId == ""
-	},
-	tbluser.Openid: func(p *User) (any, bool) {
-		return p.Openid, p.Openid == ""
-	},
-	tbluser.Phone: func(p *User) (any, bool) {
-		return p.Phone, p.Phone == ""
-	},
-	tbluser.Pass: func(p *User) (any, bool) {
-		return p.Pass, p.Pass == ""
+	tbluser.Avator: func(p *User) (any, bool) {
+		return p.Avator, p.Avator == ""
 	},
 	tbluser.Name: func(p *User) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tbluser.Avator: func(p *User) (any, bool) {
-		return p.Avator, p.Avator == ""
+	tbluser.Openid: func(p *User) (any, bool) {
+		return p.Openid, p.Openid == ""
+	},
+	tbluser.Pass: func(p *User) (any, bool) {
+		return p.Pass, p.Pass == ""
+	},
+	tbluser.Phone: func(p *User) (any, bool) {
+		return p.Phone, p.Phone == ""
+	},
+	tbluser.UnionId: func(p *User) (any, bool) {
+		return p.UnionId, p.UnionId == ""
 	},
 	tbluser.CreateTime: func(p *User) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tbluser.Id: func(p *User) (any, bool) {
+		return p.Id, p.Id == 0
+	},
 	tbluser.UpdateTime: func(p *User) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tbluser.DelFlag: func(p *User) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tbluser.State: func(p *User) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

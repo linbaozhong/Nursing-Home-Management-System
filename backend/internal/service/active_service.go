@@ -32,7 +32,7 @@ var Active = &active{}
 // typeName 通过预加载 active_type map 补齐（替代 mapper 联表）。
 func (a *active) PageActiveByKey(ctx context.Context, in *dto.PageActiveByKeyReq, out *[]dto.PageActiveByKeyResp) error {
 	// 1) 预加载活动类型，用于补齐 typeName
-	typeList, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.DelFlag.Eq(constant.YesNoNo)))
+	typeList, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}
@@ -42,7 +42,7 @@ func (a *active) PageActiveByKey(ctx context.Context, in *dto.PageActiveByKeyReq
 	}
 
 	// 2) 条件构造 + 分页
-	q := db.Table(tblactive.TableName).Where(tblactive.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactive.DelFlag.Eq(constant.YesNoNo))
+	q := db.Table(tblactive.TableName).Where(tblactive.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactive.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.TypeID != nil {
 		q.And(tblactive.TypeId.Eq(types.BigInt(*in.TypeID)))
 	}
@@ -151,7 +151,7 @@ func (a *active) AddActive(ctx context.Context, in *dto.OperateActiveReq, out *d
 	bean.Phone = types.String(*in.Phone)
 	bean.ActiveDate = types.Time{*in.ActiveDate}
 	bean.ActivePicture = types.String(*in.ActivePicture)
-	bean.DelFlag = types.Int8(int8(constant.YesNoYes))
+	bean.State = types.Int8(int8(constant.StateEnabled))
 	_, e := dao.Active(db).InsertOne(ctx, bean)
 	if e != nil {
 		return e
@@ -247,7 +247,7 @@ func (a *active) PageSearchElderByKey(ctx context.Context, in *dto.PageSearchEld
 // 对应 Java: ActiveServiceImpl.getActiveType -> activeTypeMapper.listNotDelActiveType
 // SQL: SELECT * FROM active_type WHERE del_flag = 0
 func (a *active) GetActiveType(ctx context.Context, in *dto.EmptyReq, out *[]dto.DropDown) error {
-	list, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.DelFlag.Eq(constant.YesNoNo)))
+	list, _, e := dao.ActiveType(db).List(ctx, ace.Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}

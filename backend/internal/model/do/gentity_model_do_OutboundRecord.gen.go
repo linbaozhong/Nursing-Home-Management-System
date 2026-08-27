@@ -28,29 +28,11 @@ func NewOutboundRecord() *OutboundRecord {
 // MarshalJSON
 func (p *OutboundRecord) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(14 * 50)
-	if p.RecipientType != "" {
-		write.WriteRaw("recipient_type", types.Marshal(p.RecipientType))
-	}
 	if p.MaterialUse != "" {
 		write.WriteRaw("material_use", types.Marshal(p.MaterialUse))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.WarehouseId != 0 {
-		write.WriteRaw("warehouse_id", types.Marshal(p.WarehouseId))
-	}
-	if p.StaffId != 0 {
-		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
-	}
-	if p.RecipientId != 0 {
-		write.WriteRaw("recipient_id", types.Marshal(p.RecipientId))
-	}
-	if !p.OutboundDate.IsZero() {
-		write.WriteRaw("outbound_date", types.Marshal(p.OutboundDate))
+	if p.RecipientType != "" {
+		write.WriteRaw("recipient_type", types.Marshal(p.RecipientType))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -58,17 +40,35 @@ func (p *OutboundRecord) MarshalJSON() ([]byte, error) {
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.OutboundDate.IsZero() {
+		write.WriteRaw("outbound_date", types.Marshal(p.OutboundDate))
+	}
+	if p.RecipientId != 0 {
+		write.WriteRaw("recipient_id", types.Marshal(p.RecipientId))
+	}
+	if p.StaffId != 0 {
+		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.OutboundFlag != 0 {
-		write.WriteRaw("outbound_flag", types.Marshal(p.OutboundFlag))
+	if p.WarehouseId != 0 {
+		write.WriteRaw("warehouse_id", types.Marshal(p.WarehouseId))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
+	}
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -83,34 +83,34 @@ func (p *OutboundRecord) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "recipient_type":
-			p.RecipientType = types.String(value.Str)
 		case "material_use":
 			p.MaterialUse = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "warehouse_id":
-			p.WarehouseId = types.BigInt(value.Uint())
-		case "staff_id":
-			p.StaffId = types.BigInt(value.Uint())
-		case "recipient_id":
-			p.RecipientId = types.BigInt(value.Uint())
-		case "outbound_date":
-			p.OutboundDate = types.Time{Time: value.Time()}
+		case "recipient_type":
+			p.RecipientType = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "outbound_date":
+			p.OutboundDate = types.Time{Time: value.Time()}
+		case "recipient_id":
+			p.RecipientId = types.BigInt(value.Uint())
+		case "staff_id":
+			p.StaffId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "outbound_flag":
-			p.OutboundFlag = types.Int8(value.Int())
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "warehouse_id":
+			p.WarehouseId = types.BigInt(value.Uint())
+		case "state":
+			p.State = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -132,20 +132,20 @@ func (p *OutboundRecord) Free() {
 
 // Reset
 func (p *OutboundRecord) Reset() {
-	p.RecipientType = ""
 	p.MaterialUse = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.WarehouseId = 0
-	p.StaffId = 0
-	p.RecipientId = 0
-	p.OutboundDate = types.Time{}
+	p.RecipientType = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.OutboundDate = types.Time{}
+	p.RecipientId = 0
+	p.StaffId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.OutboundFlag = 0
-	p.DelFlag = 0
+	p.WarehouseId = 0
+	p.State = 0
+	p.Status = 0
 
 }
 
@@ -155,20 +155,20 @@ func (p *OutboundRecord) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var outboundrecordFieldToPtrFunc = map[string]func(*OutboundRecord) any{
-	tbloutboundrecord.RecipientType.Name: func(p *OutboundRecord) any { return &p.RecipientType },
 	tbloutboundrecord.MaterialUse.Name:   func(p *OutboundRecord) any { return &p.MaterialUse },
-	tbloutboundrecord.Id.Name:            func(p *OutboundRecord) any { return &p.Id },
-	tbloutboundrecord.TenantId.Name:      func(p *OutboundRecord) any { return &p.TenantId },
-	tbloutboundrecord.WarehouseId.Name:   func(p *OutboundRecord) any { return &p.WarehouseId },
-	tbloutboundrecord.StaffId.Name:       func(p *OutboundRecord) any { return &p.StaffId },
-	tbloutboundrecord.RecipientId.Name:   func(p *OutboundRecord) any { return &p.RecipientId },
-	tbloutboundrecord.OutboundDate.Name:  func(p *OutboundRecord) any { return &p.OutboundDate },
+	tbloutboundrecord.RecipientType.Name: func(p *OutboundRecord) any { return &p.RecipientType },
 	tbloutboundrecord.CreateId.Name:      func(p *OutboundRecord) any { return &p.CreateId },
 	tbloutboundrecord.CreateTime.Name:    func(p *OutboundRecord) any { return &p.CreateTime },
+	tbloutboundrecord.Id.Name:            func(p *OutboundRecord) any { return &p.Id },
+	tbloutboundrecord.OutboundDate.Name:  func(p *OutboundRecord) any { return &p.OutboundDate },
+	tbloutboundrecord.RecipientId.Name:   func(p *OutboundRecord) any { return &p.RecipientId },
+	tbloutboundrecord.StaffId.Name:       func(p *OutboundRecord) any { return &p.StaffId },
+	tbloutboundrecord.TenantId.Name:      func(p *OutboundRecord) any { return &p.TenantId },
 	tbloutboundrecord.UpdateId.Name:      func(p *OutboundRecord) any { return &p.UpdateId },
 	tbloutboundrecord.UpdateTime.Name:    func(p *OutboundRecord) any { return &p.UpdateTime },
-	tbloutboundrecord.OutboundFlag.Name:  func(p *OutboundRecord) any { return &p.OutboundFlag },
-	tbloutboundrecord.DelFlag.Name:       func(p *OutboundRecord) any { return &p.DelFlag },
+	tbloutboundrecord.WarehouseId.Name:   func(p *OutboundRecord) any { return &p.WarehouseId },
+	tbloutboundrecord.State.Name:         func(p *OutboundRecord) any { return &p.State },
+	tbloutboundrecord.Status.Name:        func(p *OutboundRecord) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -258,29 +258,11 @@ func (p *OutboundRecord) RawAssignValues(d dialect.Dialect, args ...dialect.Fiel
 
 // 定义字段到值检查和获取函数的映射
 var outboundrecordFieldToValueFunc = map[dialect.Field]func(*OutboundRecord) (any, bool){
-	tbloutboundrecord.RecipientType: func(p *OutboundRecord) (any, bool) {
-		return p.RecipientType, p.RecipientType == ""
-	},
 	tbloutboundrecord.MaterialUse: func(p *OutboundRecord) (any, bool) {
 		return p.MaterialUse, p.MaterialUse == ""
 	},
-	tbloutboundrecord.Id: func(p *OutboundRecord) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tbloutboundrecord.TenantId: func(p *OutboundRecord) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tbloutboundrecord.WarehouseId: func(p *OutboundRecord) (any, bool) {
-		return p.WarehouseId, p.WarehouseId == 0
-	},
-	tbloutboundrecord.StaffId: func(p *OutboundRecord) (any, bool) {
-		return p.StaffId, p.StaffId == 0
-	},
-	tbloutboundrecord.RecipientId: func(p *OutboundRecord) (any, bool) {
-		return p.RecipientId, p.RecipientId == 0
-	},
-	tbloutboundrecord.OutboundDate: func(p *OutboundRecord) (any, bool) {
-		return p.OutboundDate, p.OutboundDate.IsZero()
+	tbloutboundrecord.RecipientType: func(p *OutboundRecord) (any, bool) {
+		return p.RecipientType, p.RecipientType == ""
 	},
 	tbloutboundrecord.CreateId: func(p *OutboundRecord) (any, bool) {
 		return p.CreateId, p.CreateId == 0
@@ -288,17 +270,35 @@ var outboundrecordFieldToValueFunc = map[dialect.Field]func(*OutboundRecord) (an
 	tbloutboundrecord.CreateTime: func(p *OutboundRecord) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tbloutboundrecord.Id: func(p *OutboundRecord) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tbloutboundrecord.OutboundDate: func(p *OutboundRecord) (any, bool) {
+		return p.OutboundDate, p.OutboundDate.IsZero()
+	},
+	tbloutboundrecord.RecipientId: func(p *OutboundRecord) (any, bool) {
+		return p.RecipientId, p.RecipientId == 0
+	},
+	tbloutboundrecord.StaffId: func(p *OutboundRecord) (any, bool) {
+		return p.StaffId, p.StaffId == 0
+	},
+	tbloutboundrecord.TenantId: func(p *OutboundRecord) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
 	tbloutboundrecord.UpdateId: func(p *OutboundRecord) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tbloutboundrecord.UpdateTime: func(p *OutboundRecord) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tbloutboundrecord.OutboundFlag: func(p *OutboundRecord) (any, bool) {
-		return p.OutboundFlag, p.OutboundFlag == 0
+	tbloutboundrecord.WarehouseId: func(p *OutboundRecord) (any, bool) {
+		return p.WarehouseId, p.WarehouseId == 0
 	},
-	tbloutboundrecord.DelFlag: func(p *OutboundRecord) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tbloutboundrecord.State: func(p *OutboundRecord) (any, bool) {
+		return p.State, p.State == 0
+	},
+	tbloutboundrecord.Status: func(p *OutboundRecord) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

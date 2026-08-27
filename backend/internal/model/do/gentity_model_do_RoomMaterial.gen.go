@@ -28,23 +28,23 @@ func NewRoomMaterial() *RoomMaterial {
 // MarshalJSON
 func (p *RoomMaterial) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(9 * 50)
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.RoomId != 0 {
-		write.WriteRaw("room_id", types.Marshal(p.RoomId))
-	}
-	if p.MaterialTypeId != 0 {
-		write.WriteRaw("material_type_id", types.Marshal(p.MaterialTypeId))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.MaterialTypeId != 0 {
+		write.WriteRaw("material_type_id", types.Marshal(p.MaterialTypeId))
+	}
+	if p.RoomId != 0 {
+		write.WriteRaw("room_id", types.Marshal(p.RoomId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -52,8 +52,8 @@ func (p *RoomMaterial) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -68,24 +68,24 @@ func (p *RoomMaterial) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "room_id":
-			p.RoomId = types.BigInt(value.Uint())
-		case "material_type_id":
-			p.MaterialTypeId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "material_type_id":
+			p.MaterialTypeId = types.BigInt(value.Uint())
+		case "room_id":
+			p.RoomId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -107,15 +107,15 @@ func (p *RoomMaterial) Free() {
 
 // Reset
 func (p *RoomMaterial) Reset() {
-	p.Id = 0
-	p.TenantId = 0
-	p.RoomId = 0
-	p.MaterialTypeId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.MaterialTypeId = 0
+	p.RoomId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -125,15 +125,15 @@ func (p *RoomMaterial) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var roommaterialFieldToPtrFunc = map[string]func(*RoomMaterial) any{
-	tblroommaterial.Id.Name:             func(p *RoomMaterial) any { return &p.Id },
-	tblroommaterial.TenantId.Name:       func(p *RoomMaterial) any { return &p.TenantId },
-	tblroommaterial.RoomId.Name:         func(p *RoomMaterial) any { return &p.RoomId },
-	tblroommaterial.MaterialTypeId.Name: func(p *RoomMaterial) any { return &p.MaterialTypeId },
 	tblroommaterial.CreateId.Name:       func(p *RoomMaterial) any { return &p.CreateId },
 	tblroommaterial.CreateTime.Name:     func(p *RoomMaterial) any { return &p.CreateTime },
+	tblroommaterial.Id.Name:             func(p *RoomMaterial) any { return &p.Id },
+	tblroommaterial.MaterialTypeId.Name: func(p *RoomMaterial) any { return &p.MaterialTypeId },
+	tblroommaterial.RoomId.Name:         func(p *RoomMaterial) any { return &p.RoomId },
+	tblroommaterial.TenantId.Name:       func(p *RoomMaterial) any { return &p.TenantId },
 	tblroommaterial.UpdateId.Name:       func(p *RoomMaterial) any { return &p.UpdateId },
 	tblroommaterial.UpdateTime.Name:     func(p *RoomMaterial) any { return &p.UpdateTime },
-	tblroommaterial.DelFlag.Name:        func(p *RoomMaterial) any { return &p.DelFlag },
+	tblroommaterial.State.Name:          func(p *RoomMaterial) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -223,23 +223,23 @@ func (p *RoomMaterial) RawAssignValues(d dialect.Dialect, args ...dialect.Field)
 
 // 定义字段到值检查和获取函数的映射
 var roommaterialFieldToValueFunc = map[dialect.Field]func(*RoomMaterial) (any, bool){
-	tblroommaterial.Id: func(p *RoomMaterial) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblroommaterial.TenantId: func(p *RoomMaterial) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblroommaterial.RoomId: func(p *RoomMaterial) (any, bool) {
-		return p.RoomId, p.RoomId == 0
-	},
-	tblroommaterial.MaterialTypeId: func(p *RoomMaterial) (any, bool) {
-		return p.MaterialTypeId, p.MaterialTypeId == 0
-	},
 	tblroommaterial.CreateId: func(p *RoomMaterial) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblroommaterial.CreateTime: func(p *RoomMaterial) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblroommaterial.Id: func(p *RoomMaterial) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblroommaterial.MaterialTypeId: func(p *RoomMaterial) (any, bool) {
+		return p.MaterialTypeId, p.MaterialTypeId == 0
+	},
+	tblroommaterial.RoomId: func(p *RoomMaterial) (any, bool) {
+		return p.RoomId, p.RoomId == 0
+	},
+	tblroommaterial.TenantId: func(p *RoomMaterial) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblroommaterial.UpdateId: func(p *RoomMaterial) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -247,8 +247,8 @@ var roommaterialFieldToValueFunc = map[dialect.Field]func(*RoomMaterial) (any, b
 	tblroommaterial.UpdateTime: func(p *RoomMaterial) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblroommaterial.DelFlag: func(p *RoomMaterial) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblroommaterial.State: func(p *RoomMaterial) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

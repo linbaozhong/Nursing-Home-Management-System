@@ -53,3 +53,38 @@ func (y YesNo) String() string {
 		return "否"
 	}
 }
+
+// State 管理状态（通用，替代 del_flag 的 Y/N）
+type State int8
+
+// 管理状态枚举
+const (
+	StateDeleted  State = -1 // 删除
+	StateDisabled State = 0  // 禁用
+	StateEnabled  State = 1  // 启用
+)
+
+func (s State) String() string {
+	switch s {
+	case StateDeleted:
+		return "已删除"
+	case StateDisabled:
+		return "已禁用"
+	case StateEnabled:
+		return "正常"
+	default:
+		return "未知"
+	}
+}
+
+// 审计动作（audit_log.action）
+const (
+	AuditCreate = "create" // 新增
+	AuditUpdate = "update" // 编辑
+	AuditDelete = "delete" // 删除
+)
+
+// 字段中文名 cache 相关 key
+const (
+	AuditFieldDictCache = "audit_field_dict" // 字段中文名字典缓存（进程内）
+)

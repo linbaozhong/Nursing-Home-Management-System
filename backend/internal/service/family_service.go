@@ -174,7 +174,7 @@ func (s *family) MyElders(ctx context.Context, in *dto.FamilyMyEldersReq, out *d
 
 func (s *family) myElders(ctx context.Context, phone string) ([]*dto.FamilyElderResp, error) {
 	beans, _, e := dao.FamilyMember(db).List(ctx, db.Table(tblfamilymember.TableName).
-		Where(tblfamilymember.Phone.Eq(types.String(phone)), tblfamilymember.DelFlag.Eq(0)))
+		Where(tblfamilymember.Phone.Eq(types.String(phone)), tblfamilymember.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return nil, e
 	}

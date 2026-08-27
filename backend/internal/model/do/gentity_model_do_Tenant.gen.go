@@ -27,21 +27,46 @@ func NewTenant() *Tenant {
 
 // MarshalJSON
 func (p *Tenant) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(14 * 50)
-	write.WriteRaw("id", types.Marshal(p.Id))
-	write.WriteRaw("name", types.Marshal(p.Name))
-	write.WriteRaw("logo", types.Marshal(p.Logo))
-	write.WriteRaw("contact_name", types.Marshal(p.ContactName))
-	write.WriteRaw("contact_phone", types.Marshal(p.ContactPhone))
-	write.WriteRaw("plan", types.Marshal(p.Plan))
-	write.WriteRaw("status", types.Marshal(p.Status))
-	write.WriteRaw("trial_start", types.Marshal(p.TrialStart))
-	write.WriteRaw("trial_end", types.Marshal(p.ExpireTime))
-	write.WriteRaw("create_id", types.Marshal(p.CreateId))
-	write.WriteRaw("create_time", types.Marshal(p.CreateTime))
-	write.WriteRaw("update_id", types.Marshal(p.UpdateId))
-	write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
-	write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	write := types.NewJsonWriter(13 * 50)
+	if p.ContactName != "" {
+		write.WriteRaw("contact_name", types.Marshal(p.ContactName))
+	}
+	if p.ContactPhone != "" {
+		write.WriteRaw("contact_phone", types.Marshal(p.ContactPhone))
+	}
+	if p.Logo != "" {
+		write.WriteRaw("logo", types.Marshal(p.Logo))
+	}
+	if p.Name != "" {
+		write.WriteRaw("name", types.Marshal(p.Name))
+	}
+	if p.Plan != "" {
+		write.WriteRaw("plan", types.Marshal(p.Plan))
+	}
+	if p.CreateId != 0 {
+		write.WriteRaw("create_id", types.Marshal(p.CreateId))
+	}
+	if !p.CreateTime.IsZero() {
+		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if !p.ExpireTime.IsZero() {
+		write.WriteRaw("expire_time", types.Marshal(p.ExpireTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.UpdateId != 0 {
+		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
+	}
+	if !p.UpdateTime.IsZero() {
+		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
+	}
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
+	}
 	return write.Bytes(), nil
 }
 
@@ -55,34 +80,32 @@ func (p *Tenant) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "name":
-			p.Name = types.String(value.Str)
-		case "logo":
-			p.Logo = types.String(value.Str)
 		case "contact_name":
 			p.ContactName = types.String(value.Str)
 		case "contact_phone":
 			p.ContactPhone = types.String(value.Str)
+		case "logo":
+			p.Logo = types.String(value.Str)
+		case "name":
+			p.Name = types.String(value.Str)
 		case "plan":
 			p.Plan = types.String(value.Str)
-		case "status":
-			p.Status = types.Int8(value.Int())
-		case "trial_start":
-			p.TrialStart = types.Time{Time: value.Time()}
-		case "trial_end":
-			p.ExpireTime = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "expire_time":
+			p.ExpireTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -104,20 +127,19 @@ func (p *Tenant) Free() {
 
 // Reset
 func (p *Tenant) Reset() {
-	p.Id = 0
-	p.Name = ""
-	p.Logo = ""
 	p.ContactName = ""
 	p.ContactPhone = ""
+	p.Logo = ""
+	p.Name = ""
 	p.Plan = ""
-	p.Status = 0
-	p.TrialStart = types.Time{}
-	p.ExpireTime = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ExpireTime = types.Time{}
+	p.Id = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
+	p.Status = 0
 
 }
 
@@ -127,20 +149,19 @@ func (p *Tenant) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var tenantFieldToPtrFunc = map[string]func(*Tenant) any{
-	tbltenant.Id.Name:           func(p *Tenant) any { return &p.Id },
-	tbltenant.Name.Name:         func(p *Tenant) any { return &p.Name },
-	tbltenant.Logo.Name:         func(p *Tenant) any { return &p.Logo },
 	tbltenant.ContactName.Name:  func(p *Tenant) any { return &p.ContactName },
 	tbltenant.ContactPhone.Name: func(p *Tenant) any { return &p.ContactPhone },
+	tbltenant.Logo.Name:         func(p *Tenant) any { return &p.Logo },
+	tbltenant.Name.Name:         func(p *Tenant) any { return &p.Name },
 	tbltenant.Plan.Name:         func(p *Tenant) any { return &p.Plan },
-	tbltenant.Status.Name:       func(p *Tenant) any { return &p.Status },
-	tbltenant.TrialStart.Name:   func(p *Tenant) any { return &p.TrialStart },
-	tbltenant.TrialEnd.Name:     func(p *Tenant) any { return &p.ExpireTime },
 	tbltenant.CreateId.Name:     func(p *Tenant) any { return &p.CreateId },
 	tbltenant.CreateTime.Name:   func(p *Tenant) any { return &p.CreateTime },
+	tbltenant.ExpireTime.Name:   func(p *Tenant) any { return &p.ExpireTime },
+	tbltenant.Id.Name:           func(p *Tenant) any { return &p.Id },
 	tbltenant.UpdateId.Name:     func(p *Tenant) any { return &p.UpdateId },
 	tbltenant.UpdateTime.Name:   func(p *Tenant) any { return &p.UpdateTime },
-	tbltenant.DelFlag.Name:      func(p *Tenant) any { return &p.DelFlag },
+	tbltenant.State.Name:        func(p *Tenant) any { return &p.State },
+	tbltenant.Status.Name:       func(p *Tenant) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -230,32 +251,20 @@ func (p *Tenant) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]st
 
 // 定义字段到值检查和获取函数的映射
 var tenantFieldToValueFunc = map[dialect.Field]func(*Tenant) (any, bool){
-	tbltenant.Id: func(p *Tenant) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tbltenant.Name: func(p *Tenant) (any, bool) {
-		return p.Name, p.Name == ""
-	},
-	tbltenant.Logo: func(p *Tenant) (any, bool) {
-		return p.Logo, p.Logo == ""
-	},
 	tbltenant.ContactName: func(p *Tenant) (any, bool) {
 		return p.ContactName, p.ContactName == ""
 	},
 	tbltenant.ContactPhone: func(p *Tenant) (any, bool) {
 		return p.ContactPhone, p.ContactPhone == ""
 	},
+	tbltenant.Logo: func(p *Tenant) (any, bool) {
+		return p.Logo, p.Logo == ""
+	},
+	tbltenant.Name: func(p *Tenant) (any, bool) {
+		return p.Name, p.Name == ""
+	},
 	tbltenant.Plan: func(p *Tenant) (any, bool) {
 		return p.Plan, p.Plan == ""
-	},
-	tbltenant.Status: func(p *Tenant) (any, bool) {
-		return p.Status, p.Status == 0
-	},
-	tbltenant.TrialStart: func(p *Tenant) (any, bool) {
-		return p.TrialStart, p.TrialStart.IsZero()
-	},
-	tbltenant.TrialEnd: func(p *Tenant) (any, bool) {
-		return p.ExpireTime, p.ExpireTime.IsZero()
 	},
 	tbltenant.CreateId: func(p *Tenant) (any, bool) {
 		return p.CreateId, p.CreateId == 0
@@ -263,14 +272,23 @@ var tenantFieldToValueFunc = map[dialect.Field]func(*Tenant) (any, bool){
 	tbltenant.CreateTime: func(p *Tenant) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tbltenant.ExpireTime: func(p *Tenant) (any, bool) {
+		return p.ExpireTime, p.ExpireTime.IsZero()
+	},
+	tbltenant.Id: func(p *Tenant) (any, bool) {
+		return p.Id, p.Id == 0
+	},
 	tbltenant.UpdateId: func(p *Tenant) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tbltenant.UpdateTime: func(p *Tenant) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tbltenant.DelFlag: func(p *Tenant) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tbltenant.State: func(p *Tenant) (any, bool) {
+		return p.State, p.State == 0
+	},
+	tbltenant.Status: func(p *Tenant) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

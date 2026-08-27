@@ -34,26 +34,26 @@ func (p *Accident) MarshalJSON() ([]byte, error) {
 	if p.Picture != "" {
 		write.WriteRaw("picture", types.Marshal(p.Picture))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
-	if p.StaffId != 0 {
-		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
-	}
-	if !p.OccurDate.IsZero() {
-		write.WriteRaw("occur_date", types.Marshal(p.OccurDate))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.OccurDate.IsZero() {
+		write.WriteRaw("occur_date", types.Marshal(p.OccurDate))
+	}
+	if p.StaffId != 0 {
+		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -61,8 +61,8 @@ func (p *Accident) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -81,26 +81,26 @@ func (p *Accident) UnmarshalJSON(data []byte) error {
 			p.Description = types.String(value.Str)
 		case "picture":
 			p.Picture = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "staff_id":
-			p.StaffId = types.BigInt(value.Uint())
-		case "occur_date":
-			p.OccurDate = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "occur_date":
+			p.OccurDate = types.Time{Time: value.Time()}
+		case "staff_id":
+			p.StaffId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -124,16 +124,16 @@ func (p *Accident) Free() {
 func (p *Accident) Reset() {
 	p.Description = ""
 	p.Picture = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
-	p.StaffId = 0
-	p.OccurDate = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.OccurDate = types.Time{}
+	p.StaffId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -145,16 +145,16 @@ func (p *Accident) TableName() string {
 var accidentFieldToPtrFunc = map[string]func(*Accident) any{
 	tblaccident.Description.Name: func(p *Accident) any { return &p.Description },
 	tblaccident.Picture.Name:     func(p *Accident) any { return &p.Picture },
-	tblaccident.Id.Name:          func(p *Accident) any { return &p.Id },
-	tblaccident.TenantId.Name:    func(p *Accident) any { return &p.TenantId },
-	tblaccident.ElderId.Name:     func(p *Accident) any { return &p.ElderId },
-	tblaccident.StaffId.Name:     func(p *Accident) any { return &p.StaffId },
-	tblaccident.OccurDate.Name:   func(p *Accident) any { return &p.OccurDate },
 	tblaccident.CreateId.Name:    func(p *Accident) any { return &p.CreateId },
 	tblaccident.CreateTime.Name:  func(p *Accident) any { return &p.CreateTime },
+	tblaccident.ElderId.Name:     func(p *Accident) any { return &p.ElderId },
+	tblaccident.Id.Name:          func(p *Accident) any { return &p.Id },
+	tblaccident.OccurDate.Name:   func(p *Accident) any { return &p.OccurDate },
+	tblaccident.StaffId.Name:     func(p *Accident) any { return &p.StaffId },
+	tblaccident.TenantId.Name:    func(p *Accident) any { return &p.TenantId },
 	tblaccident.UpdateId.Name:    func(p *Accident) any { return &p.UpdateId },
 	tblaccident.UpdateTime.Name:  func(p *Accident) any { return &p.UpdateTime },
-	tblaccident.DelFlag.Name:     func(p *Accident) any { return &p.DelFlag },
+	tblaccident.State.Name:       func(p *Accident) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -250,26 +250,26 @@ var accidentFieldToValueFunc = map[dialect.Field]func(*Accident) (any, bool){
 	tblaccident.Picture: func(p *Accident) (any, bool) {
 		return p.Picture, p.Picture == ""
 	},
-	tblaccident.Id: func(p *Accident) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblaccident.TenantId: func(p *Accident) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblaccident.ElderId: func(p *Accident) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
-	tblaccident.StaffId: func(p *Accident) (any, bool) {
-		return p.StaffId, p.StaffId == 0
-	},
-	tblaccident.OccurDate: func(p *Accident) (any, bool) {
-		return p.OccurDate, p.OccurDate.IsZero()
-	},
 	tblaccident.CreateId: func(p *Accident) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblaccident.CreateTime: func(p *Accident) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblaccident.ElderId: func(p *Accident) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblaccident.Id: func(p *Accident) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblaccident.OccurDate: func(p *Accident) (any, bool) {
+		return p.OccurDate, p.OccurDate.IsZero()
+	},
+	tblaccident.StaffId: func(p *Accident) (any, bool) {
+		return p.StaffId, p.StaffId == 0
+	},
+	tblaccident.TenantId: func(p *Accident) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblaccident.UpdateId: func(p *Accident) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -277,8 +277,8 @@ var accidentFieldToValueFunc = map[dialect.Field]func(*Accident) (any, bool){
 	tblaccident.UpdateTime: func(p *Accident) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblaccident.DelFlag: func(p *Accident) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblaccident.State: func(p *Accident) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

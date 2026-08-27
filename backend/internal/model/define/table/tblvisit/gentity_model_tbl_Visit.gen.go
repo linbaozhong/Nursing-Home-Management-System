@@ -9,58 +9,61 @@ import (
 const TableName = "visit"
 
 var (
+	IdCard     = dialect.Field{Name: "id_card", Json: "id_card", Table: "visit", Type: "types.String", IsRelation: false}
 	Name       = dialect.Field{Name: "name", Json: "name", Table: "visit", Type: "types.String", IsRelation: false}
 	Phone      = dialect.Field{Name: "phone", Json: "phone", Table: "visit", Type: "types.String", IsRelation: false}
 	Relation   = dialect.Field{Name: "relation", Json: "relation", Table: "visit", Type: "types.String", IsRelation: false}
-	Id         = dialect.Field{Name: "id", Json: "id", Table: "visit", Type: "types.BigInt", IsRelation: false}
-	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "visit", Type: "types.BigInt", IsRelation: false}
-	ElderId    = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "visit", Type: "types.BigInt", IsRelation: false}
-	VisitDate  = dialect.Field{Name: "visit_date", Json: "visit_date", Table: "visit", Type: "types.Time", IsRelation: false}
-	LeaveDate  = dialect.Field{Name: "leave_date", Json: "leave_date", Table: "visit", Type: "types.Time", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "visit", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "visit", Type: "types.Time", IsRelation: false}
+	ElderId    = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "visit", Type: "types.BigInt", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "visit", Type: "types.BigInt", IsRelation: false}
+	LeaveTime  = dialect.Field{Name: "leave_time", Json: "leave_time", Table: "visit", Type: "types.Time", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "visit", Type: "types.BigInt", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "visit", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "visit", Type: "types.Time", IsRelation: false}
+	VisitTime  = dialect.Field{Name: "visit_time", Json: "visit_time", Table: "visit", Type: "types.Time", IsRelation: false}
 	VisitNum   = dialect.Field{Name: "visit_num", Json: "visit_num", Table: "visit", Type: "types.Int32", IsRelation: false}
-	DelFlag    = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "visit", Type: "types.Int8", IsRelation: false}
-	VisitFlag  = dialect.Field{Name: "visit_flag", Json: "visit_flag", Table: "visit", Type: "types.Int8", IsRelation: false}
+	State      = dialect.Field{Name: "state", Json: "state", Table: "visit", Type: "types.Int8", IsRelation: false}
+	Status     = dialect.Field{Name: "status", Json: "status", Table: "visit", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
+		IdCard,
 		Name,
 		Phone,
 		Relation,
-		Id,
-		TenantId,
-		ElderId,
-		VisitDate,
-		LeaveDate,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		LeaveTime,
+		TenantId,
 		UpdateId,
 		UpdateTime,
+		VisitTime,
 		VisitNum,
-		DelFlag,
-		VisitFlag,
+		State,
+		Status,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
+		IdCard,
 		Name,
 		Phone,
 		Relation,
-		Id,
-		TenantId,
-		ElderId,
-		VisitDate,
-		LeaveDate,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		LeaveTime,
+		TenantId,
 		UpdateId,
 		UpdateTime,
+		VisitTime,
 		VisitNum,
-		DelFlag,
-		VisitFlag,
+		State,
+		Status,
 	}
 )

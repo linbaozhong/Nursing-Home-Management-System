@@ -9,19 +9,19 @@ import (
 const TableName = "reserve"
 
 var (
-	Name        = dialect.Field{Name: "name", Json: "name", Table: "reserve", Type: "types.String", IsRelation: false}
-	Phone       = dialect.Field{Name: "phone", Json: "phone", Table: "reserve", Type: "types.String", IsRelation: false}
-	Id          = dialect.Field{Name: "id", Json: "id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
-	TenantId    = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
-	ElderId     = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
-	StaffId     = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
-	DueDate     = dialect.Field{Name: "due_date", Json: "due_date", Table: "reserve", Type: "types.Time", IsRelation: false}
-	Deposit     = dialect.Field{Name: "deposit", Json: "deposit", Table: "reserve", Type: "types.Float64", IsRelation: false}
-	CreateId    = dialect.Field{Name: "create_id", Json: "create_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
-	CreateTime  = dialect.Field{Name: "create_time", Json: "create_time", Table: "reserve", Type: "types.Time", IsRelation: false}
-	UpdateId    = dialect.Field{Name: "update_id", Json: "update_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
-	UpdateTime  = dialect.Field{Name: "update_time", Json: "update_time", Table: "reserve", Type: "types.Time", IsRelation: false}
-	ReserveFlag = dialect.Field{Name: "reserve_flag", Json: "reserve_flag", Table: "reserve", Type: "types.Int8", IsRelation: false}
+	Name       = dialect.Field{Name: "name", Json: "name", Table: "reserve", Type: "types.String", IsRelation: false}
+	Phone      = dialect.Field{Name: "phone", Json: "phone", Table: "reserve", Type: "types.String", IsRelation: false}
+	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
+	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "reserve", Type: "types.Time", IsRelation: false}
+	Deposit    = dialect.Field{Name: "deposit", Json: "deposit", Table: "reserve", Type: "types.Money", IsRelation: false}
+	DueDate    = dialect.Field{Name: "due_date", Json: "due_date", Table: "reserve", Type: "types.Time", IsRelation: false}
+	ElderId    = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
+	StaffId    = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
+	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "reserve", Type: "types.BigInt", IsRelation: false}
+	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "reserve", Type: "types.Time", IsRelation: false}
+	Status     = dialect.Field{Name: "status", Json: "status", Table: "reserve", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -29,32 +29,32 @@ var (
 	WritableFields = []dialect.Field{
 		Name,
 		Phone,
-		Id,
-		TenantId,
-		ElderId,
-		StaffId,
-		DueDate,
-		Deposit,
 		CreateId,
 		CreateTime,
+		Deposit,
+		DueDate,
+		ElderId,
+		Id,
+		StaffId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		ReserveFlag,
+		Status,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Name,
 		Phone,
-		Id,
-		TenantId,
-		ElderId,
-		StaffId,
-		DueDate,
-		Deposit,
 		CreateId,
 		CreateTime,
+		Deposit,
+		DueDate,
+		ElderId,
+		Id,
+		StaffId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		ReserveFlag,
+		Status,
 	}
 )

@@ -28,44 +28,44 @@ func NewStaff() *Staff {
 // MarshalJSON
 func (p *Staff) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(17 * 50)
-	if p.Name != "" {
-		write.WriteRaw("name", types.Marshal(p.Name))
-	}
-	if p.IdNum != "" {
-		write.WriteRaw("id_num", types.Marshal(p.IdNum))
-	}
-	if p.Sex != "" {
-		write.WriteRaw("sex", types.Marshal(p.Sex))
-	}
-	if p.Phone != "" {
-		write.WriteRaw("phone", types.Marshal(p.Phone))
-	}
-	if p.Email != "" {
-		write.WriteRaw("email", types.Marshal(p.Email))
-	}
-	if p.Pass != "" {
-		write.WriteRaw("pass", types.Marshal(p.Pass))
+	if p.Address != "" {
+		write.WriteRaw("address", types.Marshal(p.Address))
 	}
 	if p.Avator != "" {
 		write.WriteRaw("avator", types.Marshal(p.Avator))
 	}
-	if p.Address != "" {
-		write.WriteRaw("address", types.Marshal(p.Address))
+	if p.Email != "" {
+		write.WriteRaw("email", types.Marshal(p.Email))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
+	if p.IdNum != "" {
+		write.WriteRaw("id_num", types.Marshal(p.IdNum))
 	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	if p.Name != "" {
+		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.RoleId != 0 {
-		write.WriteRaw("role_id", types.Marshal(p.RoleId))
+	if p.Pass != "" {
+		write.WriteRaw("pass", types.Marshal(p.Pass))
+	}
+	if p.Phone != "" {
+		write.WriteRaw("phone", types.Marshal(p.Phone))
+	}
+	if p.Sex != "" {
+		write.WriteRaw("sex", types.Marshal(p.Sex))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.RoleId != 0 {
+		write.WriteRaw("role_id", types.Marshal(p.RoleId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -77,7 +77,7 @@ func (p *Staff) MarshalJSON() ([]byte, error) {
 		write.WriteRaw("age", types.Marshal(p.Age))
 	}
 	if p.Status != 0 {
-		write.WriteRaw("leave_flag", types.Marshal(p.Status))
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -92,39 +92,39 @@ func (p *Staff) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "name":
-			p.Name = types.String(value.Str)
-		case "id_num":
-			p.IdNum = types.String(value.Str)
-		case "sex":
-			p.Sex = types.String(value.Str)
-		case "phone":
-			p.Phone = types.String(value.Str)
-		case "email":
-			p.Email = types.String(value.Str)
-		case "pass":
-			p.Pass = types.String(value.Str)
-		case "avator":
-			p.Avator = types.String(value.Str)
 		case "address":
 			p.Address = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "role_id":
-			p.RoleId = types.BigInt(value.Uint())
+		case "avator":
+			p.Avator = types.String(value.Str)
+		case "email":
+			p.Email = types.String(value.Str)
+		case "id_num":
+			p.IdNum = types.String(value.Str)
+		case "name":
+			p.Name = types.String(value.Str)
+		case "pass":
+			p.Pass = types.String(value.Str)
+		case "phone":
+			p.Phone = types.String(value.Str)
+		case "sex":
+			p.Sex = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "role_id":
+			p.RoleId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "age":
 			p.Age = types.Int32(value.Int())
-		case "leave_flag":
+		case "status":
 			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
@@ -147,19 +147,19 @@ func (p *Staff) Free() {
 
 // Reset
 func (p *Staff) Reset() {
-	p.Name = ""
-	p.IdNum = ""
-	p.Sex = ""
-	p.Phone = ""
-	p.Email = ""
-	p.Pass = ""
-	p.Avator = ""
 	p.Address = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.RoleId = 0
+	p.Avator = ""
+	p.Email = ""
+	p.IdNum = ""
+	p.Name = ""
+	p.Pass = ""
+	p.Phone = ""
+	p.Sex = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.RoleId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.Age = 0
@@ -173,23 +173,23 @@ func (p *Staff) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var staffFieldToPtrFunc = map[string]func(*Staff) any{
-	tblstaff.Name.Name:       func(p *Staff) any { return &p.Name },
-	tblstaff.IdNum.Name:      func(p *Staff) any { return &p.IdNum },
-	tblstaff.Sex.Name:        func(p *Staff) any { return &p.Sex },
-	tblstaff.Phone.Name:      func(p *Staff) any { return &p.Phone },
-	tblstaff.Email.Name:      func(p *Staff) any { return &p.Email },
-	tblstaff.Pass.Name:       func(p *Staff) any { return &p.Pass },
-	tblstaff.Avator.Name:     func(p *Staff) any { return &p.Avator },
 	tblstaff.Address.Name:    func(p *Staff) any { return &p.Address },
-	tblstaff.Id.Name:         func(p *Staff) any { return &p.Id },
-	tblstaff.TenantId.Name:   func(p *Staff) any { return &p.TenantId },
-	tblstaff.RoleId.Name:     func(p *Staff) any { return &p.RoleId },
+	tblstaff.Avator.Name:     func(p *Staff) any { return &p.Avator },
+	tblstaff.Email.Name:      func(p *Staff) any { return &p.Email },
+	tblstaff.IdNum.Name:      func(p *Staff) any { return &p.IdNum },
+	tblstaff.Name.Name:       func(p *Staff) any { return &p.Name },
+	tblstaff.Pass.Name:       func(p *Staff) any { return &p.Pass },
+	tblstaff.Phone.Name:      func(p *Staff) any { return &p.Phone },
+	tblstaff.Sex.Name:        func(p *Staff) any { return &p.Sex },
 	tblstaff.CreateId.Name:   func(p *Staff) any { return &p.CreateId },
 	tblstaff.CreateTime.Name: func(p *Staff) any { return &p.CreateTime },
+	tblstaff.Id.Name:         func(p *Staff) any { return &p.Id },
+	tblstaff.RoleId.Name:     func(p *Staff) any { return &p.RoleId },
+	tblstaff.TenantId.Name:   func(p *Staff) any { return &p.TenantId },
 	tblstaff.UpdateId.Name:   func(p *Staff) any { return &p.UpdateId },
 	tblstaff.UpdateTime.Name: func(p *Staff) any { return &p.UpdateTime },
 	tblstaff.Age.Name:        func(p *Staff) any { return &p.Age },
-	tblstaff.LeaveFlag.Name:  func(p *Staff) any { return &p.Status },
+	tblstaff.Status.Name:     func(p *Staff) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -279,44 +279,44 @@ func (p *Staff) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 
 // 定义字段到值检查和获取函数的映射
 var staffFieldToValueFunc = map[dialect.Field]func(*Staff) (any, bool){
-	tblstaff.Name: func(p *Staff) (any, bool) {
-		return p.Name, p.Name == ""
-	},
-	tblstaff.IdNum: func(p *Staff) (any, bool) {
-		return p.IdNum, p.IdNum == ""
-	},
-	tblstaff.Sex: func(p *Staff) (any, bool) {
-		return p.Sex, p.Sex == ""
-	},
-	tblstaff.Phone: func(p *Staff) (any, bool) {
-		return p.Phone, p.Phone == ""
-	},
-	tblstaff.Email: func(p *Staff) (any, bool) {
-		return p.Email, p.Email == ""
-	},
-	tblstaff.Pass: func(p *Staff) (any, bool) {
-		return p.Pass, p.Pass == ""
+	tblstaff.Address: func(p *Staff) (any, bool) {
+		return p.Address, p.Address == ""
 	},
 	tblstaff.Avator: func(p *Staff) (any, bool) {
 		return p.Avator, p.Avator == ""
 	},
-	tblstaff.Address: func(p *Staff) (any, bool) {
-		return p.Address, p.Address == ""
+	tblstaff.Email: func(p *Staff) (any, bool) {
+		return p.Email, p.Email == ""
 	},
-	tblstaff.Id: func(p *Staff) (any, bool) {
-		return p.Id, p.Id == 0
+	tblstaff.IdNum: func(p *Staff) (any, bool) {
+		return p.IdNum, p.IdNum == ""
 	},
-	tblstaff.TenantId: func(p *Staff) (any, bool) {
-		return p.TenantId, p.TenantId == 0
+	tblstaff.Name: func(p *Staff) (any, bool) {
+		return p.Name, p.Name == ""
 	},
-	tblstaff.RoleId: func(p *Staff) (any, bool) {
-		return p.RoleId, p.RoleId == 0
+	tblstaff.Pass: func(p *Staff) (any, bool) {
+		return p.Pass, p.Pass == ""
+	},
+	tblstaff.Phone: func(p *Staff) (any, bool) {
+		return p.Phone, p.Phone == ""
+	},
+	tblstaff.Sex: func(p *Staff) (any, bool) {
+		return p.Sex, p.Sex == ""
 	},
 	tblstaff.CreateId: func(p *Staff) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblstaff.CreateTime: func(p *Staff) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblstaff.Id: func(p *Staff) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblstaff.RoleId: func(p *Staff) (any, bool) {
+		return p.RoleId, p.RoleId == 0
+	},
+	tblstaff.TenantId: func(p *Staff) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblstaff.UpdateId: func(p *Staff) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -327,7 +327,7 @@ var staffFieldToValueFunc = map[dialect.Field]func(*Staff) (any, bool){
 	tblstaff.Age: func(p *Staff) (any, bool) {
 		return p.Age, p.Age == 0
 	},
-	tblstaff.LeaveFlag: func(p *Staff) (any, bool) {
+	tblstaff.Status: func(p *Staff) (any, bool) {
 		return p.Status, p.Status == 0
 	},
 }

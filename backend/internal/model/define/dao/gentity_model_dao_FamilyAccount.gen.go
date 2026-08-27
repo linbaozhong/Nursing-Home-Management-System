@@ -135,7 +135,7 @@ func (p *familyaccount) Update(ctx context.Context, sets []dialect.Setter, cond 
 }
 
 // UpdateById
-func (p *familyaccount) UpdateById(ctx context.Context, id types.BigInt, sets ...dialect.Setter) (bool, error) {
+func (p *familyaccount) UpdateById(ctx context.Context, id types.Money, sets ...dialect.Setter) (bool, error) {
 	return p.Update(ctx,
 		sets,
 		tblfamilyaccount.PrimaryKey.Eq(id),
@@ -199,7 +199,7 @@ func (p *familyaccount) Delete(ctx context.Context, cond ...dialect.Condition) (
 }
 
 // DeleteById
-func (p *familyaccount) DeleteById(ctx context.Context, id types.BigInt) (bool, error) {
+func (p *familyaccount) DeleteById(ctx context.Context, id types.Money) (bool, error) {
 	return p.Delete(ctx,
 		tblfamilyaccount.PrimaryKey.Eq(id),
 	)
@@ -278,7 +278,7 @@ func (p *familyaccount) Get(ctx context.Context, s ace.SelectBuilder) (*do.Famil
 }
 
 // GetByID 按主键读取一个family_account对象,先判断第二返回值是否为true,再判断是否第三返回值为nil
-func (p *familyaccount) GetByID(ctx context.Context, id types.BigInt, cols ...dialect.Field) (*do.FamilyAccount, bool, error) {
+func (p *familyaccount) GetByID(ctx context.Context, id types.Money, cols ...dialect.Field) (*do.FamilyAccount, bool, error) {
 	defer p.Free()
 	return p.Get(ctx, p.x.Table(tblfamilyaccount.TableName).Where(tblfamilyaccount.PrimaryKey.Eq(id)).Cols(cols...))
 }
@@ -443,7 +443,7 @@ func (p *familyaccount) Exists(ctx context.Context, cond ...dialect.Condition) (
 		return false, e
 	}
 
-	var id types.BigInt
+	var id types.Money
 	e = _row.Scan(&id)
 	switch e {
 	case nil:

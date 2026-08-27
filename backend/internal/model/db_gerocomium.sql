@@ -1,4 +1,4 @@
-﻿/*
+/*
 SQLyog Community v13.2.0 (64 bit)
 MySQL - 5.7.18-log : Database - db_gerocomium
 *********************************************************************
@@ -416,7 +416,7 @@ CREATE TABLE `bed` (
                        `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                        `create_time` datetime NOT NULL COMMENT '创建时间',
                        `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
-                       `update_time` datetime NOT NULL COMMENT '修改时间',
+                       `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
                        PRIMARY KEY (`id`) USING BTREE
                            KEY `idx_tenant_id` (`tenant_id`),
                        KEY `idx_room_id` (`room_id`),
@@ -1609,27 +1609,28 @@ CREATE TABLE `retreat_apply` (
                                  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
                                  `tenant_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
                                  `elder_id` bigint(20) unsigned NOT NULL COMMENT '老人id',
-                                 `apply_flag` tinyint NOT NULL COMMENT '申请状态',
+                                 `status` tinyint NOT NULL COMMENT '业务状态(退住申请流程状态)',
+                                 `state` tinyint NOT NULL DEFAULT '1' COMMENT '管理状态：-1=删除，0=禁用，1=正常',
                                  `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
                                  `create_time` datetime NOT NULL COMMENT '创建时间',
                                  `update_id` bigint(20) unsigned NOT NULL COMMENT '修改人id',
-                                 `update_time` datetime NOT NULL COMMENT '修改时间',
+                                 `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
                                  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='';
 
 /*Data for the table `retreat_apply` */
 
-insert  into `retreat_apply`(`id`,`elder_id`,`apply_flag`,`create_id`,`create_time`,`update_id`,`update_time`) values
-                                                                                                                   (3,1,-1,1,'2023-02-04 22:46:29',1,'2023-02-04 22:46:29'),
-                                                                                                                   (4,1,-1,1,'2023-02-13 17:42:29',1,'2023-02-13 17:42:45'),
-                                                                                                                   (5,1,-1,1,'2023-02-13 17:42:57',1,'2023-02-13 17:43:23'),
-                                                                                                                   (6,1,2,1,'2023-04-02 01:03:34',1,'2023-04-14 18:18:29'),
-                                                                                                                   (7,2,-1,1,'2023-04-04 19:31:00',1,'2023-04-04 19:37:08'),
-                                                                                                                   (8,2,-1,1,'2023-04-05 16:58:31',1,'2023-04-05 17:10:25'),
-                                                                                                                   (9,2,2,1,'2023-04-14 17:35:41',1,'2023-04-14 18:19:12'),
-                                                                                                                   (10,88,0,1,'2023-04-23 19:27:18',1,'2023-04-23 19:27:18'),
-                                                                                                                   (11,4,0,1,'2023-04-23 19:28:37',1,'2023-04-23 19:28:37'),
-                                                                                                                   (12,8,0,1,'2023-04-26 15:53:50',1,'2023-04-26 15:53:50');
+insert  into `retreat_apply`(`id`,`elder_id`,`status`,`state`,`create_id`,`create_time`,`update_id`,`update_time`) values
+                                                                                            (3,1,-1,1,'2023-02-04 22:46:29',1,'2023-02-04 22:46:29'),
+                                                                                            (4,1,-1,1,'2023-02-13 17:42:29',1,'2023-02-13 17:42:45'),
+                                                                                            (5,1,-1,1,'2023-02-13 17:42:57',1,'2023-02-13 17:43:23'),
+                                                                                            (6,1,2,1,'2023-04-02 01:03:34',1,'2023-04-14 18:18:29'),
+                                                                                            (7,2,-1,1,'2023-04-04 19:31:00',1,'2023-04-04 19:37:08'),
+                                                                                            (8,2,-1,1,'2023-04-05 16:58:31',1,'2023-04-05 17:10:25'),
+                                                                                            (9,2,2,1,'2023-04-14 17:35:41',1,'2023-04-14 18:19:12'),
+                                                                                            (10,88,0,1,'2023-04-23 19:27:18',1,'2023-04-23 19:27:18'),
+                                                                                            (11,4,0,1,'2023-04-23 19:28:37',1,'2023-04-23 19:28:37'),
+                                                                                            (12,8,0,1,'2023-04-26 15:53:50',1,'2023-04-26 15:53:50');
 
 /*Table structure for table `role` */
 
@@ -2210,8 +2211,8 @@ CREATE TABLE `tenant` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='租户表';
 /*Data for the table `tenant` */
 
-insert  into `tenant`(`id`,`name`,`logo`,`contact_name`,`contact_phone`,`plan`,`status`,`trial_start`,`trial_end`,`create_id`,`create_time`,`update_id`,`update_time`,`state`) values
-    (1,'平台租户','','平台','','',1,NULL,NULL,0,'2023-01-01 00:00:00',0,'2023-01-01 00:00:00',0);
+insert  into `tenant`(`id`,`name`,`logo`,`contact_name`,`contact_phone`,`plan`,`status`,`expire_time`,`create_id`,`create_time`,`update_id`,`update_time`,`state`) values
+    (1,'平台租户','','平台','','',1,NULL,0,'2023-01-01 00:00:00',0,'2023-01-01 00:00:00',0);
 
 /*Table structure for table `user` */
 
@@ -2295,6 +2296,82 @@ CREATE TABLE IF NOT EXISTS `family_recharge` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='家属充值订单表';
 
 
+-- 1) audit_log 数据轨迹日志表（新增）
+CREATE TABLE IF NOT EXISTS `audit_log` (
+                                           `id`            bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',
+                                           `tenant_id`     bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT '租户id',
+                                           `table_name`    varchar(64) NOT NULL COMMENT '被操作表名',
+                                           `row_id`        bigint(20) unsigned NOT NULL COMMENT '被操作行主键id',
+                                           `action`        varchar(20) NOT NULL COMMENT '操作：create/update/delete',
+                                           `operator_id`   bigint(20) unsigned NOT NULL COMMENT '操作员id',
+                                           `operator_name` varchar(50) NOT NULL DEFAULT '' COMMENT '操作员名称',
+                                           `change_before` json DEFAULT NULL COMMENT '变更前整行快照(JSON)',
+                                           `change_after`  json DEFAULT NULL COMMENT '变更后整行快照(JSON)',
+                                           `change_label`  varchar(500) NOT NULL DEFAULT '' COMMENT '可读变更摘要(中文字段名)',
+                                           `comment`       varchar(255) NOT NULL DEFAULT '' COMMENT '业务备注',
+                                           `create_time`   datetime NOT NULL COMMENT '操作时间',
+                                           PRIMARY KEY (`id`),
+                                           KEY `idx_row` (`table_name`,`row_id`),
+  KEY `idx_operator` (`operator_id`),
+  KEY `idx_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='数据轨迹日志';
+
+-- ============================================================================
+-- 2) bed 表：仅统一 update_time 自动更新。
+--    （bed 已具备 state / status，且保留 create_id / update_id）
+-- ============================================================================
+ALTER TABLE `bed` MODIFY COLUMN `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间';
+
+-- ============================================================================
+-- 3) retreat_apply 表：apply_flag→status、新增 state、update_time 自动更新。
+--    （保留 create_id / update_id）
+-- ============================================================================
+ALTER TABLE `retreat_apply` CHANGE COLUMN `apply_flag` `status` tinyint NOT NULL COMMENT '业务状态(退住申请流程状态)';
+ALTER TABLE `retreat_apply` ADD COLUMN `state` tinyint NOT NULL DEFAULT '1' COMMENT '管理状态：-1=删除，0=禁用，1=正常' AFTER `status`;
+ALTER TABLE `retreat_apply` MODIFY COLUMN `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间';
+
+-- 已有数据：state 统一置为 1（正常）
+UPDATE `retreat_apply` SET `state` = 1 WHERE `state` IS NULL OR `state` NOT IN (-1,0,1);
+
+
+
+-- 1) 单旗标 -> status
+ALTER TABLE `drug_deposit`  RENAME COLUMN `deposit_flag` TO `status`;
+ALTER TABLE `elder`         RENAME COLUMN `check_flag`   TO `status`;
+ALTER TABLE `emergency_contact` RENAME COLUMN `receive_flag` TO `status`;
+ALTER TABLE `family_member` RENAME COLUMN `receive_flag`  TO `status`;
+ALTER TABLE `nurse_reserve` RENAME COLUMN `order_flag`    TO `status`;
+ALTER TABLE `order`         RENAME COLUMN `order_flag`    TO `status`;
+ALTER TABLE `order_dishes`  RENAME COLUMN `set_flag`      TO `status`;
+ALTER TABLE `outbound_record` RENAME COLUMN `outbound_flag` TO `status`;
+ALTER TABLE `reserve`       RENAME COLUMN `reserve_flag`  TO `status`;
+ALTER TABLE `visit`         RENAME COLUMN `visit_flag`    TO `status`;
+ALTER TABLE `warehouse_record` RENAME COLUMN `warehouse_flag` TO `status`;
+
+-- 2) 多旗标表 -> 保留前缀 *_status
+ALTER TABLE `nurse` RENAME COLUMN `complete_flag` TO `complete_status`;
+ALTER TABLE `nurse` RENAME COLUMN `dine_flag`     TO `dine_status`;
+DROP TABLE IF EXISTS `field_dict`;
+CREATE TABLE `field_dict` (
+                              `id`          bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',
+                              `table`       varchar(64) NOT NULL COMMENT '表名',
+                              `field`       varchar(64) NOT NULL COMMENT '字段名(英文列名)',
+                              `label`       varchar(64) NOT NULL DEFAULT '' COMMENT '字段中文名',
+                              PRIMARY KEY (`id`),
+                              KEY `idx_field` (`table`, `field`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='字段中文名字典';
+
+-- ============================================================================
+-- 默认字典数据（示例；可按需补全各表字段中文名）
+-- ============================================================================
+INSERT INTO `field_dict`(`table`,`field`,`label`) VALUES
+                                                      ('accident','id','编号'),
+                                                      ('accident','staff_id','值班护工'),
+                                                      ('accident','occur_date','发生时间'),
+                                                      ('accident','description','事故描述'),
+                                                      ('accident','picture','事故图片'),
+                                                      ('accident','elder_id','老人'),
+                                                      ('accident','state','管理状态');
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

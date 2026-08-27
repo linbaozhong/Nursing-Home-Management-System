@@ -35,7 +35,7 @@ func (d *depositrecharge) PageDepositRechargeByKey(ctx context.Context, in *dto.
 		LeftJoin(tblelder.BedId, tblbed.Id).
 		Where(
 			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
-			tblelder.CheckFlag.In(
+			tblelder.Status.In(
 				types.Int8(constant.CheckEnter),
 				types.Int8(constant.CheckExitAudit),
 			),
@@ -85,7 +85,7 @@ func (d *depositrecharge) PageSearchElderByKey(ctx context.Context, in *dto.Page
 	q := db.Table(tblelder.TableName).
 		Where(
 			tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
-			tblelder.CheckFlag.In(
+			tblelder.Status.In(
 				types.Int8(constant.CheckEnter),
 				types.Int8(constant.CheckExitAudit),
 			),
@@ -101,7 +101,7 @@ func (d *depositrecharge) PageSearchElderByKey(ctx context.Context, in *dto.Page
 			tblelder.Sex,
 			tblelder.Phone,
 			tblelder.Address,
-			tblelder.CheckFlag,
+			tblelder.Status,
 		).
 		Desc(tblelder.CreateTime).
 		Select().

@@ -31,26 +31,20 @@ func (p *WarehouseRecord) MarshalJSON() ([]byte, error) {
 	if p.Source != "" {
 		write.WriteRaw("source", types.Marshal(p.Source))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.WarehouseId != 0 {
-		write.WriteRaw("warehouse_id", types.Marshal(p.WarehouseId))
-	}
-	if p.StaffId != 0 {
-		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
-	}
-	if !p.WarehouseDate.IsZero() {
-		write.WriteRaw("warehouse_date", types.Marshal(p.WarehouseDate))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.StaffId != 0 {
+		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -58,11 +52,17 @@ func (p *WarehouseRecord) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.WarehouseFlag != 0 {
-		write.WriteRaw("warehouse_flag", types.Marshal(p.WarehouseFlag))
+	if !p.WarehouseDate.IsZero() {
+		write.WriteRaw("warehouse_date", types.Marshal(p.WarehouseDate))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.WarehouseId != 0 {
+		write.WriteRaw("warehouse_id", types.Marshal(p.WarehouseId))
+	}
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
+	}
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -79,28 +79,28 @@ func (p *WarehouseRecord) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "source":
 			p.Source = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "warehouse_id":
-			p.WarehouseId = types.BigInt(value.Uint())
-		case "staff_id":
-			p.StaffId = types.BigInt(value.Uint())
-		case "warehouse_date":
-			p.WarehouseDate = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "staff_id":
+			p.StaffId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "warehouse_flag":
-			p.WarehouseFlag = types.Int8(value.Int())
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "warehouse_date":
+			p.WarehouseDate = types.Time{Time: value.Time()}
+		case "warehouse_id":
+			p.WarehouseId = types.BigInt(value.Uint())
+		case "state":
+			p.State = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -123,17 +123,17 @@ func (p *WarehouseRecord) Free() {
 // Reset
 func (p *WarehouseRecord) Reset() {
 	p.Source = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.WarehouseId = 0
-	p.StaffId = 0
-	p.WarehouseDate = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.StaffId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.WarehouseFlag = 0
-	p.DelFlag = 0
+	p.WarehouseDate = types.Time{}
+	p.WarehouseId = 0
+	p.State = 0
+	p.Status = 0
 
 }
 
@@ -144,17 +144,17 @@ func (p *WarehouseRecord) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var warehouserecordFieldToPtrFunc = map[string]func(*WarehouseRecord) any{
 	tblwarehouserecord.Source.Name:        func(p *WarehouseRecord) any { return &p.Source },
-	tblwarehouserecord.Id.Name:            func(p *WarehouseRecord) any { return &p.Id },
-	tblwarehouserecord.TenantId.Name:      func(p *WarehouseRecord) any { return &p.TenantId },
-	tblwarehouserecord.WarehouseId.Name:   func(p *WarehouseRecord) any { return &p.WarehouseId },
-	tblwarehouserecord.StaffId.Name:       func(p *WarehouseRecord) any { return &p.StaffId },
-	tblwarehouserecord.WarehouseDate.Name: func(p *WarehouseRecord) any { return &p.WarehouseDate },
 	tblwarehouserecord.CreateId.Name:      func(p *WarehouseRecord) any { return &p.CreateId },
 	tblwarehouserecord.CreateTime.Name:    func(p *WarehouseRecord) any { return &p.CreateTime },
+	tblwarehouserecord.Id.Name:            func(p *WarehouseRecord) any { return &p.Id },
+	tblwarehouserecord.StaffId.Name:       func(p *WarehouseRecord) any { return &p.StaffId },
+	tblwarehouserecord.TenantId.Name:      func(p *WarehouseRecord) any { return &p.TenantId },
 	tblwarehouserecord.UpdateId.Name:      func(p *WarehouseRecord) any { return &p.UpdateId },
 	tblwarehouserecord.UpdateTime.Name:    func(p *WarehouseRecord) any { return &p.UpdateTime },
-	tblwarehouserecord.WarehouseFlag.Name: func(p *WarehouseRecord) any { return &p.WarehouseFlag },
-	tblwarehouserecord.DelFlag.Name:       func(p *WarehouseRecord) any { return &p.DelFlag },
+	tblwarehouserecord.WarehouseDate.Name: func(p *WarehouseRecord) any { return &p.WarehouseDate },
+	tblwarehouserecord.WarehouseId.Name:   func(p *WarehouseRecord) any { return &p.WarehouseId },
+	tblwarehouserecord.State.Name:         func(p *WarehouseRecord) any { return &p.State },
+	tblwarehouserecord.Status.Name:        func(p *WarehouseRecord) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -247,26 +247,20 @@ var warehouserecordFieldToValueFunc = map[dialect.Field]func(*WarehouseRecord) (
 	tblwarehouserecord.Source: func(p *WarehouseRecord) (any, bool) {
 		return p.Source, p.Source == ""
 	},
-	tblwarehouserecord.Id: func(p *WarehouseRecord) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblwarehouserecord.TenantId: func(p *WarehouseRecord) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblwarehouserecord.WarehouseId: func(p *WarehouseRecord) (any, bool) {
-		return p.WarehouseId, p.WarehouseId == 0
-	},
-	tblwarehouserecord.StaffId: func(p *WarehouseRecord) (any, bool) {
-		return p.StaffId, p.StaffId == 0
-	},
-	tblwarehouserecord.WarehouseDate: func(p *WarehouseRecord) (any, bool) {
-		return p.WarehouseDate, p.WarehouseDate.IsZero()
-	},
 	tblwarehouserecord.CreateId: func(p *WarehouseRecord) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblwarehouserecord.CreateTime: func(p *WarehouseRecord) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblwarehouserecord.Id: func(p *WarehouseRecord) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblwarehouserecord.StaffId: func(p *WarehouseRecord) (any, bool) {
+		return p.StaffId, p.StaffId == 0
+	},
+	tblwarehouserecord.TenantId: func(p *WarehouseRecord) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblwarehouserecord.UpdateId: func(p *WarehouseRecord) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -274,11 +268,17 @@ var warehouserecordFieldToValueFunc = map[dialect.Field]func(*WarehouseRecord) (
 	tblwarehouserecord.UpdateTime: func(p *WarehouseRecord) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblwarehouserecord.WarehouseFlag: func(p *WarehouseRecord) (any, bool) {
-		return p.WarehouseFlag, p.WarehouseFlag == 0
+	tblwarehouserecord.WarehouseDate: func(p *WarehouseRecord) (any, bool) {
+		return p.WarehouseDate, p.WarehouseDate.IsZero()
 	},
-	tblwarehouserecord.DelFlag: func(p *WarehouseRecord) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblwarehouserecord.WarehouseId: func(p *WarehouseRecord) (any, bool) {
+		return p.WarehouseId, p.WarehouseId == 0
+	},
+	tblwarehouserecord.State: func(p *WarehouseRecord) (any, bool) {
+		return p.State, p.State == 0
+	},
+	tblwarehouserecord.Status: func(p *WarehouseRecord) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

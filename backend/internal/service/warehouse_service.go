@@ -26,7 +26,7 @@ var Warehouse = &warehouse{}
 // 注: staff_name 需联表 user 表(仓库管理员名), 因 user 表尚未在 Go 侧生成, 暂未联表, staff_name 留空。
 func (w *warehouse) PageWarehouseByKey(ctx context.Context, in *dto.PageWarehouseByKeyReq, out *[]dto.PageWarehouseByKeyResp) error {
 	q := db.Table(tblwarehouse.TableName).
-		Where(tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouse.DelFlag.Eq(constant.YesNoNo))
+		Where(tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblwarehouse.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.WarehouseName != nil && *in.WarehouseName != "" {
 		q.And(tblwarehouse.Name.Like(*in.WarehouseName))
 	}
@@ -54,7 +54,7 @@ func (w *warehouse) AddWarehouse(ctx context.Context, in *dto.OperateWarehouseRe
 	repeat, e := dao.Warehouse(db).Exists(ctx,
 		tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblwarehouse.Name.Eq(*in.Name),
-		tblwarehouse.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblwarehouse.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -66,7 +66,7 @@ func (w *warehouse) AddWarehouse(ctx context.Context, in *dto.OperateWarehouseRe
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.StaffId = types.BigInt(*in.StaffID)
 	bean.Name = types.String(*in.Name)
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.State = types.Int8(constant.StateEnabled)
 	_, e = dao.Warehouse(db).InsertOne(ctx, bean)
 	return e
 }
@@ -93,7 +93,7 @@ func (w *warehouse) EditWarehouse(ctx context.Context, in *dto.OperateWarehouseR
 	repeat, e := dao.Warehouse(db).Exists(ctx,
 		tblwarehouse.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblwarehouse.Name.Eq(*in.Name),
-		tblwarehouse.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblwarehouse.State.NotEq(types.Int8(constant.StateDeleted)),
 		tblwarehouse.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -125,7 +125,7 @@ func (w *warehouse) DeleteWarehouse(ctx context.Context, in *dto.IDReq, out *dto
 	}
 	bean := do.NewWarehouse()
 	bean.Id = types.BigInt(*in.ID)
-	bean.DelFlag = types.Int8(constant.YesNoYes)
+	bean.State = types.Int8(constant.StateDeleted)
 	_, e = dao.Warehouse(db).UpdateOne(ctx, bean)
 	return e
 }

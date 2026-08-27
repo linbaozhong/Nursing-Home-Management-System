@@ -31,15 +31,6 @@ func (p *Consume) MarshalJSON() ([]byte, error) {
 	if p.ConsumeType != "" {
 		write.WriteRaw("consume_type", types.Marshal(p.ConsumeType))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
 	if p.ConsumeAmount != 0 {
 		write.WriteRaw("consume_amount", types.Marshal(p.ConsumeAmount))
 	}
@@ -51,6 +42,15 @@ func (p *Consume) MarshalJSON() ([]byte, error) {
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -73,12 +73,6 @@ func (p *Consume) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "consume_type":
 			p.ConsumeType = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
 		case "consume_amount":
 			e = types.Unmarshal(value, &p.ConsumeAmount)
 		case "consume_date":
@@ -87,6 +81,12 @@ func (p *Consume) UnmarshalJSON(data []byte) error {
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -113,13 +113,13 @@ func (p *Consume) Free() {
 // Reset
 func (p *Consume) Reset() {
 	p.ConsumeType = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
 	p.ConsumeAmount = 0
 	p.ConsumeDate = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 
@@ -132,13 +132,13 @@ func (p *Consume) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var consumeFieldToPtrFunc = map[string]func(*Consume) any{
 	tblconsume.ConsumeType.Name:   func(p *Consume) any { return &p.ConsumeType },
-	tblconsume.Id.Name:            func(p *Consume) any { return &p.Id },
-	tblconsume.TenantId.Name:      func(p *Consume) any { return &p.TenantId },
-	tblconsume.ElderId.Name:       func(p *Consume) any { return &p.ElderId },
 	tblconsume.ConsumeAmount.Name: func(p *Consume) any { return &p.ConsumeAmount },
 	tblconsume.ConsumeDate.Name:   func(p *Consume) any { return &p.ConsumeDate },
 	tblconsume.CreateId.Name:      func(p *Consume) any { return &p.CreateId },
 	tblconsume.CreateTime.Name:    func(p *Consume) any { return &p.CreateTime },
+	tblconsume.ElderId.Name:       func(p *Consume) any { return &p.ElderId },
+	tblconsume.Id.Name:            func(p *Consume) any { return &p.Id },
+	tblconsume.TenantId.Name:      func(p *Consume) any { return &p.TenantId },
 	tblconsume.UpdateId.Name:      func(p *Consume) any { return &p.UpdateId },
 	tblconsume.UpdateTime.Name:    func(p *Consume) any { return &p.UpdateTime },
 }
@@ -233,15 +233,6 @@ var consumeFieldToValueFunc = map[dialect.Field]func(*Consume) (any, bool){
 	tblconsume.ConsumeType: func(p *Consume) (any, bool) {
 		return p.ConsumeType, p.ConsumeType == ""
 	},
-	tblconsume.Id: func(p *Consume) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblconsume.TenantId: func(p *Consume) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblconsume.ElderId: func(p *Consume) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
 	tblconsume.ConsumeAmount: func(p *Consume) (any, bool) {
 		return p.ConsumeAmount, p.ConsumeAmount == 0
 	},
@@ -253,6 +244,15 @@ var consumeFieldToValueFunc = map[dialect.Field]func(*Consume) (any, bool){
 	},
 	tblconsume.CreateTime: func(p *Consume) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblconsume.ElderId: func(p *Consume) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblconsume.Id: func(p *Consume) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblconsume.TenantId: func(p *Consume) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblconsume.UpdateId: func(p *Consume) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

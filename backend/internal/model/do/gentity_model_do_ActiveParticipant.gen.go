@@ -28,23 +28,23 @@ func NewActiveParticipant() *ActiveParticipant {
 // MarshalJSON
 func (p *ActiveParticipant) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(8 * 50)
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
 	if p.ActiveId != 0 {
 		write.WriteRaw("active_id", types.Marshal(p.ActiveId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -65,18 +65,18 @@ func (p *ActiveParticipant) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
 		case "active_id":
 			p.ActiveId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -102,12 +102,12 @@ func (p *ActiveParticipant) Free() {
 
 // Reset
 func (p *ActiveParticipant) Reset() {
-	p.Id = 0
-	p.TenantId = 0
 	p.ActiveId = 0
-	p.ElderId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 
@@ -119,12 +119,12 @@ func (p *ActiveParticipant) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var activeparticipantFieldToPtrFunc = map[string]func(*ActiveParticipant) any{
-	tblactiveparticipant.Id.Name:         func(p *ActiveParticipant) any { return &p.Id },
-	tblactiveparticipant.TenantId.Name:   func(p *ActiveParticipant) any { return &p.TenantId },
 	tblactiveparticipant.ActiveId.Name:   func(p *ActiveParticipant) any { return &p.ActiveId },
-	tblactiveparticipant.ElderId.Name:    func(p *ActiveParticipant) any { return &p.ElderId },
 	tblactiveparticipant.CreateId.Name:   func(p *ActiveParticipant) any { return &p.CreateId },
 	tblactiveparticipant.CreateTime.Name: func(p *ActiveParticipant) any { return &p.CreateTime },
+	tblactiveparticipant.ElderId.Name:    func(p *ActiveParticipant) any { return &p.ElderId },
+	tblactiveparticipant.Id.Name:         func(p *ActiveParticipant) any { return &p.Id },
+	tblactiveparticipant.TenantId.Name:   func(p *ActiveParticipant) any { return &p.TenantId },
 	tblactiveparticipant.UpdateId.Name:   func(p *ActiveParticipant) any { return &p.UpdateId },
 	tblactiveparticipant.UpdateTime.Name: func(p *ActiveParticipant) any { return &p.UpdateTime },
 }
@@ -216,23 +216,23 @@ func (p *ActiveParticipant) RawAssignValues(d dialect.Dialect, args ...dialect.F
 
 // 定义字段到值检查和获取函数的映射
 var activeparticipantFieldToValueFunc = map[dialect.Field]func(*ActiveParticipant) (any, bool){
-	tblactiveparticipant.Id: func(p *ActiveParticipant) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblactiveparticipant.TenantId: func(p *ActiveParticipant) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
 	tblactiveparticipant.ActiveId: func(p *ActiveParticipant) (any, bool) {
 		return p.ActiveId, p.ActiveId == 0
-	},
-	tblactiveparticipant.ElderId: func(p *ActiveParticipant) (any, bool) {
-		return p.ElderId, p.ElderId == 0
 	},
 	tblactiveparticipant.CreateId: func(p *ActiveParticipant) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblactiveparticipant.CreateTime: func(p *ActiveParticipant) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblactiveparticipant.ElderId: func(p *ActiveParticipant) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblactiveparticipant.Id: func(p *ActiveParticipant) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblactiveparticipant.TenantId: func(p *ActiveParticipant) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblactiveparticipant.UpdateId: func(p *ActiveParticipant) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

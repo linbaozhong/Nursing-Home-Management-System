@@ -10,51 +10,51 @@ const TableName = "base_attachment"
 
 var (
 	Name       = dialect.Field{Name: "name", Json: "name", Table: "base_attachment", Type: "types.String", IsRelation: false}
-	RealName   = dialect.Field{Name: "real_name", Json: "real_name", Table: "base_attachment", Type: "types.String", IsRelation: false}
 	Path       = dialect.Field{Name: "path", Json: "path", Table: "base_attachment", Type: "types.String", IsRelation: false}
-	Url        = dialect.Field{Name: "url", Json: "url", Table: "base_attachment", Type: "types.String", IsRelation: false}
+	RealName   = dialect.Field{Name: "real_name", Json: "real_name", Table: "base_attachment", Type: "types.String", IsRelation: false}
 	Suff       = dialect.Field{Name: "suff", Json: "suff", Table: "base_attachment", Type: "types.String", IsRelation: false}
-	Id         = dialect.Field{Name: "id", Json: "id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
-	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
-	Size       = dialect.Field{Name: "size", Json: "size", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
+	Url        = dialect.Field{Name: "url", Json: "url", Table: "base_attachment", Type: "types.String", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "base_attachment", Type: "types.Time", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
+	Size       = dialect.Field{Name: "size", Json: "size", Table: "base_attachment", Type: "types.Money", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "base_attachment", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "base_attachment", Type: "types.Time", IsRelation: false}
-	DelFlag    = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "base_attachment", Type: "types.Int8", IsRelation: false}
+	State      = dialect.Field{Name: "state", Json: "state", Table: "base_attachment", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
 		Name,
-		RealName,
 		Path,
-		Url,
+		RealName,
 		Suff,
-		Id,
-		TenantId,
-		Size,
+		Url,
 		CreateId,
 		CreateTime,
+		Id,
+		Size,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Name,
-		RealName,
 		Path,
-		Url,
+		RealName,
 		Suff,
-		Id,
-		TenantId,
-		Size,
+		Url,
 		CreateId,
 		CreateTime,
+		Id,
+		Size,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 )

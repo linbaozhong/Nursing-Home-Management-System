@@ -31,29 +31,29 @@ func (p *OrderDishes) MarshalJSON() ([]byte, error) {
 	if p.DishesName != "" {
 		write.WriteRaw("dishes_name", types.Marshal(p.DishesName))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.OrderId != 0 {
-		write.WriteRaw("order_id", types.Marshal(p.OrderId))
-	}
-	if p.DishesPrice != 0 {
-		write.WriteRaw("dishes_price", types.Marshal(p.DishesPrice))
-	}
-	if p.TotalAmount != 0 {
-		write.WriteRaw("total_amount", types.Marshal(p.TotalAmount))
-	}
-	if p.ReallyAmount != 0 {
-		write.WriteRaw("really_amount", types.Marshal(p.ReallyAmount))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.DishesPrice != 0 {
+		write.WriteRaw("dishes_price", types.Marshal(p.DishesPrice))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.OrderId != 0 {
+		write.WriteRaw("order_id", types.Marshal(p.OrderId))
+	}
+	if p.ReallyAmount != 0 {
+		write.WriteRaw("really_amount", types.Marshal(p.ReallyAmount))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
+	if p.TotalAmount != 0 {
+		write.WriteRaw("total_amount", types.Marshal(p.TotalAmount))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -64,8 +64,8 @@ func (p *OrderDishes) MarshalJSON() ([]byte, error) {
 	if p.OrderNum != 0 {
 		write.WriteRaw("order_num", types.Marshal(p.OrderNum))
 	}
-	if p.SetFlag != 0 {
-		write.WriteRaw("set_flag", types.Marshal(p.SetFlag))
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -82,30 +82,30 @@ func (p *OrderDishes) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "dishes_name":
 			p.DishesName = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "order_id":
-			p.OrderId = types.BigInt(value.Uint())
-		case "dishes_price":
-			e = types.Unmarshal(value, &p.DishesPrice)
-		case "total_amount":
-			e = types.Unmarshal(value, &p.TotalAmount)
-		case "really_amount":
-			e = types.Unmarshal(value, &p.ReallyAmount)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "dishes_price":
+			e = types.Unmarshal(value, &p.DishesPrice)
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "order_id":
+			p.OrderId = types.BigInt(value.Uint())
+		case "really_amount":
+			e = types.Unmarshal(value, &p.ReallyAmount)
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
+		case "total_amount":
+			e = types.Unmarshal(value, &p.TotalAmount)
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "order_num":
 			p.OrderNum = types.Int32(value.Int())
-		case "set_flag":
-			p.SetFlag = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -128,18 +128,18 @@ func (p *OrderDishes) Free() {
 // Reset
 func (p *OrderDishes) Reset() {
 	p.DishesName = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.OrderId = 0
-	p.DishesPrice = 0
-	p.TotalAmount = 0
-	p.ReallyAmount = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.DishesPrice = 0
+	p.Id = 0
+	p.OrderId = 0
+	p.ReallyAmount = 0
+	p.TenantId = 0
+	p.TotalAmount = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.OrderNum = 0
-	p.SetFlag = 0
+	p.Status = 0
 
 }
 
@@ -150,18 +150,18 @@ func (p *OrderDishes) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var orderdishesFieldToPtrFunc = map[string]func(*OrderDishes) any{
 	tblorderdishes.DishesName.Name:   func(p *OrderDishes) any { return &p.DishesName },
-	tblorderdishes.Id.Name:           func(p *OrderDishes) any { return &p.Id },
-	tblorderdishes.TenantId.Name:     func(p *OrderDishes) any { return &p.TenantId },
-	tblorderdishes.OrderId.Name:      func(p *OrderDishes) any { return &p.OrderId },
-	tblorderdishes.DishesPrice.Name:  func(p *OrderDishes) any { return &p.DishesPrice },
-	tblorderdishes.TotalAmount.Name:  func(p *OrderDishes) any { return &p.TotalAmount },
-	tblorderdishes.ReallyAmount.Name: func(p *OrderDishes) any { return &p.ReallyAmount },
 	tblorderdishes.CreateId.Name:     func(p *OrderDishes) any { return &p.CreateId },
 	tblorderdishes.CreateTime.Name:   func(p *OrderDishes) any { return &p.CreateTime },
+	tblorderdishes.DishesPrice.Name:  func(p *OrderDishes) any { return &p.DishesPrice },
+	tblorderdishes.Id.Name:           func(p *OrderDishes) any { return &p.Id },
+	tblorderdishes.OrderId.Name:      func(p *OrderDishes) any { return &p.OrderId },
+	tblorderdishes.ReallyAmount.Name: func(p *OrderDishes) any { return &p.ReallyAmount },
+	tblorderdishes.TenantId.Name:     func(p *OrderDishes) any { return &p.TenantId },
+	tblorderdishes.TotalAmount.Name:  func(p *OrderDishes) any { return &p.TotalAmount },
 	tblorderdishes.UpdateId.Name:     func(p *OrderDishes) any { return &p.UpdateId },
 	tblorderdishes.UpdateTime.Name:   func(p *OrderDishes) any { return &p.UpdateTime },
 	tblorderdishes.OrderNum.Name:     func(p *OrderDishes) any { return &p.OrderNum },
-	tblorderdishes.SetFlag.Name:      func(p *OrderDishes) any { return &p.SetFlag },
+	tblorderdishes.Status.Name:       func(p *OrderDishes) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -254,29 +254,29 @@ var orderdishesFieldToValueFunc = map[dialect.Field]func(*OrderDishes) (any, boo
 	tblorderdishes.DishesName: func(p *OrderDishes) (any, bool) {
 		return p.DishesName, p.DishesName == ""
 	},
-	tblorderdishes.Id: func(p *OrderDishes) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblorderdishes.TenantId: func(p *OrderDishes) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblorderdishes.OrderId: func(p *OrderDishes) (any, bool) {
-		return p.OrderId, p.OrderId == 0
-	},
-	tblorderdishes.DishesPrice: func(p *OrderDishes) (any, bool) {
-		return p.DishesPrice, p.DishesPrice == 0
-	},
-	tblorderdishes.TotalAmount: func(p *OrderDishes) (any, bool) {
-		return p.TotalAmount, p.TotalAmount == 0
-	},
-	tblorderdishes.ReallyAmount: func(p *OrderDishes) (any, bool) {
-		return p.ReallyAmount, p.ReallyAmount == 0
-	},
 	tblorderdishes.CreateId: func(p *OrderDishes) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblorderdishes.CreateTime: func(p *OrderDishes) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblorderdishes.DishesPrice: func(p *OrderDishes) (any, bool) {
+		return p.DishesPrice, p.DishesPrice == 0
+	},
+	tblorderdishes.Id: func(p *OrderDishes) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblorderdishes.OrderId: func(p *OrderDishes) (any, bool) {
+		return p.OrderId, p.OrderId == 0
+	},
+	tblorderdishes.ReallyAmount: func(p *OrderDishes) (any, bool) {
+		return p.ReallyAmount, p.ReallyAmount == 0
+	},
+	tblorderdishes.TenantId: func(p *OrderDishes) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
+	tblorderdishes.TotalAmount: func(p *OrderDishes) (any, bool) {
+		return p.TotalAmount, p.TotalAmount == 0
 	},
 	tblorderdishes.UpdateId: func(p *OrderDishes) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -287,8 +287,8 @@ var orderdishesFieldToValueFunc = map[dialect.Field]func(*OrderDishes) (any, boo
 	tblorderdishes.OrderNum: func(p *OrderDishes) (any, bool) {
 		return p.OrderNum, p.OrderNum == 0
 	},
-	tblorderdishes.SetFlag: func(p *OrderDishes) (any, bool) {
-		return p.SetFlag, p.SetFlag == 0
+	tblorderdishes.Status: func(p *OrderDishes) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

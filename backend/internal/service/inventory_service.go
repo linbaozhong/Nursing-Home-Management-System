@@ -86,22 +86,22 @@ func (i *inventory) GetInventoryById(ctx context.Context, in *dto.IDReq, out *dt
 }
 
 // AddInventory Java InventoryServiceImpl 未实现, 保留占位
-func (i *inventory) AddInventory(ctx context.Context, in *dto.OperateInventoryQuery, out *dto.EmptyResp) error {
+func (i *inventory) AddInventory(ctx context.Context, in *dto.AddInventoryReq, out *dto.EmptyResp) error {
 	return nil
 }
 
 // EditInventory Java InventoryServiceImpl 未实现, 保留占位
-func (i *inventory) EditInventory(ctx context.Context, in *dto.OperateInventoryQuery, out *dto.EmptyResp) error {
+func (i *inventory) EditInventory(ctx context.Context, in *dto.EditInventoryReq, out *dto.EmptyResp) error {
 	return nil
 }
 
 // AuditInventory Java InventoryServiceImpl 未实现, 保留占位
-func (i *inventory) AuditInventory(ctx context.Context, in *dto.OperateInventoryQuery, out *dto.EmptyResp) error {
+func (i *inventory) AuditInventory(ctx context.Context, in *dto.AuditInventoryReq, out *dto.EmptyResp) error {
 	return nil
 }
 
 // PageInventoryRecordByKey Java InventoryServiceImpl 未实现, 保留占位
-func (i *inventory) PageInventoryRecordByKey(ctx context.Context, in *dto.PageInventoryRecordByKeyReq, out *[]dto.PageInventoryRecordByKeyVO) error {
+func (i *inventory) PageInventoryRecordByKey(ctx context.Context, in *dto.PageInventoryRecordByKeyReq, out *[]dto.PageInventoryByKeyResp) error {
 	return nil
 }
 

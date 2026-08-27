@@ -26,7 +26,7 @@ type nurseGradeService struct{}
 // PageNurseGradeByKey 分页查询护理等级
 func (s *nurseGradeService) PageNurseGradeByKey(ctx context.Context, in *dto.PageNurseGradeByKeyReq, out *[]dto.PageNurseGradeByKeyResp) error {
 	q := db.Table(tblnursegrade.TableName)
-	q = q.Where(tblnursegrade.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblnursegrade.DelFlag.Eq(types.Int8(constant.YesNoNo)))
+	q = q.Where(tblnursegrade.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblnursegrade.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.GradeName != nil {
 		q = q.And(tblnursegrade.Name.Like(*in.GradeName))
 	}
@@ -46,7 +46,7 @@ func (s *nurseGradeService) PageNurseGradeByKey(ctx context.Context, in *dto.Pag
 
 // GetNurseGradeById 查询护理等级详情（含护理服务列表）
 func (s *nurseGradeService) GetNurseGradeById(ctx context.Context, in *dto.IDReq, out *dto.GetNurseGradeByIDResp) error {
-	bean, has, e := dao.NurseGrade(db).GetByID(ctx, types.BigInt(*in.ID), tblnursegrade.Id, tblnursegrade.Name, tblnursegrade.Type, tblnursegrade.MonthPrice, tblnursegrade.DelFlag)
+	bean, has, e := dao.NurseGrade(db).GetByID(ctx, types.BigInt(*in.ID), tblnursegrade.Id, tblnursegrade.Name, tblnursegrade.Type, tblnursegrade.MonthPrice, tblnursegrade.State)
 	if e != nil {
 		return e
 	}
@@ -70,7 +70,7 @@ func (s *nurseGradeService) GetNurseGradeById(ctx context.Context, in *dto.IDReq
 		ids = append(ids, it.ServiceId)
 	}
 	services, _, e := dao.ServiceItem(db).List(ctx, ace.Where(tblserviceitem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblserviceitem.Id.In(ids...)).
-		And(tblserviceitem.DelFlag.Eq(types.Int8(constant.YesNoNo))).
+		And(tblserviceitem.State.NotEq(types.Int8(constant.StateDeleted))).
 		Cols(tblserviceitem.Id, tblserviceitem.TypeId, tblserviceitem.Name, tblserviceitem.ChargeMethod, tblserviceitem.Price, tblserviceitem.NeedDate))
 	if e != nil {
 		return e
@@ -96,7 +96,7 @@ func (s *nurseGradeService) AddNurseGrade(ctx context.Context, in *dto.AddNurseG
 		tblnursegrade.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblnursegrade.Name.Eq(types.String(*in.Name)),
 		tblnursegrade.Type.Eq(types.String(*in.Type)),
-		tblnursegrade.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblnursegrade.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -109,8 +109,8 @@ func (s *nurseGradeService) AddNurseGrade(ctx context.Context, in *dto.AddNurseG
 	bean.Name = types.String(*in.Name)
 	bean.Type = types.String(*in.Type)
 	bean.MonthPrice = types.Money(*in.MonthPrice)
-	bean.DelFlag = types.Int8(constant.YesNoNo)
-	ok, e := dao.NurseGrade(db).InsertOne(ctx, bean, tblnursegrade.TenantId, tblnursegrade.Name, tblnursegrade.Type, tblnursegrade.MonthPrice, tblnursegrade.DelFlag, tblnursegrade.CreateId, tblnursegrade.CreateTime)
+	bean.State = types.Int8(constant.StateEnabled)
+	ok, e := dao.NurseGrade(db).InsertOne(ctx, bean, tblnursegrade.TenantId, tblnursegrade.Name, tblnursegrade.Type, tblnursegrade.MonthPrice, tblnursegrade.State, tblnursegrade.CreateId, tblnursegrade.CreateTime)
 	if e != nil {
 		return e
 	}
@@ -140,7 +140,7 @@ func (s *nurseGradeService) EditNurseGrade(ctx context.Context, in *dto.EditNurs
 		tblnursegrade.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblnursegrade.Name.Eq(types.String(*in.Name)),
 		tblnursegrade.Type.Eq(types.String(*in.Type)),
-		tblnursegrade.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblnursegrade.State.NotEq(types.Int8(constant.StateDeleted)),
 		tblnursegrade.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -185,7 +185,7 @@ func (s *nurseGradeService) EditNurseGrade(ctx context.Context, in *dto.EditNurs
 // DeleteNurseGrade 删除护理等级（逻辑删除）
 func (s *nurseGradeService) DeleteNurseGrade(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	_, e := dao.NurseGrade(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tblnursegrade.DelFlag.Set(types.Int8(constant.YesNoYes)),
+		tblnursegrade.State.Set(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e

@@ -9,43 +9,43 @@ import (
 const TableName = "user"
 
 var (
-	Id         = dialect.Field{Name: "id", Json: "id", Table: "user", Type: "types.BigInt", IsRelation: false}
-	UnionId    = dialect.Field{Name: "union_id", Json: "union_id", Table: "user", Type: "types.String", IsRelation: false}
-	Openid     = dialect.Field{Name: "openid", Json: "openid", Table: "user", Type: "types.String", IsRelation: false}
-	Phone      = dialect.Field{Name: "phone", Json: "phone", Table: "user", Type: "types.String", IsRelation: false}
-	Pass       = dialect.Field{Name: "pass", Json: "pass", Table: "user", Type: "types.String", IsRelation: false}
-	Name       = dialect.Field{Name: "name", Json: "name", Table: "user", Type: "types.String", IsRelation: false}
 	Avator     = dialect.Field{Name: "avator", Json: "avator", Table: "user", Type: "types.String", IsRelation: false}
+	Name       = dialect.Field{Name: "name", Json: "name", Table: "user", Type: "types.String", IsRelation: false}
+	Openid     = dialect.Field{Name: "openid", Json: "openid", Table: "user", Type: "types.String", IsRelation: false}
+	Pass       = dialect.Field{Name: "pass", Json: "pass", Table: "user", Type: "types.String", IsRelation: false}
+	Phone      = dialect.Field{Name: "phone", Json: "phone", Table: "user", Type: "types.String", IsRelation: false}
+	UnionId    = dialect.Field{Name: "union_id", Json: "union_id", Table: "user", Type: "types.String", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "user", Type: "types.Time", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "user", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "user", Type: "types.Time", IsRelation: false}
-	DelFlag    = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "user", Type: "types.Int8", IsRelation: false}
+	State      = dialect.Field{Name: "state", Json: "state", Table: "user", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Id,
-		UnionId,
-		Openid,
-		Phone,
-		Pass,
-		Name,
 		Avator,
+		Name,
+		Openid,
+		Pass,
+		Phone,
+		UnionId,
 		CreateTime,
+		Id,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Id,
-		UnionId,
-		Openid,
-		Phone,
-		Pass,
-		Name,
 		Avator,
+		Name,
+		Openid,
+		Pass,
+		Phone,
+		UnionId,
 		CreateTime,
+		Id,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 )

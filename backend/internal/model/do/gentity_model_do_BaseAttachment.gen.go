@@ -31,26 +31,17 @@ func (p *BaseAttachment) MarshalJSON() ([]byte, error) {
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.RealName != "" {
-		write.WriteRaw("real_name", types.Marshal(p.RealName))
-	}
 	if p.Path != "" {
 		write.WriteRaw("path", types.Marshal(p.Path))
 	}
-	if p.Url != "" {
-		write.WriteRaw("url", types.Marshal(p.Url))
+	if p.RealName != "" {
+		write.WriteRaw("real_name", types.Marshal(p.RealName))
 	}
 	if p.Suff != "" {
 		write.WriteRaw("suff", types.Marshal(p.Suff))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.Size != 0 {
-		write.WriteRaw("size", types.Marshal(p.Size))
+	if p.Url != "" {
+		write.WriteRaw("url", types.Marshal(p.Url))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -58,14 +49,23 @@ func (p *BaseAttachment) MarshalJSON() ([]byte, error) {
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.Size != 0 {
+		write.WriteRaw("size", types.Marshal(p.Size))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
 	}
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -82,30 +82,30 @@ func (p *BaseAttachment) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "real_name":
-			p.RealName = types.String(value.Str)
 		case "path":
 			p.Path = types.String(value.Str)
-		case "url":
-			p.Url = types.String(value.Str)
+		case "real_name":
+			p.RealName = types.String(value.Str)
 		case "suff":
 			p.Suff = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "size":
-			p.Size = types.BigInt(value.Uint())
+		case "url":
+			p.Url = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "size":
+			e = types.Unmarshal(value, &p.Size)
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -128,18 +128,18 @@ func (p *BaseAttachment) Free() {
 // Reset
 func (p *BaseAttachment) Reset() {
 	p.Name = ""
-	p.RealName = ""
 	p.Path = ""
-	p.Url = ""
+	p.RealName = ""
 	p.Suff = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.Size = 0
+	p.Url = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.Size = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -150,18 +150,18 @@ func (p *BaseAttachment) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var baseattachmentFieldToPtrFunc = map[string]func(*BaseAttachment) any{
 	tblbaseattachment.Name.Name:       func(p *BaseAttachment) any { return &p.Name },
-	tblbaseattachment.RealName.Name:   func(p *BaseAttachment) any { return &p.RealName },
 	tblbaseattachment.Path.Name:       func(p *BaseAttachment) any { return &p.Path },
-	tblbaseattachment.Url.Name:        func(p *BaseAttachment) any { return &p.Url },
+	tblbaseattachment.RealName.Name:   func(p *BaseAttachment) any { return &p.RealName },
 	tblbaseattachment.Suff.Name:       func(p *BaseAttachment) any { return &p.Suff },
-	tblbaseattachment.Id.Name:         func(p *BaseAttachment) any { return &p.Id },
-	tblbaseattachment.TenantId.Name:   func(p *BaseAttachment) any { return &p.TenantId },
-	tblbaseattachment.Size.Name:       func(p *BaseAttachment) any { return &p.Size },
+	tblbaseattachment.Url.Name:        func(p *BaseAttachment) any { return &p.Url },
 	tblbaseattachment.CreateId.Name:   func(p *BaseAttachment) any { return &p.CreateId },
 	tblbaseattachment.CreateTime.Name: func(p *BaseAttachment) any { return &p.CreateTime },
+	tblbaseattachment.Id.Name:         func(p *BaseAttachment) any { return &p.Id },
+	tblbaseattachment.Size.Name:       func(p *BaseAttachment) any { return &p.Size },
+	tblbaseattachment.TenantId.Name:   func(p *BaseAttachment) any { return &p.TenantId },
 	tblbaseattachment.UpdateId.Name:   func(p *BaseAttachment) any { return &p.UpdateId },
 	tblbaseattachment.UpdateTime.Name: func(p *BaseAttachment) any { return &p.UpdateTime },
-	tblbaseattachment.DelFlag.Name:    func(p *BaseAttachment) any { return &p.DelFlag },
+	tblbaseattachment.State.Name:      func(p *BaseAttachment) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -254,26 +254,17 @@ var baseattachmentFieldToValueFunc = map[dialect.Field]func(*BaseAttachment) (an
 	tblbaseattachment.Name: func(p *BaseAttachment) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tblbaseattachment.RealName: func(p *BaseAttachment) (any, bool) {
-		return p.RealName, p.RealName == ""
-	},
 	tblbaseattachment.Path: func(p *BaseAttachment) (any, bool) {
 		return p.Path, p.Path == ""
 	},
-	tblbaseattachment.Url: func(p *BaseAttachment) (any, bool) {
-		return p.Url, p.Url == ""
+	tblbaseattachment.RealName: func(p *BaseAttachment) (any, bool) {
+		return p.RealName, p.RealName == ""
 	},
 	tblbaseattachment.Suff: func(p *BaseAttachment) (any, bool) {
 		return p.Suff, p.Suff == ""
 	},
-	tblbaseattachment.Id: func(p *BaseAttachment) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblbaseattachment.TenantId: func(p *BaseAttachment) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblbaseattachment.Size: func(p *BaseAttachment) (any, bool) {
-		return p.Size, p.Size == 0
+	tblbaseattachment.Url: func(p *BaseAttachment) (any, bool) {
+		return p.Url, p.Url == ""
 	},
 	tblbaseattachment.CreateId: func(p *BaseAttachment) (any, bool) {
 		return p.CreateId, p.CreateId == 0
@@ -281,14 +272,23 @@ var baseattachmentFieldToValueFunc = map[dialect.Field]func(*BaseAttachment) (an
 	tblbaseattachment.CreateTime: func(p *BaseAttachment) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tblbaseattachment.Id: func(p *BaseAttachment) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblbaseattachment.Size: func(p *BaseAttachment) (any, bool) {
+		return p.Size, p.Size == 0
+	},
+	tblbaseattachment.TenantId: func(p *BaseAttachment) (any, bool) {
+		return p.TenantId, p.TenantId == 0
+	},
 	tblbaseattachment.UpdateId: func(p *BaseAttachment) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
 	},
 	tblbaseattachment.UpdateTime: func(p *BaseAttachment) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblbaseattachment.DelFlag: func(p *BaseAttachment) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblbaseattachment.State: func(p *BaseAttachment) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

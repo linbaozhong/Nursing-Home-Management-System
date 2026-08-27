@@ -31,20 +31,20 @@ func (p *CateringSet) MarshalJSON() ([]byte, error) {
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.MonthPrice != 0 {
-		write.WriteRaw("month_price", types.Marshal(p.MonthPrice))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.MonthPrice != 0 {
+		write.WriteRaw("month_price", types.Marshal(p.MonthPrice))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -52,8 +52,8 @@ func (p *CateringSet) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -70,22 +70,22 @@ func (p *CateringSet) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "month_price":
-			e = types.Unmarshal(value, &p.MonthPrice)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "month_price":
+			e = types.Unmarshal(value, &p.MonthPrice)
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -108,14 +108,14 @@ func (p *CateringSet) Free() {
 // Reset
 func (p *CateringSet) Reset() {
 	p.Name = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.MonthPrice = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.MonthPrice = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -126,14 +126,14 @@ func (p *CateringSet) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var cateringsetFieldToPtrFunc = map[string]func(*CateringSet) any{
 	tblcateringset.Name.Name:       func(p *CateringSet) any { return &p.Name },
-	tblcateringset.Id.Name:         func(p *CateringSet) any { return &p.Id },
-	tblcateringset.TenantId.Name:   func(p *CateringSet) any { return &p.TenantId },
-	tblcateringset.MonthPrice.Name: func(p *CateringSet) any { return &p.MonthPrice },
 	tblcateringset.CreateId.Name:   func(p *CateringSet) any { return &p.CreateId },
 	tblcateringset.CreateTime.Name: func(p *CateringSet) any { return &p.CreateTime },
+	tblcateringset.Id.Name:         func(p *CateringSet) any { return &p.Id },
+	tblcateringset.MonthPrice.Name: func(p *CateringSet) any { return &p.MonthPrice },
+	tblcateringset.TenantId.Name:   func(p *CateringSet) any { return &p.TenantId },
 	tblcateringset.UpdateId.Name:   func(p *CateringSet) any { return &p.UpdateId },
 	tblcateringset.UpdateTime.Name: func(p *CateringSet) any { return &p.UpdateTime },
-	tblcateringset.DelFlag.Name:    func(p *CateringSet) any { return &p.DelFlag },
+	tblcateringset.State.Name:      func(p *CateringSet) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -226,20 +226,20 @@ var cateringsetFieldToValueFunc = map[dialect.Field]func(*CateringSet) (any, boo
 	tblcateringset.Name: func(p *CateringSet) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tblcateringset.Id: func(p *CateringSet) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblcateringset.TenantId: func(p *CateringSet) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblcateringset.MonthPrice: func(p *CateringSet) (any, bool) {
-		return p.MonthPrice, p.MonthPrice == 0
-	},
 	tblcateringset.CreateId: func(p *CateringSet) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblcateringset.CreateTime: func(p *CateringSet) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblcateringset.Id: func(p *CateringSet) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblcateringset.MonthPrice: func(p *CateringSet) (any, bool) {
+		return p.MonthPrice, p.MonthPrice == 0
+	},
+	tblcateringset.TenantId: func(p *CateringSet) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblcateringset.UpdateId: func(p *CateringSet) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -247,8 +247,8 @@ var cateringsetFieldToValueFunc = map[dialect.Field]func(*CateringSet) (any, boo
 	tblcateringset.UpdateTime: func(p *CateringSet) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblcateringset.DelFlag: func(p *CateringSet) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblcateringset.State: func(p *CateringSet) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

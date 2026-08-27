@@ -31,12 +31,6 @@ func (p *Floor) MarshalJSON() ([]byte, error) {
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
 	if p.BuildingId != 0 {
 		write.WriteRaw("building_id", types.Marshal(p.BuildingId))
 	}
@@ -45,6 +39,12 @@ func (p *Floor) MarshalJSON() ([]byte, error) {
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -55,8 +55,8 @@ func (p *Floor) MarshalJSON() ([]byte, error) {
 	if p.RoomNum != 0 {
 		write.WriteRaw("room_num", types.Marshal(p.RoomNum))
 	}
-	if p.DelFlag != 0 {
-		write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
 	}
 	return write.Bytes(), nil
 }
@@ -73,24 +73,24 @@ func (p *Floor) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "name":
 			p.Name = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
 		case "building_id":
 			p.BuildingId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "room_num":
 			p.RoomNum = types.Int32(value.Int())
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -113,15 +113,15 @@ func (p *Floor) Free() {
 // Reset
 func (p *Floor) Reset() {
 	p.Name = ""
-	p.Id = 0
-	p.TenantId = 0
 	p.BuildingId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.RoomNum = 0
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -132,15 +132,15 @@ func (p *Floor) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var floorFieldToPtrFunc = map[string]func(*Floor) any{
 	tblfloor.Name.Name:       func(p *Floor) any { return &p.Name },
-	tblfloor.Id.Name:         func(p *Floor) any { return &p.Id },
-	tblfloor.TenantId.Name:   func(p *Floor) any { return &p.TenantId },
 	tblfloor.BuildingId.Name: func(p *Floor) any { return &p.BuildingId },
 	tblfloor.CreateId.Name:   func(p *Floor) any { return &p.CreateId },
 	tblfloor.CreateTime.Name: func(p *Floor) any { return &p.CreateTime },
+	tblfloor.Id.Name:         func(p *Floor) any { return &p.Id },
+	tblfloor.TenantId.Name:   func(p *Floor) any { return &p.TenantId },
 	tblfloor.UpdateId.Name:   func(p *Floor) any { return &p.UpdateId },
 	tblfloor.UpdateTime.Name: func(p *Floor) any { return &p.UpdateTime },
 	tblfloor.RoomNum.Name:    func(p *Floor) any { return &p.RoomNum },
-	tblfloor.DelFlag.Name:    func(p *Floor) any { return &p.DelFlag },
+	tblfloor.State.Name:      func(p *Floor) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -233,12 +233,6 @@ var floorFieldToValueFunc = map[dialect.Field]func(*Floor) (any, bool){
 	tblfloor.Name: func(p *Floor) (any, bool) {
 		return p.Name, p.Name == ""
 	},
-	tblfloor.Id: func(p *Floor) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblfloor.TenantId: func(p *Floor) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
 	tblfloor.BuildingId: func(p *Floor) (any, bool) {
 		return p.BuildingId, p.BuildingId == 0
 	},
@@ -247,6 +241,12 @@ var floorFieldToValueFunc = map[dialect.Field]func(*Floor) (any, bool){
 	},
 	tblfloor.CreateTime: func(p *Floor) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblfloor.Id: func(p *Floor) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblfloor.TenantId: func(p *Floor) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblfloor.UpdateId: func(p *Floor) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -257,8 +257,8 @@ var floorFieldToValueFunc = map[dialect.Field]func(*Floor) (any, bool){
 	tblfloor.RoomNum: func(p *Floor) (any, bool) {
 		return p.RoomNum, p.RoomNum == 0
 	},
-	tblfloor.DelFlag: func(p *Floor) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblfloor.State: func(p *Floor) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

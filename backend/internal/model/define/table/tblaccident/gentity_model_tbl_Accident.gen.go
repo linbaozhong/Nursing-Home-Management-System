@@ -11,16 +11,16 @@ const TableName = "accident"
 var (
 	Description = dialect.Field{Name: "description", Json: "description", Table: "accident", Type: "types.String", IsRelation: false}
 	Picture     = dialect.Field{Name: "picture", Json: "picture", Table: "accident", Type: "types.String", IsRelation: false}
-	Id          = dialect.Field{Name: "id", Json: "id", Table: "accident", Type: "types.BigInt", IsRelation: false}
-	TenantId    = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "accident", Type: "types.BigInt", IsRelation: false}
-	ElderId     = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "accident", Type: "types.BigInt", IsRelation: false}
-	StaffId     = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "accident", Type: "types.BigInt", IsRelation: false}
-	OccurDate   = dialect.Field{Name: "occur_date", Json: "occur_date", Table: "accident", Type: "types.Time", IsRelation: false}
 	CreateId    = dialect.Field{Name: "create_id", Json: "create_id", Table: "accident", Type: "types.BigInt", IsRelation: false}
 	CreateTime  = dialect.Field{Name: "create_time", Json: "create_time", Table: "accident", Type: "types.Time", IsRelation: false}
+	ElderId     = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "accident", Type: "types.BigInt", IsRelation: false}
+	Id          = dialect.Field{Name: "id", Json: "id", Table: "accident", Type: "types.BigInt", IsRelation: false}
+	OccurDate   = dialect.Field{Name: "occur_date", Json: "occur_date", Table: "accident", Type: "types.Time", IsRelation: false}
+	StaffId     = dialect.Field{Name: "staff_id", Json: "staff_id", Table: "accident", Type: "types.BigInt", IsRelation: false}
+	TenantId    = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "accident", Type: "types.BigInt", IsRelation: false}
 	UpdateId    = dialect.Field{Name: "update_id", Json: "update_id", Table: "accident", Type: "types.BigInt", IsRelation: false}
 	UpdateTime  = dialect.Field{Name: "update_time", Json: "update_time", Table: "accident", Type: "types.Time", IsRelation: false}
-	DelFlag     = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "accident", Type: "types.Int8", IsRelation: false}
+	State       = dialect.Field{Name: "state", Json: "state", Table: "accident", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -28,30 +28,30 @@ var (
 	WritableFields = []dialect.Field{
 		Description,
 		Picture,
-		Id,
-		TenantId,
-		ElderId,
-		StaffId,
-		OccurDate,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		OccurDate,
+		StaffId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
 		Description,
 		Picture,
-		Id,
-		TenantId,
-		ElderId,
-		StaffId,
-		OccurDate,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		OccurDate,
+		StaffId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 )

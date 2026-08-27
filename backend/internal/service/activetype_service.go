@@ -22,7 +22,7 @@ var ActiveType = &activetype{}
 // PageActiveTypeByKey 分页查询活动类型
 // 对应 Java: ActiveTypeServiceImpl.pageActiveTypeByKey -> ActiveTypeFunc.listNotDelActiveType
 func (a *activetype) PageActiveTypeByKey(ctx context.Context, in *dto.PageActiveTypeByKeyReq, out *[]dto.PageActiveTypeByKeyResp) error {
-	q := db.Table(tblactivetype.TableName).Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.DelFlag.Eq(constant.YesNoNo))
+	q := db.Table(tblactivetype.TableName).Where(tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblactivetype.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.ActiveTypeName != nil {
 		q.And(tblactivetype.Name.Like(*in.ActiveTypeName))
 	}
@@ -66,7 +66,7 @@ func (a *activetype) AddActiveType(ctx context.Context, in *dto.AddActiveTypeReq
 	bean := do.NewActiveType()
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.State = types.Int8(constant.StateEnabled)
 	_, e = dao.ActiveType(db).InsertOne(ctx, bean)
 	return e
 }
@@ -93,7 +93,7 @@ func (a *activetype) EditActiveType(ctx context.Context, in *dto.OperateActiveTy
 // 对应 Java: ActiveTypeServiceImpl.deleteActiveType -> activeTypeMapper.updateById(delFlag=Y)
 func (a *activetype) DeleteActiveType(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	sets := []dialect.Setter{
-		tblactivetype.DelFlag.Set(types.Int8(constant.YesNoYes)),
+		tblactivetype.State.Set(types.Int8(constant.StateDeleted)),
 	}
 	_, e := dao.ActiveType(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
 	return e
@@ -104,7 +104,7 @@ func (a *activetype) getActiveTypeByName(ctx context.Context, name string) (bool
 	return dao.ActiveType(db).Exists(ctx,
 		tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblactivetype.Name.Eq(types.String(name)),
-		tblactivetype.DelFlag.Eq(constant.YesNoNo),
+		tblactivetype.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 }
 
@@ -113,7 +113,7 @@ func (a *activetype) getActiveTypeByNameExclude(ctx context.Context, name string
 	return dao.ActiveType(db).Exists(ctx,
 		tblactivetype.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblactivetype.Name.Eq(types.String(name)),
-		tblactivetype.DelFlag.Eq(constant.YesNoNo),
+		tblactivetype.State.NotEq(types.Int8(constant.StateDeleted)),
 		tblactivetype.Id.NotEq(types.BigInt(excludeID)),
 	)
 }

@@ -28,23 +28,23 @@ func NewNurseGroupMember() *NurseGroupMember {
 // MarshalJSON
 func (p *NurseGroupMember) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(8 * 50)
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.GroupId != 0 {
-		write.WriteRaw("group_id", types.Marshal(p.GroupId))
-	}
-	if p.StaffId != 0 {
-		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.GroupId != 0 {
+		write.WriteRaw("group_id", types.Marshal(p.GroupId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.StaffId != 0 {
+		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -65,18 +65,18 @@ func (p *NurseGroupMember) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "group_id":
-			p.GroupId = types.BigInt(value.Uint())
-		case "staff_id":
-			p.StaffId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "group_id":
+			p.GroupId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "staff_id":
+			p.StaffId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -102,12 +102,12 @@ func (p *NurseGroupMember) Free() {
 
 // Reset
 func (p *NurseGroupMember) Reset() {
-	p.Id = 0
-	p.TenantId = 0
-	p.GroupId = 0
-	p.StaffId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.GroupId = 0
+	p.Id = 0
+	p.StaffId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 
@@ -119,12 +119,12 @@ func (p *NurseGroupMember) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var nursegroupmemberFieldToPtrFunc = map[string]func(*NurseGroupMember) any{
-	tblnursegroupmember.Id.Name:         func(p *NurseGroupMember) any { return &p.Id },
-	tblnursegroupmember.TenantId.Name:   func(p *NurseGroupMember) any { return &p.TenantId },
-	tblnursegroupmember.GroupId.Name:    func(p *NurseGroupMember) any { return &p.GroupId },
-	tblnursegroupmember.StaffId.Name:    func(p *NurseGroupMember) any { return &p.StaffId },
 	tblnursegroupmember.CreateId.Name:   func(p *NurseGroupMember) any { return &p.CreateId },
 	tblnursegroupmember.CreateTime.Name: func(p *NurseGroupMember) any { return &p.CreateTime },
+	tblnursegroupmember.GroupId.Name:    func(p *NurseGroupMember) any { return &p.GroupId },
+	tblnursegroupmember.Id.Name:         func(p *NurseGroupMember) any { return &p.Id },
+	tblnursegroupmember.StaffId.Name:    func(p *NurseGroupMember) any { return &p.StaffId },
+	tblnursegroupmember.TenantId.Name:   func(p *NurseGroupMember) any { return &p.TenantId },
 	tblnursegroupmember.UpdateId.Name:   func(p *NurseGroupMember) any { return &p.UpdateId },
 	tblnursegroupmember.UpdateTime.Name: func(p *NurseGroupMember) any { return &p.UpdateTime },
 }
@@ -216,23 +216,23 @@ func (p *NurseGroupMember) RawAssignValues(d dialect.Dialect, args ...dialect.Fi
 
 // 定义字段到值检查和获取函数的映射
 var nursegroupmemberFieldToValueFunc = map[dialect.Field]func(*NurseGroupMember) (any, bool){
-	tblnursegroupmember.Id: func(p *NurseGroupMember) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblnursegroupmember.TenantId: func(p *NurseGroupMember) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblnursegroupmember.GroupId: func(p *NurseGroupMember) (any, bool) {
-		return p.GroupId, p.GroupId == 0
-	},
-	tblnursegroupmember.StaffId: func(p *NurseGroupMember) (any, bool) {
-		return p.StaffId, p.StaffId == 0
-	},
 	tblnursegroupmember.CreateId: func(p *NurseGroupMember) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblnursegroupmember.CreateTime: func(p *NurseGroupMember) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblnursegroupmember.GroupId: func(p *NurseGroupMember) (any, bool) {
+		return p.GroupId, p.GroupId == 0
+	},
+	tblnursegroupmember.Id: func(p *NurseGroupMember) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblnursegroupmember.StaffId: func(p *NurseGroupMember) (any, bool) {
+		return p.StaffId, p.StaffId == 0
+	},
+	tblnursegroupmember.TenantId: func(p *NurseGroupMember) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblnursegroupmember.UpdateId: func(p *NurseGroupMember) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

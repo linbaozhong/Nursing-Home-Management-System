@@ -28,8 +28,11 @@ func NewAuth() *Auth {
 // MarshalJSON
 func (p *Auth) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(13 * 50)
-	if p.Title != "" {
-		write.WriteRaw("title", types.Marshal(p.Title))
+	if p.Icon != "" {
+		write.WriteRaw("icon", types.Marshal(p.Icon))
+	}
+	if p.Method != "" {
+		write.WriteRaw("method", types.Marshal(p.Method))
 	}
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
@@ -37,29 +40,26 @@ func (p *Auth) MarshalJSON() ([]byte, error) {
 	if p.Path != "" {
 		write.WriteRaw("path", types.Marshal(p.Path))
 	}
-	if p.Icon != "" {
-		write.WriteRaw("icon", types.Marshal(p.Icon))
-	}
-	if p.Url != "" {
-		write.WriteRaw("url", types.Marshal(p.Url))
+	if p.Title != "" {
+		write.WriteRaw("title", types.Marshal(p.Title))
 	}
 	if p.Type != "" {
 		write.WriteRaw("type", types.Marshal(p.Type))
 	}
-	if p.Method != "" {
-		write.WriteRaw("method", types.Marshal(p.Method))
-	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.ParentId != 0 {
-		write.WriteRaw("parent_id", types.Marshal(p.ParentId))
+	if p.Url != "" {
+		write.WriteRaw("url", types.Marshal(p.Url))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.ParentId != 0 {
+		write.WriteRaw("parent_id", types.Marshal(p.ParentId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -80,28 +80,28 @@ func (p *Auth) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "title":
-			p.Title = types.String(value.Str)
+		case "icon":
+			p.Icon = types.String(value.Str)
+		case "method":
+			p.Method = types.String(value.Str)
 		case "name":
 			p.Name = types.String(value.Str)
 		case "path":
 			p.Path = types.String(value.Str)
-		case "icon":
-			p.Icon = types.String(value.Str)
-		case "url":
-			p.Url = types.String(value.Str)
+		case "title":
+			p.Title = types.String(value.Str)
 		case "type":
 			p.Type = types.String(value.Str)
-		case "method":
-			p.Method = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "parent_id":
-			p.ParentId = types.BigInt(value.Uint())
+		case "url":
+			p.Url = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "parent_id":
+			p.ParentId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -127,17 +127,17 @@ func (p *Auth) Free() {
 
 // Reset
 func (p *Auth) Reset() {
-	p.Title = ""
+	p.Icon = ""
+	p.Method = ""
 	p.Name = ""
 	p.Path = ""
-	p.Icon = ""
-	p.Url = ""
+	p.Title = ""
 	p.Type = ""
-	p.Method = ""
-	p.Id = 0
-	p.ParentId = 0
+	p.Url = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.ParentId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 
@@ -149,17 +149,17 @@ func (p *Auth) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var authFieldToPtrFunc = map[string]func(*Auth) any{
-	tblauth.Title.Name:      func(p *Auth) any { return &p.Title },
+	tblauth.Icon.Name:       func(p *Auth) any { return &p.Icon },
+	tblauth.Method.Name:     func(p *Auth) any { return &p.Method },
 	tblauth.Name.Name:       func(p *Auth) any { return &p.Name },
 	tblauth.Path.Name:       func(p *Auth) any { return &p.Path },
-	tblauth.Icon.Name:       func(p *Auth) any { return &p.Icon },
-	tblauth.Url.Name:        func(p *Auth) any { return &p.Url },
+	tblauth.Title.Name:      func(p *Auth) any { return &p.Title },
 	tblauth.Type.Name:       func(p *Auth) any { return &p.Type },
-	tblauth.Method.Name:     func(p *Auth) any { return &p.Method },
-	tblauth.Id.Name:         func(p *Auth) any { return &p.Id },
-	tblauth.ParentId.Name:   func(p *Auth) any { return &p.ParentId },
+	tblauth.Url.Name:        func(p *Auth) any { return &p.Url },
 	tblauth.CreateId.Name:   func(p *Auth) any { return &p.CreateId },
 	tblauth.CreateTime.Name: func(p *Auth) any { return &p.CreateTime },
+	tblauth.Id.Name:         func(p *Auth) any { return &p.Id },
+	tblauth.ParentId.Name:   func(p *Auth) any { return &p.ParentId },
 	tblauth.UpdateId.Name:   func(p *Auth) any { return &p.UpdateId },
 	tblauth.UpdateTime.Name: func(p *Auth) any { return &p.UpdateTime },
 }
@@ -251,8 +251,11 @@ func (p *Auth) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]stri
 
 // 定义字段到值检查和获取函数的映射
 var authFieldToValueFunc = map[dialect.Field]func(*Auth) (any, bool){
-	tblauth.Title: func(p *Auth) (any, bool) {
-		return p.Title, p.Title == ""
+	tblauth.Icon: func(p *Auth) (any, bool) {
+		return p.Icon, p.Icon == ""
+	},
+	tblauth.Method: func(p *Auth) (any, bool) {
+		return p.Method, p.Method == ""
 	},
 	tblauth.Name: func(p *Auth) (any, bool) {
 		return p.Name, p.Name == ""
@@ -260,29 +263,26 @@ var authFieldToValueFunc = map[dialect.Field]func(*Auth) (any, bool){
 	tblauth.Path: func(p *Auth) (any, bool) {
 		return p.Path, p.Path == ""
 	},
-	tblauth.Icon: func(p *Auth) (any, bool) {
-		return p.Icon, p.Icon == ""
-	},
-	tblauth.Url: func(p *Auth) (any, bool) {
-		return p.Url, p.Url == ""
+	tblauth.Title: func(p *Auth) (any, bool) {
+		return p.Title, p.Title == ""
 	},
 	tblauth.Type: func(p *Auth) (any, bool) {
 		return p.Type, p.Type == ""
 	},
-	tblauth.Method: func(p *Auth) (any, bool) {
-		return p.Method, p.Method == ""
-	},
-	tblauth.Id: func(p *Auth) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblauth.ParentId: func(p *Auth) (any, bool) {
-		return p.ParentId, p.ParentId == 0
+	tblauth.Url: func(p *Auth) (any, bool) {
+		return p.Url, p.Url == ""
 	},
 	tblauth.CreateId: func(p *Auth) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblauth.CreateTime: func(p *Auth) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblauth.Id: func(p *Auth) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblauth.ParentId: func(p *Auth) (any, bool) {
+		return p.ParentId, p.ParentId == 0
 	},
 	tblauth.UpdateId: func(p *Auth) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

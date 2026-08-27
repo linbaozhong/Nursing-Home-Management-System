@@ -34,20 +34,17 @@ func (p *HealthData) MarshalJSON() ([]byte, error) {
 	if p.RightEar != "" {
 		write.WriteRaw("right_ear", types.Marshal(p.RightEar))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
+	if p.CreateId != 0 {
+		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
+	if !p.CreateTime.IsZero() {
+		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
 	}
-	if p.Weight != 0.0 {
-		write.WriteRaw("weight", types.Marshal(p.Weight))
-	}
-	if p.Temperature != 0.0 {
-		write.WriteRaw("temperature", types.Marshal(p.Temperature))
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
 	}
 	if p.LeftEye != 0.0 {
 		write.WriteRaw("left_eye", types.Marshal(p.LeftEye))
@@ -55,11 +52,11 @@ func (p *HealthData) MarshalJSON() ([]byte, error) {
 	if p.RightEye != 0.0 {
 		write.WriteRaw("right_eye", types.Marshal(p.RightEye))
 	}
-	if p.CreateId != 0 {
-		write.WriteRaw("create_id", types.Marshal(p.CreateId))
+	if p.Temperature != 0.0 {
+		write.WriteRaw("temperature", types.Marshal(p.Temperature))
 	}
-	if !p.CreateTime.IsZero() {
-		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -67,14 +64,17 @@ func (p *HealthData) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.Height != 0 {
-		write.WriteRaw("height", types.Marshal(p.Height))
+	if p.Weight != 0.0 {
+		write.WriteRaw("weight", types.Marshal(p.Weight))
 	}
-	if p.HeartRate != 0 {
-		write.WriteRaw("heart_rate", types.Marshal(p.HeartRate))
+	if p.BloodOxygenSaturation != 0 {
+		write.WriteRaw("blood_oxygen_saturation", types.Marshal(p.BloodOxygenSaturation))
 	}
-	if p.SystolicBloodPressure != 0 {
-		write.WriteRaw("systolic_blood_pressure", types.Marshal(p.SystolicBloodPressure))
+	if p.BodyFatPercentage != 0 {
+		write.WriteRaw("body_fat_percentage", types.Marshal(p.BodyFatPercentage))
+	}
+	if p.Cholesterol != 0 {
+		write.WriteRaw("cholesterol", types.Marshal(p.Cholesterol))
 	}
 	if p.DiastolicBloodPressure != 0 {
 		write.WriteRaw("diastolic_blood_pressure", types.Marshal(p.DiastolicBloodPressure))
@@ -82,32 +82,32 @@ func (p *HealthData) MarshalJSON() ([]byte, error) {
 	if p.FastingBloodGlucose != 0 {
 		write.WriteRaw("fasting_blood_glucose", types.Marshal(p.FastingBloodGlucose))
 	}
-	if p.PostprandialBloodGlucose != 0 {
-		write.WriteRaw("postprandial_blood_glucose", types.Marshal(p.PostprandialBloodGlucose))
+	if p.HeartRate != 0 {
+		write.WriteRaw("heart_rate", types.Marshal(p.HeartRate))
 	}
-	if p.BloodOxygenSaturation != 0 {
-		write.WriteRaw("blood_oxygen_saturation", types.Marshal(p.BloodOxygenSaturation))
-	}
-	if p.Cholesterol != 0 {
-		write.WriteRaw("cholesterol", types.Marshal(p.Cholesterol))
-	}
-	if p.UricAcid != 0 {
-		write.WriteRaw("uric_acid", types.Marshal(p.UricAcid))
-	}
-	if p.MusclePercentage != 0 {
-		write.WriteRaw("muscle_percentage", types.Marshal(p.MusclePercentage))
-	}
-	if p.BodyFatPercentage != 0 {
-		write.WriteRaw("body_fat_percentage", types.Marshal(p.BodyFatPercentage))
-	}
-	if p.WaistCircumference != 0 {
-		write.WriteRaw("waist_circumference", types.Marshal(p.WaistCircumference))
+	if p.Height != 0 {
+		write.WriteRaw("height", types.Marshal(p.Height))
 	}
 	if p.HipCircumference != 0 {
 		write.WriteRaw("hip_circumference", types.Marshal(p.HipCircumference))
 	}
 	if p.MoistureContent != 0 {
 		write.WriteRaw("moisture_content", types.Marshal(p.MoistureContent))
+	}
+	if p.MusclePercentage != 0 {
+		write.WriteRaw("muscle_percentage", types.Marshal(p.MusclePercentage))
+	}
+	if p.PostprandialBloodGlucose != 0 {
+		write.WriteRaw("postprandial_blood_glucose", types.Marshal(p.PostprandialBloodGlucose))
+	}
+	if p.SystolicBloodPressure != 0 {
+		write.WriteRaw("systolic_blood_pressure", types.Marshal(p.SystolicBloodPressure))
+	}
+	if p.UricAcid != 0 {
+		write.WriteRaw("uric_acid", types.Marshal(p.UricAcid))
+	}
+	if p.WaistCircumference != 0 {
+		write.WriteRaw("waist_circumference", types.Marshal(p.WaistCircumference))
 	}
 	return write.Bytes(), nil
 }
@@ -126,56 +126,56 @@ func (p *HealthData) UnmarshalJSON(data []byte) error {
 			p.LeftEar = types.String(value.Str)
 		case "right_ear":
 			p.RightEar = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "weight":
-			p.Weight = types.Float64(value.Float())
-		case "temperature":
-			p.Temperature = types.Float64(value.Float())
-		case "left_eye":
-			p.LeftEye = types.Float64(value.Float())
-		case "right_eye":
-			p.RightEye = types.Float64(value.Float())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "left_eye":
+			p.LeftEye = types.Float64(value.Float())
+		case "right_eye":
+			p.RightEye = types.Float64(value.Float())
+		case "temperature":
+			p.Temperature = types.Float64(value.Float())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "height":
-			p.Height = types.Int32(value.Int())
-		case "heart_rate":
-			p.HeartRate = types.Int32(value.Int())
-		case "systolic_blood_pressure":
-			p.SystolicBloodPressure = types.Int32(value.Int())
+		case "weight":
+			p.Weight = types.Float64(value.Float())
+		case "blood_oxygen_saturation":
+			p.BloodOxygenSaturation = types.Int32(value.Int())
+		case "body_fat_percentage":
+			p.BodyFatPercentage = types.Int32(value.Int())
+		case "cholesterol":
+			p.Cholesterol = types.Int32(value.Int())
 		case "diastolic_blood_pressure":
 			p.DiastolicBloodPressure = types.Int32(value.Int())
 		case "fasting_blood_glucose":
 			p.FastingBloodGlucose = types.Int32(value.Int())
-		case "postprandial_blood_glucose":
-			p.PostprandialBloodGlucose = types.Int32(value.Int())
-		case "blood_oxygen_saturation":
-			p.BloodOxygenSaturation = types.Int32(value.Int())
-		case "cholesterol":
-			p.Cholesterol = types.Int32(value.Int())
-		case "uric_acid":
-			p.UricAcid = types.Int32(value.Int())
-		case "muscle_percentage":
-			p.MusclePercentage = types.Int32(value.Int())
-		case "body_fat_percentage":
-			p.BodyFatPercentage = types.Int32(value.Int())
-		case "waist_circumference":
-			p.WaistCircumference = types.Int32(value.Int())
+		case "heart_rate":
+			p.HeartRate = types.Int32(value.Int())
+		case "height":
+			p.Height = types.Int32(value.Int())
 		case "hip_circumference":
 			p.HipCircumference = types.Int32(value.Int())
 		case "moisture_content":
 			p.MoistureContent = types.Int32(value.Int())
+		case "muscle_percentage":
+			p.MusclePercentage = types.Int32(value.Int())
+		case "postprandial_blood_glucose":
+			p.PostprandialBloodGlucose = types.Int32(value.Int())
+		case "systolic_blood_pressure":
+			p.SystolicBloodPressure = types.Int32(value.Int())
+		case "uric_acid":
+			p.UricAcid = types.Int32(value.Int())
+		case "waist_circumference":
+			p.WaistCircumference = types.Int32(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -199,31 +199,31 @@ func (p *HealthData) Free() {
 func (p *HealthData) Reset() {
 	p.LeftEar = ""
 	p.RightEar = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
-	p.Weight = 0
-	p.Temperature = 0
-	p.LeftEye = 0
-	p.RightEye = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.LeftEye = 0
+	p.RightEye = 0
+	p.Temperature = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.Height = 0
-	p.HeartRate = 0
-	p.SystolicBloodPressure = 0
+	p.Weight = 0
+	p.BloodOxygenSaturation = 0
+	p.BodyFatPercentage = 0
+	p.Cholesterol = 0
 	p.DiastolicBloodPressure = 0
 	p.FastingBloodGlucose = 0
-	p.PostprandialBloodGlucose = 0
-	p.BloodOxygenSaturation = 0
-	p.Cholesterol = 0
-	p.UricAcid = 0
-	p.MusclePercentage = 0
-	p.BodyFatPercentage = 0
-	p.WaistCircumference = 0
+	p.HeartRate = 0
+	p.Height = 0
 	p.HipCircumference = 0
 	p.MoistureContent = 0
+	p.MusclePercentage = 0
+	p.PostprandialBloodGlucose = 0
+	p.SystolicBloodPressure = 0
+	p.UricAcid = 0
+	p.WaistCircumference = 0
 
 }
 
@@ -235,31 +235,31 @@ func (p *HealthData) TableName() string {
 var healthdataFieldToPtrFunc = map[string]func(*HealthData) any{
 	tblhealthdata.LeftEar.Name:                  func(p *HealthData) any { return &p.LeftEar },
 	tblhealthdata.RightEar.Name:                 func(p *HealthData) any { return &p.RightEar },
-	tblhealthdata.Id.Name:                       func(p *HealthData) any { return &p.Id },
-	tblhealthdata.TenantId.Name:                 func(p *HealthData) any { return &p.TenantId },
-	tblhealthdata.ElderId.Name:                  func(p *HealthData) any { return &p.ElderId },
-	tblhealthdata.Weight.Name:                   func(p *HealthData) any { return &p.Weight },
-	tblhealthdata.Temperature.Name:              func(p *HealthData) any { return &p.Temperature },
-	tblhealthdata.LeftEye.Name:                  func(p *HealthData) any { return &p.LeftEye },
-	tblhealthdata.RightEye.Name:                 func(p *HealthData) any { return &p.RightEye },
 	tblhealthdata.CreateId.Name:                 func(p *HealthData) any { return &p.CreateId },
 	tblhealthdata.CreateTime.Name:               func(p *HealthData) any { return &p.CreateTime },
+	tblhealthdata.ElderId.Name:                  func(p *HealthData) any { return &p.ElderId },
+	tblhealthdata.Id.Name:                       func(p *HealthData) any { return &p.Id },
+	tblhealthdata.LeftEye.Name:                  func(p *HealthData) any { return &p.LeftEye },
+	tblhealthdata.RightEye.Name:                 func(p *HealthData) any { return &p.RightEye },
+	tblhealthdata.Temperature.Name:              func(p *HealthData) any { return &p.Temperature },
+	tblhealthdata.TenantId.Name:                 func(p *HealthData) any { return &p.TenantId },
 	tblhealthdata.UpdateId.Name:                 func(p *HealthData) any { return &p.UpdateId },
 	tblhealthdata.UpdateTime.Name:               func(p *HealthData) any { return &p.UpdateTime },
-	tblhealthdata.Height.Name:                   func(p *HealthData) any { return &p.Height },
-	tblhealthdata.HeartRate.Name:                func(p *HealthData) any { return &p.HeartRate },
-	tblhealthdata.SystolicBloodPressure.Name:    func(p *HealthData) any { return &p.SystolicBloodPressure },
+	tblhealthdata.Weight.Name:                   func(p *HealthData) any { return &p.Weight },
+	tblhealthdata.BloodOxygenSaturation.Name:    func(p *HealthData) any { return &p.BloodOxygenSaturation },
+	tblhealthdata.BodyFatPercentage.Name:        func(p *HealthData) any { return &p.BodyFatPercentage },
+	tblhealthdata.Cholesterol.Name:              func(p *HealthData) any { return &p.Cholesterol },
 	tblhealthdata.DiastolicBloodPressure.Name:   func(p *HealthData) any { return &p.DiastolicBloodPressure },
 	tblhealthdata.FastingBloodGlucose.Name:      func(p *HealthData) any { return &p.FastingBloodGlucose },
-	tblhealthdata.PostprandialBloodGlucose.Name: func(p *HealthData) any { return &p.PostprandialBloodGlucose },
-	tblhealthdata.BloodOxygenSaturation.Name:    func(p *HealthData) any { return &p.BloodOxygenSaturation },
-	tblhealthdata.Cholesterol.Name:              func(p *HealthData) any { return &p.Cholesterol },
-	tblhealthdata.UricAcid.Name:                 func(p *HealthData) any { return &p.UricAcid },
-	tblhealthdata.MusclePercentage.Name:         func(p *HealthData) any { return &p.MusclePercentage },
-	tblhealthdata.BodyFatPercentage.Name:        func(p *HealthData) any { return &p.BodyFatPercentage },
-	tblhealthdata.WaistCircumference.Name:       func(p *HealthData) any { return &p.WaistCircumference },
+	tblhealthdata.HeartRate.Name:                func(p *HealthData) any { return &p.HeartRate },
+	tblhealthdata.Height.Name:                   func(p *HealthData) any { return &p.Height },
 	tblhealthdata.HipCircumference.Name:         func(p *HealthData) any { return &p.HipCircumference },
 	tblhealthdata.MoistureContent.Name:          func(p *HealthData) any { return &p.MoistureContent },
+	tblhealthdata.MusclePercentage.Name:         func(p *HealthData) any { return &p.MusclePercentage },
+	tblhealthdata.PostprandialBloodGlucose.Name: func(p *HealthData) any { return &p.PostprandialBloodGlucose },
+	tblhealthdata.SystolicBloodPressure.Name:    func(p *HealthData) any { return &p.SystolicBloodPressure },
+	tblhealthdata.UricAcid.Name:                 func(p *HealthData) any { return &p.UricAcid },
+	tblhealthdata.WaistCircumference.Name:       func(p *HealthData) any { return &p.WaistCircumference },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -355,20 +355,17 @@ var healthdataFieldToValueFunc = map[dialect.Field]func(*HealthData) (any, bool)
 	tblhealthdata.RightEar: func(p *HealthData) (any, bool) {
 		return p.RightEar, p.RightEar == ""
 	},
-	tblhealthdata.Id: func(p *HealthData) (any, bool) {
-		return p.Id, p.Id == 0
+	tblhealthdata.CreateId: func(p *HealthData) (any, bool) {
+		return p.CreateId, p.CreateId == 0
 	},
-	tblhealthdata.TenantId: func(p *HealthData) (any, bool) {
-		return p.TenantId, p.TenantId == 0
+	tblhealthdata.CreateTime: func(p *HealthData) (any, bool) {
+		return p.CreateTime, p.CreateTime.IsZero()
 	},
 	tblhealthdata.ElderId: func(p *HealthData) (any, bool) {
 		return p.ElderId, p.ElderId == 0
 	},
-	tblhealthdata.Weight: func(p *HealthData) (any, bool) {
-		return p.Weight, p.Weight == 0.0
-	},
-	tblhealthdata.Temperature: func(p *HealthData) (any, bool) {
-		return p.Temperature, p.Temperature == 0.0
+	tblhealthdata.Id: func(p *HealthData) (any, bool) {
+		return p.Id, p.Id == 0
 	},
 	tblhealthdata.LeftEye: func(p *HealthData) (any, bool) {
 		return p.LeftEye, p.LeftEye == 0.0
@@ -376,11 +373,11 @@ var healthdataFieldToValueFunc = map[dialect.Field]func(*HealthData) (any, bool)
 	tblhealthdata.RightEye: func(p *HealthData) (any, bool) {
 		return p.RightEye, p.RightEye == 0.0
 	},
-	tblhealthdata.CreateId: func(p *HealthData) (any, bool) {
-		return p.CreateId, p.CreateId == 0
+	tblhealthdata.Temperature: func(p *HealthData) (any, bool) {
+		return p.Temperature, p.Temperature == 0.0
 	},
-	tblhealthdata.CreateTime: func(p *HealthData) (any, bool) {
-		return p.CreateTime, p.CreateTime.IsZero()
+	tblhealthdata.TenantId: func(p *HealthData) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblhealthdata.UpdateId: func(p *HealthData) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -388,14 +385,17 @@ var healthdataFieldToValueFunc = map[dialect.Field]func(*HealthData) (any, bool)
 	tblhealthdata.UpdateTime: func(p *HealthData) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblhealthdata.Height: func(p *HealthData) (any, bool) {
-		return p.Height, p.Height == 0
+	tblhealthdata.Weight: func(p *HealthData) (any, bool) {
+		return p.Weight, p.Weight == 0.0
 	},
-	tblhealthdata.HeartRate: func(p *HealthData) (any, bool) {
-		return p.HeartRate, p.HeartRate == 0
+	tblhealthdata.BloodOxygenSaturation: func(p *HealthData) (any, bool) {
+		return p.BloodOxygenSaturation, p.BloodOxygenSaturation == 0
 	},
-	tblhealthdata.SystolicBloodPressure: func(p *HealthData) (any, bool) {
-		return p.SystolicBloodPressure, p.SystolicBloodPressure == 0
+	tblhealthdata.BodyFatPercentage: func(p *HealthData) (any, bool) {
+		return p.BodyFatPercentage, p.BodyFatPercentage == 0
+	},
+	tblhealthdata.Cholesterol: func(p *HealthData) (any, bool) {
+		return p.Cholesterol, p.Cholesterol == 0
 	},
 	tblhealthdata.DiastolicBloodPressure: func(p *HealthData) (any, bool) {
 		return p.DiastolicBloodPressure, p.DiastolicBloodPressure == 0
@@ -403,32 +403,32 @@ var healthdataFieldToValueFunc = map[dialect.Field]func(*HealthData) (any, bool)
 	tblhealthdata.FastingBloodGlucose: func(p *HealthData) (any, bool) {
 		return p.FastingBloodGlucose, p.FastingBloodGlucose == 0
 	},
-	tblhealthdata.PostprandialBloodGlucose: func(p *HealthData) (any, bool) {
-		return p.PostprandialBloodGlucose, p.PostprandialBloodGlucose == 0
+	tblhealthdata.HeartRate: func(p *HealthData) (any, bool) {
+		return p.HeartRate, p.HeartRate == 0
 	},
-	tblhealthdata.BloodOxygenSaturation: func(p *HealthData) (any, bool) {
-		return p.BloodOxygenSaturation, p.BloodOxygenSaturation == 0
-	},
-	tblhealthdata.Cholesterol: func(p *HealthData) (any, bool) {
-		return p.Cholesterol, p.Cholesterol == 0
-	},
-	tblhealthdata.UricAcid: func(p *HealthData) (any, bool) {
-		return p.UricAcid, p.UricAcid == 0
-	},
-	tblhealthdata.MusclePercentage: func(p *HealthData) (any, bool) {
-		return p.MusclePercentage, p.MusclePercentage == 0
-	},
-	tblhealthdata.BodyFatPercentage: func(p *HealthData) (any, bool) {
-		return p.BodyFatPercentage, p.BodyFatPercentage == 0
-	},
-	tblhealthdata.WaistCircumference: func(p *HealthData) (any, bool) {
-		return p.WaistCircumference, p.WaistCircumference == 0
+	tblhealthdata.Height: func(p *HealthData) (any, bool) {
+		return p.Height, p.Height == 0
 	},
 	tblhealthdata.HipCircumference: func(p *HealthData) (any, bool) {
 		return p.HipCircumference, p.HipCircumference == 0
 	},
 	tblhealthdata.MoistureContent: func(p *HealthData) (any, bool) {
 		return p.MoistureContent, p.MoistureContent == 0
+	},
+	tblhealthdata.MusclePercentage: func(p *HealthData) (any, bool) {
+		return p.MusclePercentage, p.MusclePercentage == 0
+	},
+	tblhealthdata.PostprandialBloodGlucose: func(p *HealthData) (any, bool) {
+		return p.PostprandialBloodGlucose, p.PostprandialBloodGlucose == 0
+	},
+	tblhealthdata.SystolicBloodPressure: func(p *HealthData) (any, bool) {
+		return p.SystolicBloodPressure, p.SystolicBloodPressure == 0
+	},
+	tblhealthdata.UricAcid: func(p *HealthData) (any, bool) {
+		return p.UricAcid, p.UricAcid == 0
+	},
+	tblhealthdata.WaistCircumference: func(p *HealthData) (any, bool) {
+		return p.WaistCircumference, p.WaistCircumference == 0
 	},
 }
 

@@ -72,7 +72,7 @@ func (s *fileService) DownloadFile(ctx context.Context, in *dto.DownloadFileReq,
 	}
 	att := new(do.BaseAttachment)
 	has, e := dao.BaseAttachment(db).Get(ctx, ace.Where(tblbaseattachment.Id.Eq(types.BigInt(*in.ID))).
-		And(tblbaseattachment.DelFlag.Eq(types.Int8(constant.YesNoNo))))
+		And(tblbaseattachment.State.NotEq(types.Int8(constant.StateDeleted))))
 	if e != nil {
 		return e
 	}

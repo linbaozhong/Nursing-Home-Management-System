@@ -9,12 +9,12 @@ import (
 const TableName = "active_participant"
 
 var (
-	Id         = dialect.Field{Name: "id", Json: "id", Table: "active_participant", Type: "types.BigInt", IsRelation: false}
-	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "active_participant", Type: "types.BigInt", IsRelation: false}
 	ActiveId   = dialect.Field{Name: "active_id", Json: "active_id", Table: "active_participant", Type: "types.BigInt", IsRelation: false}
-	ElderId    = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "active_participant", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "active_participant", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "active_participant", Type: "types.Time", IsRelation: false}
+	ElderId    = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "active_participant", Type: "types.BigInt", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "active_participant", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "active_participant", Type: "types.BigInt", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "active_participant", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "active_participant", Type: "types.Time", IsRelation: false}
 	// 主键
@@ -22,23 +22,23 @@ var (
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Id,
-		TenantId,
 		ActiveId,
-		ElderId,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Id,
-		TenantId,
 		ActiveId,
-		ElderId,
 		CreateId,
 		CreateTime,
+		ElderId,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 	}

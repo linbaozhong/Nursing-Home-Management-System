@@ -28,14 +28,17 @@ func NewWarehouseMaterial() *WarehouseMaterial {
 // MarshalJSON
 func (p *WarehouseMaterial) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(12 * 50)
+	if p.CreateId != 0 {
+		write.WriteRaw("create_id", types.Marshal(p.CreateId))
+	}
+	if !p.CreateTime.IsZero() {
+		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if !p.ExpireDate.IsZero() {
+		write.WriteRaw("expire_date", types.Marshal(p.ExpireDate))
+	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.WarehouseRecordId != 0 {
-		write.WriteRaw("warehouse_record_id", types.Marshal(p.WarehouseRecordId))
 	}
 	if p.MaterialId != 0 {
 		write.WriteRaw("material_id", types.Marshal(p.MaterialId))
@@ -43,14 +46,8 @@ func (p *WarehouseMaterial) MarshalJSON() ([]byte, error) {
 	if !p.ProductDate.IsZero() {
 		write.WriteRaw("product_date", types.Marshal(p.ProductDate))
 	}
-	if !p.ExpireDate.IsZero() {
-		write.WriteRaw("expire_date", types.Marshal(p.ExpireDate))
-	}
-	if p.CreateId != 0 {
-		write.WriteRaw("create_id", types.Marshal(p.CreateId))
-	}
-	if !p.CreateTime.IsZero() {
-		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -58,11 +55,14 @@ func (p *WarehouseMaterial) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.WarehouseNum != 0 {
-		write.WriteRaw("warehouse_num", types.Marshal(p.WarehouseNum))
+	if p.WarehouseRecordId != 0 {
+		write.WriteRaw("warehouse_record_id", types.Marshal(p.WarehouseRecordId))
 	}
 	if p.Inventory != 0 {
 		write.WriteRaw("inventory", types.Marshal(p.Inventory))
+	}
+	if p.WarehouseNum != 0 {
+		write.WriteRaw("warehouse_num", types.Marshal(p.WarehouseNum))
 	}
 	return write.Bytes(), nil
 }
@@ -77,30 +77,30 @@ func (p *WarehouseMaterial) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "warehouse_record_id":
-			p.WarehouseRecordId = types.BigInt(value.Uint())
-		case "material_id":
-			p.MaterialId = types.BigInt(value.Uint())
-		case "product_date":
-			p.ProductDate = types.Time{Time: value.Time()}
-		case "expire_date":
-			p.ExpireDate = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "expire_date":
+			p.ExpireDate = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "material_id":
+			p.MaterialId = types.BigInt(value.Uint())
+		case "product_date":
+			p.ProductDate = types.Time{Time: value.Time()}
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "warehouse_num":
-			p.WarehouseNum = types.Int32(value.Int())
+		case "warehouse_record_id":
+			p.WarehouseRecordId = types.BigInt(value.Uint())
 		case "inventory":
 			p.Inventory = types.Int32(value.Int())
+		case "warehouse_num":
+			p.WarehouseNum = types.Int32(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -122,18 +122,18 @@ func (p *WarehouseMaterial) Free() {
 
 // Reset
 func (p *WarehouseMaterial) Reset() {
-	p.Id = 0
-	p.TenantId = 0
-	p.WarehouseRecordId = 0
-	p.MaterialId = 0
-	p.ProductDate = types.Time{}
-	p.ExpireDate = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ExpireDate = types.Time{}
+	p.Id = 0
+	p.MaterialId = 0
+	p.ProductDate = types.Time{}
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.WarehouseNum = 0
+	p.WarehouseRecordId = 0
 	p.Inventory = 0
+	p.WarehouseNum = 0
 
 }
 
@@ -143,18 +143,18 @@ func (p *WarehouseMaterial) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var warehousematerialFieldToPtrFunc = map[string]func(*WarehouseMaterial) any{
-	tblwarehousematerial.Id.Name:                func(p *WarehouseMaterial) any { return &p.Id },
-	tblwarehousematerial.TenantId.Name:          func(p *WarehouseMaterial) any { return &p.TenantId },
-	tblwarehousematerial.WarehouseRecordId.Name: func(p *WarehouseMaterial) any { return &p.WarehouseRecordId },
-	tblwarehousematerial.MaterialId.Name:        func(p *WarehouseMaterial) any { return &p.MaterialId },
-	tblwarehousematerial.ProductDate.Name:       func(p *WarehouseMaterial) any { return &p.ProductDate },
-	tblwarehousematerial.ExpireDate.Name:        func(p *WarehouseMaterial) any { return &p.ExpireDate },
 	tblwarehousematerial.CreateId.Name:          func(p *WarehouseMaterial) any { return &p.CreateId },
 	tblwarehousematerial.CreateTime.Name:        func(p *WarehouseMaterial) any { return &p.CreateTime },
+	tblwarehousematerial.ExpireDate.Name:        func(p *WarehouseMaterial) any { return &p.ExpireDate },
+	tblwarehousematerial.Id.Name:                func(p *WarehouseMaterial) any { return &p.Id },
+	tblwarehousematerial.MaterialId.Name:        func(p *WarehouseMaterial) any { return &p.MaterialId },
+	tblwarehousematerial.ProductDate.Name:       func(p *WarehouseMaterial) any { return &p.ProductDate },
+	tblwarehousematerial.TenantId.Name:          func(p *WarehouseMaterial) any { return &p.TenantId },
 	tblwarehousematerial.UpdateId.Name:          func(p *WarehouseMaterial) any { return &p.UpdateId },
 	tblwarehousematerial.UpdateTime.Name:        func(p *WarehouseMaterial) any { return &p.UpdateTime },
-	tblwarehousematerial.WarehouseNum.Name:      func(p *WarehouseMaterial) any { return &p.WarehouseNum },
+	tblwarehousematerial.WarehouseRecordId.Name: func(p *WarehouseMaterial) any { return &p.WarehouseRecordId },
 	tblwarehousematerial.Inventory.Name:         func(p *WarehouseMaterial) any { return &p.Inventory },
+	tblwarehousematerial.WarehouseNum.Name:      func(p *WarehouseMaterial) any { return &p.WarehouseNum },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -244,14 +244,17 @@ func (p *WarehouseMaterial) RawAssignValues(d dialect.Dialect, args ...dialect.F
 
 // 定义字段到值检查和获取函数的映射
 var warehousematerialFieldToValueFunc = map[dialect.Field]func(*WarehouseMaterial) (any, bool){
+	tblwarehousematerial.CreateId: func(p *WarehouseMaterial) (any, bool) {
+		return p.CreateId, p.CreateId == 0
+	},
+	tblwarehousematerial.CreateTime: func(p *WarehouseMaterial) (any, bool) {
+		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblwarehousematerial.ExpireDate: func(p *WarehouseMaterial) (any, bool) {
+		return p.ExpireDate, p.ExpireDate.IsZero()
+	},
 	tblwarehousematerial.Id: func(p *WarehouseMaterial) (any, bool) {
 		return p.Id, p.Id == 0
-	},
-	tblwarehousematerial.TenantId: func(p *WarehouseMaterial) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblwarehousematerial.WarehouseRecordId: func(p *WarehouseMaterial) (any, bool) {
-		return p.WarehouseRecordId, p.WarehouseRecordId == 0
 	},
 	tblwarehousematerial.MaterialId: func(p *WarehouseMaterial) (any, bool) {
 		return p.MaterialId, p.MaterialId == 0
@@ -259,14 +262,8 @@ var warehousematerialFieldToValueFunc = map[dialect.Field]func(*WarehouseMateria
 	tblwarehousematerial.ProductDate: func(p *WarehouseMaterial) (any, bool) {
 		return p.ProductDate, p.ProductDate.IsZero()
 	},
-	tblwarehousematerial.ExpireDate: func(p *WarehouseMaterial) (any, bool) {
-		return p.ExpireDate, p.ExpireDate.IsZero()
-	},
-	tblwarehousematerial.CreateId: func(p *WarehouseMaterial) (any, bool) {
-		return p.CreateId, p.CreateId == 0
-	},
-	tblwarehousematerial.CreateTime: func(p *WarehouseMaterial) (any, bool) {
-		return p.CreateTime, p.CreateTime.IsZero()
+	tblwarehousematerial.TenantId: func(p *WarehouseMaterial) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblwarehousematerial.UpdateId: func(p *WarehouseMaterial) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -274,11 +271,14 @@ var warehousematerialFieldToValueFunc = map[dialect.Field]func(*WarehouseMateria
 	tblwarehousematerial.UpdateTime: func(p *WarehouseMaterial) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblwarehousematerial.WarehouseNum: func(p *WarehouseMaterial) (any, bool) {
-		return p.WarehouseNum, p.WarehouseNum == 0
+	tblwarehousematerial.WarehouseRecordId: func(p *WarehouseMaterial) (any, bool) {
+		return p.WarehouseRecordId, p.WarehouseRecordId == 0
 	},
 	tblwarehousematerial.Inventory: func(p *WarehouseMaterial) (any, bool) {
 		return p.Inventory, p.Inventory == 0
+	},
+	tblwarehousematerial.WarehouseNum: func(p *WarehouseMaterial) (any, bool) {
+		return p.WarehouseNum, p.WarehouseNum == 0
 	},
 }
 

@@ -9,34 +9,34 @@ import (
 const TableName = "family_account"
 
 var (
-	Id         = dialect.Field{Name: "id", Json: "id", Table: "family_account", Type: "types.BigInt", IsRelation: false}
-	Phone      = dialect.Field{Name: "phone", Json: "phone", Table: "family_account", Type: "types.String", IsRelation: false}
-	Pass       = dialect.Field{Name: "pass", Json: "pass", Table: "family_account", Type: "types.String", IsRelation: false}
 	Openid     = dialect.Field{Name: "openid", Json: "openid", Table: "family_account", Type: "types.String", IsRelation: false}
+	Pass       = dialect.Field{Name: "pass", Json: "pass", Table: "family_account", Type: "types.String", IsRelation: false}
+	Phone      = dialect.Field{Name: "phone", Json: "phone", Table: "family_account", Type: "types.String", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "family_account", Type: "types.Time", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "family_account", Type: "types.Money", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "family_account", Type: "types.Time", IsRelation: false}
-	DelFlag    = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "family_account", Type: "types.Int8", IsRelation: false}
+	State      = dialect.Field{Name: "state", Json: "state", Table: "family_account", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Id,
-		Phone,
-		Pass,
 		Openid,
+		Pass,
+		Phone,
 		CreateTime,
+		Id,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Id,
-		Phone,
-		Pass,
 		Openid,
+		Pass,
+		Phone,
 		CreateTime,
+		Id,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 )

@@ -26,7 +26,7 @@ var CateringSet = &cateringset{}
 // 对应 Java: CateringSetServiceImpl.pageCateringSetByKey -> CateringSetFunc.listNotDelCateringSet
 func (c *cateringset) PageCateringSetByKey(ctx context.Context, in *dto.PageCateringSetByKeyReq, out *[]dto.PageCateringSetByKeyResp) error {
 	q := db.Table(tblcateringset.TableName).
-		Where(tblcateringset.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblcateringset.DelFlag.Eq(constant.YesNoNo))
+		Where(tblcateringset.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tblcateringset.State.NotEq(types.Int8(constant.StateDeleted)))
 	if in.SetName != nil {
 		q.And(tblcateringset.Name.Like(*in.SetName))
 	}
@@ -71,7 +71,7 @@ func (c *cateringset) GetCateringSetById(ctx context.Context, in *dto.IDReq, out
 		Where(
 			tblsetdishes.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 			tblsetdishes.SetId.Eq(types.BigInt(*in.ID)),
-			tbldishes.DelFlag.Eq(constant.YesNoNo),
+			tbldishes.State.NotEq(types.Int8(constant.StateDeleted)),
 		).
 		Cols(
 			tbldishes.Id,
@@ -99,7 +99,7 @@ func (c *cateringset) checkNameRepeat(ctx context.Context, name string, excludeI
 	cond := []dialect.Condition{
 		tblcateringset.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblcateringset.Name.Eq(name),
-		tblcateringset.DelFlag.Eq(constant.YesNoNo),
+		tblcateringset.State.NotEq(types.Int8(constant.StateDeleted)),
 	}
 	if excludeID != nil {
 		cond = append(cond, tblcateringset.Id.NotEq(types.BigInt(*excludeID)))
@@ -154,7 +154,7 @@ func (c *cateringset) AddCateringSet(ctx context.Context, in *dto.OperateCaterin
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Name)
 	bean.MonthPrice = types.Money(*in.MonthPrice)
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.State = types.Int8(constant.StateEnabled)
 	_, e = dao.CateringSet(db).InsertOne(ctx, bean)
 	if e != nil {
 		return e
@@ -193,7 +193,7 @@ func (c *cateringset) DeleteCateringSet(ctx context.Context, in *dto.IDReq, out 
 	used, e := dao.Elder(db).Exists(ctx,
 		tblelder.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblelder.CateringSetId.Eq(types.BigInt(*in.ID)),
-		tblelder.CheckFlag.In(
+		tblelder.Status.In(
 			types.Int8(constant.CheckEnter),
 			types.Int8(constant.CheckExitAudit),
 		),
@@ -206,7 +206,7 @@ func (c *cateringset) DeleteCateringSet(ctx context.Context, in *dto.IDReq, out 
 	}
 	// 逻辑删除
 	_, e = dao.CateringSet(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tblcateringset.DelFlag.Set(constant.YesNoYes),
+		tblcateringset.State.Set(constant.StateDeleted),
 	)
 	return e
 }

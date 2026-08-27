@@ -31,17 +31,11 @@ func (p *Order) MarshalJSON() ([]byte, error) {
 	if p.DineType != "" {
 		write.WriteRaw("dine_type", types.Marshal(p.DineType))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
+	if p.CreateId != 0 {
+		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
-	if p.StaffId != 0 {
-		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
+	if !p.CreateTime.IsZero() {
+		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
 	}
 	if !p.DeliverDishesDate.IsZero() {
 		write.WriteRaw("deliver_dishes_date", types.Marshal(p.DeliverDishesDate))
@@ -49,14 +43,20 @@ func (p *Order) MarshalJSON() ([]byte, error) {
 	if !p.DineDate.IsZero() {
 		write.WriteRaw("dine_date", types.Marshal(p.DineDate))
 	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
 	if p.PayAmount != 0 {
 		write.WriteRaw("pay_amount", types.Marshal(p.PayAmount))
 	}
-	if p.CreateId != 0 {
-		write.WriteRaw("create_id", types.Marshal(p.CreateId))
+	if p.StaffId != 0 {
+		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
 	}
-	if !p.CreateTime.IsZero() {
-		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -64,8 +64,8 @@ func (p *Order) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.OrderFlag != 0 {
-		write.WriteRaw("order_flag", types.Marshal(p.OrderFlag))
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -82,30 +82,30 @@ func (p *Order) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "dine_type":
 			p.DineType = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "staff_id":
-			p.StaffId = types.BigInt(value.Uint())
-		case "deliver_dishes_date":
-			p.DeliverDishesDate = types.Time{Time: value.Time()}
-		case "dine_date":
-			p.DineDate = types.Time{Time: value.Time()}
-		case "pay_amount":
-			e = types.Unmarshal(value, &p.PayAmount)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "deliver_dishes_date":
+			p.DeliverDishesDate = types.Time{Time: value.Time()}
+		case "dine_date":
+			p.DineDate = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "pay_amount":
+			e = types.Unmarshal(value, &p.PayAmount)
+		case "staff_id":
+			p.StaffId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "order_flag":
-			p.OrderFlag = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -128,18 +128,18 @@ func (p *Order) Free() {
 // Reset
 func (p *Order) Reset() {
 	p.DineType = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
-	p.StaffId = 0
-	p.DeliverDishesDate = types.Time{}
-	p.DineDate = types.Time{}
-	p.PayAmount = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.DeliverDishesDate = types.Time{}
+	p.DineDate = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.PayAmount = 0
+	p.StaffId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.OrderFlag = 0
+	p.Status = 0
 
 }
 
@@ -150,18 +150,18 @@ func (p *Order) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var orderFieldToPtrFunc = map[string]func(*Order) any{
 	tblorder.DineType.Name:          func(p *Order) any { return &p.DineType },
-	tblorder.Id.Name:                func(p *Order) any { return &p.Id },
-	tblorder.TenantId.Name:          func(p *Order) any { return &p.TenantId },
-	tblorder.ElderId.Name:           func(p *Order) any { return &p.ElderId },
-	tblorder.StaffId.Name:           func(p *Order) any { return &p.StaffId },
-	tblorder.DeliverDishesDate.Name: func(p *Order) any { return &p.DeliverDishesDate },
-	tblorder.DineDate.Name:          func(p *Order) any { return &p.DineDate },
-	tblorder.PayAmount.Name:         func(p *Order) any { return &p.PayAmount },
 	tblorder.CreateId.Name:          func(p *Order) any { return &p.CreateId },
 	tblorder.CreateTime.Name:        func(p *Order) any { return &p.CreateTime },
+	tblorder.DeliverDishesDate.Name: func(p *Order) any { return &p.DeliverDishesDate },
+	tblorder.DineDate.Name:          func(p *Order) any { return &p.DineDate },
+	tblorder.ElderId.Name:           func(p *Order) any { return &p.ElderId },
+	tblorder.Id.Name:                func(p *Order) any { return &p.Id },
+	tblorder.PayAmount.Name:         func(p *Order) any { return &p.PayAmount },
+	tblorder.StaffId.Name:           func(p *Order) any { return &p.StaffId },
+	tblorder.TenantId.Name:          func(p *Order) any { return &p.TenantId },
 	tblorder.UpdateId.Name:          func(p *Order) any { return &p.UpdateId },
 	tblorder.UpdateTime.Name:        func(p *Order) any { return &p.UpdateTime },
-	tblorder.OrderFlag.Name:         func(p *Order) any { return &p.OrderFlag },
+	tblorder.Status.Name:            func(p *Order) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -254,17 +254,11 @@ var orderFieldToValueFunc = map[dialect.Field]func(*Order) (any, bool){
 	tblorder.DineType: func(p *Order) (any, bool) {
 		return p.DineType, p.DineType == ""
 	},
-	tblorder.Id: func(p *Order) (any, bool) {
-		return p.Id, p.Id == 0
+	tblorder.CreateId: func(p *Order) (any, bool) {
+		return p.CreateId, p.CreateId == 0
 	},
-	tblorder.TenantId: func(p *Order) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblorder.ElderId: func(p *Order) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
-	tblorder.StaffId: func(p *Order) (any, bool) {
-		return p.StaffId, p.StaffId == 0
+	tblorder.CreateTime: func(p *Order) (any, bool) {
+		return p.CreateTime, p.CreateTime.IsZero()
 	},
 	tblorder.DeliverDishesDate: func(p *Order) (any, bool) {
 		return p.DeliverDishesDate, p.DeliverDishesDate.IsZero()
@@ -272,14 +266,20 @@ var orderFieldToValueFunc = map[dialect.Field]func(*Order) (any, bool){
 	tblorder.DineDate: func(p *Order) (any, bool) {
 		return p.DineDate, p.DineDate.IsZero()
 	},
+	tblorder.ElderId: func(p *Order) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblorder.Id: func(p *Order) (any, bool) {
+		return p.Id, p.Id == 0
+	},
 	tblorder.PayAmount: func(p *Order) (any, bool) {
 		return p.PayAmount, p.PayAmount == 0
 	},
-	tblorder.CreateId: func(p *Order) (any, bool) {
-		return p.CreateId, p.CreateId == 0
+	tblorder.StaffId: func(p *Order) (any, bool) {
+		return p.StaffId, p.StaffId == 0
 	},
-	tblorder.CreateTime: func(p *Order) (any, bool) {
-		return p.CreateTime, p.CreateTime.IsZero()
+	tblorder.TenantId: func(p *Order) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblorder.UpdateId: func(p *Order) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -287,8 +287,8 @@ var orderFieldToValueFunc = map[dialect.Field]func(*Order) (any, bool){
 	tblorder.UpdateTime: func(p *Order) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblorder.OrderFlag: func(p *Order) (any, bool) {
-		return p.OrderFlag, p.OrderFlag == 0
+	tblorder.Status: func(p *Order) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

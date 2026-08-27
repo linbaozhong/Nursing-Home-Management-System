@@ -9,43 +9,43 @@ import (
 const TableName = "outbound_material"
 
 var (
-	Id                  = dialect.Field{Name: "id", Json: "id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
-	TenantId            = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
-	OutboundRecordId    = dialect.Field{Name: "outbound_record_id", Json: "outbound_record_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
-	WarehouseMaterialId = dialect.Field{Name: "warehouse_material_id", Json: "warehouse_material_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
-	MaterialId          = dialect.Field{Name: "material_id", Json: "material_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
 	CreateId            = dialect.Field{Name: "create_id", Json: "create_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
 	CreateTime          = dialect.Field{Name: "create_time", Json: "create_time", Table: "outbound_material", Type: "types.Time", IsRelation: false}
+	Id                  = dialect.Field{Name: "id", Json: "id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
+	MaterialId          = dialect.Field{Name: "material_id", Json: "material_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
+	OutboundRecordId    = dialect.Field{Name: "outbound_record_id", Json: "outbound_record_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
+	TenantId            = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
 	UpdateId            = dialect.Field{Name: "update_id", Json: "update_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
 	UpdateTime          = dialect.Field{Name: "update_time", Json: "update_time", Table: "outbound_material", Type: "types.Time", IsRelation: false}
+	WarehouseMaterialId = dialect.Field{Name: "warehouse_material_id", Json: "warehouse_material_id", Table: "outbound_material", Type: "types.BigInt", IsRelation: false}
 	OutboundNum         = dialect.Field{Name: "outbound_num", Json: "outbound_num", Table: "outbound_material", Type: "types.Int32", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Id,
-		TenantId,
-		OutboundRecordId,
-		WarehouseMaterialId,
-		MaterialId,
 		CreateId,
 		CreateTime,
+		Id,
+		MaterialId,
+		OutboundRecordId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
+		WarehouseMaterialId,
 		OutboundNum,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Id,
-		TenantId,
-		OutboundRecordId,
-		WarehouseMaterialId,
-		MaterialId,
 		CreateId,
 		CreateTime,
+		Id,
+		MaterialId,
+		OutboundRecordId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
+		WarehouseMaterialId,
 		OutboundNum,
 	}
 )

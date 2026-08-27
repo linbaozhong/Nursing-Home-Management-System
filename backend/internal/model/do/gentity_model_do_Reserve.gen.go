@@ -34,29 +34,29 @@ func (p *Reserve) MarshalJSON() ([]byte, error) {
 	if p.Phone != "" {
 		write.WriteRaw("phone", types.Marshal(p.Phone))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
-	if p.StaffId != 0 {
-		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
-	}
-	if !p.DueDate.IsZero() {
-		write.WriteRaw("due_date", types.Marshal(p.DueDate))
-	}
-	if p.Deposit != 0.0 {
-		write.WriteRaw("deposit", types.Marshal(p.Deposit))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Deposit != 0 {
+		write.WriteRaw("deposit", types.Marshal(p.Deposit))
+	}
+	if !p.DueDate.IsZero() {
+		write.WriteRaw("due_date", types.Marshal(p.DueDate))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.StaffId != 0 {
+		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -64,8 +64,8 @@ func (p *Reserve) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.ReserveFlag != 0 {
-		write.WriteRaw("reserve_flag", types.Marshal(p.ReserveFlag))
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -84,28 +84,28 @@ func (p *Reserve) UnmarshalJSON(data []byte) error {
 			p.Name = types.String(value.Str)
 		case "phone":
 			p.Phone = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "staff_id":
-			p.StaffId = types.BigInt(value.Uint())
-		case "due_date":
-			p.DueDate = types.Time{Time: value.Time()}
-		case "deposit":
-			p.Deposit = types.Float64(value.Float())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "deposit":
+			e = types.Unmarshal(value, &p.Deposit)
+		case "due_date":
+			p.DueDate = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "staff_id":
+			p.StaffId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "reserve_flag":
-			p.ReserveFlag = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -129,17 +129,17 @@ func (p *Reserve) Free() {
 func (p *Reserve) Reset() {
 	p.Name = ""
 	p.Phone = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
-	p.StaffId = 0
-	p.DueDate = types.Time{}
-	p.Deposit = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Deposit = 0
+	p.DueDate = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
+	p.StaffId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.ReserveFlag = 0
+	p.Status = 0
 
 }
 
@@ -149,19 +149,19 @@ func (p *Reserve) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var reserveFieldToPtrFunc = map[string]func(*Reserve) any{
-	tblreserve.Name.Name:        func(p *Reserve) any { return &p.Name },
-	tblreserve.Phone.Name:       func(p *Reserve) any { return &p.Phone },
-	tblreserve.Id.Name:          func(p *Reserve) any { return &p.Id },
-	tblreserve.TenantId.Name:    func(p *Reserve) any { return &p.TenantId },
-	tblreserve.ElderId.Name:     func(p *Reserve) any { return &p.ElderId },
-	tblreserve.StaffId.Name:     func(p *Reserve) any { return &p.StaffId },
-	tblreserve.DueDate.Name:     func(p *Reserve) any { return &p.DueDate },
-	tblreserve.Deposit.Name:     func(p *Reserve) any { return &p.Deposit },
-	tblreserve.CreateId.Name:    func(p *Reserve) any { return &p.CreateId },
-	tblreserve.CreateTime.Name:  func(p *Reserve) any { return &p.CreateTime },
-	tblreserve.UpdateId.Name:    func(p *Reserve) any { return &p.UpdateId },
-	tblreserve.UpdateTime.Name:  func(p *Reserve) any { return &p.UpdateTime },
-	tblreserve.ReserveFlag.Name: func(p *Reserve) any { return &p.ReserveFlag },
+	tblreserve.Name.Name:       func(p *Reserve) any { return &p.Name },
+	tblreserve.Phone.Name:      func(p *Reserve) any { return &p.Phone },
+	tblreserve.CreateId.Name:   func(p *Reserve) any { return &p.CreateId },
+	tblreserve.CreateTime.Name: func(p *Reserve) any { return &p.CreateTime },
+	tblreserve.Deposit.Name:    func(p *Reserve) any { return &p.Deposit },
+	tblreserve.DueDate.Name:    func(p *Reserve) any { return &p.DueDate },
+	tblreserve.ElderId.Name:    func(p *Reserve) any { return &p.ElderId },
+	tblreserve.Id.Name:         func(p *Reserve) any { return &p.Id },
+	tblreserve.StaffId.Name:    func(p *Reserve) any { return &p.StaffId },
+	tblreserve.TenantId.Name:   func(p *Reserve) any { return &p.TenantId },
+	tblreserve.UpdateId.Name:   func(p *Reserve) any { return &p.UpdateId },
+	tblreserve.UpdateTime.Name: func(p *Reserve) any { return &p.UpdateTime },
+	tblreserve.Status.Name:     func(p *Reserve) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -257,29 +257,29 @@ var reserveFieldToValueFunc = map[dialect.Field]func(*Reserve) (any, bool){
 	tblreserve.Phone: func(p *Reserve) (any, bool) {
 		return p.Phone, p.Phone == ""
 	},
-	tblreserve.Id: func(p *Reserve) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblreserve.TenantId: func(p *Reserve) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblreserve.ElderId: func(p *Reserve) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
-	tblreserve.StaffId: func(p *Reserve) (any, bool) {
-		return p.StaffId, p.StaffId == 0
-	},
-	tblreserve.DueDate: func(p *Reserve) (any, bool) {
-		return p.DueDate, p.DueDate.IsZero()
-	},
-	tblreserve.Deposit: func(p *Reserve) (any, bool) {
-		return p.Deposit, p.Deposit == 0.0
-	},
 	tblreserve.CreateId: func(p *Reserve) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblreserve.CreateTime: func(p *Reserve) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblreserve.Deposit: func(p *Reserve) (any, bool) {
+		return p.Deposit, p.Deposit == 0
+	},
+	tblreserve.DueDate: func(p *Reserve) (any, bool) {
+		return p.DueDate, p.DueDate.IsZero()
+	},
+	tblreserve.ElderId: func(p *Reserve) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblreserve.Id: func(p *Reserve) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblreserve.StaffId: func(p *Reserve) (any, bool) {
+		return p.StaffId, p.StaffId == 0
+	},
+	tblreserve.TenantId: func(p *Reserve) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblreserve.UpdateId: func(p *Reserve) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -287,8 +287,8 @@ var reserveFieldToValueFunc = map[dialect.Field]func(*Reserve) (any, bool){
 	tblreserve.UpdateTime: func(p *Reserve) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblreserve.ReserveFlag: func(p *Reserve) (any, bool) {
-		return p.ReserveFlag, p.ReserveFlag == 0
+	tblreserve.Status: func(p *Reserve) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

@@ -28,32 +28,32 @@ func NewContract() *Contract {
 // MarshalJSON
 func (p *Contract) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(11 * 50)
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.ElderId != 0 {
-		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	}
-	if p.StaffId != 0 {
-		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
-	}
-	if !p.SignDate.IsZero() {
-		write.WriteRaw("sign_date", types.Marshal(p.SignDate))
-	}
-	if !p.StartDate.IsZero() {
-		write.WriteRaw("start_date", types.Marshal(p.StartDate))
-	}
-	if !p.EndDate.IsZero() {
-		write.WriteRaw("end_date", types.Marshal(p.EndDate))
-	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if !p.EndDate.IsZero() {
+		write.WriteRaw("end_date", types.Marshal(p.EndDate))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.SignDate.IsZero() {
+		write.WriteRaw("sign_date", types.Marshal(p.SignDate))
+	}
+	if p.StaffId != 0 {
+		write.WriteRaw("staff_id", types.Marshal(p.StaffId))
+	}
+	if !p.StartDate.IsZero() {
+		write.WriteRaw("start_date", types.Marshal(p.StartDate))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -74,24 +74,24 @@ func (p *Contract) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "staff_id":
-			p.StaffId = types.BigInt(value.Uint())
-		case "sign_date":
-			p.SignDate = types.Time{Time: value.Time()}
-		case "start_date":
-			p.StartDate = types.Time{Time: value.Time()}
-		case "end_date":
-			p.EndDate = types.Time{Time: value.Time()}
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			p.ElderId = types.BigInt(value.Uint())
+		case "end_date":
+			p.EndDate = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "sign_date":
+			p.SignDate = types.Time{Time: value.Time()}
+		case "staff_id":
+			p.StaffId = types.BigInt(value.Uint())
+		case "start_date":
+			p.StartDate = types.Time{Time: value.Time()}
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
@@ -117,15 +117,15 @@ func (p *Contract) Free() {
 
 // Reset
 func (p *Contract) Reset() {
-	p.Id = 0
-	p.TenantId = 0
-	p.ElderId = 0
-	p.StaffId = 0
-	p.SignDate = types.Time{}
-	p.StartDate = types.Time{}
-	p.EndDate = types.Time{}
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.EndDate = types.Time{}
+	p.Id = 0
+	p.SignDate = types.Time{}
+	p.StaffId = 0
+	p.StartDate = types.Time{}
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 
@@ -137,15 +137,15 @@ func (p *Contract) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var contractFieldToPtrFunc = map[string]func(*Contract) any{
-	tblcontract.Id.Name:         func(p *Contract) any { return &p.Id },
-	tblcontract.TenantId.Name:   func(p *Contract) any { return &p.TenantId },
-	tblcontract.ElderId.Name:    func(p *Contract) any { return &p.ElderId },
-	tblcontract.StaffId.Name:    func(p *Contract) any { return &p.StaffId },
-	tblcontract.SignDate.Name:   func(p *Contract) any { return &p.SignDate },
-	tblcontract.StartDate.Name:  func(p *Contract) any { return &p.StartDate },
-	tblcontract.EndDate.Name:    func(p *Contract) any { return &p.EndDate },
 	tblcontract.CreateId.Name:   func(p *Contract) any { return &p.CreateId },
 	tblcontract.CreateTime.Name: func(p *Contract) any { return &p.CreateTime },
+	tblcontract.ElderId.Name:    func(p *Contract) any { return &p.ElderId },
+	tblcontract.EndDate.Name:    func(p *Contract) any { return &p.EndDate },
+	tblcontract.Id.Name:         func(p *Contract) any { return &p.Id },
+	tblcontract.SignDate.Name:   func(p *Contract) any { return &p.SignDate },
+	tblcontract.StaffId.Name:    func(p *Contract) any { return &p.StaffId },
+	tblcontract.StartDate.Name:  func(p *Contract) any { return &p.StartDate },
+	tblcontract.TenantId.Name:   func(p *Contract) any { return &p.TenantId },
 	tblcontract.UpdateId.Name:   func(p *Contract) any { return &p.UpdateId },
 	tblcontract.UpdateTime.Name: func(p *Contract) any { return &p.UpdateTime },
 }
@@ -237,32 +237,32 @@ func (p *Contract) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]
 
 // 定义字段到值检查和获取函数的映射
 var contractFieldToValueFunc = map[dialect.Field]func(*Contract) (any, bool){
-	tblcontract.Id: func(p *Contract) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblcontract.TenantId: func(p *Contract) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblcontract.ElderId: func(p *Contract) (any, bool) {
-		return p.ElderId, p.ElderId == 0
-	},
-	tblcontract.StaffId: func(p *Contract) (any, bool) {
-		return p.StaffId, p.StaffId == 0
-	},
-	tblcontract.SignDate: func(p *Contract) (any, bool) {
-		return p.SignDate, p.SignDate.IsZero()
-	},
-	tblcontract.StartDate: func(p *Contract) (any, bool) {
-		return p.StartDate, p.StartDate.IsZero()
-	},
-	tblcontract.EndDate: func(p *Contract) (any, bool) {
-		return p.EndDate, p.EndDate.IsZero()
-	},
 	tblcontract.CreateId: func(p *Contract) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblcontract.CreateTime: func(p *Contract) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblcontract.ElderId: func(p *Contract) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblcontract.EndDate: func(p *Contract) (any, bool) {
+		return p.EndDate, p.EndDate.IsZero()
+	},
+	tblcontract.Id: func(p *Contract) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblcontract.SignDate: func(p *Contract) (any, bool) {
+		return p.SignDate, p.SignDate.IsZero()
+	},
+	tblcontract.StaffId: func(p *Contract) (any, bool) {
+		return p.StaffId, p.StaffId == 0
+	},
+	tblcontract.StartDate: func(p *Contract) (any, bool) {
+		return p.StartDate, p.StartDate.IsZero()
+	},
+	tblcontract.TenantId: func(p *Contract) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblcontract.UpdateId: func(p *Contract) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0

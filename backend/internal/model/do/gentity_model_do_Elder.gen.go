@@ -28,44 +28,44 @@ func NewElder() *Elder {
 // MarshalJSON
 func (p *Elder) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(17 * 50)
-	if p.Name != "" {
-		write.WriteRaw("name", types.Marshal(p.Name))
+	if p.Address != "" {
+		write.WriteRaw("address", types.Marshal(p.Address))
 	}
 	if p.IdNum != "" {
 		write.WriteRaw("id_num", types.Marshal(p.IdNum))
 	}
-	if p.Sex != "" {
-		write.WriteRaw("sex", types.Marshal(p.Sex))
+	if p.Name != "" {
+		write.WriteRaw("name", types.Marshal(p.Name))
 	}
 	if p.Phone != "" {
 		write.WriteRaw("phone", types.Marshal(p.Phone))
 	}
-	if p.Address != "" {
-		write.WriteRaw("address", types.Marshal(p.Address))
+	if p.Sex != "" {
+		write.WriteRaw("sex", types.Marshal(p.Sex))
 	}
-	if p.Id != 0 {
-		write.WriteRaw("id", types.Marshal(p.Id))
-	}
-	if p.TenantId != 0 {
-		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
-	}
-	if p.NursingGradeId != 0 {
-		write.WriteRaw("nursing_grade_id", types.Marshal(p.NursingGradeId))
-	}
-	if p.CateringSetId != 0 {
-		write.WriteRaw("catering_set_id", types.Marshal(p.CateringSetId))
+	if p.Balance != 0 {
+		write.WriteRaw("balance", types.Marshal(p.Balance))
 	}
 	if p.BedId != 0 {
 		write.WriteRaw("bed_id", types.Marshal(p.BedId))
 	}
-	if p.Balance != 0 {
-		write.WriteRaw("balance", types.Marshal(p.Balance))
+	if p.CateringSetId != 0 {
+		write.WriteRaw("catering_set_id", types.Marshal(p.CateringSetId))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
 	}
 	if !p.CreateTime.IsZero() {
 		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.NursingGradeId != 0 {
+		write.WriteRaw("nursing_grade_id", types.Marshal(p.NursingGradeId))
+	}
+	if p.TenantId != 0 {
+		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
 	}
 	if p.UpdateId != 0 {
 		write.WriteRaw("update_id", types.Marshal(p.UpdateId))
@@ -76,8 +76,8 @@ func (p *Elder) MarshalJSON() ([]byte, error) {
 	if p.Age != 0 {
 		write.WriteRaw("age", types.Marshal(p.Age))
 	}
-	if p.CheckFlag != 0 {
-		write.WriteRaw("check_flag", types.Marshal(p.CheckFlag))
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
 	}
 	return write.Bytes(), nil
 }
@@ -92,40 +92,40 @@ func (p *Elder) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "name":
-			p.Name = types.String(value.Str)
-		case "id_num":
-			p.IdNum = types.String(value.Str)
-		case "sex":
-			p.Sex = types.String(value.Str)
-		case "phone":
-			p.Phone = types.String(value.Str)
 		case "address":
 			p.Address = types.String(value.Str)
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "tenant_id":
-			p.TenantId = types.BigInt(value.Uint())
-		case "nursing_grade_id":
-			p.NursingGradeId = types.BigInt(value.Uint())
-		case "catering_set_id":
-			p.CateringSetId = types.BigInt(value.Uint())
-		case "bed_id":
-			p.BedId = types.BigInt(value.Uint())
+		case "id_num":
+			p.IdNum = types.String(value.Str)
+		case "name":
+			p.Name = types.String(value.Str)
+		case "phone":
+			p.Phone = types.String(value.Str)
+		case "sex":
+			p.Sex = types.String(value.Str)
 		case "balance":
 			e = types.Unmarshal(value, &p.Balance)
+		case "bed_id":
+			p.BedId = types.BigInt(value.Uint())
+		case "catering_set_id":
+			p.CateringSetId = types.BigInt(value.Uint())
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			p.Id = types.BigInt(value.Uint())
+		case "nursing_grade_id":
+			p.NursingGradeId = types.BigInt(value.Uint())
+		case "tenant_id":
+			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "age":
 			p.Age = types.Int32(value.Int())
-		case "check_flag":
-			p.CheckFlag = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -147,23 +147,23 @@ func (p *Elder) Free() {
 
 // Reset
 func (p *Elder) Reset() {
-	p.Name = ""
-	p.IdNum = ""
-	p.Sex = ""
-	p.Phone = ""
 	p.Address = ""
-	p.Id = 0
-	p.TenantId = 0
-	p.NursingGradeId = 0
-	p.CateringSetId = 0
-	p.BedId = 0
+	p.IdNum = ""
+	p.Name = ""
+	p.Phone = ""
+	p.Sex = ""
 	p.Balance = 0
+	p.BedId = 0
+	p.CateringSetId = 0
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
+	p.Id = 0
+	p.NursingGradeId = 0
+	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.Age = 0
-	p.CheckFlag = 0
+	p.Status = 0
 
 }
 
@@ -173,23 +173,23 @@ func (p *Elder) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var elderFieldToPtrFunc = map[string]func(*Elder) any{
-	tblelder.Name.Name:           func(p *Elder) any { return &p.Name },
-	tblelder.IdNum.Name:          func(p *Elder) any { return &p.IdNum },
-	tblelder.Sex.Name:            func(p *Elder) any { return &p.Sex },
-	tblelder.Phone.Name:          func(p *Elder) any { return &p.Phone },
 	tblelder.Address.Name:        func(p *Elder) any { return &p.Address },
-	tblelder.Id.Name:             func(p *Elder) any { return &p.Id },
-	tblelder.TenantId.Name:       func(p *Elder) any { return &p.TenantId },
-	tblelder.NursingGradeId.Name: func(p *Elder) any { return &p.NursingGradeId },
-	tblelder.CateringSetId.Name:  func(p *Elder) any { return &p.CateringSetId },
-	tblelder.BedId.Name:          func(p *Elder) any { return &p.BedId },
+	tblelder.IdNum.Name:          func(p *Elder) any { return &p.IdNum },
+	tblelder.Name.Name:           func(p *Elder) any { return &p.Name },
+	tblelder.Phone.Name:          func(p *Elder) any { return &p.Phone },
+	tblelder.Sex.Name:            func(p *Elder) any { return &p.Sex },
 	tblelder.Balance.Name:        func(p *Elder) any { return &p.Balance },
+	tblelder.BedId.Name:          func(p *Elder) any { return &p.BedId },
+	tblelder.CateringSetId.Name:  func(p *Elder) any { return &p.CateringSetId },
 	tblelder.CreateId.Name:       func(p *Elder) any { return &p.CreateId },
 	tblelder.CreateTime.Name:     func(p *Elder) any { return &p.CreateTime },
+	tblelder.Id.Name:             func(p *Elder) any { return &p.Id },
+	tblelder.NursingGradeId.Name: func(p *Elder) any { return &p.NursingGradeId },
+	tblelder.TenantId.Name:       func(p *Elder) any { return &p.TenantId },
 	tblelder.UpdateId.Name:       func(p *Elder) any { return &p.UpdateId },
 	tblelder.UpdateTime.Name:     func(p *Elder) any { return &p.UpdateTime },
 	tblelder.Age.Name:            func(p *Elder) any { return &p.Age },
-	tblelder.CheckFlag.Name:      func(p *Elder) any { return &p.CheckFlag },
+	tblelder.Status.Name:         func(p *Elder) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -279,44 +279,44 @@ func (p *Elder) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 
 // 定义字段到值检查和获取函数的映射
 var elderFieldToValueFunc = map[dialect.Field]func(*Elder) (any, bool){
-	tblelder.Name: func(p *Elder) (any, bool) {
-		return p.Name, p.Name == ""
+	tblelder.Address: func(p *Elder) (any, bool) {
+		return p.Address, p.Address == ""
 	},
 	tblelder.IdNum: func(p *Elder) (any, bool) {
 		return p.IdNum, p.IdNum == ""
 	},
-	tblelder.Sex: func(p *Elder) (any, bool) {
-		return p.Sex, p.Sex == ""
+	tblelder.Name: func(p *Elder) (any, bool) {
+		return p.Name, p.Name == ""
 	},
 	tblelder.Phone: func(p *Elder) (any, bool) {
 		return p.Phone, p.Phone == ""
 	},
-	tblelder.Address: func(p *Elder) (any, bool) {
-		return p.Address, p.Address == ""
+	tblelder.Sex: func(p *Elder) (any, bool) {
+		return p.Sex, p.Sex == ""
 	},
-	tblelder.Id: func(p *Elder) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblelder.TenantId: func(p *Elder) (any, bool) {
-		return p.TenantId, p.TenantId == 0
-	},
-	tblelder.NursingGradeId: func(p *Elder) (any, bool) {
-		return p.NursingGradeId, p.NursingGradeId == 0
-	},
-	tblelder.CateringSetId: func(p *Elder) (any, bool) {
-		return p.CateringSetId, p.CateringSetId == 0
+	tblelder.Balance: func(p *Elder) (any, bool) {
+		return p.Balance, p.Balance == 0
 	},
 	tblelder.BedId: func(p *Elder) (any, bool) {
 		return p.BedId, p.BedId == 0
 	},
-	tblelder.Balance: func(p *Elder) (any, bool) {
-		return p.Balance, p.Balance == 0
+	tblelder.CateringSetId: func(p *Elder) (any, bool) {
+		return p.CateringSetId, p.CateringSetId == 0
 	},
 	tblelder.CreateId: func(p *Elder) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
 	tblelder.CreateTime: func(p *Elder) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblelder.Id: func(p *Elder) (any, bool) {
+		return p.Id, p.Id == 0
+	},
+	tblelder.NursingGradeId: func(p *Elder) (any, bool) {
+		return p.NursingGradeId, p.NursingGradeId == 0
+	},
+	tblelder.TenantId: func(p *Elder) (any, bool) {
+		return p.TenantId, p.TenantId == 0
 	},
 	tblelder.UpdateId: func(p *Elder) (any, bool) {
 		return p.UpdateId, p.UpdateId == 0
@@ -327,8 +327,8 @@ var elderFieldToValueFunc = map[dialect.Field]func(*Elder) (any, bool){
 	tblelder.Age: func(p *Elder) (any, bool) {
 		return p.Age, p.Age == 0
 	},
-	tblelder.CheckFlag: func(p *Elder) (any, bool) {
-		return p.CheckFlag, p.CheckFlag == 0
+	tblelder.Status: func(p *Elder) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

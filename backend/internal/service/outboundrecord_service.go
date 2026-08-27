@@ -64,7 +64,7 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 			tbloutboundrecord.Id,
 			tbloutboundrecord.RecipientType,
 			tbloutboundrecord.OutboundDate,
-			tbloutboundrecord.OutboundFlag,
+			tbloutboundrecord.Status,
 			tblwarehouse.Name.As("warehouse_name"),
 			tblstaff.Name.As("staff_name"),
 			tblelder.Name.As("elder_name"),
@@ -150,7 +150,7 @@ func (s *outboundRecordService) PageSearchElderByKey(ctx context.Context, in *dt
 	}
 	var elders []do.Elder
 	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
-		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.CheckFlag).
+		Cols(tblelder.Id, tblelder.Name, tblelder.IdNum, tblelder.Sex, tblelder.Phone, tblelder.Address, tblelder.Status).
 		Desc(tblelder.Id).
 		Select().Gets(ctx, &elders)
 	if e != nil {
@@ -275,12 +275,12 @@ func (s *outboundRecordService) AuditOutboundRecord(ctx context.Context, in *dto
 		return constant.ErrDataNotExist
 	}
 	if *in.AuditResult == "不通过" {
-		if _, e = dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.OutboundRecordID), tbloutboundrecord.OutboundFlag.Set(types.Int8(constant.AuditNotPass))); e != nil {
+		if _, e = dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.OutboundRecordID), tbloutboundrecord.Status.Set(types.Int8(constant.AuditNotPass))); e != nil {
 			return e
 		}
 		return nil
 	}
-	if _, e = dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.OutboundRecordID), tbloutboundrecord.OutboundFlag.Set(types.Int8(constant.AuditPass))); e != nil {
+	if _, e = dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.OutboundRecordID), tbloutboundrecord.Status.Set(types.Int8(constant.AuditPass))); e != nil {
 		return e
 	}
 	return nil
@@ -288,7 +288,7 @@ func (s *outboundRecordService) AuditOutboundRecord(ctx context.Context, in *dto
 
 // DeleteOutboundRecord 删除出库记录（逻辑删除）
 func (s *outboundRecordService) DeleteOutboundRecord(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	if _, e := dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.ID), tbloutboundrecord.DelFlag.Set(types.Int8(constant.YesNoYes))); e != nil {
+	if _, e := dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.ID), tbloutboundrecord.State.Set(types.Int8(constant.StateDeleted))); e != nil {
 		return e
 	}
 	return nil

@@ -9,49 +9,49 @@ import (
 const TableName = "medicine"
 
 var (
-	Name          = dialect.Field{Name: "name", Json: "name", Table: "medicine", Type: "types.String", IsRelation: false}
-	Type          = dialect.Field{Name: "type", Json: "type", Table: "medicine", Type: "types.String", IsRelation: false}
-	Specification = dialect.Field{Name: "specification", Json: "specification", Table: "medicine", Type: "types.String", IsRelation: false}
 	DosageForm    = dialect.Field{Name: "dosage_form", Json: "dosage_form", Table: "medicine", Type: "types.String", IsRelation: false}
 	Manufacturer  = dialect.Field{Name: "manufacturer", Json: "manufacturer", Table: "medicine", Type: "types.String", IsRelation: false}
-	Id            = dialect.Field{Name: "id", Json: "id", Table: "medicine", Type: "types.BigInt", IsRelation: false}
-	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "medicine", Type: "types.BigInt", IsRelation: false}
+	Name          = dialect.Field{Name: "name", Json: "name", Table: "medicine", Type: "types.String", IsRelation: false}
+	Specification = dialect.Field{Name: "specification", Json: "specification", Table: "medicine", Type: "types.String", IsRelation: false}
+	Type          = dialect.Field{Name: "type", Json: "type", Table: "medicine", Type: "types.String", IsRelation: false}
 	CreateId      = dialect.Field{Name: "create_id", Json: "create_id", Table: "medicine", Type: "types.BigInt", IsRelation: false}
 	CreateTime    = dialect.Field{Name: "create_time", Json: "create_time", Table: "medicine", Type: "types.Time", IsRelation: false}
+	Id            = dialect.Field{Name: "id", Json: "id", Table: "medicine", Type: "types.BigInt", IsRelation: false}
+	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "medicine", Type: "types.BigInt", IsRelation: false}
 	UpdateId      = dialect.Field{Name: "update_id", Json: "update_id", Table: "medicine", Type: "types.BigInt", IsRelation: false}
 	UpdateTime    = dialect.Field{Name: "update_time", Json: "update_time", Table: "medicine", Type: "types.Time", IsRelation: false}
-	DelFlag       = dialect.Field{Name: "del_flag", Json: "del_flag", Table: "medicine", Type: "types.Int8", IsRelation: false}
+	State         = dialect.Field{Name: "state", Json: "state", Table: "medicine", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Name,
-		Type,
-		Specification,
 		DosageForm,
 		Manufacturer,
-		Id,
-		TenantId,
+		Name,
+		Specification,
+		Type,
 		CreateId,
 		CreateTime,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Name,
-		Type,
-		Specification,
 		DosageForm,
 		Manufacturer,
-		Id,
-		TenantId,
+		Name,
+		Specification,
+		Type,
 		CreateId,
 		CreateTime,
+		Id,
+		TenantId,
 		UpdateId,
 		UpdateTime,
-		DelFlag,
+		State,
 	}
 )

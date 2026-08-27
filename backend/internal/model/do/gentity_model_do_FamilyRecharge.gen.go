@@ -28,16 +28,36 @@ func NewFamilyRecharge() *FamilyRecharge {
 // MarshalJSON
 func (p *FamilyRecharge) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(10 * 50)
-	write.WriteRaw("id", types.Marshal(p.Id))
-	write.WriteRaw("order_no", types.Marshal(p.OrderNo))
-	write.WriteRaw("phone", types.Marshal(p.Phone))
-	write.WriteRaw("elder_id", types.Marshal(p.ElderId))
-	write.WriteRaw("amount", types.Marshal(p.Amount))
-	write.WriteRaw("status", types.Marshal(p.Status))
-	write.WriteRaw("prepay_id", types.Marshal(p.PrepayId))
-	write.WriteRaw("create_time", types.Marshal(p.CreateTime))
-	write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
-	write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.OrderNo != "" {
+		write.WriteRaw("order_no", types.Marshal(p.OrderNo))
+	}
+	if p.Phone != "" {
+		write.WriteRaw("phone", types.Marshal(p.Phone))
+	}
+	if p.PrepayId != "" {
+		write.WriteRaw("prepay_id", types.Marshal(p.PrepayId))
+	}
+	if p.Amount != 0 {
+		write.WriteRaw("amount", types.Marshal(p.Amount))
+	}
+	if !p.CreateTime.IsZero() {
+		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.ElderId != 0 {
+		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.UpdateTime.IsZero() {
+		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
+	}
+	if p.Status != 0 {
+		write.WriteRaw("status", types.Marshal(p.Status))
+	}
 	return write.Bytes(), nil
 }
 
@@ -51,26 +71,26 @@ func (p *FamilyRecharge) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
 		case "order_no":
 			p.OrderNo = types.String(value.Str)
 		case "phone":
 			p.Phone = types.String(value.Str)
-		case "elder_id":
-			p.ElderId = types.BigInt(value.Uint())
-		case "amount":
-			p.Amount = types.Int64(value.Int())
-		case "status":
-			p.Status = types.Int8(value.Int())
 		case "prepay_id":
 			p.PrepayId = types.String(value.Str)
+		case "amount":
+			e = types.Unmarshal(value, &p.Amount)
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "elder_id":
+			e = types.Unmarshal(value, &p.ElderId)
+		case "id":
+			e = types.Unmarshal(value, &p.Id)
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
+		case "status":
+			p.Status = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -92,16 +112,16 @@ func (p *FamilyRecharge) Free() {
 
 // Reset
 func (p *FamilyRecharge) Reset() {
-	p.Id = 0
 	p.OrderNo = ""
 	p.Phone = ""
-	p.ElderId = 0
-	p.Amount = 0
-	p.Status = 0
 	p.PrepayId = ""
+	p.Amount = 0
 	p.CreateTime = types.Time{}
+	p.ElderId = 0
+	p.Id = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
+	p.Status = 0
 
 }
 
@@ -111,16 +131,16 @@ func (p *FamilyRecharge) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var familyrechargeFieldToPtrFunc = map[string]func(*FamilyRecharge) any{
-	tblfamilyrecharge.Id.Name:         func(p *FamilyRecharge) any { return &p.Id },
 	tblfamilyrecharge.OrderNo.Name:    func(p *FamilyRecharge) any { return &p.OrderNo },
 	tblfamilyrecharge.Phone.Name:      func(p *FamilyRecharge) any { return &p.Phone },
-	tblfamilyrecharge.ElderId.Name:    func(p *FamilyRecharge) any { return &p.ElderId },
-	tblfamilyrecharge.Amount.Name:     func(p *FamilyRecharge) any { return &p.Amount },
-	tblfamilyrecharge.Status.Name:     func(p *FamilyRecharge) any { return &p.Status },
 	tblfamilyrecharge.PrepayId.Name:   func(p *FamilyRecharge) any { return &p.PrepayId },
+	tblfamilyrecharge.Amount.Name:     func(p *FamilyRecharge) any { return &p.Amount },
 	tblfamilyrecharge.CreateTime.Name: func(p *FamilyRecharge) any { return &p.CreateTime },
+	tblfamilyrecharge.ElderId.Name:    func(p *FamilyRecharge) any { return &p.ElderId },
+	tblfamilyrecharge.Id.Name:         func(p *FamilyRecharge) any { return &p.Id },
 	tblfamilyrecharge.UpdateTime.Name: func(p *FamilyRecharge) any { return &p.UpdateTime },
-	tblfamilyrecharge.DelFlag.Name:    func(p *FamilyRecharge) any { return &p.DelFlag },
+	tblfamilyrecharge.State.Name:      func(p *FamilyRecharge) any { return &p.State },
+	tblfamilyrecharge.Status.Name:     func(p *FamilyRecharge) any { return &p.Status },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -210,35 +230,35 @@ func (p *FamilyRecharge) RawAssignValues(d dialect.Dialect, args ...dialect.Fiel
 
 // 定义字段到值检查和获取函数的映射
 var familyrechargeFieldToValueFunc = map[dialect.Field]func(*FamilyRecharge) (any, bool){
-	tblfamilyrecharge.Id: func(p *FamilyRecharge) (any, bool) {
-		return p.Id, p.Id == 0
-	},
 	tblfamilyrecharge.OrderNo: func(p *FamilyRecharge) (any, bool) {
 		return p.OrderNo, p.OrderNo == ""
 	},
 	tblfamilyrecharge.Phone: func(p *FamilyRecharge) (any, bool) {
 		return p.Phone, p.Phone == ""
 	},
-	tblfamilyrecharge.ElderId: func(p *FamilyRecharge) (any, bool) {
-		return p.ElderId, p.ElderId == 0
+	tblfamilyrecharge.PrepayId: func(p *FamilyRecharge) (any, bool) {
+		return p.PrepayId, p.PrepayId == ""
 	},
 	tblfamilyrecharge.Amount: func(p *FamilyRecharge) (any, bool) {
 		return p.Amount, p.Amount == 0
 	},
-	tblfamilyrecharge.Status: func(p *FamilyRecharge) (any, bool) {
-		return p.Status, p.Status == 0
-	},
-	tblfamilyrecharge.PrepayId: func(p *FamilyRecharge) (any, bool) {
-		return p.PrepayId, p.PrepayId == ""
-	},
 	tblfamilyrecharge.CreateTime: func(p *FamilyRecharge) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
+	},
+	tblfamilyrecharge.ElderId: func(p *FamilyRecharge) (any, bool) {
+		return p.ElderId, p.ElderId == 0
+	},
+	tblfamilyrecharge.Id: func(p *FamilyRecharge) (any, bool) {
+		return p.Id, p.Id == 0
 	},
 	tblfamilyrecharge.UpdateTime: func(p *FamilyRecharge) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblfamilyrecharge.DelFlag: func(p *FamilyRecharge) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblfamilyrecharge.State: func(p *FamilyRecharge) (any, bool) {
+		return p.State, p.State == 0
+	},
+	tblfamilyrecharge.Status: func(p *FamilyRecharge) (any, bool) {
+		return p.Status, p.Status == 0
 	},
 }
 

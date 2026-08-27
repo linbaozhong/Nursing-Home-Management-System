@@ -28,13 +28,27 @@ func NewFamilyAccount() *FamilyAccount {
 // MarshalJSON
 func (p *FamilyAccount) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(7 * 50)
-	write.WriteRaw("id", types.Marshal(p.Id))
-	write.WriteRaw("phone", types.Marshal(p.Phone))
-	write.WriteRaw("pass", types.Marshal(p.Pass))
-	write.WriteRaw("openid", types.Marshal(p.Openid))
-	write.WriteRaw("create_time", types.Marshal(p.CreateTime))
-	write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
-	write.WriteRaw("del_flag", types.Marshal(p.DelFlag))
+	if p.Openid != "" {
+		write.WriteRaw("openid", types.Marshal(p.Openid))
+	}
+	if p.Pass != "" {
+		write.WriteRaw("pass", types.Marshal(p.Pass))
+	}
+	if p.Phone != "" {
+		write.WriteRaw("phone", types.Marshal(p.Phone))
+	}
+	if !p.CreateTime.IsZero() {
+		write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	}
+	if p.Id != 0 {
+		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if !p.UpdateTime.IsZero() {
+		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
+	}
+	if p.State != 0 {
+		write.WriteRaw("state", types.Marshal(p.State))
+	}
 	return write.Bytes(), nil
 }
 
@@ -48,20 +62,20 @@ func (p *FamilyAccount) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "id":
-			p.Id = types.BigInt(value.Uint())
-		case "phone":
-			p.Phone = types.String(value.Str)
-		case "pass":
-			p.Pass = types.String(value.Str)
 		case "openid":
 			p.Openid = types.String(value.Str)
+		case "pass":
+			p.Pass = types.String(value.Str)
+		case "phone":
+			p.Phone = types.String(value.Str)
 		case "create_time":
 			p.CreateTime = types.Time{Time: value.Time()}
+		case "id":
+			e = types.Unmarshal(value, &p.Id)
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "del_flag":
-			p.DelFlag = types.Int8(value.Int())
+		case "state":
+			p.State = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -83,13 +97,13 @@ func (p *FamilyAccount) Free() {
 
 // Reset
 func (p *FamilyAccount) Reset() {
-	p.Id = 0
-	p.Phone = ""
-	p.Pass = ""
 	p.Openid = ""
+	p.Pass = ""
+	p.Phone = ""
 	p.CreateTime = types.Time{}
+	p.Id = 0
 	p.UpdateTime = types.Time{}
-	p.DelFlag = 0
+	p.State = 0
 
 }
 
@@ -99,13 +113,13 @@ func (p *FamilyAccount) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var familyaccountFieldToPtrFunc = map[string]func(*FamilyAccount) any{
-	tblfamilyaccount.Id.Name:         func(p *FamilyAccount) any { return &p.Id },
-	tblfamilyaccount.Phone.Name:      func(p *FamilyAccount) any { return &p.Phone },
-	tblfamilyaccount.Pass.Name:       func(p *FamilyAccount) any { return &p.Pass },
 	tblfamilyaccount.Openid.Name:     func(p *FamilyAccount) any { return &p.Openid },
+	tblfamilyaccount.Pass.Name:       func(p *FamilyAccount) any { return &p.Pass },
+	tblfamilyaccount.Phone.Name:      func(p *FamilyAccount) any { return &p.Phone },
 	tblfamilyaccount.CreateTime.Name: func(p *FamilyAccount) any { return &p.CreateTime },
+	tblfamilyaccount.Id.Name:         func(p *FamilyAccount) any { return &p.Id },
 	tblfamilyaccount.UpdateTime.Name: func(p *FamilyAccount) any { return &p.UpdateTime },
-	tblfamilyaccount.DelFlag.Name:    func(p *FamilyAccount) any { return &p.DelFlag },
+	tblfamilyaccount.State.Name:      func(p *FamilyAccount) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -195,26 +209,26 @@ func (p *FamilyAccount) RawAssignValues(d dialect.Dialect, args ...dialect.Field
 
 // 定义字段到值检查和获取函数的映射
 var familyaccountFieldToValueFunc = map[dialect.Field]func(*FamilyAccount) (any, bool){
-	tblfamilyaccount.Id: func(p *FamilyAccount) (any, bool) {
-		return p.Id, p.Id == 0
-	},
-	tblfamilyaccount.Phone: func(p *FamilyAccount) (any, bool) {
-		return p.Phone, p.Phone == ""
+	tblfamilyaccount.Openid: func(p *FamilyAccount) (any, bool) {
+		return p.Openid, p.Openid == ""
 	},
 	tblfamilyaccount.Pass: func(p *FamilyAccount) (any, bool) {
 		return p.Pass, p.Pass == ""
 	},
-	tblfamilyaccount.Openid: func(p *FamilyAccount) (any, bool) {
-		return p.Openid, p.Openid == ""
+	tblfamilyaccount.Phone: func(p *FamilyAccount) (any, bool) {
+		return p.Phone, p.Phone == ""
 	},
 	tblfamilyaccount.CreateTime: func(p *FamilyAccount) (any, bool) {
 		return p.CreateTime, p.CreateTime.IsZero()
 	},
+	tblfamilyaccount.Id: func(p *FamilyAccount) (any, bool) {
+		return p.Id, p.Id == 0
+	},
 	tblfamilyaccount.UpdateTime: func(p *FamilyAccount) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblfamilyaccount.DelFlag: func(p *FamilyAccount) (any, bool) {
-		return p.DelFlag, p.DelFlag == 0
+	tblfamilyaccount.State: func(p *FamilyAccount) (any, bool) {
+		return p.State, p.State == 0
 	},
 }
 

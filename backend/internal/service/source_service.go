@@ -24,7 +24,7 @@ func (s *source) PageSourceByKey(ctx context.Context, in *dto.PageSourceByKeyReq
 	q := db.Table(tblsource.TableName).
 		Where(
 			tblsource.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
-			tblsource.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+			tblsource.State.NotEq(types.Int8(constant.StateDeleted)),
 		).
 		Desc(tblsource.CreateTime)
 	if in.SourceName != nil {
@@ -43,7 +43,7 @@ func (s *source) AddSource(ctx context.Context, in *dto.StringReq, out *dto.Empt
 	has, e := dao.Source(db).Exists(ctx,
 		tblsource.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblsource.Name.Eq(*in.Value),
-		tblsource.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblsource.State.NotEq(types.Int8(constant.StateDeleted)),
 	)
 	if e != nil {
 		return e
@@ -57,7 +57,7 @@ func (s *source) AddSource(ctx context.Context, in *dto.StringReq, out *dto.Empt
 
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.Name = types.String(*in.Value)
-	bean.DelFlag = types.Int8(constant.YesNoNo)
+	bean.State = types.Int8(constant.StateEnabled)
 	// 新增
 	_, e = dao.Source(db).InsertOne(ctx, bean)
 	return e
@@ -81,7 +81,7 @@ func (s *source) EditSource(ctx context.Context, in *dto.OperateSourceReq, out *
 	has, e := dao.Source(db).Exists(ctx,
 		tblsource.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
 		tblsource.Name.Eq(*in.Name),
-		tblsource.DelFlag.Eq(types.Int8(constant.YesNoNo)),
+		tblsource.State.NotEq(types.Int8(constant.StateDeleted)),
 		tblsource.Id.NotEq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
@@ -109,7 +109,7 @@ func (s *source) DeleteSource(ctx context.Context, in *dto.IDReq, out *dto.Empty
 		return errors.New("来源渠道不存在")
 	}
 	_, e = dao.Source(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tblsource.DelFlag.Set(types.Int8(constant.YesNoYes)),
+		tblsource.State.Set(types.Int8(constant.StateDeleted)),
 	)
 	return e
 }

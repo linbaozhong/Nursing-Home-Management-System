@@ -9,12 +9,12 @@ import (
 const TableName = "deposit_info"
 
 var (
-	Id         = dialect.Field{Name: "id", Json: "id", Table: "deposit_info", Type: "types.BigInt", IsRelation: false}
-	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "deposit_info", Type: "types.BigInt", IsRelation: false}
-	DepositId  = dialect.Field{Name: "deposit_id", Json: "deposit_id", Table: "deposit_info", Type: "types.BigInt", IsRelation: false}
-	MedicineId = dialect.Field{Name: "medicine_id", Json: "medicine_id", Table: "deposit_info", Type: "types.BigInt", IsRelation: false}
 	CreateId   = dialect.Field{Name: "create_id", Json: "create_id", Table: "deposit_info", Type: "types.BigInt", IsRelation: false}
 	CreateTime = dialect.Field{Name: "create_time", Json: "create_time", Table: "deposit_info", Type: "types.Time", IsRelation: false}
+	DepositId  = dialect.Field{Name: "deposit_id", Json: "deposit_id", Table: "deposit_info", Type: "types.BigInt", IsRelation: false}
+	Id         = dialect.Field{Name: "id", Json: "id", Table: "deposit_info", Type: "types.BigInt", IsRelation: false}
+	MedicineId = dialect.Field{Name: "medicine_id", Json: "medicine_id", Table: "deposit_info", Type: "types.BigInt", IsRelation: false}
+	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "deposit_info", Type: "types.BigInt", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "deposit_info", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "deposit_info", Type: "types.Time", IsRelation: false}
 	DepositNum = dialect.Field{Name: "deposit_num", Json: "deposit_num", Table: "deposit_info", Type: "types.Int32", IsRelation: false}
@@ -25,12 +25,12 @@ var (
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Id,
-		TenantId,
-		DepositId,
-		MedicineId,
 		CreateId,
 		CreateTime,
+		DepositId,
+		Id,
+		MedicineId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 		DepositNum,
@@ -39,12 +39,12 @@ var (
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Id,
-		TenantId,
-		DepositId,
-		MedicineId,
 		CreateId,
 		CreateTime,
+		DepositId,
+		Id,
+		MedicineId,
+		TenantId,
 		UpdateId,
 		UpdateTime,
 		DepositNum,
