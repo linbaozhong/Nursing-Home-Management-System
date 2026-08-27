@@ -8,7 +8,7 @@ import (
 
 	"api/internal/lib"
 	"api/internal/model/define/dao"
-	"api/internal/model/define/table/tblauditlog"
+	"api/internal/model/do"
 
 	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/types"
@@ -70,41 +70,32 @@ func AuditFieldLabel(table, col string) string {
 	return col
 }
 
-// auditLogRow 审计日志写入参数
-type auditLogRow struct {
-	action      string
-	table       string
-	rowID       int64
-	changeAfter string // 变更后整行快照(JSON 字符串)
-	changeLabel string // 可读中文摘要
-	comment     string
-}
-
 // WriteAuditLog 向 audit_log 写入一条操作日志。
 // x 传 ace.Executer：业务在事务内则传 tx（与业务同一事务；推荐），否则传 db。
 // after map[string]any 会被序列化为 change_after（key 保持英文列名）。
-func WriteAuditLog(ctx context.Context, x ace.Executer, row auditLogRow, after map[string]any) error {
+func WriteAuditLog(ctx context.Context, x ace.Executer,
+	table string, rowID int64, action, label, comment string, after map[string]any) error {
+
 	var afterJSON string
 	if after != nil {
-		b, e := json.Marshal(after)
-		if e != nil {
-			afterJSON = ""
-		} else {
+		if b, e := json.Marshal(after); e == nil {
 			afterJSON = string(b)
 		}
 	}
-	now := types.Time{Time: time.Now()}
-	_, e := dao.AuditLog(x).Insert(ctx,
-		tblauditlog.TenantId.Set(types.BigInt(lib.TenantID(ctx))),
-		tblauditlog.OperatorId.Set(types.BigInt(lib.UserID(ctx))),
-		tblauditlog.OperatorName.Set(types.String(lib.UserName(ctx))),
-		tblauditlog.Table.Set(types.String(row.table)),
-		tblauditlog.RowId.Set(types.BigInt(row.rowID)),
-		tblauditlog.Action.Set(types.String(row.action)),
-		tblauditlog.ChangeAfter.Set(types.String(afterJSON)),
-		tblauditlog.ChangeLabel.Set(types.String(row.changeLabel)),
-		tblauditlog.Comment.Set(types.String(row.comment)),
-		tblauditlog.CreateTime.Set(now),
-	)
+	row := do.NewAuditLog()
+	defer row.Free()
+
+	row.TenantId = types.BigInt(lib.TenantID(ctx))
+	row.OperatorId = types.BigInt(lib.UserID(ctx))
+	row.OperatorName = types.String(lib.UserName(ctx))
+	row.Table = types.String(table)
+	row.RowId = types.BigInt(rowID)
+	row.Action = types.String(action)
+	row.ChangeAfter = types.String(afterJSON)
+	row.ChangeLabel = types.String(label)
+	row.Comment = types.String(comment)
+	row.CreateTime = types.Time{Time: time.Now()}
+
+	_, e := dao.AuditLog(x).InsertOne(ctx, row)
 	return e
 }

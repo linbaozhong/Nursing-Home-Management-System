@@ -101,12 +101,8 @@ func (a *accident) AddAccident(ctx context.Context, in *dto.AddAccidentReq, out 
 			"description": *in.Description,
 			"picture":     ptrStr(in.Picture),
 		}
-		e = WriteAuditLog(ctx, tx, auditLogRow{
-			action:      constant.AuditCreate,
-			table:       tblaccident.TableName,
-			rowID:       id,
-			changeLabel: "新增事故，发生时间：" + in.OccurDate.Format("2006-01-02"),
-		}, after)
+		e = WriteAuditLog(ctx, tx, tblaccident.TableName, id, constant.AuditCreate,
+			"新增事故，发生时间："+in.OccurDate.Format("2006-01-02"), "", after)
 		if e != nil {
 			return 0, e
 		}
@@ -169,12 +165,7 @@ func (a *accident) EditAccident(ctx context.Context, in *dto.EditAccidentReq, ou
 			return 0, e
 		}
 		label := "更新事故：" + strings.Join(parts, "；")
-		if e := WriteAuditLog(ctx, tx, auditLogRow{
-			action:      constant.AuditUpdate,
-			table:       tblaccident.TableName,
-			rowID:       *in.ID,
-			changeLabel: label,
-		}, after); e != nil {
+		if e := WriteAuditLog(ctx, tx, tblaccident.TableName, *in.ID, constant.AuditUpdate, label, "", after); e != nil {
 			return 0, e
 		}
 		return nil, nil
@@ -191,12 +182,7 @@ func (a *accident) DeleteAccident(ctx context.Context, in *dto.IDReq, out *dto.E
 		); e != nil {
 			return 0, e
 		}
-		if e := WriteAuditLog(ctx, tx, auditLogRow{
-			action:      constant.AuditDelete,
-			table:       tblaccident.TableName,
-			rowID:       *in.ID,
-			changeLabel: "删除事故",
-		}, map[string]any{"id": int64(*in.ID)}); e != nil {
+		if e := WriteAuditLog(ctx, tx, tblaccident.TableName, *in.ID, constant.AuditDelete, "删除事故", "", map[string]any{"id": int64(*in.ID)}); e != nil {
 			return 0, e
 		}
 		return nil, nil
