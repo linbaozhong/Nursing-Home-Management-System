@@ -179,7 +179,7 @@ func (s *staffService) EditStaff(ctx context.Context, in *dto.OperateStaffReq, o
 // LeaveStaff 员工离职
 func (s *staffService) LeaveStaff(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
 	_, e := dao.Staff(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tblstaff.LeaveFlag.Set(types.Int8(constant.YesNoYes)),
+		tblstaff.Status.Set(types.Int8(constant.YesNoYes)),
 	)
 	if e != nil {
 		return e
