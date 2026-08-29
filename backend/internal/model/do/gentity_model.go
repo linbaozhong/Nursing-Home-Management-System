@@ -9,18 +9,21 @@ import (
 // @tablename accident
 type Accident struct {
 	pool.Model
-	Description types.String `json:"description,omitempty" db:"'description'"`     // 事故描述
-	Picture     types.String `json:"picture,omitempty" db:"'picture'"`             // 事故图片
-	CreateId    types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人id
-	CreateTime  types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
-	ElderId     types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`   // 老人id
-	Id          types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // id
-	OccurDate   types.Time   `json:"occur_date,omitempty" db:"'occur_date'"`       // 发生时间
-	StaffId     types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`   // 值班护工id
-	TenantId    types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户id
-	UpdateId    types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人id
-	UpdateTime  types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
-	State       types.Int8   `json:"state,omitempty" db:"'state' size:3"`          // 管理状态：-1=删除，0=禁用，1=可用
+	Description   types.String `json:"description,omitempty" db:"'description'"`                 // 事故描述
+	HandleResult  types.String `json:"handle_result,omitempty" db:"'handle_result'"`             // 处理结果/整改措施
+	Picture       types.String `json:"picture,omitempty" db:"'picture'"`                         // 事故图片
+	CreateId      types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`             // 创建人id
+	CreateTime    types.Time   `json:"create_time,omitempty" db:"'create_time'"`                 // 创建时间
+	ElderId       types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`               // 老人id
+	HandleStaffId types.BigInt `json:"handle_staff_id,omitempty" db:"'handle_staff_id' size:20"` // 处理责任人id
+	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                   // id
+	OccurDate     types.Time   `json:"occur_date,omitempty" db:"'occur_date'"`                   // 发生时间
+	StaffId       types.BigInt `json:"staff_id,omitempty" db:"'staff_id' size:20"`               // 值班护工id
+	TenantId      types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`             // 租户id
+	UpdateId      types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`             // 修改人id
+	UpdateTime    types.Time   `json:"update_time,omitempty" db:"'update_time'"`                 // 修改时间
+	Severity      types.Int8   `json:"severity,omitempty" db:"'severity' size:3"`                // 严重程度：1轻/2中/3重
+	State         types.Int8   `json:"state,omitempty" db:"'state' size:3"`                      // 管理状态：-1=删除，0=禁用，1=可用
 }
 
 // Active
@@ -269,10 +272,13 @@ type Consume struct {
 	ConsumeType   types.String `json:"consume_type,omitempty" db:"'consume_type'"`             // 消费类别
 	ConsumeAmount types.Money  `json:"consume_amount,omitempty" db:"'consume_amount' size:19"` // 消费金额
 	ConsumeDate   types.Time   `json:"consume_date,omitempty" db:"'consume_date'"`             // 消费日期
+	SourceType    types.String `json:"source_type,omitempty" db:"'source_type'"`               // 来源：ORDER/NURSE_RESERVE/MANUAL
+	OutTradeNo    types.String `json:"out_trade_no,omitempty" db:"'out_trade_no'"`             // 外部交易单号（对账）
 	CreateId      types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`           // 创建人id
 	CreateTime    types.Time   `json:"create_time,omitempty" db:"'create_time'"`               // 创建时间
 	ElderId       types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`             // 老人id
 	Id            types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                 // id
+	SourceId      types.BigInt `json:"source_id,omitempty" db:"'source_id' size:20"`           // 来源业务主键id
 	TenantId      types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`           // 租户id
 	UpdateId      types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`           // 修改人id
 	UpdateTime    types.Time   `json:"update_time,omitempty" db:"'update_time'"`               // 修改时间
@@ -381,6 +387,24 @@ type Elder struct {
 	Status         types.Int8   `json:"status,omitempty" db:"'status' size:3"`                      // 入住状态
 }
 
+// ElderAccountLedger 老人资金明细台账
+// @tablename elder_account_ledger
+type ElderAccountLedger struct {
+	pool.Model
+	BusinessNo   types.String `json:"business_no,omitempty" db:"'business_no'"`             // 业务单号（可空，用于人工对账）
+	Remark       types.String `json:"remark,omitempty" db:"'remark'"`                       // 备注
+	SourceType   types.String `json:"source_type,omitempty" db:"'source_type'"`             // 来源类型：BILL_INCOME/RECHARGE/FEED/NURSING/REFUND
+	Amount       types.Money  `json:"amount,omitempty" db:"'amount' size:19"`               // 变更金额（分），恒为正
+	BalanceAfter types.Money  `json:"balance_after,omitempty" db:"'balance_after' size:19"` // 变动后的账户余额（分）
+	CreateTime   types.Time   `json:"create_time,omitempty" db:"'create_time'"`             // 创建时间
+	ElderId      types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`           // 老人id
+	Id           types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`               // id
+	OperatorId   types.BigInt `json:"operator_id,omitempty" db:"'operator_id' size:20"`     // 操作员id
+	SourceId     types.BigInt `json:"source_id,omitempty" db:"'source_id' size:20"`         // 来源业务表主键id
+	TenantId     types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`         // 租户id
+	Direction    types.Int8   `json:"direction,omitempty" db:"'direction' size:3"`          // 1=入账(充值/退款入账)，2=出账(消费/扣费)
+}
+
 // ElderLabel
 // @tablename elder_label
 type ElderLabel struct {
@@ -430,21 +454,21 @@ type FamilyAccount struct {
 // @tablename family_member
 type FamilyMember struct {
 	pool.Model
-	Address    types.String `json:"address,omitempty" db:"'address'"`             // 地址
-	Email      types.String `json:"email,omitempty" db:"'email'"`                 // 家属邮箱
-	IdNum      types.String `json:"id_num,omitempty" db:"'id_num'"`               // 身份证号
-	Name       types.String `json:"name,omitempty" db:"'name'"`                   // 家属姓名
-	Phone      types.String `json:"phone,omitempty" db:"'phone'"`                 // 家属电话
-	Relation   types.String `json:"relation,omitempty" db:"'relation'"`           // 与老人关系
-	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人id
-	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
-	ElderId    types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`   // 老人id
-	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // id
-	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户id
-	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人id
-	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
-	State      types.Int8   `json:"state,omitempty" db:"'state' size:3"`          // 管理状态：-1=删除，0=禁用，1=可用
-	Status     types.Int8   `json:"status,omitempty" db:"'status' size:3"`        // 是否接收消息（Y/N）
+	Address    types.String `json:"address,omitempty" db:"'address'"`              // 地址
+	Email      types.String `json:"email,omitempty" db:"'email'"`                  // 家属邮箱
+	IdNum      types.String `json:"id_num,omitempty" db:"'id_num'"`                // 身份证号
+	Name       types.String `json:"name,omitempty" db:"'name'"`                    // 家属姓名
+	Phone      types.String `json:"phone,omitempty" db:"'phone'"`                  // 家属电话
+	Relation   types.String `json:"relation,omitempty" db:"'relation'"`            // 与老人关系
+	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`  // 创建人id
+	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`      // 创建时间
+	ElderId    types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`    // 老人id
+	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`        // id
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`  // 租户id
+	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`  // 修改人id
+	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`      // 修改时间
+	State      types.Int8   `json:"state,omitempty" db:"'state' size:3"`           // 管理状态：-1=删除，0=禁用，1=可用
+	IsReceive  types.Int8   `json:"is_receive,omitempty" db:"'is_receive' size:3"` // 是否接收消息（Y/N）
 }
 
 // FamilyRecharge 家属充值订单表
@@ -785,6 +809,7 @@ type NurseReserve struct {
 type Order struct {
 	pool.Model
 	DineType          types.String `json:"dine_type,omitempty" db:"'dine_type'"`                     // 就餐方式
+	OutTradeNo        types.String `json:"out_trade_no,omitempty" db:"'out_trade_no'"`               // 对外交易单号
 	CreateId          types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`             // 创建人id
 	CreateTime        types.Time   `json:"create_time,omitempty" db:"'create_time'"`                 // 创建时间
 	DeliverDishesDate types.Time   `json:"deliver_dishes_date,omitempty" db:"'deliver_dishes_date'"` // 送餐时间
@@ -1085,7 +1110,7 @@ type Source struct {
 type Staff struct {
 	pool.Model
 	Address    types.String `json:"address,omitempty" db:"'address'"`             // 地址
-	Avator     types.String `json:"avator,omitempty" db:"'avator'"`               // 头像
+	Avatar     types.String `json:"avatar,omitempty" db:"'avatar'"`               // 头像
 	Email      types.String `json:"email,omitempty" db:"'email'"`                 // 邮箱
 	IdNum      types.String `json:"id_num,omitempty" db:"'id_num'"`               // 身份证号
 	Name       types.String `json:"name,omitempty" db:"'name'"`                   // 姓名
@@ -1126,7 +1151,7 @@ type Tenant struct {
 // @tablename user
 type User struct {
 	pool.Model
-	Avator     types.String `json:"avator,omitempty" db:"'avator'"`           // 头像
+	Avatar     types.String `json:"avatar,omitempty" db:"'avatar'"`           // 头像
 	Name       types.String `json:"name,omitempty" db:"'name'"`               // 姓名
 	Openid     types.String `json:"openid,omitempty" db:"'openid'"`           // 微信OpenID（兜底匹配）
 	Pass       types.String `json:"pass,omitempty" db:"'pass'"`               // 密码(md5)

@@ -149,7 +149,7 @@ func (a *account) Edit(ctx context.Context, in *dto.EditReq, out *dto.LoginUserR
 		return constant.ErrDataNotExist
 	}
 	user, has, e := dao.User(db).GetByID(ctx, types.BigInt(*in.ID),
-		tbluser.Id, tbluser.Name, tbluser.Phone, tbluser.Avator, tbluser.Pass)
+		tbluser.Id, tbluser.Name, tbluser.Phone, tbluser.Avatar, tbluser.Pass)
 	if e != nil {
 		return e
 	}

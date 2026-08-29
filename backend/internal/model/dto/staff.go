@@ -35,7 +35,7 @@ type OperateStaffReq struct {
 	Phone   *string `json:"phone" valid:"required"`   // 员工电话
 	Email   *string `json:"email" valid:"required"`   // 员工邮箱
 	Address *string `json:"address" valid:"required"` // 员工地址
-	Avator  *string `json:"avator" valid:"required"`  // 员工头像
+	Avatar  *string `json:"avatar" valid:"required"`  // 员工头像
 }
 
 // ============ StaffController 响应 ============

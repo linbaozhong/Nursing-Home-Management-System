@@ -27,9 +27,12 @@ func NewAccident() *Accident {
 
 // MarshalJSON
 func (p *Accident) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(12 * 50)
+	write := types.NewJsonWriter(15 * 50)
 	if p.Description != "" {
 		write.WriteRaw("description", types.Marshal(p.Description))
+	}
+	if p.HandleResult != "" {
+		write.WriteRaw("handle_result", types.Marshal(p.HandleResult))
 	}
 	if p.Picture != "" {
 		write.WriteRaw("picture", types.Marshal(p.Picture))
@@ -42,6 +45,9 @@ func (p *Accident) MarshalJSON() ([]byte, error) {
 	}
 	if p.ElderId != 0 {
 		write.WriteRaw("elder_id", types.Marshal(p.ElderId))
+	}
+	if p.HandleStaffId != 0 {
+		write.WriteRaw("handle_staff_id", types.Marshal(p.HandleStaffId))
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
@@ -61,6 +67,9 @@ func (p *Accident) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
+	if p.Severity != 0 {
+		write.WriteRaw("severity", types.Marshal(p.Severity))
+	}
 	if p.State != 0 {
 		write.WriteRaw("state", types.Marshal(p.State))
 	}
@@ -79,6 +88,8 @@ func (p *Accident) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "description":
 			p.Description = types.String(value.Str)
+		case "handle_result":
+			p.HandleResult = types.String(value.Str)
 		case "picture":
 			p.Picture = types.String(value.Str)
 		case "create_id":
@@ -87,6 +98,8 @@ func (p *Accident) UnmarshalJSON(data []byte) error {
 			p.CreateTime = types.Time{Time: value.Time()}
 		case "elder_id":
 			p.ElderId = types.BigInt(value.Uint())
+		case "handle_staff_id":
+			p.HandleStaffId = types.BigInt(value.Uint())
 		case "id":
 			p.Id = types.BigInt(value.Uint())
 		case "occur_date":
@@ -99,6 +112,8 @@ func (p *Accident) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
+		case "severity":
+			p.Severity = types.Int8(value.Int())
 		case "state":
 			p.State = types.Int8(value.Int())
 		}
@@ -123,16 +138,19 @@ func (p *Accident) Free() {
 // Reset
 func (p *Accident) Reset() {
 	p.Description = ""
+	p.HandleResult = ""
 	p.Picture = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.ElderId = 0
+	p.HandleStaffId = 0
 	p.Id = 0
 	p.OccurDate = types.Time{}
 	p.StaffId = 0
 	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
+	p.Severity = 0
 	p.State = 0
 
 }
@@ -143,18 +161,21 @@ func (p *Accident) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var accidentFieldToPtrFunc = map[string]func(*Accident) any{
-	tblaccident.Description.Name: func(p *Accident) any { return &p.Description },
-	tblaccident.Picture.Name:     func(p *Accident) any { return &p.Picture },
-	tblaccident.CreateId.Name:    func(p *Accident) any { return &p.CreateId },
-	tblaccident.CreateTime.Name:  func(p *Accident) any { return &p.CreateTime },
-	tblaccident.ElderId.Name:     func(p *Accident) any { return &p.ElderId },
-	tblaccident.Id.Name:          func(p *Accident) any { return &p.Id },
-	tblaccident.OccurDate.Name:   func(p *Accident) any { return &p.OccurDate },
-	tblaccident.StaffId.Name:     func(p *Accident) any { return &p.StaffId },
-	tblaccident.TenantId.Name:    func(p *Accident) any { return &p.TenantId },
-	tblaccident.UpdateId.Name:    func(p *Accident) any { return &p.UpdateId },
-	tblaccident.UpdateTime.Name:  func(p *Accident) any { return &p.UpdateTime },
-	tblaccident.State.Name:       func(p *Accident) any { return &p.State },
+	tblaccident.Description.Name:   func(p *Accident) any { return &p.Description },
+	tblaccident.HandleResult.Name:  func(p *Accident) any { return &p.HandleResult },
+	tblaccident.Picture.Name:       func(p *Accident) any { return &p.Picture },
+	tblaccident.CreateId.Name:      func(p *Accident) any { return &p.CreateId },
+	tblaccident.CreateTime.Name:    func(p *Accident) any { return &p.CreateTime },
+	tblaccident.ElderId.Name:       func(p *Accident) any { return &p.ElderId },
+	tblaccident.HandleStaffId.Name: func(p *Accident) any { return &p.HandleStaffId },
+	tblaccident.Id.Name:            func(p *Accident) any { return &p.Id },
+	tblaccident.OccurDate.Name:     func(p *Accident) any { return &p.OccurDate },
+	tblaccident.StaffId.Name:       func(p *Accident) any { return &p.StaffId },
+	tblaccident.TenantId.Name:      func(p *Accident) any { return &p.TenantId },
+	tblaccident.UpdateId.Name:      func(p *Accident) any { return &p.UpdateId },
+	tblaccident.UpdateTime.Name:    func(p *Accident) any { return &p.UpdateTime },
+	tblaccident.Severity.Name:      func(p *Accident) any { return &p.Severity },
+	tblaccident.State.Name:         func(p *Accident) any { return &p.State },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -247,6 +268,9 @@ var accidentFieldToValueFunc = map[dialect.Field]func(*Accident) (any, bool){
 	tblaccident.Description: func(p *Accident) (any, bool) {
 		return p.Description, p.Description == ""
 	},
+	tblaccident.HandleResult: func(p *Accident) (any, bool) {
+		return p.HandleResult, p.HandleResult == ""
+	},
 	tblaccident.Picture: func(p *Accident) (any, bool) {
 		return p.Picture, p.Picture == ""
 	},
@@ -258,6 +282,9 @@ var accidentFieldToValueFunc = map[dialect.Field]func(*Accident) (any, bool){
 	},
 	tblaccident.ElderId: func(p *Accident) (any, bool) {
 		return p.ElderId, p.ElderId == 0
+	},
+	tblaccident.HandleStaffId: func(p *Accident) (any, bool) {
+		return p.HandleStaffId, p.HandleStaffId == 0
 	},
 	tblaccident.Id: func(p *Accident) (any, bool) {
 		return p.Id, p.Id == 0
@@ -276,6 +303,9 @@ var accidentFieldToValueFunc = map[dialect.Field]func(*Accident) (any, bool){
 	},
 	tblaccident.UpdateTime: func(p *Accident) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
+	},
+	tblaccident.Severity: func(p *Accident) (any, bool) {
+		return p.Severity, p.Severity == 0
 	},
 	tblaccident.State: func(p *Accident) (any, bool) {
 		return p.State, p.State == 0

@@ -15,3 +15,19 @@ func clampPage(pageNum, pageSize *int) {
 		*pageSize = PageSizeMax
 	}
 }
+
+// ptrI8v 解引用 int8 指针；nil 时返回 0
+func ptrI8v(p *int8) int8 {
+	if p == nil {
+		return 0
+	}
+	return *p
+}
+
+// ptrI64v 解引用 int64 指针；nil 时返回 0
+func ptrI64v(p *int64) int64 {
+	if p == nil {
+		return 0
+	}
+	return *p
+}

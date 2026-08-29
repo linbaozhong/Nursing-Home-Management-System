@@ -11,6 +11,7 @@ import (
 	"context"
 	"crypto/md5"
 	"encoding/hex"
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"strconv"
 	"time"
 
@@ -37,7 +38,7 @@ func idNumTailMatch(full, tail string) bool {
 }
 
 // SendCode 发送家属注册/绑定验证码
-func (s *family) SendCode(ctx context.Context, in *dto.FamilySendCodeReq, out *dto.LoginUserResp) error {
+func (s *family) SendCode(ctx context.Context, in *dto.SendCodeReq, out *dto.SendCodeResp) error {
 	if in.Phone == nil || !isValidPhone(*in.Phone) {
 		return constant.ErrPhoneError
 	}
@@ -46,7 +47,7 @@ func (s *family) SendCode(ctx context.Context, in *dto.FamilySendCodeReq, out *d
 		code:   code,
 		expire: time.Now().Add(5 * time.Minute).Unix(),
 	})
-	out.Pass = code
+	out.Code = code
 	return nil
 }
 
@@ -60,14 +61,14 @@ func (s *family) RegisterBind(ctx context.Context, in *dto.RegisterBindReq, out 
 		return e
 	}
 	elder, ok, e := dao.Elder(db).Get(ctx, db.Table(tblelder.TableName).
-		Where(tblelder.Name.Eq(types.String(*in.ElderName)), tblelder.CheckFlag.Eq(2)))
+		Where(tblelder.Name.Eq(types.String(*in.ElderName)), tblelder.Status.Eq(2)))
 	if e != nil {
 		return e
 	}
 	if !ok || !idNumTailMatch(elder.IdNum.String(), *in.IdNumTail) {
 		return constant.ErrFamilyElderMatch
 	}
-	exists, e := dao.FamilyAccount(db).ExistsByPhone(ctx, *in.Phone)
+	exists, e := dao.FamilyAccount(db).Exists(ctx, tblfamilyaccount.Phone.Eq(types.String(*in.Phone)))
 	if e != nil {
 		return e
 	}
@@ -97,14 +98,14 @@ func (s *family) BindElder(ctx context.Context, in *dto.BindElderReq, out *dto.E
 		return e
 	}
 	elder, ok, e := dao.Elder(db).Get(ctx, db.Table(tblelder.TableName).
-		Where(tblelder.Name.Eq(types.String(*in.ElderName)), tblelder.CheckFlag.Eq(2)))
+		Where(tblelder.Name.Eq(types.String(*in.ElderName)), tblelder.Status.Eq(2)))
 	if e != nil {
 		return e
 	}
 	if !ok || !idNumTailMatch(elder.IdNum.String(), *in.IdNumTail) {
 		return constant.ErrFamilyElderMatch
 	}
-	_, ok, e = dao.FamilyAccount(db).GetByPhone(ctx, *in.Phone)
+	ok, e = dao.FamilyAccount(db).Exists(ctx, tblfamilyaccount.Phone.Eq(types.String(*in.Phone)))
 	if e != nil {
 		return e
 	}
@@ -120,14 +121,14 @@ func (s *family) BindElder(ctx context.Context, in *dto.BindElderReq, out *dto.E
 
 func (s *family) bindElderRecord(ctx context.Context, phone string, elder *do.Elder, relation string) error {
 	_, e := dao.FamilyMember(db).InsertOne(ctx, &do.FamilyMember{
-		ElderId:     types.BigInt(elder.Id.Int64()),
-		Name:        elder.Name,
-		Phone:       types.String(phone),
-		IdNum:       elder.IdNum,
-		Relation:    types.String(relation),
-		ReceiveFlag: types.Int8(0),
+		ElderId:   types.BigInt(elder.Id.Int64()),
+		Name:      elder.Name,
+		Phone:     types.String(phone),
+		IdNum:     elder.IdNum,
+		Relation:  types.String(relation),
+		IsReceive: types.Int8(0),
 	}, tblfamilymember.ElderId, tblfamilymember.Name, tblfamilymember.Phone,
-		tblfamilymember.IdNum, tblfamilymember.Relation, tblfamilymember.ReceiveFlag)
+		tblfamilymember.IdNum, tblfamilymember.Relation, tblfamilymember.IsReceive)
 	return e
 }
 
@@ -136,7 +137,7 @@ func (s *family) Login(ctx context.Context, in *dto.FamilyLoginReq, out *dto.Fam
 	if in.Phone == nil || in.Password == nil {
 		return constant.ErrParamError
 	}
-	acc, ok, e := dao.FamilyAccount(db).GetByPhone(ctx, *in.Phone)
+	acc, ok, e := dao.FamilyAccount(db).Get(ctx, ace.Where(tblfamilyaccount.Phone.Eq(types.String(*in.Phone))))
 	if e != nil {
 		return e
 	}
@@ -190,7 +191,7 @@ func (s *family) myElders(ctx context.Context, phone string) ([]*dto.FamilyElder
 }
 
 // MyElderIDs 返回家属可访问的老人 id 集合（供各查询接口做 WHERE elder_id IN (...)）
-func (s *family) MyElderIDs(ctx context.Context, phone string) ([]int64, error) {
+func (s *family) MyElderIDs(ctx context.Context, phone string) ([]types.BigInt, error) {
 	list, e := s.myElders(ctx, phone)
 	if e != nil {
 		return nil, e
@@ -198,7 +199,7 @@ func (s *family) MyElderIDs(ctx context.Context, phone string) ([]int64, error) 
 	if len(list) == 0 {
 		return nil, constant.ErrFamilyNoElder
 	}
-	ids := make([]int64, 0, len(list))
+	ids := make([]types.BigInt, 0, len(list))
 	for _, v := range list {
 		ids = append(ids, v.ElderID)
 	}
@@ -206,7 +207,7 @@ func (s *family) MyElderIDs(ctx context.Context, phone string) ([]int64, error) 
 }
 
 // IsMyElder 校验某 elderId 是否属于该家属（防越权）
-func (s *family) IsMyElder(ctx context.Context, phone string, elderID int64) (bool, error) {
+func (s *family) IsMyElder(ctx context.Context, phone string, elderID types.BigInt) (bool, error) {
 	ids, e := s.MyElderIDs(ctx, phone)
 	if e != nil {
 		return false, e
@@ -229,14 +230,14 @@ func (s *family) BindOpenid(ctx context.Context, in *dto.BindOpenidReq, out *dto
 	if e != nil {
 		return e
 	}
-	res, e := mini.Code2Session(*in.Code)
+	res, e := mini.GetAuth().Code2Session(*in.Code)
 	if e != nil {
 		return e
 	}
 	if res.ErrCode != 0 {
 		return types.NewError(400, res.ErrMsg)
 	}
-	if _, e = dao.FamilyAccount(db).UpdateOpenid(ctx, *in.Phone, res.OpenID); e != nil {
+	if _, e = dao.FamilyAccount(db).Update(ctx, ace.Sets(tblfamilyaccount.Openid.Set(types.String(res.OpenID))).ToSlice(), tblfamilyaccount.Phone.Eq(types.String(*in.Phone))); e != nil {
 		return e
 	}
 	out.Openid = res.OpenID

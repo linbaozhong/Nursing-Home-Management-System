@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"api/internal/constant"
 	"api/internal/lib"
 	"api/internal/model/define/dao"
 	"api/internal/model/define/table/tblconsume"
@@ -12,6 +13,7 @@ import (
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
@@ -57,6 +59,9 @@ func (c *consume) GetConsumeById(ctx context.Context, in *dto.IDReq, out *dto.Ge
 		tblconsume.ConsumeType,
 		tblconsume.ConsumeAmount,
 		tblconsume.ConsumeDate,
+		tblconsume.SourceType,
+		tblconsume.SourceId,
+		tblconsume.OutTradeNo,
 	)
 	if e != nil {
 		return e
@@ -69,18 +74,56 @@ func (c *consume) GetConsumeById(ctx context.Context, in *dto.IDReq, out *dto.Ge
 	out.ConsumeType = obj.ConsumeType.String()
 	out.ConsumeAmount = obj.ConsumeAmount
 	out.ConsumeDate = obj.ConsumeDate.Time
+	out.SourceType = obj.SourceType.String()
+	out.SourceID = types.BigInt(obj.SourceId)
+	out.OutTradeNo = obj.OutTradeNo.String()
 	return nil
 }
 
-// AddConsume 新增消费
+// AddConsume 新增消费（扣减老人余额并记账，同事务）
 func (c *consume) AddConsume(ctx context.Context, in *dto.AddConsumeReq, out *dto.EmptyResp) error {
+	if in.ElderID == nil || in.ConsumeAmount == nil {
+		return constant.ErrParamError
+	}
 	bean := do.NewConsume()
 	bean.TenantId = types.BigInt(lib.TenantID(ctx))
 	bean.ElderId = types.BigInt(*in.ElderID)
 	bean.ConsumeType = types.String(*in.ConsumeType)
 	bean.ConsumeAmount = *in.ConsumeAmount
 	bean.ConsumeDate = types.Time{*in.ConsumeDate}
-	_, e := dao.Consume(db).InsertOne(ctx, bean)
+	if in.SourceType != nil {
+		bean.SourceType = types.String(*in.SourceType)
+	}
+	if in.SourceID != nil {
+		bean.SourceId = types.BigInt(*in.SourceID)
+	}
+	if in.OutTradeNo != nil {
+		bean.OutTradeNo = types.String(*in.OutTradeNo)
+	}
+
+	// 记录消费 + 扣减老人余额记账：同一事务，原子、幂等
+	_, e := db.Transaction(ctx, func(tx *ace.Tx) (any, error) {
+		// 先落消费记录，拿回自增 id 作为记账 source_id
+		if _, e := dao.Consume(tx).InsertOne(ctx, bean, tblconsume.ConsumeType, tblconsume.ElderId, tblconsume.ConsumeAmount, tblconsume.ConsumeDate, tblconsume.SourceType, tblconsume.SourceId, tblconsume.OutTradeNo); e != nil {
+			return nil, e
+		}
+		elderID := bean.ElderId.Int64()
+		sourceID := bean.Id.Int64()
+		amt := bean.ConsumeAmount
+		direction := int8(constant.LedgerOutcome)
+		sourceType := constant.LedgerSourceMANUAL
+		deduct := &dto.ChangeBalanceReq{
+			ElderID:    &elderID,
+			Direction:  &direction,
+			Amount:     &amt,
+			SourceType: &sourceType,
+			SourceID:   &sourceID,
+		}
+		if e := AccountLedger.changeBalanceTx(ctx, tx, deduct); e != nil {
+			return nil, e
+		}
+		return nil, nil
+	})
 	return e
 }
 
@@ -91,6 +134,15 @@ func (c *consume) EditConsume(ctx context.Context, in *dto.EditConsumeReq, out *
 	sets = append(sets, tblconsume.ConsumeType.Set(*in.ConsumeType))
 	sets = append(sets, tblconsume.ConsumeAmount.Set(*in.ConsumeAmount))
 	sets = append(sets, tblconsume.ConsumeDate.Set(*in.ConsumeDate))
+	if in.SourceType != nil {
+		sets = append(sets, tblconsume.SourceType.Set(*in.SourceType))
+	}
+	if in.SourceID != nil {
+		sets = append(sets, tblconsume.SourceId.Set(*in.SourceID))
+	}
+	if in.OutTradeNo != nil {
+		sets = append(sets, tblconsume.OutTradeNo.Set(*in.OutTradeNo))
+	}
 	_, e := dao.Consume(db).UpdateById(ctx, types.BigInt(*in.ID), sets...)
 	return e
 }

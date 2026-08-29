@@ -9,7 +9,7 @@ import (
 const TableName = "user"
 
 var (
-	Avator     = dialect.Field{Name: "avator", Json: "avator", Table: "user", Type: "types.String", IsRelation: false}
+	Avatar     = dialect.Field{Name: "avatar", Json: "avatar", Table: "user", Type: "types.String", IsRelation: false}
 	Name       = dialect.Field{Name: "name", Json: "name", Table: "user", Type: "types.String", IsRelation: false}
 	Openid     = dialect.Field{Name: "openid", Json: "openid", Table: "user", Type: "types.String", IsRelation: false}
 	Pass       = dialect.Field{Name: "pass", Json: "pass", Table: "user", Type: "types.String", IsRelation: false}
@@ -24,7 +24,7 @@ var (
 
 	// 可写列
 	WritableFields = []dialect.Field{
-		Avator,
+		Avatar,
 		Name,
 		Openid,
 		Pass,
@@ -37,7 +37,7 @@ var (
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
-		Avator,
+		Avatar,
 		Name,
 		Openid,
 		Pass,

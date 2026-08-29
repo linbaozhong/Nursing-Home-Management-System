@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strconv"
 
 	"api/internal/constant"
 	"api/internal/lib"
@@ -97,6 +98,7 @@ func (s *orderService) GetOrderById(ctx context.Context, in *dto.IDReq, out *dto
 	out.DineDate = order.DineDate.Time
 	out.DineType = order.DineType.String()
 	out.DeliverDishesDate = order.DeliverDishesDate.Time
+	out.OutTradeNo = order.OutTradeNo.String()
 	// 老人信息
 	if el, eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(order.ElderId))); ee == nil && eh {
 		out.ElderName = el.Name.String()
@@ -137,6 +139,9 @@ func (s *orderService) AddOrder(ctx context.Context, in *dto.AddOrderReq, out *d
 		OrderFlag: types.Int8(constant.YesNoNo),
 		CreateId:  types.BigInt(*in.ElderID),
 	}
+	if in.OutTradeNo != nil {
+		order.OutTradeNo = types.String(*in.OutTradeNo)
+	}
 	if _, e := dao.Order(db).InsertOne(ctx, order); e != nil {
 		return e
 	}
@@ -174,7 +179,7 @@ func (s *orderService) AddOrder(ctx context.Context, in *dto.AddOrderReq, out *d
 	return nil
 }
 
-// SendOrder 送餐（标记完成并扣费）
+// SendOrder 送餐（标记完成并扣费，同事务记账）
 func (s *orderService) SendOrder(ctx context.Context, in *dto.SendOrderReq, out *dto.EmptyResp) error {
 	if in.ID == nil || in.StaffID == nil {
 		return constant.ErrParamInvalid
@@ -186,30 +191,54 @@ func (s *orderService) SendOrder(ctx context.Context, in *dto.SendOrderReq, out 
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	if _, e = dao.Order(db).UpdateById(ctx, types.BigInt(*in.ID),
-		tblorder.Status.Set(types.Int8(constant.YesNoYes)),
-		tblorder.StaffId.Set(types.BigInt(*in.StaffID)),
-		tblorder.DeliverDishesDate.Set(types.Time{Time: *in.DeliverDishesDate}),
-	); e != nil {
-		return e
-	}
-	// 扣减老人余额并记录消费
-	if el, eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(order.ElderId))); ee == nil && eh {
-		newBalance := el.Balance - order.PayAmount
-		if newBalance < 0 {
-			newBalance = 0
+
+	// 送餐完成 + 扣减老人余额记账 + 记录消费：同一事务，原子
+	_, e = db.Transaction(ctx, func(tx *ace.Tx) (any, error) {
+		// 标记订单为已送餐
+		if _, e := dao.Order(tx).UpdateById(ctx, types.BigInt(*in.ID),
+			tblorder.Status.Set(types.Int8(constant.YesNoYes)),
+			tblorder.StaffId.Set(types.BigInt(*in.StaffID)),
+			tblorder.DeliverDishesDate.Set(types.Time{Time: *in.DeliverDishesDate}),
+		); e != nil {
+			return nil, e
 		}
-		_, _ = dao.Elder(db).UpdateById(ctx, order.ElderId, tblelder.Balance.Set(types.Float64(newBalance)))
+		// 扣减老人余额 + 写资金明细（幂等：FEED + orderId）
+		amt := order.PayAmount
+		elderID := order.ElderId.Int64()
+		orderID := order.Id.Int64()
+		direction := int8(constant.LedgerOutcome)
+		sourceType := constant.LedgerSourceFEED
+		businessNo := strconv.FormatInt(orderID, 10)
+		remark := "送餐扣款"
+		deduct := &dto.ChangeBalanceReq{
+			ElderID:    &elderID,
+			Direction:  &direction,
+			Amount:     &amt,
+			SourceType: &sourceType,
+			SourceID:   &orderID,
+			BusinessNo: &businessNo,
+			Remark:     &remark,
+		}
+		if e := AccountLedger.changeBalanceTx(ctx, tx, deduct); e != nil {
+			return nil, e
+		}
+		// 记录消费流水（source_type=FEED 关联到订单）
 		consume := &do.Consume{
 			TenantId:      types.BigInt(lib.TenantID(ctx)),
 			ElderId:       order.ElderId,
 			ConsumeType:   types.String("点餐"),
 			ConsumeAmount: order.PayAmount,
 			CreateId:      types.BigInt(*in.StaffID),
+			SourceType:    types.String(constant.LedgerSourceFEED),
+			SourceId:      types.BigInt(order.Id),
+			OutTradeNo:    order.OutTradeNo,
 		}
-		_, _ = dao.Consume(db).InsertOne(ctx, consume)
-	}
-	return nil
+		if _, e := dao.Consume(tx).InsertOne(ctx, consume); e != nil {
+			return nil, e
+		}
+		return nil, nil
+	})
+	return e
 }
 
 func orInt(p *int) int {

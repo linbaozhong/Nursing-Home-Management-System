@@ -56,7 +56,7 @@ func (s *staffService) PageStaffByKey(ctx context.Context, in *dto.PageStaffByKe
 			tblstaff.Sex.As("sex"),
 			tblstaff.Phone.As("phone"),
 			tblstaff.Email.As("email"),
-			tblstaff.LeaveFlag.As("leave_flag"),
+			tblstaff.Status.As("leave_flag"),
 		).
 		Desc(tblstaff.CreateTime).
 		Select().Gets(ctx, out)
@@ -105,7 +105,7 @@ func (s *staffService) AddStaff(ctx context.Context, in *dto.OperateStaffReq, ou
 	bean.Phone = types.String(*in.Phone)
 	bean.Email = types.String(*in.Email)
 	bean.Address = types.String(*in.Address)
-	bean.Avator = types.String(*in.Avator)
+	bean.Avatar = types.String(*in.Avatar)
 	bean.Status = types.Int8(constant.YesNoNo)
 	// 初始密码：手机号后 6 位（Java 端为 aesEncode(phone[5:11])，Go 端暂明文存储）
 	if ph := *in.Phone; len(ph) >= 11 {
@@ -113,8 +113,8 @@ func (s *staffService) AddStaff(ctx context.Context, in *dto.OperateStaffReq, ou
 	}
 	_, e = dao.Staff(db).InsertOne(ctx, bean,
 		tblstaff.RoleId, tblstaff.Name, tblstaff.IdNum, tblstaff.Age, tblstaff.Sex,
-		tblstaff.Phone, tblstaff.Email, tblstaff.Address, tblstaff.Avator,
-		tblstaff.LeaveFlag, tblstaff.Pass, tblstaff.CreateId, tblstaff.CreateTime)
+		tblstaff.Phone, tblstaff.Email, tblstaff.Address, tblstaff.Avatar,
+		tblstaff.Status, tblstaff.Pass, tblstaff.CreateId, tblstaff.CreateTime)
 	if e != nil {
 		return e
 	}
@@ -125,7 +125,7 @@ func (s *staffService) AddStaff(ctx context.Context, in *dto.OperateStaffReq, ou
 func (s *staffService) GetStaffById(ctx context.Context, in *dto.IDReq, out *dto.OperateStaffResp) error {
 	bean, has, e := dao.Staff(db).GetByID(ctx, types.BigInt(*in.ID),
 		tblstaff.Id, tblstaff.RoleId, tblstaff.Name, tblstaff.IdNum, tblstaff.Age,
-		tblstaff.Sex, tblstaff.Phone, tblstaff.Email, tblstaff.Address, tblstaff.Avator)
+		tblstaff.Sex, tblstaff.Phone, tblstaff.Email, tblstaff.Address, tblstaff.Avatar)
 	if e != nil {
 		return e
 	}
@@ -141,7 +141,7 @@ func (s *staffService) GetStaffById(ctx context.Context, in *dto.IDReq, out *dto
 	*out.Phone = bean.Phone.String()
 	*out.Email = bean.Email.String()
 	*out.Address = bean.Address.String()
-	*out.Avator = bean.Avator.String()
+	*out.Avatar = bean.Avatar.String()
 	return nil
 }
 
@@ -168,7 +168,7 @@ func (s *staffService) EditStaff(ctx context.Context, in *dto.OperateStaffReq, o
 		tblstaff.Phone.Set(types.String(*in.Phone)),
 		tblstaff.Email.Set(types.String(*in.Email)),
 		tblstaff.Address.Set(types.String(*in.Address)),
-		tblstaff.Avator.Set(types.String(*in.Avator)),
+		tblstaff.Avatar.Set(types.String(*in.Avatar)),
 	)
 	if e != nil {
 		return e

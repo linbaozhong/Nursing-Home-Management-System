@@ -23,6 +23,7 @@ type AddOrderReq struct {
 	DineDate        *time.Time          `json:"dine_date" valid:"required"`         // 就餐时间
 	DineType        *string             `json:"dine_type" valid:"required"`         // 就餐方式
 	OrderDishesList []AddOrderDishesReq `json:"order_dishes_list" valid:"required"` // 菜品列表
+	OutTradeNo      *string             `json:"out_trade_no"`                       // 对外交易单号
 }
 
 // AddOrderDishesReq 新增点餐食物请求（嵌套）
@@ -65,6 +66,7 @@ type GetOrderByIDResp struct {
 	DineType            string            `json:"dine_type"`              // 就餐方式
 	StaffName           string            `json:"staff_name"`             // 送餐人员姓名
 	DeliverDishesDate   time.Time         `json:"deliver_dishes_date"`    // 送餐时间
+	OutTradeNo          string            `json:"out_trade_no"`           // 对外交易单号
 	OrderDishesRespList []OrderDishesResp `json:"order_dishes_resp_list"` // 订单菜品列表
 }
 

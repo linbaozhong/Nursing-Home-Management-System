@@ -21,6 +21,7 @@ func (n *nursereserve) RegisterRoute(group ack.Party) {
 	_g.Post("/addNurseReserve", n.addNurseReserve)
 	_g.Post("/editNurseReserve", n.editNurseReserve)
 	_g.Post("/deleteNurseReserve", n.deleteNurseReserve)
+	_g.Post("/executeNurseReserve", n.executeNurseReserve)
 	_g.Get("/pageSearchElderByKey", n.pageSearchElderByKey)
 	_g.Get("/listNurseStaff", n.listNurseStaff)
 }
@@ -83,6 +84,18 @@ func (n *nursereserve) editNurseReserve(ctx ack.Context) {
 // @Router /nurseReserve/deleteNurseReserve [post]
 func (n *nursereserve) deleteNurseReserve(ctx ack.Context) {
 	ack.Post(ctx, service.NurseReserve.DeleteNurseReserve)
+}
+
+// 执行护理预约（扣款记账）
+// @Summary 执行护理预约
+// @Tags 护理预约
+// @Accept application/json
+// @Produce application/json
+// @Param data body dto.ExecuteNurseReserveReq true "ExecuteNurseReserveReq"
+// @Success 200 {object} dto.EmptyResp
+// @Router /nurseReserve/executeNurseReserve [post]
+func (n *nursereserve) executeNurseReserve(ctx ack.Context) {
+	ack.Post(ctx, service.NurseReserve.ExecuteNurseReserve)
 }
 
 // 分页查询老人

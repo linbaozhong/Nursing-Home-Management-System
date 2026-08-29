@@ -27,9 +27,12 @@ func NewOrder() *Order {
 
 // MarshalJSON
 func (p *Order) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(13 * 50)
+	write := types.NewJsonWriter(14 * 50)
 	if p.DineType != "" {
 		write.WriteRaw("dine_type", types.Marshal(p.DineType))
+	}
+	if p.OutTradeNo != "" {
+		write.WriteRaw("out_trade_no", types.Marshal(p.OutTradeNo))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -82,6 +85,8 @@ func (p *Order) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "dine_type":
 			p.DineType = types.String(value.Str)
+		case "out_trade_no":
+			p.OutTradeNo = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -128,6 +133,7 @@ func (p *Order) Free() {
 // Reset
 func (p *Order) Reset() {
 	p.DineType = ""
+	p.OutTradeNo = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.DeliverDishesDate = types.Time{}
@@ -150,6 +156,7 @@ func (p *Order) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var orderFieldToPtrFunc = map[string]func(*Order) any{
 	tblorder.DineType.Name:          func(p *Order) any { return &p.DineType },
+	tblorder.OutTradeNo.Name:        func(p *Order) any { return &p.OutTradeNo },
 	tblorder.CreateId.Name:          func(p *Order) any { return &p.CreateId },
 	tblorder.CreateTime.Name:        func(p *Order) any { return &p.CreateTime },
 	tblorder.DeliverDishesDate.Name: func(p *Order) any { return &p.DeliverDishesDate },
@@ -253,6 +260,9 @@ func (p *Order) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]str
 var orderFieldToValueFunc = map[dialect.Field]func(*Order) (any, bool){
 	tblorder.DineType: func(p *Order) (any, bool) {
 		return p.DineType, p.DineType == ""
+	},
+	tblorder.OutTradeNo: func(p *Order) (any, bool) {
+		return p.OutTradeNo, p.OutTradeNo == ""
 	},
 	tblorder.CreateId: func(p *Order) (any, bool) {
 		return p.CreateId, p.CreateId == 0

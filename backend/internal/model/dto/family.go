@@ -10,11 +10,17 @@ var _ = validator.IsMobile
 
 // ============ FamilyController 请求 ============
 
-// FamilySendCodeReq 发送家属注册/绑定验证码请求
-// @request
-type FamilySendCodeReq struct {
-	Phone *string `json:"phone" valid:"required"` // 家属手机号
-}
+//// FamilySendCodeReq 发送家属注册/绑定验证码请求
+//// @request
+//type FamilySendCodeReq struct {
+//	Phone *string `json:"phone" valid:"required"` // 家属手机号
+//}
+//
+//// FamilySendCodeResp 发送家属注册/绑定验证码响应
+//// @response
+//type FamilySendCodeResp struct {
+//	Code string `json:"code"`
+//}
 
 // RegisterBindReq 家属注册并绑定老人请求
 // @request

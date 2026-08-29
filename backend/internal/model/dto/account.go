@@ -47,7 +47,7 @@ type EditReq struct {
 type LoginUserResp struct {
 	ID          types.BigInt   `json:"id"`            // 全局用户id
 	Name        string         `json:"name"`          // 姓名
-	Avator      string         `json:"avator"`        // 头像
+	Avatar      string         `json:"avatar"`        // 头像
 	Phone       string         `json:"phone"`         // 电话
 	TenantID    types.BigInt   `json:"tenant_id"`     // 当前租户编号
 	MemberID    types.BigInt   `json:"member_id"`     // 当前成员编号

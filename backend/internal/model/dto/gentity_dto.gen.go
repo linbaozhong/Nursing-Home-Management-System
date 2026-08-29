@@ -353,13 +353,16 @@ func (p *PageAccidentByKeyResp) MarshalJSON() ([]byte, error) {
 */
 // MarshalJSON
 func (p *GetAccidentByIDResp) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(6 * 50)
+	write := types.NewJsonWriter(9 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
 	write.WriteRaw("staff_id", types.Marshal(p.StaffID))
 	write.WriteRaw("occur_date", types.Marshal(p.OccurDate))
 	write.WriteRaw("description", types.Marshal(p.Description))
 	write.WriteRaw("picture", types.Marshal(p.Picture))
+	write.WriteRaw("severity", types.Marshal(p.Severity))
+	write.WriteRaw("handle_result", types.Marshal(p.HandleResult))
+	write.WriteRaw("handle_staff_id", types.Marshal(p.HandleStaffID))
 	return write.Bytes(), nil
 }
 
@@ -854,7 +857,7 @@ func (p *LoginUserResp) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(12 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("name", types.Marshal(p.Name))
-	write.WriteRaw("avator", types.Marshal(p.Avator))
+	write.WriteRaw("avatar", types.Marshal(p.Avatar))
 	write.WriteRaw("phone", types.Marshal(p.Phone))
 	write.WriteRaw("tenant_id", types.Marshal(p.TenantID))
 	write.WriteRaw("member_id", types.Marshal(p.MemberID))
@@ -864,6 +867,428 @@ func (p *LoginUserResp) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("auth_url_list", types.Marshal(p.AuthUrlList))
 	write.WriteRaw("tenants", types.Marshal(p.Tenants))
 	write.WriteRaw("token", types.Marshal(p.Token))
+	return write.Bytes(), nil
+}
+
+/*
+	--- PageAccountLedgerByKeyReq ---
+*/
+// Init
+func (p *PageAccountLedgerByKeyReq) Init() error {
+	p.PageNum = nil
+	p.PageSize = nil
+	p.ElderName = nil
+	p.Direction = nil
+	p.StartTime = nil
+	p.EndTime = nil
+
+	return nil
+}
+
+// Check
+func (p *PageAccountLedgerByKeyReq) Check() error {
+	if p.PageNum == nil {
+		return types.NewError(http.StatusBadRequest, "page_num is required")
+	}
+	if p.PageSize == nil {
+		return types.NewError(http.StatusBadRequest, "page_size is required")
+	}
+	return nil
+}
+
+// UnmarshalJSON
+func (p *PageAccountLedgerByKeyReq) UnmarshalJSON(data []byte) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	ok := gjson.ValidBytes(data)
+	if !ok {
+		return errors.New("invalid json")
+	}
+	_result := gjson.ParseBytes(data)
+	var e error
+	_result.ForEach(func(key, value gjson.Result) bool {
+		switch key.Str {
+		case "page_num":
+			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "page_size":
+			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "elder_name":
+			e = types.Unmarshal(value, &p.ElderName, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "direction":
+			e = types.Unmarshal(value, &p.Direction, func(value gjson.Result) *int8 {
+				var obj *int8
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "start_time":
+			e = types.Unmarshal(value, &p.StartTime, func(value gjson.Result) *time.Time {
+				var obj *time.Time
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "end_time":
+			e = types.Unmarshal(value, &p.EndTime, func(value gjson.Result) *time.Time {
+				var obj *time.Time
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return false
+		}
+		return true
+	})
+	return nil
+}
+
+// UnmarshalValues
+func (p *PageAccountLedgerByKeyReq) UnmarshalValues(m map[string][]string) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	var e error
+	for k, v := range m {
+		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
+		switch k {
+		case "page_num":
+			e = types.Unmarshal(value, &p.PageNum, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "page_size":
+			e = types.Unmarshal(value, &p.PageSize, func(value gjson.Result) *int {
+				var obj *int
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "elder_name":
+			e = types.Unmarshal(value, &p.ElderName, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "direction":
+			e = types.Unmarshal(value, &p.Direction, func(value gjson.Result) *int8 {
+				var obj *int8
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "start_time":
+			e = types.Unmarshal(value, &p.StartTime, func(value gjson.Result) *time.Time {
+				var obj *time.Time
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "end_time":
+			e = types.Unmarshal(value, &p.EndTime, func(value gjson.Result) *time.Time {
+				var obj *time.Time
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return e
+		}
+	}
+
+	return nil
+}
+
+/*
+	--- ChangeBalanceReq ---
+*/
+// Init
+func (p *ChangeBalanceReq) Init() error {
+	p.ElderID = nil
+	p.Direction = nil
+	p.Amount = nil
+	p.SourceType = nil
+	p.SourceID = nil
+	p.BusinessNo = nil
+	p.Remark = nil
+
+	return nil
+}
+
+// Check
+func (p *ChangeBalanceReq) Check() error {
+	if p.ElderID == nil {
+		return types.NewError(http.StatusBadRequest, "elder_id is required")
+	}
+	if p.Direction == nil {
+		return types.NewError(http.StatusBadRequest, "direction is required")
+	}
+	if p.Amount == nil {
+		return types.NewError(http.StatusBadRequest, "amount is required")
+	}
+	return nil
+}
+
+// UnmarshalJSON
+func (p *ChangeBalanceReq) UnmarshalJSON(data []byte) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	ok := gjson.ValidBytes(data)
+	if !ok {
+		return errors.New("invalid json")
+	}
+	_result := gjson.ParseBytes(data)
+	var e error
+	_result.ForEach(func(key, value gjson.Result) bool {
+		switch key.Str {
+		case "elder_id":
+			e = types.Unmarshal(value, &p.ElderID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "direction":
+			e = types.Unmarshal(value, &p.Direction, func(value gjson.Result) *int8 {
+				var obj *int8
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "amount":
+			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "source_type":
+			e = types.Unmarshal(value, &p.SourceType, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "source_id":
+			e = types.Unmarshal(value, &p.SourceID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "business_no":
+			e = types.Unmarshal(value, &p.BusinessNo, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "remark":
+			e = types.Unmarshal(value, &p.Remark, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return false
+		}
+		return true
+	})
+	return nil
+}
+
+// UnmarshalValues
+func (p *ChangeBalanceReq) UnmarshalValues(m map[string][]string) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Error(r)
+			return
+		}
+	}()
+
+	var e error
+	for k, v := range m {
+		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
+		switch k {
+		case "elder_id":
+			e = types.Unmarshal(value, &p.ElderID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "direction":
+			e = types.Unmarshal(value, &p.Direction, func(value gjson.Result) *int8 {
+				var obj *int8
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "amount":
+			e = types.Unmarshal(value, &p.Amount, func(value gjson.Result) *types.Money {
+				var obj *types.Money
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "source_type":
+			e = types.Unmarshal(value, &p.SourceType, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "source_id":
+			e = types.Unmarshal(value, &p.SourceID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "business_no":
+			e = types.Unmarshal(value, &p.BusinessNo, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "remark":
+			e = types.Unmarshal(value, &p.Remark, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		}
+		if e != nil {
+			log.Error(e)
+			return e
+		}
+	}
+
+	return nil
+}
+
+/*
+	--- PageAccountLedgerByKeyResp ---
+*/
+// MarshalJSON
+func (p *PageAccountLedgerByKeyResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(9 * 50)
+	write.WriteRaw("id", types.Marshal(p.ID))
+	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
+	write.WriteRaw("direction", types.Marshal(p.Direction))
+	write.WriteRaw("amount", types.Marshal(p.Amount))
+	write.WriteRaw("balance_after", types.Marshal(p.BalanceAfter))
+	write.WriteRaw("source_type", types.Marshal(p.SourceType))
+	write.WriteRaw("business_no", types.Marshal(p.BusinessNo))
+	write.WriteRaw("remark", types.Marshal(p.Remark))
+	write.WriteRaw("create_time", types.Marshal(p.CreateTime))
+	return write.Bytes(), nil
+}
+
+/*
+	--- PageAccountLedgerBalanceResp ---
+*/
+// MarshalJSON
+func (p *PageAccountLedgerBalanceResp) MarshalJSON() ([]byte, error) {
+	write := types.NewJsonWriter(5 * 50)
+	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
+	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
+	write.WriteRaw("balance", types.Marshal(p.Balance))
+	write.WriteRaw("total_income", types.Marshal(p.TotalIncome))
+	write.WriteRaw("total_outcome", types.Marshal(p.TotalOutcome))
 	return write.Bytes(), nil
 }
 
@@ -8770,6 +9195,9 @@ func (p *AddConsumeReq) Init() error {
 	p.ConsumeAmount = nil
 	p.ConsumeDate = nil
 	p.Remark = nil
+	p.SourceType = nil
+	p.SourceID = nil
+	p.OutTradeNo = nil
 
 	return nil
 }
@@ -8862,6 +9290,33 @@ func (p *AddConsumeReq) UnmarshalJSON(data []byte) error {
 				}
 				return obj
 			}(value))
+		case "source_type":
+			e = types.Unmarshal(value, &p.SourceType, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "source_id":
+			e = types.Unmarshal(value, &p.SourceID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "out_trade_no":
+			e = types.Unmarshal(value, &p.OutTradeNo, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -8939,6 +9394,33 @@ func (p *AddConsumeReq) UnmarshalValues(m map[string][]string) error {
 				}
 				return obj
 			}(value))
+		case "source_type":
+			e = types.Unmarshal(value, &p.SourceType, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "source_id":
+			e = types.Unmarshal(value, &p.SourceID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "out_trade_no":
+			e = types.Unmarshal(value, &p.OutTradeNo, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -8960,6 +9442,9 @@ func (p *EditConsumeReq) Init() error {
 	p.ConsumeAmount = nil
 	p.ConsumeDate = nil
 	p.Remark = nil
+	p.SourceType = nil
+	p.SourceID = nil
+	p.OutTradeNo = nil
 
 	return nil
 }
@@ -9052,6 +9537,33 @@ func (p *EditConsumeReq) UnmarshalJSON(data []byte) error {
 				}
 				return obj
 			}(value))
+		case "source_type":
+			e = types.Unmarshal(value, &p.SourceType, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "source_id":
+			e = types.Unmarshal(value, &p.SourceID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "out_trade_no":
+			e = types.Unmarshal(value, &p.OutTradeNo, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -9129,6 +9641,33 @@ func (p *EditConsumeReq) UnmarshalValues(m map[string][]string) error {
 				}
 				return obj
 			}(value))
+		case "source_type":
+			e = types.Unmarshal(value, &p.SourceType, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "source_id":
+			e = types.Unmarshal(value, &p.SourceID, func(value gjson.Result) *int64 {
+				var obj *int64
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "out_trade_no":
+			e = types.Unmarshal(value, &p.OutTradeNo, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -9159,7 +9698,7 @@ func (p *PageConsumeByKeyResp) MarshalJSON() ([]byte, error) {
 */
 // MarshalJSON
 func (p *GetConsumeByIdResp) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(10 * 50)
 	write.WriteRaw("id", types.Marshal(p.ID))
 	write.WriteRaw("elder_id", types.Marshal(p.ElderID))
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
@@ -9167,6 +9706,9 @@ func (p *GetConsumeByIdResp) MarshalJSON() ([]byte, error) {
 	write.WriteRaw("consume_amount", types.Marshal(p.ConsumeAmount))
 	write.WriteRaw("consume_date", types.Marshal(p.ConsumeDate))
 	write.WriteRaw("remark", types.Marshal(p.Remark))
+	write.WriteRaw("source_type", types.Marshal(p.SourceType))
+	write.WriteRaw("source_id", types.Marshal(p.SourceID))
+	write.WriteRaw("out_trade_no", types.Marshal(p.OutTradeNo))
 	return write.Bytes(), nil
 }
 
@@ -20246,6 +20788,7 @@ func (p *AddOrderReq) Init() error {
 	p.DineDate = nil
 	p.DineType = nil
 	p.OrderDishesList = nil
+	p.OutTradeNo = nil
 
 	return nil
 }
@@ -20320,6 +20863,15 @@ func (p *AddOrderReq) UnmarshalJSON(data []byte) error {
 				}
 				return obj
 			}(value))
+		case "out_trade_no":
+			e = types.Unmarshal(value, &p.OutTradeNo, func(value gjson.Result) *string {
+				var obj *string
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
 		}
 		if e != nil {
 			log.Error(e)
@@ -20373,6 +20925,15 @@ func (p *AddOrderReq) UnmarshalValues(m map[string][]string) error {
 		case "order_dishes_list":
 			e = types.Unmarshal(value, &p.OrderDishesList, func(value gjson.Result) []AddOrderDishesReq {
 				var obj []AddOrderDishesReq
+				e := types.Unmarshal(value, &obj)
+				if e != nil {
+					panic(e)
+				}
+				return obj
+			}(value))
+		case "out_trade_no":
+			e = types.Unmarshal(value, &p.OutTradeNo, func(value gjson.Result) *string {
+				var obj *string
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
 					panic(e)
@@ -20650,13 +21211,14 @@ func (p *PageOrderByKeyResp) MarshalJSON() ([]byte, error) {
 */
 // MarshalJSON
 func (p *GetOrderByIDResp) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(7 * 50)
+	write := types.NewJsonWriter(8 * 50)
 	write.WriteRaw("elder_name", types.Marshal(p.ElderName))
 	write.WriteRaw("elder_phone", types.Marshal(p.ElderPhone))
 	write.WriteRaw("dine_date", types.Marshal(p.DineDate))
 	write.WriteRaw("dine_type", types.Marshal(p.DineType))
 	write.WriteRaw("staff_name", types.Marshal(p.StaffName))
 	write.WriteRaw("deliver_dishes_date", types.Marshal(p.DeliverDishesDate))
+	write.WriteRaw("out_trade_no", types.Marshal(p.OutTradeNo))
 	write.WriteRaw("order_dishes_resp_list", types.Marshal(p.OrderDishesRespList))
 	return write.Bytes(), nil
 }
@@ -25297,7 +25859,7 @@ func (p *OperateStaffReq) Init() error {
 	p.Phone = nil
 	p.Email = nil
 	p.Address = nil
-	p.Avator = nil
+	p.Avatar = nil
 
 	return nil
 }
@@ -25328,8 +25890,8 @@ func (p *OperateStaffReq) Check() error {
 	if p.Address == nil {
 		return types.NewError(http.StatusBadRequest, "address is required")
 	}
-	if p.Avator == nil {
-		return types.NewError(http.StatusBadRequest, "avator is required")
+	if p.Avatar == nil {
+		return types.NewError(http.StatusBadRequest, "avatar is required")
 	}
 	return nil
 }
@@ -25432,8 +25994,8 @@ func (p *OperateStaffReq) UnmarshalJSON(data []byte) error {
 				}
 				return obj
 			}(value))
-		case "avator":
-			e = types.Unmarshal(value, &p.Avator, func(value gjson.Result) *string {
+		case "avatar":
+			e = types.Unmarshal(value, &p.Avatar, func(value gjson.Result) *string {
 				var obj *string
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
@@ -25545,8 +26107,8 @@ func (p *OperateStaffReq) UnmarshalValues(m map[string][]string) error {
 				}
 				return obj
 			}(value))
-		case "avator":
-			e = types.Unmarshal(value, &p.Avator, func(value gjson.Result) *string {
+		case "avatar":
+			e = types.Unmarshal(value, &p.Avatar, func(value gjson.Result) *string {
 				var obj *string
 				e := types.Unmarshal(value, &obj)
 				if e != nil {

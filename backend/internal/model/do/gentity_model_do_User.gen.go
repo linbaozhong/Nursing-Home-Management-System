@@ -28,8 +28,8 @@ func NewUser() *User {
 // MarshalJSON
 func (p *User) MarshalJSON() ([]byte, error) {
 	write := types.NewJsonWriter(10 * 50)
-	if p.Avator != "" {
-		write.WriteRaw("avator", types.Marshal(p.Avator))
+	if p.Avatar != "" {
+		write.WriteRaw("avatar", types.Marshal(p.Avatar))
 	}
 	if p.Name != "" {
 		write.WriteRaw("name", types.Marshal(p.Name))
@@ -71,8 +71,8 @@ func (p *User) UnmarshalJSON(data []byte) error {
 	_result.ForEach(func(key, value gjson.Result) bool {
 		var e error
 		switch key.Str {
-		case "avator":
-			p.Avator = types.String(value.Str)
+		case "avatar":
+			p.Avatar = types.String(value.Str)
 		case "name":
 			p.Name = types.String(value.Str)
 		case "openid":
@@ -112,7 +112,7 @@ func (p *User) Free() {
 
 // Reset
 func (p *User) Reset() {
-	p.Avator = ""
+	p.Avatar = ""
 	p.Name = ""
 	p.Openid = ""
 	p.Pass = ""
@@ -131,7 +131,7 @@ func (p *User) TableName() string {
 
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var userFieldToPtrFunc = map[string]func(*User) any{
-	tbluser.Avator.Name:     func(p *User) any { return &p.Avator },
+	tbluser.Avatar.Name:     func(p *User) any { return &p.Avatar },
 	tbluser.Name.Name:       func(p *User) any { return &p.Name },
 	tbluser.Openid.Name:     func(p *User) any { return &p.Openid },
 	tbluser.Pass.Name:       func(p *User) any { return &p.Pass },
@@ -230,8 +230,8 @@ func (p *User) RawAssignValues(d dialect.Dialect, args ...dialect.Field) ([]stri
 
 // 定义字段到值检查和获取函数的映射
 var userFieldToValueFunc = map[dialect.Field]func(*User) (any, bool){
-	tbluser.Avator: func(p *User) (any, bool) {
-		return p.Avator, p.Avator == ""
+	tbluser.Avatar: func(p *User) (any, bool) {
+		return p.Avatar, p.Avatar == ""
 	},
 	tbluser.Name: func(p *User) (any, bool) {
 		return p.Name, p.Name == ""

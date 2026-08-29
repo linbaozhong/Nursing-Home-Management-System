@@ -31,10 +31,13 @@ type AddAccidentReq struct {
 }
 
 type AccidentQuery struct {
-	StaffID     *int64     `json:"staff_id" valid:"required"`    // 护工编号
-	OccurDate   *time.Time `json:"occur_date" valid:"required"`  // 发生时间
-	Description *string    `json:"description" valid:"required"` // 事故描述
-	Picture     *string    `json:"picture" valid:"required"`     // 事故图片
+	StaffID       *int64     `json:"staff_id" valid:"required"`    // 护工编号
+	OccurDate     *time.Time `json:"occur_date" valid:"required"`  // 发生时间
+	Description   *string    `json:"description" valid:"required"` // 事故描述
+	Picture       *string    `json:"picture"`                      // 事故图片
+	Severity      *int8      `json:"severity"`                     // 严重程度：1轻/2中/3重
+	HandleResult  *string    `json:"handle_result"`                // 处理结果/整改措施
+	HandleStaffID *int64     `json:"handle_staff_id"`              // 处理责任人id
 }
 
 // ============ AccidentController 响应 ============
@@ -51,10 +54,13 @@ type PageAccidentByKeyResp struct {
 // GetAccidentByIDResp 根据编号获取事故登记响应
 // @response
 type GetAccidentByIDResp struct {
-	ID          types.BigInt `json:"id"`          // id
-	ElderName   string       `json:"elder_name"`  // 老人姓名
-	StaffID     types.BigInt `json:"staff_id"`    // 护工编号
-	OccurDate   time.Time    `json:"occur_date"`  // 发生时间
-	Description string       `json:"description"` // 事故描述
-	Picture     string       `json:"picture"`     // 事故图片
+	ID            types.BigInt `json:"id"`              // id
+	ElderName     string       `json:"elder_name"`      // 老人姓名
+	StaffID       types.BigInt `json:"staff_id"`        // 护工编号
+	OccurDate     time.Time    `json:"occur_date"`      // 发生时间
+	Description   string       `json:"description"`     // 事故描述
+	Picture       string       `json:"picture"`         // 事故图片
+	Severity      int8         `json:"severity"`        // 严重程度：1轻/2中/3重
+	HandleResult  string       `json:"handle_result"`   // 处理结果/整改措施
+	HandleStaffID types.BigInt `json:"handle_staff_id"` // 处理责任人id
 }

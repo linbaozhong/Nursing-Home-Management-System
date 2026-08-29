@@ -47,7 +47,7 @@ func wxCode2Session(code string) (openID, unionID string, err error) {
 	if e != nil {
 		return "", "", e
 	}
-	res, e := mini.Code2Session(code)
+	res, e := mini.GetAuth().Code2Session(code)
 	if e != nil {
 		return "", "", e
 	}
@@ -440,7 +440,7 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginReq, out *dto.WxLog
 // fillUserByMember 根据 user/tenant/member 组装登录信息并生成 token
 func (a *account) fillUserByMember(ctx context.Context, userID, tenantID, memberID, roleID int64, out *dto.LoginUserResp) error {
 	user, has, e := dao.User(db).GetByID(ctx, types.BigInt(userID),
-		tbluser.Id, tbluser.Name, tbluser.Avator, tbluser.Phone, tbluser.Pass)
+		tbluser.Id, tbluser.Name, tbluser.Avatar, tbluser.Phone, tbluser.Pass)
 	if e != nil {
 		return e
 	}
@@ -459,7 +459,7 @@ func (a *account) fillUserByMember(ctx context.Context, userID, tenantID, member
 	}
 	out.ID = types.BigInt(userID)
 	out.Name = user.Name.String()
-	out.Avator = user.Avator.String()
+	out.Avatar = user.Avatar.String()
 	out.Phone = user.Phone.String()
 	out.Token = tk
 	out.AuthUrlList = authUrls

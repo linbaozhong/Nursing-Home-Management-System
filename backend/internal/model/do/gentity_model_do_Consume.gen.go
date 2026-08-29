@@ -27,7 +27,7 @@ func NewConsume() *Consume {
 
 // MarshalJSON
 func (p *Consume) MarshalJSON() ([]byte, error) {
-	write := types.NewJsonWriter(10 * 50)
+	write := types.NewJsonWriter(13 * 50)
 	if p.ConsumeType != "" {
 		write.WriteRaw("consume_type", types.Marshal(p.ConsumeType))
 	}
@@ -36,6 +36,12 @@ func (p *Consume) MarshalJSON() ([]byte, error) {
 	}
 	if !p.ConsumeDate.IsZero() {
 		write.WriteRaw("consume_date", types.Marshal(p.ConsumeDate))
+	}
+	if p.SourceType != "" {
+		write.WriteRaw("source_type", types.Marshal(p.SourceType))
+	}
+	if p.OutTradeNo != "" {
+		write.WriteRaw("out_trade_no", types.Marshal(p.OutTradeNo))
 	}
 	if p.CreateId != 0 {
 		write.WriteRaw("create_id", types.Marshal(p.CreateId))
@@ -48,6 +54,9 @@ func (p *Consume) MarshalJSON() ([]byte, error) {
 	}
 	if p.Id != 0 {
 		write.WriteRaw("id", types.Marshal(p.Id))
+	}
+	if p.SourceId != 0 {
+		write.WriteRaw("source_id", types.Marshal(p.SourceId))
 	}
 	if p.TenantId != 0 {
 		write.WriteRaw("tenant_id", types.Marshal(p.TenantId))
@@ -77,6 +86,10 @@ func (p *Consume) UnmarshalJSON(data []byte) error {
 			e = types.Unmarshal(value, &p.ConsumeAmount)
 		case "consume_date":
 			p.ConsumeDate = types.Time{Time: value.Time()}
+		case "source_type":
+			p.SourceType = types.String(value.Str)
+		case "out_trade_no":
+			p.OutTradeNo = types.String(value.Str)
 		case "create_id":
 			p.CreateId = types.BigInt(value.Uint())
 		case "create_time":
@@ -85,6 +98,8 @@ func (p *Consume) UnmarshalJSON(data []byte) error {
 			p.ElderId = types.BigInt(value.Uint())
 		case "id":
 			p.Id = types.BigInt(value.Uint())
+		case "source_id":
+			p.SourceId = types.BigInt(value.Uint())
 		case "tenant_id":
 			p.TenantId = types.BigInt(value.Uint())
 		case "update_id":
@@ -115,10 +130,13 @@ func (p *Consume) Reset() {
 	p.ConsumeType = ""
 	p.ConsumeAmount = 0
 	p.ConsumeDate = types.Time{}
+	p.SourceType = ""
+	p.OutTradeNo = ""
 	p.CreateId = 0
 	p.CreateTime = types.Time{}
 	p.ElderId = 0
 	p.Id = 0
+	p.SourceId = 0
 	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
@@ -134,10 +152,13 @@ var consumeFieldToPtrFunc = map[string]func(*Consume) any{
 	tblconsume.ConsumeType.Name:   func(p *Consume) any { return &p.ConsumeType },
 	tblconsume.ConsumeAmount.Name: func(p *Consume) any { return &p.ConsumeAmount },
 	tblconsume.ConsumeDate.Name:   func(p *Consume) any { return &p.ConsumeDate },
+	tblconsume.SourceType.Name:    func(p *Consume) any { return &p.SourceType },
+	tblconsume.OutTradeNo.Name:    func(p *Consume) any { return &p.OutTradeNo },
 	tblconsume.CreateId.Name:      func(p *Consume) any { return &p.CreateId },
 	tblconsume.CreateTime.Name:    func(p *Consume) any { return &p.CreateTime },
 	tblconsume.ElderId.Name:       func(p *Consume) any { return &p.ElderId },
 	tblconsume.Id.Name:            func(p *Consume) any { return &p.Id },
+	tblconsume.SourceId.Name:      func(p *Consume) any { return &p.SourceId },
 	tblconsume.TenantId.Name:      func(p *Consume) any { return &p.TenantId },
 	tblconsume.UpdateId.Name:      func(p *Consume) any { return &p.UpdateId },
 	tblconsume.UpdateTime.Name:    func(p *Consume) any { return &p.UpdateTime },
@@ -239,6 +260,12 @@ var consumeFieldToValueFunc = map[dialect.Field]func(*Consume) (any, bool){
 	tblconsume.ConsumeDate: func(p *Consume) (any, bool) {
 		return p.ConsumeDate, p.ConsumeDate.IsZero()
 	},
+	tblconsume.SourceType: func(p *Consume) (any, bool) {
+		return p.SourceType, p.SourceType == ""
+	},
+	tblconsume.OutTradeNo: func(p *Consume) (any, bool) {
+		return p.OutTradeNo, p.OutTradeNo == ""
+	},
 	tblconsume.CreateId: func(p *Consume) (any, bool) {
 		return p.CreateId, p.CreateId == 0
 	},
@@ -250,6 +277,9 @@ var consumeFieldToValueFunc = map[dialect.Field]func(*Consume) (any, bool){
 	},
 	tblconsume.Id: func(p *Consume) (any, bool) {
 		return p.Id, p.Id == 0
+	},
+	tblconsume.SourceId: func(p *Consume) (any, bool) {
+		return p.SourceId, p.SourceId == 0
 	},
 	tblconsume.TenantId: func(p *Consume) (any, bool) {
 		return p.TenantId, p.TenantId == 0

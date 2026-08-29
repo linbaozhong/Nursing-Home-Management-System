@@ -2028,7 +2028,7 @@ CREATE TABLE `staff` (
                          `phone` varchar(11) NOT NULL COMMENT '电话',
                          `email` varchar(30) NOT NULL COMMENT '邮箱',
                          `pass` varchar(255) NOT NULL COMMENT '密码',
-                         `avator` varchar(255) NOT NULL COMMENT '头像',
+                         `avatar` varchar(255) NOT NULL COMMENT '头像',
                          `address` varchar(50) NOT NULL COMMENT '地址',
                          `status` tinyint NOT NULL COMMENT '状态：0-离职，1-在职',
                          `create_id` bigint(20) unsigned NOT NULL COMMENT '创建人id',
@@ -2040,7 +2040,7 @@ CREATE TABLE `staff` (
 
 /*Data for the table `staff` */
 
-insert  into `staff`(`id`,`role_id`,`name`,`id_num`,`age`,`sex`,`phone`,`email`,`pass`,`avator`,`address`,`status`,`create_id`,`create_time`,`update_id`,`update_time`) values
+insert  into `staff`(`id`,`role_id`,`name`,`id_num`,`age`,`sex`,`phone`,`email`,`pass`,`avatar`,`address`,`status`,`create_id`,`create_time`,`update_id`,`update_time`) values
                                                                                                                                                                                 (1,1,'超级管理员','1',29,'男','13547584400','756932656@qq.com','7217ac017b4fb2352ec9e65576c5c0b1','http://127.0.0.1:9001/upload/img/20230405/1643600038046306304_logo.png','1',0,0,'2022-12-31 12:34:43',1,'2023-04-26 15:48:02'),
                                                                                                                                                                                 (2,2,'小管','230182198012251659',31,'女','13547584401','2175728501@qq.com','7217ac017b4fb2352ec9e65576c5c0b1','http://127.0.0.1:9001/upload/img/20240420/1781361739637297152_1.png','黑龙江哈尔滨',0,0,'2022-12-31 12:34:43',1,'2024-04-20 00:38:31'),
                                                                                                                                                                                 (3,4,'小妹','230182198012251659',30,'女','13547584402','2927803979@qq.com','7217ac017b4fb2352ec9e65576c5c0b1','http://127.0.0.1:9001/upload/img/20240420/1781361825431785472_2.png','黑龙江哈尔滨',0,0,'2022-12-31 12:34:43',1,'2024-04-20 00:39:35'),
@@ -2225,7 +2225,7 @@ CREATE TABLE `user` (
                         `phone` varchar(11) NOT NULL DEFAULT '' COMMENT '手机号（账号密码登录）',
                         `pass` varchar(64) NOT NULL DEFAULT '' COMMENT '密码(md5)',
                         `name` varchar(10) NOT NULL DEFAULT '' COMMENT '姓名',
-                        `avator` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
+                        `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
                         `create_time` datetime NOT NULL COMMENT '创建时间',
                         `update_time` datetime NOT NULL COMMENT '更新时间',
                         `state` tinyint(4) NOT NULL DEFAULT 0 COMMENT '管理状态：-1=删除，0=禁用，1=可用',
@@ -2257,7 +2257,7 @@ CREATE TABLE `member` (
 
 /*Data for the table `user` */
 
-insert  into `user`(`id`,`union_id`,`openid`,`phone`,`pass`,`name`,`avator`,`create_time`,`update_time`,`state`) values
+insert  into `user`(`id`,`union_id`,`openid`,`phone`,`pass`,`name`,`avatar`,`create_time`,`update_time`,`state`) values
     (1,'','','13547584400','7217ac017b4fb2352ec9e65576c5c0b1','超级管理员','http://127.0.0.1:9001/upload/img/20230405/1643600038046306304_logo.png','2022-12-31 12:34:43','2023-04-26 15:48:02',0);
 
 /*Data for the table `member` */

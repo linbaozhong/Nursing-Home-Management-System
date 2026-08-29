@@ -70,8 +70,8 @@ func (p *FamilyMember) MarshalJSON() ([]byte, error) {
 	if p.State != 0 {
 		write.WriteRaw("state", types.Marshal(p.State))
 	}
-	if p.Status != 0 {
-		write.WriteRaw("status", types.Marshal(p.Status))
+	if p.IsReceive != 0 {
+		write.WriteRaw("is_receive", types.Marshal(p.IsReceive))
 	}
 	return write.Bytes(), nil
 }
@@ -114,8 +114,8 @@ func (p *FamilyMember) UnmarshalJSON(data []byte) error {
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "state":
 			p.State = types.Int8(value.Int())
-		case "status":
-			p.Status = types.Int8(value.Int())
+		case "is_receive":
+			p.IsReceive = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -151,7 +151,7 @@ func (p *FamilyMember) Reset() {
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
 	p.State = 0
-	p.Status = 0
+	p.IsReceive = 0
 
 }
 
@@ -175,7 +175,7 @@ var familymemberFieldToPtrFunc = map[string]func(*FamilyMember) any{
 	tblfamilymember.UpdateId.Name:   func(p *FamilyMember) any { return &p.UpdateId },
 	tblfamilymember.UpdateTime.Name: func(p *FamilyMember) any { return &p.UpdateTime },
 	tblfamilymember.State.Name:      func(p *FamilyMember) any { return &p.State },
-	tblfamilymember.Status.Name:     func(p *FamilyMember) any { return &p.Status },
+	tblfamilymember.IsReceive.Name:  func(p *FamilyMember) any { return &p.IsReceive },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -307,8 +307,8 @@ var familymemberFieldToValueFunc = map[dialect.Field]func(*FamilyMember) (any, b
 	tblfamilymember.State: func(p *FamilyMember) (any, bool) {
 		return p.State, p.State == 0
 	},
-	tblfamilymember.Status: func(p *FamilyMember) (any, bool) {
-		return p.Status, p.Status == 0
+	tblfamilymember.IsReceive: func(p *FamilyMember) (any, bool) {
+		return p.IsReceive, p.IsReceive == 0
 	},
 }
 

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strconv"
 
 	"api/internal/constant"
 	"api/internal/lib"
@@ -143,7 +144,7 @@ func (s *nurseReserveService) AddNurseReserve(ctx context.Context, in *dto.AddNu
 		ChargeMethod: types.String(*in.ChargeMethod),
 		Frequency:    types.Int32(int32(*in.Frequency)),
 		PayAmount:    types.Money(*in.PayAmount),
-		OrderFlag:    types.Int8(constant.YesNoNo),
+		Status:       types.Int8(constant.YesNoNo),
 		CreateId:     types.BigInt(*in.ElderID),
 	}
 	if _, e := dao.NurseReserve(db).InsertOne(ctx, rec); e != nil {
@@ -176,6 +177,74 @@ func (s *nurseReserveService) DeleteNurseReserve(ctx context.Context, in *dto.ID
 		return e
 	}
 	return nil
+}
+
+// ExecuteNurseReserve 执行护理预定（标记完成并扣费，同事务记账）
+// 幂等：status 已为已执行时直接返回成功，避免重复扣款。
+func (s *nurseReserveService) ExecuteNurseReserve(ctx context.Context, in *dto.ExecuteNurseReserveReq, out *dto.EmptyResp) error {
+	if in.ID == nil || in.StaffID == nil || in.NurseDate == nil {
+		return constant.ErrParamInvalid
+	}
+	rec, has, e := dao.NurseReserve(db).Get(ctx, ace.Where(
+		tblnursereserve.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+		tblnursereserve.Id.Eq(types.BigInt(*in.ID)),
+	))
+	if e != nil {
+		return e
+	}
+	if !has {
+		return constant.ErrDataNotExist
+	}
+	if rec.Status.Int8() == constant.YesNoYes {
+		return nil // 已执行，幂等
+	}
+
+	// 执行护理 + 扣减老人余额记账 + 记录消费：同一事务，原子
+	_, e = db.Transaction(ctx, func(tx *ace.Tx) (any, error) {
+		// 标记护理预定为已执行
+		if _, e := dao.NurseReserve(tx).UpdateById(ctx, rec.Id,
+			tblnursereserve.Status.Set(types.Int8(constant.YesNoYes)),
+			tblnursereserve.StaffId.Set(types.BigInt(*in.StaffID)),
+			tblnursereserve.NurseDate.Set(types.Time{*in.NurseDate}),
+		); e != nil {
+			return nil, e
+		}
+		// 扣减老人余额 + 写资金明细（幂等：NURSING + 护理预定id）
+		amt := rec.PayAmount
+		elderID := rec.ElderId.Int64()
+		reserveID := rec.Id.Int64()
+		direction := int8(constant.LedgerOutcome)
+		sourceType := constant.LedgerSourceNURSING
+		businessNo := strconv.FormatInt(reserveID, 10)
+		remark := "护理扣款"
+		deduct := &dto.ChangeBalanceReq{
+			ElderID:    &elderID,
+			Direction:  &direction,
+			Amount:     &amt,
+			SourceType: &sourceType,
+			SourceID:   &reserveID,
+			BusinessNo: &businessNo,
+			Remark:     &remark,
+		}
+		if e := AccountLedger.changeBalanceTx(ctx, tx, deduct); e != nil {
+			return nil, e
+		}
+		// 记录消费流水（source_type=NURSING 关联到护理预定）
+		consume := &do.Consume{
+			TenantId:      types.BigInt(lib.TenantID(ctx)),
+			ElderId:       rec.ElderId,
+			ConsumeType:   types.String("护理"),
+			ConsumeAmount: rec.PayAmount,
+			CreateId:      types.BigInt(*in.StaffID),
+			SourceType:    types.String(constant.LedgerSourceNURSING),
+			SourceId:      types.BigInt(rec.Id),
+		}
+		if _, e := dao.Consume(tx).InsertOne(ctx, consume); e != nil {
+			return nil, e
+		}
+		return nil, nil
+	})
+	return e
 }
 
 // PageSearchElderByKey 分页查询老人（供护理预定选择）

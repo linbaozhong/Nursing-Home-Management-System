@@ -10,6 +10,7 @@ const TableName = "order"
 
 var (
 	DineType          = dialect.Field{Name: "dine_type", Json: "dine_type", Table: "order", Type: "types.String", IsRelation: false}
+	OutTradeNo        = dialect.Field{Name: "out_trade_no", Json: "out_trade_no", Table: "order", Type: "types.String", IsRelation: false}
 	CreateId          = dialect.Field{Name: "create_id", Json: "create_id", Table: "order", Type: "types.BigInt", IsRelation: false}
 	CreateTime        = dialect.Field{Name: "create_time", Json: "create_time", Table: "order", Type: "types.Time", IsRelation: false}
 	DeliverDishesDate = dialect.Field{Name: "deliver_dishes_date", Json: "deliver_dishes_date", Table: "order", Type: "types.Time", IsRelation: false}
@@ -28,6 +29,7 @@ var (
 	// 可写列
 	WritableFields = []dialect.Field{
 		DineType,
+		OutTradeNo,
 		CreateId,
 		CreateTime,
 		DeliverDishesDate,
@@ -44,6 +46,7 @@ var (
 	// 可读列
 	ReadableFields = []dialect.Field{
 		DineType,
+		OutTradeNo,
 		CreateId,
 		CreateTime,
 		DeliverDishesDate,

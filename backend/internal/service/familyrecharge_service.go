@@ -3,7 +3,6 @@ package service
 import (
 	"api/internal/constant"
 	"api/internal/model/define/dao"
-	"api/internal/model/define/table/tblelder"
 	"api/internal/model/define/table/tblfamilyrecharge"
 	"api/internal/model/dto"
 	"context"
@@ -12,6 +11,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/linbaozhong/gentity/pkg/ace"
 	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
@@ -127,22 +127,33 @@ func (s *familyRecharge) PayNotify(ctx context.Context, in *dto.WechatPayNotifyR
 	if order.Status.Int8() == 1 {
 		return nil // 已处理
 	}
-	// 标记已支付
-	if _, e = dao.FamilyRecharge(db).UpdateStatus(ctx, tx.OutTradeNo, 1); e != nil {
-		return e
-	}
-	// 给老人余额加款（amount 单位分 -> 元），先读后写保证增量正确
-	elder, ok, e := dao.Elder(db).GetByID(ctx, order.ElderId, tblelder.Id, tblelder.Balance)
-	if e != nil {
-		return e
-	}
-	if !ok {
-		return errors.New("老人不存在")
-	}
-	yuan := order.Amount.Int64() / 100
-	cur, _ := strconv.ParseFloat(elder.Balance.String(), 64)
-	newBalance := int64(cur) + yuan
-	_, e = dao.Elder(db).UpdateById(ctx, order.ElderId, tblelder.Balance.Set(types.Money(strconv.FormatInt(newBalance, 10))))
+	// 标记已支付 + 给老人余额加款记账 + 写资金明细：同一事务，原子、幂等（uk_source）
+	// 金额单位：Money 内部存分，充值订单 order.Amount 即分，直接作为 balance/台账增量。
+	_, e = db.Transaction(ctx, func(tx *ace.Tx) (any, error) {
+		if _, e := dao.FamilyRecharge(tx).UpdateStatus(ctx, tx.OutTradeNo, 1); e != nil {
+			return nil, e
+		}
+		elderID := order.ElderId.Int64()
+		orderID := order.Id.Int64()
+		amount := order.Amount
+		direction := int8(constant.LedgerIncome)
+		sourceType := constant.LedgerSourceRECHARGE
+		businessNo := order.OrderNo.String()
+		remark := "家属充值"
+		topup := &dto.ChangeBalanceReq{
+			ElderID:    &elderID,
+			Direction:  &direction,
+			Amount:     &amount,
+			SourceType: &sourceType,
+			SourceID:   &orderID,
+			BusinessNo: &businessNo,
+			Remark:     &remark,
+		}
+		if e := AccountLedger.changeBalanceTx(ctx, tx, topup); e != nil {
+			return nil, e
+		}
+		return nil, nil
+	})
 	return e
 }
 

@@ -12,10 +12,13 @@ var (
 	ConsumeType   = dialect.Field{Name: "consume_type", Json: "consume_type", Table: "consume", Type: "types.String", IsRelation: false}
 	ConsumeAmount = dialect.Field{Name: "consume_amount", Json: "consume_amount", Table: "consume", Type: "types.Money", IsRelation: false}
 	ConsumeDate   = dialect.Field{Name: "consume_date", Json: "consume_date", Table: "consume", Type: "types.Time", IsRelation: false}
+	SourceType    = dialect.Field{Name: "source_type", Json: "source_type", Table: "consume", Type: "types.String", IsRelation: false}
+	OutTradeNo    = dialect.Field{Name: "out_trade_no", Json: "out_trade_no", Table: "consume", Type: "types.String", IsRelation: false}
 	CreateId      = dialect.Field{Name: "create_id", Json: "create_id", Table: "consume", Type: "types.BigInt", IsRelation: false}
 	CreateTime    = dialect.Field{Name: "create_time", Json: "create_time", Table: "consume", Type: "types.Time", IsRelation: false}
 	ElderId       = dialect.Field{Name: "elder_id", Json: "elder_id", Table: "consume", Type: "types.BigInt", IsRelation: false}
 	Id            = dialect.Field{Name: "id", Json: "id", Table: "consume", Type: "types.BigInt", IsRelation: false}
+	SourceId      = dialect.Field{Name: "source_id", Json: "source_id", Table: "consume", Type: "types.BigInt", IsRelation: false}
 	TenantId      = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "consume", Type: "types.BigInt", IsRelation: false}
 	UpdateId      = dialect.Field{Name: "update_id", Json: "update_id", Table: "consume", Type: "types.BigInt", IsRelation: false}
 	UpdateTime    = dialect.Field{Name: "update_time", Json: "update_time", Table: "consume", Type: "types.Time", IsRelation: false}
@@ -27,10 +30,13 @@ var (
 		ConsumeType,
 		ConsumeAmount,
 		ConsumeDate,
+		SourceType,
+		OutTradeNo,
 		CreateId,
 		CreateTime,
 		ElderId,
 		Id,
+		SourceId,
 		TenantId,
 		UpdateId,
 		UpdateTime,
@@ -40,10 +46,13 @@ var (
 		ConsumeType,
 		ConsumeAmount,
 		ConsumeDate,
+		SourceType,
+		OutTradeNo,
 		CreateId,
 		CreateTime,
 		ElderId,
 		Id,
+		SourceId,
 		TenantId,
 		UpdateId,
 		UpdateTime,

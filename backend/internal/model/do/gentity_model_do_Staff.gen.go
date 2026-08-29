@@ -31,8 +31,8 @@ func (p *Staff) MarshalJSON() ([]byte, error) {
 	if p.Address != "" {
 		write.WriteRaw("address", types.Marshal(p.Address))
 	}
-	if p.Avator != "" {
-		write.WriteRaw("avator", types.Marshal(p.Avator))
+	if p.Avatar != "" {
+		write.WriteRaw("avatar", types.Marshal(p.Avatar))
 	}
 	if p.Email != "" {
 		write.WriteRaw("email", types.Marshal(p.Email))
@@ -94,8 +94,8 @@ func (p *Staff) UnmarshalJSON(data []byte) error {
 		switch key.Str {
 		case "address":
 			p.Address = types.String(value.Str)
-		case "avator":
-			p.Avator = types.String(value.Str)
+		case "avatar":
+			p.Avatar = types.String(value.Str)
 		case "email":
 			p.Email = types.String(value.Str)
 		case "id_num":
@@ -148,7 +148,7 @@ func (p *Staff) Free() {
 // Reset
 func (p *Staff) Reset() {
 	p.Address = ""
-	p.Avator = ""
+	p.Avatar = ""
 	p.Email = ""
 	p.IdNum = ""
 	p.Name = ""
@@ -174,7 +174,7 @@ func (p *Staff) TableName() string {
 // 定义一个映射表，将字段与对应的指针获取函数关联
 var staffFieldToPtrFunc = map[string]func(*Staff) any{
 	tblstaff.Address.Name:    func(p *Staff) any { return &p.Address },
-	tblstaff.Avator.Name:     func(p *Staff) any { return &p.Avator },
+	tblstaff.Avatar.Name:     func(p *Staff) any { return &p.Avatar },
 	tblstaff.Email.Name:      func(p *Staff) any { return &p.Email },
 	tblstaff.IdNum.Name:      func(p *Staff) any { return &p.IdNum },
 	tblstaff.Name.Name:       func(p *Staff) any { return &p.Name },
@@ -282,8 +282,8 @@ var staffFieldToValueFunc = map[dialect.Field]func(*Staff) (any, bool){
 	tblstaff.Address: func(p *Staff) (any, bool) {
 		return p.Address, p.Address == ""
 	},
-	tblstaff.Avator: func(p *Staff) (any, bool) {
-		return p.Avator, p.Avator == ""
+	tblstaff.Avatar: func(p *Staff) (any, bool) {
+		return p.Avatar, p.Avatar == ""
 	},
 	tblstaff.Email: func(p *Staff) (any, bool) {
 		return p.Email, p.Email == ""

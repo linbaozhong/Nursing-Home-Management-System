@@ -26,6 +26,9 @@ type AddConsumeReq struct {
 	ConsumeAmount *types.Money `json:"consume_amount" valid:"required"` // 消费金额
 	ConsumeDate   *time.Time   `json:"consume_date" valid:"required"`   // 消费日期
 	Remark        *string      `json:"remark"`                          // 备注
+	SourceType    *string      `json:"source_type"`                     // 来源类型：ORDER/NURSE_RESERVE/MANUAL
+	SourceID      *int64       `json:"source_id"`                       // 来源业务主键id
+	OutTradeNo    *string      `json:"out_trade_no"`                    // 外部交易单号（对账）
 }
 
 // EditConsumeReq 编辑消费记录请求
@@ -37,6 +40,9 @@ type EditConsumeReq struct {
 	ConsumeAmount *types.Money `json:"consume_amount" valid:"required"` // 消费金额
 	ConsumeDate   *time.Time   `json:"consume_date" valid:"required"`   // 消费日期
 	Remark        *string      `json:"remark"`                          // 备注
+	SourceType    *string      `json:"source_type"`                     // 来源类型：ORDER/NURSE_RESERVE/MANUAL
+	SourceID      *int64       `json:"source_id"`                       // 来源业务主键id
+	OutTradeNo    *string      `json:"out_trade_no"`                    // 外部交易单号（对账）
 }
 
 // ============ ConsumeController 响应 ============
@@ -62,4 +68,7 @@ type GetConsumeByIdResp struct {
 	ConsumeAmount types.Money  `json:"consume_amount"` // 消费金额
 	ConsumeDate   time.Time    `json:"consume_date"`   // 消费日期
 	Remark        string       `json:"remark"`         // 备注
+	SourceType    string       `json:"source_type"`    // 来源类型
+	SourceID      types.BigInt `json:"source_id"`      // 来源业务主键id
+	OutTradeNo    string       `json:"out_trade_no"`   // 外部交易单号
 }

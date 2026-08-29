@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"github.com/linbaozhong/gentity/pkg/cachego/mmap"
 	"sync"
 	"time"
 
@@ -20,22 +21,20 @@ import (
 
 // fieldDictCache 字段中文名字典缓存：key = 表名 -> map[字段名]中文名。
 // 按需懒加载：用到某表时才从 field_dict 表读入。
-var fieldDictCache = map[string]map[string]string{}
+var fieldDictCache = mmap.New[map[string]string](mmap.WithExpired(time.Minute * 10))
 var fieldDictMu sync.Mutex
 
 // LoadFieldDict 从 field_dict 表读取某张表的字段中文名到 cache（列：table/field/label）。
 func LoadFieldDict(ctx context.Context, table string) {
-	fieldDictMu.Lock()
-	defer fieldDictMu.Unlock()
-	if _, ok := fieldDictCache[table]; ok {
+	if _, e := fieldDictCache.Fetch(ctx, table); e == nil {
 		return // 已加载
 	}
-	m := map[string]string{}
+	var m = make(map[string]string)
 	rows, e := db.QueryContext(ctx,
 		"SELECT field, label FROM field_dict WHERE `table` = ?",
 		table)
 	if e != nil {
-		fieldDictCache[table] = m
+		fieldDictCache.Save(ctx, table, m)
 		return
 	}
 	defer rows.Close()
@@ -47,21 +46,20 @@ func LoadFieldDict(ctx context.Context, table string) {
 			}
 		}
 	}
-	fieldDictCache[table] = m
+	fieldDictCache.Save(ctx, table, m)
 }
 
 // AuditFieldLabel 将字段名（英文列名）转中文；该表字典未加载则懒加载一次。
-func AuditFieldLabel(table, col string) string {
+func AuditFieldLabel(ctx context.Context, table, col string) string {
 	if col == "" {
 		return ""
 	}
-	fieldDictMu.Lock()
-	m, ok := fieldDictCache[table]
-	fieldDictMu.Unlock()
-	if !ok {
+
+	m, e := fieldDictCache.Fetch(ctx, table)
+	if e != nil {
 		LoadFieldDict(context.Background(), table)
 		fieldDictMu.Lock()
-		m, _ = fieldDictCache[table]
+		m, _ = fieldDictCache.Fetch(ctx, table)
 		fieldDictMu.Unlock()
 	}
 	if v, ok := m[col]; ok && v != "" {
