@@ -7,8 +7,8 @@ import (
 	"api/internal/constant"
 	"api/internal/lib"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblstock"
 	"api/internal/model/define/table/tblwarehouse"
-	"api/internal/model/define/table/tblwarehousematerial"
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
@@ -110,18 +110,18 @@ func (w *warehouse) EditWarehouse(ctx context.Context, in *dto.OperateWarehouseR
 	return e
 }
 
-// DeleteWarehouse 删除仓库（存在关联物资记录则不允许删除）
+// DeleteWarehouse 删除仓库（存在关联库存记录则不允许删除）
 // 对应 Java: WarehouseServiceImpl.deleteWarehouse -> warehouseMaterialMapper.sumWarehouseMaterialNumByWarehouseId
 func (w *warehouse) DeleteWarehouse(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	hasMaterial, e := dao.WarehouseMaterial(db).Exists(ctx,
-		tblwarehousematerial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
-		tblwarehousematerial.WarehouseRecordId.Eq(types.BigInt(*in.ID)),
+	hasStock, e := dao.Stock(db).Exists(ctx,
+		tblstock.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+		tblstock.WarehouseId.Eq(types.BigInt(*in.ID)),
 	)
 	if e != nil {
 		return e
 	}
-	if hasMaterial {
-		return errors.New("该仓库下存在物资，无法删除")
+	if hasStock {
+		return errors.New("该仓库下存在物资库存，无法删除")
 	}
 	bean := do.NewWarehouse()
 	bean.Id = types.BigInt(*in.ID)

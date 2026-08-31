@@ -21578,7 +21578,7 @@ func (p *AddOutboundRecordReq) UnmarshalValues(m map[string][]string) error {
 */
 // Init
 func (p *AddOutboundMaterialReq) Init() error {
-	p.WarehouseMaterialID = nil
+	p.StockID = nil
 	p.OutboundNum = nil
 
 	return nil
@@ -21586,8 +21586,8 @@ func (p *AddOutboundMaterialReq) Init() error {
 
 // Check
 func (p *AddOutboundMaterialReq) Check() error {
-	if p.WarehouseMaterialID == nil {
-		return types.NewError(http.StatusBadRequest, "warehouse_material_id is required")
+	if p.StockID == nil {
+		return types.NewError(http.StatusBadRequest, "stock_id is required")
 	}
 	if p.OutboundNum == nil {
 		return types.NewError(http.StatusBadRequest, "outbound_num is required")
@@ -21612,8 +21612,8 @@ func (p *AddOutboundMaterialReq) UnmarshalJSON(data []byte) error {
 	var e error
 	_result.ForEach(func(key, value gjson.Result) bool {
 		switch key.Str {
-		case "warehouse_material_id":
-			e = types.Unmarshal(value, &p.WarehouseMaterialID, func(value gjson.Result) *int64 {
+		case "stock_id":
+			e = types.Unmarshal(value, &p.StockID, func(value gjson.Result) *int64 {
 				var obj *int64
 				e := types.Unmarshal(value, &obj)
 				if e != nil {
@@ -21653,8 +21653,8 @@ func (p *AddOutboundMaterialReq) UnmarshalValues(m map[string][]string) error {
 	for k, v := range m {
 		value := gjson.Result{Type: gjson.String, Raw: v[0], Str: v[0]}
 		switch k {
-		case "warehouse_material_id":
-			e = types.Unmarshal(value, &p.WarehouseMaterialID, func(value gjson.Result) *int64 {
+		case "stock_id":
+			e = types.Unmarshal(value, &p.StockID, func(value gjson.Result) *int64 {
 				var obj *int64
 				e := types.Unmarshal(value, &obj)
 				if e != nil {

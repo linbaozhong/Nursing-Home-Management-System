@@ -1,23 +1,24 @@
 package service
 
 import (
-	"api/internal/model/define/table/tblbed"
 	"context"
 
 	"api/internal/constant"
 	"api/internal/lib"
 	"api/internal/model/define/dao"
+	"api/internal/model/define/table/tblbed"
 	"api/internal/model/define/table/tblelder"
 	"api/internal/model/define/table/tblmaterial"
-	"api/internal/model/define/table/tbloutboundmaterial"
 	"api/internal/model/define/table/tbloutboundrecord"
+	"api/internal/model/define/table/tbloutboundrecorditem"
 	"api/internal/model/define/table/tblstaff"
+	"api/internal/model/define/table/tblstock"
 	"api/internal/model/define/table/tblwarehouse"
-	"api/internal/model/define/table/tblwarehousematerial"
 	"api/internal/model/do"
 	"api/internal/model/dto"
 
 	"github.com/linbaozhong/gentity/pkg/ace"
+	"github.com/linbaozhong/gentity/pkg/ace/dialect"
 	"github.com/linbaozhong/gentity/pkg/types"
 )
 
@@ -79,7 +80,7 @@ func (s *outboundRecordService) PageOutboundRecordByKey(ctx context.Context, in 
 		res = append(res, dto.PageOutboundRecordByKeyResp{
 			ID:            types.BigInt(j.ID),
 			WarehouseName: j.WarehouseName.String(),
-			OutboundDate:  j.OutboundDate.Time(),
+			OutboundDate:  j.OutboundDate.Time,
 			Recipient:     j.ElderName.String(),
 			StaffName:     j.StaffName.String(),
 			OutboundFlag:  constant.AuditStatus(j.OutboundFlag).String(),
@@ -111,16 +112,16 @@ func (s *outboundRecordService) GetOutboundRecordById(ctx context.Context, in *d
 		out.StaffName = st.Name.String()
 	}
 	// 出库物资明细
-	materials, _, me := dao.OutboundMaterial(db).List(ctx, ace.Where(tbloutboundmaterial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutboundmaterial.OutboundRecordId.Eq(rec.Id)))
+	items, _, me := dao.OutboundRecordItem(db).List(ctx, ace.Where(tbloutboundrecorditem.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutboundrecorditem.RecordId.Eq(rec.Id)))
 	if me == nil {
-		for _, m := range materials {
+		for _, it := range items {
 			mn := ""
-			if mm, mh, merr := dao.Material(db).Get(ctx, ace.Where(tblmaterial.Id.Eq(m.MaterialId))); merr == nil && mh {
+			if mm, mh, merr := dao.Material(db).Get(ctx, ace.Where(tblmaterial.Id.Eq(it.MaterialId)).Cols(tblmaterial.Name)); merr == nil && mh {
 				mn = mm.Name.String()
 			}
-			out.OutboundMaterialByIDVOList = append(out.OutboundMaterialByIDVOList, dto.GetOutboundMaterialByIDResp{
+			out.OutboundMaterialByIDRespList = append(out.OutboundMaterialByIDRespList, dto.GetOutboundMaterialByIDResp{
 				MaterialName: mn,
-				OutboundNum:  int(m.OutboundNum),
+				OutboundNum:  int(it.Qty),
 			})
 		}
 	}
@@ -157,48 +158,52 @@ func (s *outboundRecordService) PageSearchElderByKey(ctx context.Context, in *dt
 		return e
 	}
 	res := make([]dto.PageSearchElderByKeyResp, 0, len(elders))
-	for _, el := range elders {
+	for i := range elders {
+		el := &elders[i]
 		res = append(res, dto.PageSearchElderByKeyResp{
-			ElderID:   int64(el.Id),
-			ElderName: el.Name.String(),
+			ID:        types.BigInt(el.Id),
+			Name:      el.Name.String(),
 			IDNum:     el.IdNum.String(),
-			ElderSex:  el.Sex.String(),
-			BedName:   el.Phone.String(),
+			Sex:       el.Sex.String(),
+			Phone:     el.Phone.String(),
+			Address:   el.Address.String(),
+			CheckFlag: el.Status.String(),
 		})
 	}
 	*out = res
 	return nil
 }
 
-// PageWarehouseMaterialByKey 分页查询仓库物资（供出库选择）
+// PageWarehouseMaterialByKey 分页查询库存台账（供出库选择，可按仓库过滤）
 func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, in *dto.PageWarehouseMaterialByKeyReq, out *[]dto.PageWarehouseMaterialByKeyResp) error {
-	if in.PageNum == nil || in.PageSize == nil || in.WarehouseID == nil {
+	if in.PageNum == nil || in.PageSize == nil {
 		return constant.ErrParamInvalid
 	}
-	q := db.Table(tblwarehousematerial.TableName).
-		LeftJoin(tblwarehousematerial.MaterialId, tblmaterial.Id).
-		Where(tblwarehousematerial.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
+	q := db.Table(tblstock.TableName).
+		LeftJoin(tblstock.MaterialId, tblmaterial.Id).
+		Where(tblstock.TenantId.Eq(types.BigInt(lib.TenantID(ctx))))
+	if in.WarehouseID != nil {
+		q = q.And(tblstock.WarehouseId.Eq(types.BigInt(*in.WarehouseID)))
+	}
 	if in.MaterialName != nil && *in.MaterialName != "" {
-		q = q.Where(tblmaterial.Name.Like(*in.MaterialName))
+		q = q.And(tblmaterial.Name.Like(*in.MaterialName))
 	}
 	var list []struct {
 		ID           types.BigInt `json:"id"`
 		MaterialName types.String `json:"material_name"`
 		Price        types.Money  `json:"price"`
-		WarehouseNum types.Int    `json:"warehouse_num"`
 		Inventory    types.BigInt `json:"inventory"`
 		ExpireDate   types.Time   `json:"expire_date"`
 	}
 	e := q.Page(uint(*in.PageNum), uint(*in.PageSize)).
 		Cols(
-			tblwarehousematerial.Id,
-			tblwarehousematerial.Price,
-			tblwarehousematerial.WarehouseNum,
-			tblwarehousematerial.Inventory,
-			tblwarehousematerial.ExpireDate,
+			tblstock.Id,
+			tblstock.Qty.As("inventory"),
+			tblstock.ExpireDate,
 			tblmaterial.Name.As("material_name"),
+			tblmaterial.Price.As("price"),
 		).
-		Desc(tblwarehousematerial.Id).
+		Desc(tblstock.Id).
 		Select().Gets(ctx, &list)
 	if e != nil {
 		return e
@@ -209,7 +214,7 @@ func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, 
 			ID:           types.BigInt(m.ID),
 			MaterialName: m.MaterialName.String(),
 			Price:        m.Price,
-			WarehouseNum: int(m.WarehouseNum),
+			WarehouseNum: 0,
 			Inventory:    int(m.Inventory),
 			ExpireDate:   m.ExpireDate.Time,
 		})
@@ -218,7 +223,7 @@ func (s *outboundRecordService) PageWarehouseMaterialByKey(ctx context.Context, 
 	return nil
 }
 
-// AddOutboundRecord 新增出库记录并扣减库存
+// AddOutboundRecord 新增出库记录（仅登记，不扣库存。库存扣减在审核通过时生效）
 func (s *outboundRecordService) AddOutboundRecord(ctx context.Context, in *dto.AddOutboundRecordReq, out *dto.EmptyResp) error {
 	if in.WarehouseID == nil || in.StaffID == nil || len(in.OutboundMaterialQueryList) == 0 {
 		return constant.ErrParamInvalid
@@ -231,65 +236,179 @@ func (s *outboundRecordService) AddOutboundRecord(ctx context.Context, in *dto.A
 		StaffId:       types.BigInt(*in.StaffID),
 		RecipientId:   types.BigInt(*in.RecipientID),
 		OutboundDate:  types.Time{Time: *in.OutboundDate},
-		OutboundFlag:  types.Int8(constant.AuditStay),
+		Status:        types.Uint8(constant.AuditStay),
+		State:         types.Int8(constant.StateEnabled),
 		CreateId:      types.BigInt(*in.StaffID),
 	}
-	if _, e := dao.OutboundRecord(db).InsertOne(ctx, rec); e != nil {
-		return e
-	}
-	for _, m := range in.OutboundMaterialQueryList {
-		if m.WarehouseMaterialID != nil && m.OutboundNum != nil {
-			// 扣减对应仓库物资库存
-			wm, has, e := dao.WarehouseMaterial(db).Get(ctx, ace.Where(tblwarehousematerial.Id.Eq(types.BigInt(*m.WarehouseMaterialID))))
-			if e == nil && has {
-				newInv := int32(wm.Inventory) - int32(*m.OutboundNum)
-				if newInv < 0 {
-					newInv = 0
-				}
-				_, _ = dao.WarehouseMaterial(db).UpdateById(ctx, wm.Id, tblwarehousematerial.Inventory.Set(types.Int32(newInv)))
-			}
-			om := &do.OutboundMaterial{
-				TenantId:            types.BigInt(lib.TenantID(ctx)),
-				OutboundRecordId:    rec.Id,
-				WarehouseMaterialId: types.BigInt(*m.WarehouseMaterialID),
-				MaterialId:          wm.MaterialId,
-				OutboundNum:         types.Int32(int32(*m.OutboundNum)),
-				CreateId:            rec.CreateId,
-			}
-			_, _ = dao.OutboundMaterial(db).InsertOne(ctx, om)
+	_, err := db.Transaction(ctx, func(tx *ace.Tx) (any, error) {
+		id, e := dao.OutboundRecord(tx).Insert(ctx,
+			tbloutboundrecord.TenantId.Set(rec.TenantId),
+			tbloutboundrecord.RecipientType.Set(rec.RecipientType),
+			tbloutboundrecord.MaterialUse.Set(rec.MaterialUse),
+			tbloutboundrecord.WarehouseId.Set(rec.WarehouseId),
+			tbloutboundrecord.StaffId.Set(rec.StaffId),
+			tbloutboundrecord.RecipientId.Set(rec.RecipientId),
+			tbloutboundrecord.OutboundDate.Set(rec.OutboundDate),
+			tbloutboundrecord.Status.Set(types.Int8(rec.Status)),
+			tbloutboundrecord.State.Set(types.Int8(rec.State)),
+			tbloutboundrecord.CreateId.Set(rec.CreateId),
+			tbloutboundrecord.CreateTime.Set(types.Now()),
+		)
+		if e != nil {
+			return nil, e
 		}
+		rec.Id = types.BigInt(id)
+		beans := make([]*do.OutboundRecordItem, 0, len(in.OutboundMaterialQueryList))
+		for i := range in.OutboundMaterialQueryList {
+			m := &in.OutboundMaterialQueryList[i]
+			if m.StockID == nil || m.OutboundNum == nil {
+				return nil, constant.ErrParamInvalid
+			}
+			// 校验所选库存行属于该仓库，并取物资id
+			st, has, e := dao.Stock(tx).Get(ctx, ace.Where(
+				tblstock.TenantId.Eq(rec.TenantId),
+				tblstock.Id.Eq(types.BigInt(*m.StockID)),
+			).Cols(tblstock.Id, tblstock.WarehouseId, tblstock.MaterialId))
+			if e != nil {
+				return nil, e
+			}
+			if !has {
+				return nil, constant.ErrDataNotExist
+			}
+			if st.WarehouseId != rec.WarehouseId {
+				return nil, constant.ErrParamInvalid
+			}
+			it := new(do.OutboundRecordItem)
+			it.TenantId = rec.TenantId
+			it.RecordId = rec.Id
+			it.StockId = &st.Id
+			it.MaterialId = st.MaterialId
+			it.Qty = types.Int32(*m.OutboundNum)
+			it.CreateId = rec.CreateId
+			beans = append(beans, it)
+		}
+		if _, e := dao.OutboundRecordItem(tx).InsertBatch(ctx, beans,
+			tbloutboundrecorditem.TenantId, tbloutboundrecorditem.RecordId, tbloutboundrecorditem.StockId, tbloutboundrecorditem.MaterialId,
+			tbloutboundrecorditem.Qty, tbloutboundrecorditem.CreateId, tbloutboundrecorditem.CreateTime,
+			tbloutboundrecorditem.UpdateId, tbloutboundrecorditem.UpdateTime); e != nil {
+			return nil, e
+		}
+		return nil, nil
+	})
+	if err != nil {
+		return err
 	}
+	_ = out
 	return nil
 }
 
-// AuditOutboundRecord 审核出库记录（通过/不通过）
+// AuditOutboundRecord 审核出库记录：通过时扣减库存（并发安全，禁止超卖）
 func (s *outboundRecordService) AuditOutboundRecord(ctx context.Context, in *dto.AuditOutboundRecordReq, out *dto.EmptyResp) error {
 	if in.OutboundRecordID == nil || in.AuditResult == nil {
 		return constant.ErrParamInvalid
 	}
-	rec, has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(tbloutboundrecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))), tbloutboundrecord.Id.Eq(types.BigInt(*in.OutboundRecordID))))
+	rec, has, e := dao.OutboundRecord(db).Get(ctx,
+		ace.Where(
+			tbloutboundrecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+			tbloutboundrecord.Id.Eq(types.BigInt(*in.OutboundRecordID)),
+		).Cols(tbloutboundrecord.Id, tbloutboundrecord.Status, tbloutboundrecord.WarehouseId, tbloutboundrecord.TenantId))
 	if e != nil {
 		return e
 	}
 	if !has {
 		return constant.ErrDataNotExist
 	}
-	if *in.AuditResult == "不通过" {
-		if _, e = dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.OutboundRecordID), tbloutboundrecord.Status.Set(types.Int8(constant.AuditNotPass))); e != nil {
-			return e
+	if rec.Status != types.Uint8(constant.AuditStay) {
+		return constant.ErrAuditRepeat
+	}
+
+	flag := constant.AuditNotPass
+	if *in.AuditResult == "通过" {
+		flag = constant.AuditPass
+	}
+
+	_, tErr := db.Transaction(ctx, func(tx *ace.Tx) (any, error) {
+		if _, e := dao.OutboundRecord(tx).UpdateById(ctx, types.BigInt(*in.OutboundRecordID),
+			tbloutboundrecord.Status.Set(types.Int8(flag))); e != nil {
+			return nil, e
 		}
-		return nil
+		if flag != constant.AuditPass {
+			return nil, nil
+		}
+		items, _, e := dao.OutboundRecordItem(tx).List(ctx, ace.Where(
+			tbloutboundrecorditem.RecordId.Eq(types.BigInt(*in.OutboundRecordID)),
+		).Cols(tbloutboundrecorditem.Id, tbloutboundrecorditem.StockId, tbloutboundrecorditem.Qty))
+		if e != nil {
+			return nil, e
+		}
+		for _, it := range items {
+			if it.StockId == nil {
+				return nil, constant.ErrParamInvalid
+			}
+			// 原子扣减：qty = qty - n WHERE id=? AND tenant_id=? AND qty>=n
+			res, e := tx.ExecContext(ctx,
+				"UPDATE `stock` SET `qty` = `qty` - ? WHERE `id` = ? AND `tenant_id` = ? AND `qty` >= ?",
+				int32(it.Qty), int64(*it.StockId), int64(rec.TenantId), int32(it.Qty))
+			if e != nil {
+				return nil, e
+			}
+			rows, _ := res.RowsAffected()
+			if rows == 0 {
+				return nil, constant.ErrOutboundNumError
+			}
+		}
+		return nil, nil
+	})
+	if tErr != nil {
+		return tErr
 	}
-	if _, e = dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.OutboundRecordID), tbloutboundrecord.Status.Set(types.Int8(constant.AuditPass))); e != nil {
-		return e
-	}
+	_ = out
 	return nil
 }
 
-// DeleteOutboundRecord 删除出库记录（逻辑删除）
+// DeleteOutboundRecord 删除出库记录（逻辑删除；若已审核通过则回补库存）
 func (s *outboundRecordService) DeleteOutboundRecord(ctx context.Context, in *dto.IDReq, out *dto.EmptyResp) error {
-	if _, e := dao.OutboundRecord(db).UpdateById(ctx, types.BigInt(*in.ID), tbloutboundrecord.State.Set(types.Int8(constant.StateDeleted))); e != nil {
+	if in.ID == nil {
+		return constant.ErrParamInvalid
+	}
+	rec, has, e := dao.OutboundRecord(db).Get(ctx, ace.Where(
+		tbloutboundrecord.TenantId.Eq(types.BigInt(lib.TenantID(ctx))),
+		tbloutboundrecord.Id.Eq(types.BigInt(*in.ID)),
+	).Cols(tbloutboundrecord.Id, tbloutboundrecord.Status, tbloutboundrecord.State))
+	if e != nil {
 		return e
 	}
+	if !has || rec.State == types.Int8(constant.StateDeleted) {
+		return constant.ErrDelRepeat
+	}
+	_, tErr := db.Transaction(ctx, func(tx *ace.Tx) (any, error) {
+		if _, e := dao.OutboundRecord(tx).UpdateById(ctx, types.BigInt(*in.ID),
+			tbloutboundrecord.State.Set(types.Int8(constant.StateDeleted))); e != nil {
+			return nil, e
+		}
+		// 若已审核通过，回补库存
+		if rec.Status == types.Uint8(constant.AuditPass) {
+			items, _, e := dao.OutboundRecordItem(tx).List(ctx, ace.Where(
+				tbloutboundrecorditem.RecordId.Eq(types.BigInt(*in.ID)),
+			).Cols(tbloutboundrecorditem.StockId, tbloutboundrecorditem.Qty))
+			if e != nil {
+				return nil, e
+			}
+			for _, it := range items {
+				if it.StockId == nil {
+					continue
+				}
+				if _, e := dao.Stock(tx).Update(ctx, []dialect.Setter{tblstock.Qty.Incr(it.Qty)},
+					tblstock.Id.Eq(*it.StockId)); e != nil {
+					return nil, e
+				}
+			}
+		}
+		return nil, nil
+	})
+	if tErr != nil {
+		return tErr
+	}
+	_ = out
 	return nil
 }

@@ -34,8 +34,8 @@ type AddOutboundRecordReq struct {
 // AddOutboundMaterialReq 新增出库物资请求（嵌套）
 // @request
 type AddOutboundMaterialReq struct {
-	WarehouseMaterialID *int64 `json:"warehouse_material_id" valid:"required"` // 入库物资编号
-	OutboundNum         *int   `json:"outbound_num" valid:"required"`          // 出库数量
+	StockID     *int64 `json:"stock_id" valid:"required"`     // 库存台账编号(stock.id)
+	OutboundNum *int   `json:"outbound_num" valid:"required"` // 出库数量
 }
 
 // AuditOutboundRecordReq 审核出库记录请求

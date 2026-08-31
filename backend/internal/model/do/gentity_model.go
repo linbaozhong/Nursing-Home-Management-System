@@ -843,23 +843,23 @@ type OrderDishes struct {
 	Status       types.Uint8  `json:"status,omitempty" db:"'status' size:3"`                // 套餐标记
 }
 
-// OutboundMaterial
-// @tablename outbound_material
-type OutboundMaterial struct {
+// OutboundRecordItem 出库单明细
+// @tablename outbound_record_item
+type OutboundRecordItem struct {
 	pool.Model
-	CreateId            types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`                         // 创建人id
-	CreateTime          types.Time   `json:"create_time,omitempty" db:"'create_time'"`                             // 创建时间
-	Id                  types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                               // id
-	MaterialId          types.BigInt `json:"material_id,omitempty" db:"'material_id' size:20"`                     // 物资id
-	OutboundRecordId    types.BigInt `json:"outbound_record_id,omitempty" db:"'outbound_record_id' size:20"`       // 出库登记id
-	TenantId            types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`                         // 租户id
-	UpdateId            types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`                         // 修改人id
-	UpdateTime          types.Time   `json:"update_time,omitempty" db:"'update_time'"`                             // 修改时间
-	WarehouseMaterialId types.BigInt `json:"warehouse_material_id,omitempty" db:"'warehouse_material_id' size:20"` // 入库物资id
-	OutboundNum         types.Int32  `json:"outbound_num,omitempty" db:"'outbound_num' size:10"`                   // 出库数量
+	CreateId   types.BigInt  `json:"create_id,omitempty" db:"'create_id' size:20"`     // 创建人id
+	CreateTime types.Time    `json:"create_time,omitempty" db:"'create_time'"`         // 创建时间
+	Id         types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`           // id
+	MaterialId types.BigInt  `json:"material_id,omitempty" db:"'material_id' size:20"` // 物资id
+	RecordId   types.BigInt  `json:"record_id,omitempty" db:"'record_id' size:20"`     // 出库单id
+	StockId    *types.BigInt `json:"stock_id,omitempty" db:"'stock_id' size:20"`       // 库存台账id(审核通过后回填)
+	TenantId   types.BigInt  `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`     // 租户id
+	UpdateId   types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"`     // 修改人id
+	UpdateTime types.Time    `json:"update_time,omitempty" db:"'update_time'"`         // 修改时间
+	Qty        types.Int32   `json:"qty,omitempty" db:"'qty' size:10"`                 // 本次出库数量
 }
 
-// OutboundRecord
+// OutboundRecord 出库记录
 // @tablename outbound_record
 type OutboundRecord struct {
 	pool.Model
@@ -879,7 +879,7 @@ type OutboundRecord struct {
 	Status        types.Uint8  `json:"status,omitempty" db:"'status' size:3"`              // 出库状态
 }
 
-// Outward
+// Outward 外出登记
 // @tablename outward
 type Outward struct {
 	pool.Model
@@ -1203,7 +1203,7 @@ type VisitPlan struct {
 	State        types.Int8   `json:"state,omitempty" db:"'state' size:3"`          // 管理状态：-1=删除，0=禁用，1=可用
 }
 
-// Warehouse
+// Warehouse 仓库
 // @tablename warehouse
 type Warehouse struct {
 	pool.Model
@@ -1218,25 +1218,43 @@ type Warehouse struct {
 	State      types.Int8   `json:"state,omitempty" db:"'state' size:3"`          // 管理状态：-1=删除，0=禁用，1=可用
 }
 
-// WarehouseMaterial
-// @tablename warehouse_material
-type WarehouseMaterial struct {
+// Stock 库存台账
+// @tablename stock
+type Stock struct {
 	pool.Model
-	CreateId          types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`                     // 创建人id
-	CreateTime        types.Time   `json:"create_time,omitempty" db:"'create_time'"`                         // 创建时间
-	ExpireDate        types.Time   `json:"expire_date,omitempty" db:"'expire_date'"`                         // 有效期
-	Id                types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`                           // id
-	MaterialId        types.BigInt `json:"material_id,omitempty" db:"'material_id' size:20"`                 // 物资id
-	ProductDate       types.Time   `json:"product_date,omitempty" db:"'product_date'"`                       // 生产日期
-	TenantId          types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`                     // 租户id
-	UpdateId          types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`                     // 修改人id
-	UpdateTime        types.Time   `json:"update_time,omitempty" db:"'update_time'"`                         // 修改时间
-	WarehouseRecordId types.BigInt `json:"warehouse_record_id,omitempty" db:"'warehouse_record_id' size:20"` // 入库登记id
-	Inventory         types.Int32  `json:"inventory,omitempty" db:"'inventory' size:10"`                     // 库存量
-	WarehouseNum      types.Int32  `json:"warehouse_num,omitempty" db:"'warehouse_num' size:10"`             // 入库数量
+	CreateId    types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`       // 创建人id
+	CreateTime  types.Time   `json:"create_time,omitempty" db:"'create_time'"`           // 创建时间
+	ExpireDate  types.Time   `json:"expire_date,omitempty" db:"'expire_date'"`           // 有效期
+	Id          types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`             // id
+	MaterialId  types.BigInt `json:"material_id,omitempty" db:"'material_id' size:20"`   // 物资id
+	ProductDate types.Time   `json:"product_date,omitempty" db:"'product_date'"`         // 生产日期
+	TenantId    types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`       // 租户id
+	UpdateId    types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`       // 修改人id
+	UpdateTime  types.Time   `json:"update_time,omitempty" db:"'update_time'"`           // 修改时间
+	WarehouseId types.BigInt `json:"warehouse_id,omitempty" db:"'warehouse_id' size:20"` // 仓库id
+	Qty         types.Int32  `json:"qty,omitempty" db:"'qty' size:10"`                   // 实时库存(>=0)
+	BatchNo     types.String `json:"batch_no,omitempty" db:"'batch_no'"`                 // 批次号(空表示不按批次管理)
 }
 
-// WarehouseRecord
+// WarehouseRecordItem 入库单明细
+// @tablename warehouse_record_item
+type WarehouseRecordItem struct {
+	pool.Model
+	CreateId    types.BigInt  `json:"create_id,omitempty" db:"'create_id' size:20"`     // 创建人id
+	CreateTime  types.Time    `json:"create_time,omitempty" db:"'create_time'"`         // 创建时间
+	ExpireDate  types.Time    `json:"expire_date,omitempty" db:"'expire_date'"`         // 有效期
+	Id          types.BigInt  `json:"id,omitempty" db:"'id' pk auto size:20"`           // id
+	MaterialId  types.BigInt  `json:"material_id,omitempty" db:"'material_id' size:20"` // 物资id
+	ProductDate types.Time    `json:"product_date,omitempty" db:"'product_date'"`       // 生产日期
+	RecordId    types.BigInt  `json:"record_id,omitempty" db:"'record_id' size:20"`     // 入库单id
+	StockId     *types.BigInt `json:"stock_id,omitempty" db:"'stock_id' size:20"`       // 库存台账id(审核通过后回填)
+	TenantId    types.BigInt  `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`     // 租户id
+	UpdateId    types.BigInt  `json:"update_id,omitempty" db:"'update_id' size:20"`     // 修改人id
+	UpdateTime  types.Time    `json:"update_time,omitempty" db:"'update_time'"`         // 修改时间
+	Qty         types.Int32   `json:"qty,omitempty" db:"'qty' size:10"`                 // 本次入库数量
+}
+
+// WarehouseRecord 库存记录
 // @tablename warehouse_record
 type WarehouseRecord struct {
 	pool.Model
