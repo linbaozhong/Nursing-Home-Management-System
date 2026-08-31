@@ -163,7 +163,7 @@ type Bed struct {
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人id
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time' <-"`  // 修改时间
 	State      types.Int8   `json:"state,omitempty" db:"'state' size:3"`          // 管理状态：-1=删除，0=禁用，1=正常
-	Status     types.Int8   `json:"status,omitempty" db:"'status' size:3"`        // 床位状态(空闲/预定/入住/退住审核/维修)
+	Status     types.Uint8  `json:"status,omitempty" db:"'status' size:3"`        // 床位状态(空闲/预定/入住/退住审核/维修)
 }
 
 // Bill 账单表
@@ -182,7 +182,7 @@ type Bill struct {
 	TotalAmount types.Money  `json:"total_amount,omitempty" db:"'total_amount' size:19"` // 总金额（分）
 	UpdateId    types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`       // 修改人id
 	UpdateTime  types.Time   `json:"update_time,omitempty" db:"'update_time'"`           // 修改时间
-	Status      types.Int8   `json:"status,omitempty" db:"'status' size:3"`              // 状态：0-未支付，1-部分支付，2-已支付，3-逾期
+	Status      types.Uint8  `json:"status,omitempty" db:"'status' size:3"`              // 状态：0-未支付，1-部分支付，2-已支付，3-逾期
 }
 
 // BillItem 账单明细表
@@ -361,7 +361,7 @@ type DrugDeposit struct {
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人id
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
 	State      types.Int8   `json:"state,omitempty" db:"'state' size:3"`          // 管理状态：-1=删除，0=禁用，1=可用
-	Status     types.Int8   `json:"status,omitempty" db:"'status' size:3"`        // 缴存状态
+	Status     types.Uint8  `json:"status,omitempty" db:"'status' size:3"`        // 缴存状态
 }
 
 // Elder
@@ -384,7 +384,7 @@ type Elder struct {
 	UpdateId       types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`               // 修改人id
 	UpdateTime     types.Time   `json:"update_time,omitempty" db:"'update_time'"`                   // 修改时间
 	Age            types.Int32  `json:"age,omitempty" db:"'age' size:10"`                           // 年龄
-	Status         types.Int8   `json:"status,omitempty" db:"'status' size:3"`                      // 入住状态
+	Status         types.Uint8  `json:"status,omitempty" db:"'status' size:3"`                      // 入住状态
 }
 
 // ElderAccountLedger 老人资金明细台账
@@ -423,18 +423,18 @@ type ElderLabel struct {
 // @tablename emergency_contact
 type EmergencyContact struct {
 	pool.Model
-	Email      types.String `json:"email,omitempty" db:"'email'"`                 // 紧急联系人邮箱
-	Name       types.String `json:"name,omitempty" db:"'name'"`                   // 紧急联系人姓名
-	Phone      types.String `json:"phone,omitempty" db:"'phone'"`                 // 紧急联系人电话
-	Relation   types.String `json:"relation,omitempty" db:"'relation'"`           // 与老人关系
-	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"` // 创建人id
-	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`     // 创建时间
-	ElderId    types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`   // 老人id
-	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`       // id
-	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户id
-	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人id
-	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
-	Status     types.Int8   `json:"status,omitempty" db:"'status' size:3"`        // 是否接收消息（Y/N）
+	Email      types.String `json:"email,omitempty" db:"'email'"`                  // 紧急联系人邮箱
+	Name       types.String `json:"name,omitempty" db:"'name'"`                    // 紧急联系人姓名
+	Phone      types.String `json:"phone,omitempty" db:"'phone'"`                  // 紧急联系人电话
+	Relation   types.String `json:"relation,omitempty" db:"'relation'"`            // 与老人关系
+	CreateId   types.BigInt `json:"create_id,omitempty" db:"'create_id' size:20"`  // 创建人id
+	CreateTime types.Time   `json:"create_time,omitempty" db:"'create_time'"`      // 创建时间
+	ElderId    types.BigInt `json:"elder_id,omitempty" db:"'elder_id' size:20"`    // 老人id
+	Id         types.BigInt `json:"id,omitempty" db:"'id' pk auto size:20"`        // id
+	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`  // 租户id
+	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`  // 修改人id
+	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`      // 修改时间
+	IsReceive  types.Int8   `json:"is_receive,omitempty" db:"'is_receive' size:3"` // 是否接收消息（Y/N）
 }
 
 // FamilyAccount 家属账号表
@@ -484,7 +484,7 @@ type FamilyRecharge struct {
 	Id         types.Money  `json:"id,omitempty" db:"'id' pk auto size:19"`     // 主键
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`   // 更新时间
 	State      types.Int8   `json:"state,omitempty" db:"'state' size:3"`        // 逻辑删除
-	Status     types.Int8   `json:"status,omitempty" db:"'status' size:3"`      // 0-待支付 1-已支付 2-已关闭
+	Status     types.Uint8  `json:"status,omitempty" db:"'status' size:3"`      // 0-待支付 1-已支付 2-已关闭
 }
 
 // FeeItem 费用项配置表
@@ -700,7 +700,7 @@ type Member struct {
 	UpdateTime  types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
 	UserId      types.BigInt `json:"user_id,omitempty" db:"'user_id' size:20"`     // 全局用户id
 	State       types.Int8   `json:"state,omitempty" db:"'state' size:3"`          // 管理状态：-1=删除，0=禁用，1=可用
-	Status      types.Int8   `json:"status,omitempty" db:"'status' size:3"`        // 状态：0在职 1离职
+	Status      types.Uint8  `json:"status,omitempty" db:"'status' size:3"`        // 状态：0在职 1离职
 }
 
 // Nurse
@@ -719,8 +719,8 @@ type Nurse struct {
 	TenantId       types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`            // 租户id
 	UpdateId       types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`            // 修改人id
 	UpdateTime     types.Time   `json:"update_time,omitempty" db:"'update_time'"`                // 修改时间
-	CompleteStatus types.Int8   `json:"complete_status,omitempty" db:"'complete_status' size:3"` // 护理完成情况
-	DineStatus     types.Int8   `json:"dine_status,omitempty" db:"'dine_status' size:3"`         // 进餐情况
+	CompleteStatus types.Uint8  `json:"complete_status,omitempty" db:"'complete_status' size:3"` // 护理完成情况
+	DineStatus     types.Uint8  `json:"dine_status,omitempty" db:"'dine_status' size:3"`         // 进餐情况
 }
 
 // NurseGrade
@@ -801,7 +801,7 @@ type NurseReserve struct {
 	UpdateTime   types.Time   `json:"update_time,omitempty" db:"'update_time'"`             // 修改时间
 	Frequency    types.Int32  `json:"frequency,omitempty" db:"'frequency' size:10"`         // 服务次数
 	NeedDate     types.Int32  `json:"need_date,omitempty" db:"'need_date' size:10"`         // 所需时间
-	Status       types.Int8   `json:"status,omitempty" db:"'status' size:3"`                // 订单状态
+	Status       types.Uint8  `json:"status,omitempty" db:"'status' size:3"`                // 订单状态
 }
 
 // Order
@@ -821,7 +821,7 @@ type Order struct {
 	TenantId          types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"`             // 租户id
 	UpdateId          types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`             // 修改人id
 	UpdateTime        types.Time   `json:"update_time,omitempty" db:"'update_time'"`                 // 修改时间
-	Status            types.Int8   `json:"status,omitempty" db:"'status' size:3"`                    // 订单状态
+	Status            types.Uint8  `json:"status,omitempty" db:"'status' size:3"`                    // 订单状态
 }
 
 // OrderDishes
@@ -840,7 +840,7 @@ type OrderDishes struct {
 	UpdateId     types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"`         // 修改人id
 	UpdateTime   types.Time   `json:"update_time,omitempty" db:"'update_time'"`             // 修改时间
 	OrderNum     types.Int32  `json:"order_num,omitempty" db:"'order_num' size:10"`         // 菜品份数
-	Status       types.Int8   `json:"status,omitempty" db:"'status' size:3"`                // 套餐标记
+	Status       types.Uint8  `json:"status,omitempty" db:"'status' size:3"`                // 套餐标记
 }
 
 // OutboundMaterial
@@ -876,7 +876,7 @@ type OutboundRecord struct {
 	UpdateTime    types.Time   `json:"update_time,omitempty" db:"'update_time'"`           // 修改时间
 	WarehouseId   types.BigInt `json:"warehouse_id,omitempty" db:"'warehouse_id' size:20"` // 仓库id
 	State         types.Int8   `json:"state,omitempty" db:"'state' size:3"`                // 管理状态：-1=删除，0=禁用，1=可用
-	Status        types.Int8   `json:"status,omitempty" db:"'status' size:3"`              // 出库状态
+	Status        types.Uint8  `json:"status,omitempty" db:"'status' size:3"`              // 出库状态
 }
 
 // Outward
@@ -915,7 +915,7 @@ type Reserve struct {
 	TenantId   types.BigInt `json:"tenant_id,omitempty" db:"'tenant_id' size:20"` // 租户id
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人id
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
-	Status     types.Int8   `json:"status,omitempty" db:"'status' size:3"`        // 退款状态（N/Y）
+	Status     types.Uint8  `json:"status,omitempty" db:"'status' size:3"`        // 退款状态（N/Y）
 }
 
 // Retreat
@@ -946,7 +946,7 @@ type RetreatApply struct {
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人id
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time' <-"`  // 修改时间
 	State      types.Int8   `json:"state,omitempty" db:"'state' size:3"`          // 管理状态：-1=删除，0=禁用，1=正常
-	Status     types.Int8   `json:"status,omitempty" db:"'status' size:3"`        // 业务状态(退住申请流程状态)
+	Status     types.Uint8  `json:"status,omitempty" db:"'status' size:3"`        // 业务状态(退住申请流程状态)
 }
 
 // Role 角色表
@@ -994,7 +994,7 @@ type Room struct {
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
 	BedNum     types.Int32  `json:"bed_num,omitempty" db:"'bed_num' size:10"`     // 床位数量
 	State      types.Int8   `json:"state,omitempty" db:"'state' size:3"`          // 管理状态：-1=删除，0=禁用，1=可用
-	Status     types.Int8   `json:"status,omitempty" db:"'status' size:3"`        // 状态：0-空闲，1-部分占用，2-全满，3-维修
+	Status     types.Uint8  `json:"status,omitempty" db:"'status' size:3"`        // 状态：0-空闲，1-部分占用，2-全满，3-维修
 	Type       types.Int8   `json:"type,omitempty" db:"'type' size:3"`            // 房间类型：1-单人间，2-双人间，3-多人间
 }
 
@@ -1125,7 +1125,7 @@ type Staff struct {
 	UpdateId   types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人id
 	UpdateTime types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
 	Age        types.Int32  `json:"age,omitempty" db:"'age' size:10"`             // 年龄
-	Status     types.Int8   `json:"status,omitempty" db:"'status' size:3"`        // 状态：0-离职，1-在职
+	Status     types.Uint8  `json:"status,omitempty" db:"'status' size:3"`        // 状态：0-离职，1-在职
 }
 
 // Tenant 租户表
@@ -1144,7 +1144,7 @@ type Tenant struct {
 	UpdateId     types.BigInt `json:"update_id,omitempty" db:"'update_id' size:20"` // 修改人id
 	UpdateTime   types.Time   `json:"update_time,omitempty" db:"'update_time'"`     // 修改时间
 	State        types.Int8   `json:"state,omitempty" db:"'state' size:3"`          // 管理状态：-1=删除，0=禁用，1=可用
-	Status       types.Int8   `json:"status,omitempty" db:"'status' size:3"`        // 状态：0试用中 1正式 2锁定
+	Status       types.Uint8  `json:"status,omitempty" db:"'status' size:3"`        // 状态：0试用中 1正式 2锁定
 }
 
 // User 全局用户表
@@ -1182,7 +1182,7 @@ type Visit struct {
 	VisitTime  types.Time   `json:"visit_time,omitempty" db:"'visit_time'"`       // 来访时间
 	VisitNum   types.Int32  `json:"visit_num,omitempty" db:"'visit_num' size:10"` // 来访者人数
 	State      types.Int8   `json:"state,omitempty" db:"'state' size:3"`          // 删除状态
-	Status     types.Int8   `json:"status,omitempty" db:"'status' size:3"`        // 来访状态
+	Status     types.Uint8  `json:"status,omitempty" db:"'status' size:3"`        // 来访状态
 }
 
 // VisitPlan
@@ -1251,5 +1251,5 @@ type WarehouseRecord struct {
 	WarehouseDate types.Time   `json:"warehouse_date,omitempty" db:"'warehouse_date'"`     // 入库时间
 	WarehouseId   types.BigInt `json:"warehouse_id,omitempty" db:"'warehouse_id' size:20"` // 仓库id
 	State         types.Int8   `json:"state,omitempty" db:"'state' size:3"`                // 管理状态：-1=删除，0=禁用，1=可用
-	Status        types.Int8   `json:"status,omitempty" db:"'status' size:3"`              // 入库状态
+	Status        types.Uint8  `json:"status,omitempty" db:"'status' size:3"`              // 入库状态
 }

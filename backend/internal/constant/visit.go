@@ -1,7 +1,7 @@
 package constant
 
 // VisitStatus 来访状态
-type VisitStatus int8
+type VisitStatus uint8
 
 // 来访状态
 const (

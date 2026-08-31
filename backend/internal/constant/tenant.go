@@ -2,12 +2,29 @@ package constant
 
 import "github.com/linbaozhong/gentity/pkg/types"
 
+type TenantStatus uint8
+
 // 租户状态
 const (
-	TenantStatusTrial  int8 = 0 // 试用中
-	TenantStatusNormal int8 = 1 // 正式
-	TenantStatusLocked int8 = 2 // 锁定
+	TenantTrial   TenantStatus = 0 // 试用中
+	TenantNormal  TenantStatus = 1 // 正式
+	TenantLocked  TenantStatus = 2 // 锁定
+	TenantExpired TenantStatus = 3 // 已过期
 )
+
+func (t TenantStatus) String() string {
+	switch t {
+	case TenantTrial:
+		return "试用中"
+	case TenantNormal:
+		return "正式"
+	case TenantLocked:
+		return "被锁定"
+	case TenantExpired:
+		return "已过期"
+	}
+	return ""
+}
 
 // 租户默认试用期（天）
 const TrialDays = 30
@@ -16,10 +33,22 @@ const TrialDays = 30
 const PlatformTenantID int64 = 1
 
 // 租户成员在职状态
+type MemberStatus uint8
+
 const (
-	MemberStatusActive int8 = 0 // 在职
-	MemberStatusLeave  int8 = 1 // 离职
+	MemberLeave  MemberStatus = 0 // 离职
+	MemberActive MemberStatus = 1 // 在职
 )
+
+func (m MemberStatus) String() string {
+	switch m {
+	case MemberLeave:
+		return "离职"
+	case MemberActive:
+		return "在职"
+	}
+	return ""
+}
 
 // 租户 token 角色标识
 const TenantRole = "tenant"

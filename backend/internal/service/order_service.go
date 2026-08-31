@@ -33,7 +33,7 @@ type orderJoin struct {
 	StaffName         types.String `json:"staff_name"`
 	DeliverDishesDate types.Time   `json:"deliver_dishes_date"`
 	PayAmount         types.Money  `json:"pay_amount"`
-	OrderFlag         types.Int8   `json:"order_flag"`
+	Status            types.Int8   `json:"status"`
 }
 
 // PageOrderByKey 分页查询点餐
@@ -79,7 +79,7 @@ func (s *orderService) PageOrderByKey(ctx context.Context, in *dto.PageOrderByKe
 			StaffName:         j.StaffName.String(),
 			DeliverDishesDate: j.DeliverDishesDate.Time,
 			PayAmount:         j.PayAmount,
-			OrderFlag:         constant.YesNo(j.OrderFlag).String(),
+			OrderFlag:         constant.OrderStatus(j.Status).String(),
 		})
 	}
 	*out = res
@@ -116,7 +116,7 @@ func (s *orderService) GetOrderById(ctx context.Context, in *dto.IDReq, out *dto
 				DishesName:   d.DishesName.String(),
 				DishesPrice:  d.DishesPrice,
 				OrderNum:     int(d.OrderNum),
-				SetFlag:      constant.YesNo(d.SetFlag).String(),
+				SetFlag:      constant.SetDishesStatus(d.Status).String(),
 				TotalAmount:  d.TotalAmount,
 				ReallyAmount: d.ReallyAmount,
 			})

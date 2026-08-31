@@ -26,16 +26,26 @@ var (
 )
 
 // MaterialTypeKind 物资分类用途
-type MaterialTypeKind int8
+type MaterialTypeKind uint8
 
 // 物资分类用途常量
 const (
-	KindBed      MaterialTypeKind = 1  // 床型
-	KindFacility MaterialTypeKind = 99 // 设施/其他
+	KindElse MaterialTypeKind = 0 // 设施/其他
+	KindBed  MaterialTypeKind = 1 // 床型
 )
 
+func (m MaterialTypeKind) String() string {
+	switch m {
+	case KindElse:
+		return "其它类"
+	case KindBed:
+		return "床型"
+	}
+	return ""
+}
+
 // BedStatus 床位状态
-type BedStatus int8
+type BedStatus uint8
 
 // 床位状态
 const (
@@ -60,6 +70,32 @@ func (b BedStatus) String() string {
 	}
 }
 
+// RoomStatus 房间状态（room.status）
+type RoomStatus uint8
+
+// 房间状态
+const (
+	RoomIdle       RoomStatus = 0 // 空闲
+	RoomPartOccupy RoomStatus = 1 // 部分占用
+	RoomFull       RoomStatus = 2 // 全满
+	RoomRepair     RoomStatus = 3 // 维修
+)
+
+func (r RoomStatus) String() string {
+	switch r {
+	case RoomIdle:
+		return "空闲"
+	case RoomPartOccupy:
+		return "部分占用"
+	case RoomFull:
+		return "全满"
+	case RoomRepair:
+		return "维修"
+	default:
+		return "未知"
+	}
+}
+
 // 床位
 var (
 	ErrBedNull    = types.NewError(500, "床位不存在")
@@ -70,7 +106,7 @@ var (
 )
 
 // NodeMark 节点标记
-type NodeMark int8
+type NodeMark uint8
 
 // 节点标记
 const (

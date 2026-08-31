@@ -120,7 +120,7 @@ func (p *NurseReserve) UnmarshalJSON(data []byte) error {
 		case "need_date":
 			p.NeedDate = types.Int32(value.Int())
 		case "status":
-			p.Status = types.Int8(value.Int())
+			p.Status = types.Uint8(value.Uint())
 		}
 		if e != nil {
 			log.Error(e)

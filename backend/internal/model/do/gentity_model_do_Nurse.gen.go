@@ -108,9 +108,9 @@ func (p *Nurse) UnmarshalJSON(data []byte) error {
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
 		case "complete_status":
-			p.CompleteStatus = types.Int8(value.Int())
+			p.CompleteStatus = types.Uint8(value.Uint())
 		case "dine_status":
-			p.DineStatus = types.Int8(value.Int())
+			p.DineStatus = types.Uint8(value.Uint())
 		}
 		if e != nil {
 			log.Error(e)

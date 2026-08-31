@@ -121,7 +121,7 @@ func (b *build) hasOccupiedBed(ctx context.Context, scope string, id int64) (boo
 		return false, e
 	}
 	for _, bed := range beds {
-		if bed.Status != types.Int8(constant.BedIdle) {
+		if bed.Status != types.Uint8(constant.BedIdle) {
 			return true, nil
 		}
 	}
@@ -169,7 +169,7 @@ func (b *build) buildTree(buildings []*do.Building, floors []*do.Floor, rooms []
 					ri.BedList = append(ri.BedList, dto.RoomItemResp{
 						ID:      types.BigInt(bd2.Id),
 						Name:    string(bd2.Name),
-						BedFlag: constant.YesNo(bd2.Status).String(),
+						BedFlag: constant.BedStatus(bd2.Status).String(),
 					})
 				}
 				fi.RoomList = append(fi.RoomList, ri)

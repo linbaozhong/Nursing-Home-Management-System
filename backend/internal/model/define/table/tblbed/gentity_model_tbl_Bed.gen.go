@@ -20,7 +20,7 @@ var (
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "bed", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "bed", Type: "types.Time", IsRelation: false}
 	State      = dialect.Field{Name: "state", Json: "state", Table: "bed", Type: "types.Int8", IsRelation: false}
-	Status     = dialect.Field{Name: "status", Json: "status", Table: "bed", Type: "types.Int8", IsRelation: false}
+	Status     = dialect.Field{Name: "status", Json: "status", Table: "bed", Type: "types.Uint8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 

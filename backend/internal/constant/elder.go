@@ -3,7 +3,7 @@ package constant
 import "github.com/linbaozhong/gentity/pkg/types"
 
 // CheckStatus 咨询 / 客户状态
-type CheckStatus int8
+type CheckStatus uint8
 
 // 咨询 / 客户状态
 const (
@@ -38,7 +38,7 @@ func (c CheckStatus) String() string {
 }
 
 // Sex 性别
-type Sex int8
+type Sex uint8
 
 const (
 	SexMale   Sex = 0 // 男
@@ -56,16 +56,16 @@ func (s Sex) String() string {
 	}
 }
 
-// ElderCheckFlag 老人入住状态（tblelder.check_flag 字典）
-type ElderCheckFlag int8
+// ElderCheckStatus 老人入住状态（tblelder.check_flag 字典）
+type ElderCheckStatus uint8
 
 const (
-	ElderCheckNotEnter ElderCheckFlag = 0 // 未入住
-	ElderCheckEntered  ElderCheckFlag = 1 // 入住中
-	ElderCheckExited   ElderCheckFlag = 2 // 已离院
+	ElderCheckNotEnter ElderCheckStatus = 0 // 未入住
+	ElderCheckEntered  ElderCheckStatus = 1 // 入住中
+	ElderCheckExited   ElderCheckStatus = 2 // 已离院
 )
 
-func (e ElderCheckFlag) String() string {
+func (e ElderCheckStatus) String() string {
 	switch e {
 	case ElderCheckNotEnter:
 		return "未入住"
@@ -73,6 +73,44 @@ func (e ElderCheckFlag) String() string {
 		return "入住中"
 	case ElderCheckExited:
 		return "已离院"
+	default:
+		return "未知"
+	}
+}
+
+// StaffStatus 员工状态（staff.status / member.status）
+type StaffStatus uint8
+
+const (
+	StaffLeave  StaffStatus = 0 // 离职
+	StaffActive StaffStatus = 1 // 在职
+)
+
+func (s StaffStatus) String() string {
+	switch s {
+	case StaffLeave:
+		return "离职"
+	case StaffActive:
+		return "在职"
+	default:
+		return "未知"
+	}
+}
+
+// ReceiveStatus 是否接收消息（emergency_contact.status / family_member.status，Y/N）
+type ReceiveStatus uint8
+
+const (
+	ReceiveNo  ReceiveStatus = 0 // 否
+	ReceiveYes ReceiveStatus = 1 // 是
+)
+
+func (r ReceiveStatus) String() string {
+	switch r {
+	case ReceiveNo:
+		return "否"
+	case ReceiveYes:
+		return "是"
 	default:
 		return "未知"
 	}

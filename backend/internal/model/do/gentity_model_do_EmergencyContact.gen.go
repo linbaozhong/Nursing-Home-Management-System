@@ -61,8 +61,8 @@ func (p *EmergencyContact) MarshalJSON() ([]byte, error) {
 	if !p.UpdateTime.IsZero() {
 		write.WriteRaw("update_time", types.Marshal(p.UpdateTime))
 	}
-	if p.Status != 0 {
-		write.WriteRaw("status", types.Marshal(p.Status))
+	if p.IsReceive != 0 {
+		write.WriteRaw("is_receive", types.Marshal(p.IsReceive))
 	}
 	return write.Bytes(), nil
 }
@@ -99,8 +99,8 @@ func (p *EmergencyContact) UnmarshalJSON(data []byte) error {
 			p.UpdateId = types.BigInt(value.Uint())
 		case "update_time":
 			p.UpdateTime = types.Time{Time: value.Time()}
-		case "status":
-			p.Status = types.Int8(value.Int())
+		case "is_receive":
+			p.IsReceive = types.Int8(value.Int())
 		}
 		if e != nil {
 			log.Error(e)
@@ -133,7 +133,7 @@ func (p *EmergencyContact) Reset() {
 	p.TenantId = 0
 	p.UpdateId = 0
 	p.UpdateTime = types.Time{}
-	p.Status = 0
+	p.IsReceive = 0
 
 }
 
@@ -154,7 +154,7 @@ var emergencycontactFieldToPtrFunc = map[string]func(*EmergencyContact) any{
 	tblemergencycontact.TenantId.Name:   func(p *EmergencyContact) any { return &p.TenantId },
 	tblemergencycontact.UpdateId.Name:   func(p *EmergencyContact) any { return &p.UpdateId },
 	tblemergencycontact.UpdateTime.Name: func(p *EmergencyContact) any { return &p.UpdateTime },
-	tblemergencycontact.Status.Name:     func(p *EmergencyContact) any { return &p.Status },
+	tblemergencycontact.IsReceive.Name:  func(p *EmergencyContact) any { return &p.IsReceive },
 }
 
 // fieldPtr 根据字段参数，返回对应的指针获取函数列表（与具体实例无关，可缓存复用）
@@ -277,8 +277,8 @@ var emergencycontactFieldToValueFunc = map[dialect.Field]func(*EmergencyContact)
 	tblemergencycontact.UpdateTime: func(p *EmergencyContact) (any, bool) {
 		return p.UpdateTime, p.UpdateTime.IsZero()
 	},
-	tblemergencycontact.Status: func(p *EmergencyContact) (any, bool) {
-		return p.Status, p.Status == 0
+	tblemergencycontact.IsReceive: func(p *EmergencyContact) (any, bool) {
+		return p.IsReceive, p.IsReceive == 0
 	},
 }
 

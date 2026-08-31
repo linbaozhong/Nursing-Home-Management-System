@@ -130,7 +130,7 @@ func (t *tenant) Register(ctx context.Context, in *dto.RegisterTenantReq, out *d
 		tbltenant.ContactName.Set(types.String(*in.ContactName)),
 		tbltenant.ContactPhone.Set(types.String(*in.ContactPhone)),
 		tbltenant.Plan.Set(types.String("trial")),
-		tbltenant.Status.Set(types.Int8(constant.TenantStatusTrial)),
+		tbltenant.Status.Set(constant.TenantTrial),
 		tbltenant.ExpireTime.Set(types.Time{Time: now}),
 		tbltenant.ExpireTime.Set(types.Time{Time: trialEnd}),
 		tbltenant.CreateId.Set(types.BigInt(userID)),
@@ -148,7 +148,7 @@ func (t *tenant) Register(ctx context.Context, in *dto.RegisterTenantReq, out *d
 		tblmember.UserId.Set(types.BigInt(userID)),
 		tblmember.TenantId.Set(types.BigInt(tenantID)),
 		tblmember.RoleId.Set(types.BigInt(1)),
-		tblmember.Status.Set(types.Int8(constant.MemberStatusActive)),
+		tblmember.Status.Set(constant.MemberActive),
 		tblmember.CreateId.Set(types.BigInt(userID)),
 		tblmember.CreateTime.Set(types.Time{Time: now}),
 		tblmember.UpdateId.Set(types.BigInt(userID)),
@@ -182,7 +182,7 @@ func (t *tenant) Open(ctx context.Context, in *dto.OpenTenantReq, out *dto.Empty
 	// 解锁并延长试用期（重新计 30 天）
 	now := time.Now()
 	_, e = dao.Tenant(db).UpdateById(ctx, tenantID,
-		tbltenant.Status.Set(types.Int8(constant.TenantStatusTrial)),
+		tbltenant.Status.Set(constant.TenantTrial),
 		tbltenant.ExpireTime.Set(types.Time{Time: now}),
 		tbltenant.ExpireTime.Set(types.Time{Time: now.AddDate(0, 0, constant.TrialDays)}),
 		tbltenant.UpdateTime.Set(types.Time{Time: now}),
@@ -203,10 +203,10 @@ func (t *tenant) Lock(ctx context.Context, in *dto.OpenTenantReq, out *dto.Empty
 	if !has {
 		return constant.ErrTenantNotExist
 	}
-	if tn.Status.Int8() == constant.TenantStatusTrial && !tn.ExpireTime.IsZero() &&
+	if tn.Status == types.Uint8(constant.TenantTrial) && !tn.ExpireTime.IsZero() &&
 		tn.ExpireTime.Time.Before(time.Now()) {
 		_, e = dao.Tenant(db).UpdateById(ctx, tenantID,
-			tbltenant.Status.Set(types.Int8(constant.TenantStatusLocked)),
+			tbltenant.Status.Set(constant.TenantLocked),
 			tbltenant.UpdateTime.Set(types.Time{Time: time.Now()}),
 		)
 		return e
@@ -219,8 +219,8 @@ func (t *tenant) MyTenants(ctx context.Context, in *dto.EmptyReq, out *dto.UserT
 	userID := lib.UserID(ctx)
 	memberList, _, e := dao.Member(db).List(ctx, db.Table(tblmember.TableName).
 		Where(tblmember.UserId.Eq(types.BigInt(userID)),
-			tblmember.Status.Eq(types.Int8(constant.MemberStatusActive)),
-			tblmember.State.NotEq(types.Int8(constant.StateDeleted))))
+			tblmember.Status.Eq(constant.MemberActive),
+			tblmember.State.NotEq(constant.StateDeleted)))
 	if e != nil {
 		return e
 	}
@@ -325,7 +325,7 @@ func (t *tenant) InviteMember(ctx context.Context, in *dto.InviteMemberReq, out 
 		tblmember.UserId.Set(types.BigInt(userID)),
 		tblmember.TenantId.Set(tenantID),
 		tblmember.RoleId.Set(types.BigInt(*in.RoleID)),
-		tblmember.Status.Set(types.Int8(constant.MemberStatusActive)),
+		tblmember.Status.Set(constant.MemberActive),
 		tblmember.CreateId.Set(types.BigInt(lib.UserID(ctx))),
 		tblmember.CreateTime.Set(types.Time{Time: now}),
 		tblmember.UpdateId.Set(types.BigInt(lib.UserID(ctx))),
@@ -339,7 +339,7 @@ func (t *tenant) InviteMember(ctx context.Context, in *dto.InviteMemberReq, out 
 	out.UserID = types.BigInt(userID)
 	out.Phone = *in.Phone
 	out.RoleID = types.BigInt(*in.RoleID)
-	out.Status = constant.MemberStatusActive
+	out.Status = types.Uint8(constant.MemberActive)
 	return nil
 }
 
@@ -378,8 +378,8 @@ func (t *tenant) WxLogin(ctx context.Context, in *dto.WxLoginReq, out *dto.WxLog
 	// 查询该用户所有在职成员（绑定企业）
 	memberList, _, e := dao.Member(db).List(ctx, db.Table(tblmember.TableName).
 		Where(tblmember.UserId.Eq(types.BigInt(userID)),
-			tblmember.Status.Eq(types.Int8(constant.MemberStatusActive)),
-			tblmember.State.NotEq(types.Int8(constant.StateDeleted))))
+			tblmember.Status.Eq(constant.MemberActive),
+			tblmember.State.NotEq(constant.StateDeleted)))
 	if e != nil {
 		return e
 	}
@@ -496,10 +496,10 @@ func (a *account) authUrlsByRole(ctx context.Context, roleID int64) ([]string, e
 
 // checkTenantUsable 校验租户是否可用（未锁定且未过期）
 func checkTenantUsable(tn *do.Tenant) error {
-	if tn.Status.Int8() == constant.TenantStatusLocked {
+	if tn.Status == types.Uint8(constant.TenantLocked) {
 		return constant.ErrTenantLocked
 	}
-	if tn.Status.Int8() == constant.TenantStatusTrial &&
+	if tn.Status == types.Uint8(constant.TenantTrial) &&
 		!tn.ExpireTime.IsZero() && tn.ExpireTime.Time.Before(time.Now()) {
 		return constant.ErrTenantExpired
 	}

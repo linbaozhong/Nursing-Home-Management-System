@@ -21,8 +21,8 @@ var (
 	TenantId       = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
 	UpdateId       = dialect.Field{Name: "update_id", Json: "update_id", Table: "nurse", Type: "types.BigInt", IsRelation: false}
 	UpdateTime     = dialect.Field{Name: "update_time", Json: "update_time", Table: "nurse", Type: "types.Time", IsRelation: false}
-	CompleteStatus = dialect.Field{Name: "complete_status", Json: "complete_status", Table: "nurse", Type: "types.Int8", IsRelation: false}
-	DineStatus     = dialect.Field{Name: "dine_status", Json: "dine_status", Table: "nurse", Type: "types.Int8", IsRelation: false}
+	CompleteStatus = dialect.Field{Name: "complete_status", Json: "complete_status", Table: "nurse", Type: "types.Uint8", IsRelation: false}
+	DineStatus     = dialect.Field{Name: "dine_status", Json: "dine_status", Table: "nurse", Type: "types.Uint8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 

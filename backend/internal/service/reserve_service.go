@@ -25,12 +25,12 @@ type reserveService struct{}
 
 // reserveJoin 接收预定联表（老人姓名、申请人姓名、床位名）查询结果的中间结构体
 type reserveJoin struct {
-	ID          types.BigInt `json:"id"`
-	ElderName   types.String `json:"elder_name"`
-	StaffName   types.String `json:"staff_name"`
-	Deposit     types.Money  `json:"deposit"`
-	DueDate     types.Time   `json:"due_date"`
-	ReserveFlag types.Int8   `json:"reserve_flag"`
+	ID        types.BigInt `json:"id"`
+	ElderName types.String `json:"elder_name"`
+	StaffName types.String `json:"staff_name"`
+	Deposit   types.Money  `json:"deposit"`
+	DueDate   types.Time   `json:"due_date"`
+	Status    types.Int8   `json:"status"`
 }
 
 // PageReserveByKey 分页查询预定
@@ -69,7 +69,7 @@ func (s *reserveService) PageReserveByKey(ctx context.Context, in *dto.PageReser
 			StaffName:   j.StaffName.String(),
 			Deposit:     j.Deposit,
 			DueDate:     j.DueDate.Time,
-			ReserveFlag: constant.YesNo(j.ReserveFlag).String(),
+			ReserveFlag: constant.ReserveStatus(j.Status).String(),
 		})
 	}
 	*out = res
@@ -86,12 +86,12 @@ func (s *reserveService) GetReserveById(ctx context.Context, in *dto.IDReq, out 
 		return constant.ErrDataNotExist
 	}
 	out.ReserveID = int64(rec.Id)
-	out.ElderID = int64(rec.ElderId)
+	out.ElderName = rec.ElderId
 	out.StaffID = types.BigInt(rec.StaffId)
-	out.DueDate = rec.DueDate.Time()
-	out.Deposit = rec.Deposit.Float64()
+	out.DueDate = rec.DueDate.Time
+	out.Deposit = rec.Deposit
 	out.Remark = rec.Remark.String()
-	out.ReserveFlag = constant.YesNo(rec.Status).String()
+	out.ReserveFlag = constant.ReserveStatus(rec.Status).String()
 	return nil
 }
 
@@ -104,14 +104,14 @@ func (s *reserveService) AddReserve(ctx context.Context, in *dto.AddReserveReq, 
 	elderId := orInt64(in.ElderID)
 	if elderId == 0 {
 		elder := &do.Elder{
-			TenantId:  types.BigInt(lib.TenantID(ctx)),
-			Name:      types.String(orEmpty(in.ElderName)),
-			Age:       types.Int8(orInt8(in.ElderAge)),
-			Sex:       types.String(orEmpty(in.ElderSex)),
-			Phone:     types.String(orEmpty(in.ElderPhone)),
-			Address:   types.String(orEmpty(in.ElderAddress)),
-			IdNum:     types.String(orEmpty(in.IDNum)),
-			CheckFlag: types.Int8(constant.CheckIntention),
+			TenantId: types.BigInt(lib.TenantID(ctx)),
+			Name:     types.String(orEmpty(in.ElderName)),
+			Age:      types.Int32(*in.ElderAge),
+			Sex:      types.String(orEmpty(in.ElderSex)),
+			Phone:    types.String(orEmpty(in.ElderPhone)),
+			Address:  types.String(orEmpty(in.ElderAddress)),
+			IdNum:    types.String(orEmpty(in.IDNum)),
+			Status:   types.Uint8(constant.CheckIntention),
 		}
 		if _, e := dao.Elder(db).InsertOne(ctx, elder); e != nil {
 			return e
@@ -292,7 +292,7 @@ func (s *reserveService) GetReserveByReserveIdAndElderId(ctx context.Context, in
 	out.DueDate = rec.DueDate.Time()
 	out.Deposit = rec.Deposit.Float64()
 	out.Remark = rec.Remark.String()
-	out.ReserveFlag = constant.YesNo(rec.Status).String()
+	out.ReserveFlag = constant.ReserveStatus(rec.Status).String()
 	return nil
 }
 

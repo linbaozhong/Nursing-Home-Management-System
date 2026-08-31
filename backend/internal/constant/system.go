@@ -19,7 +19,7 @@ const (
 )
 
 // RecipientType 接收方类型
-type RecipientType int8
+type RecipientType uint8
 
 // 接收方类型
 const (

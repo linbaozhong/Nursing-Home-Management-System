@@ -34,7 +34,7 @@ type nurseReserveJoin struct {
 	Frequency    types.Int32  `json:"frequency"`
 	PayAmount    types.Money  `json:"pay_amount"`
 	NurseDate    types.Time   `json:"nurse_date"`
-	OrderFlag    types.Int8   `json:"order_flag"`
+	Status       types.Int8   `json:"status"`
 }
 
 // PageNurseReserveByKey 分页查询护理预定
@@ -88,7 +88,7 @@ func (s *nurseReserveService) PageNurseReserveByKey(ctx context.Context, in *dto
 			Frequency:    int(j.Frequency),
 			PayAmount:    j.PayAmount,
 			NurseDate:    j.NurseDate.Time,
-			OrderFlag:    constant.YesNo(j.OrderFlag).String(),
+			OrderFlag:    constant.OrderStatus(j.Status).String(),
 		})
 	}
 	*out = res
@@ -117,7 +117,7 @@ func (s *nurseReserveService) GetNurseReserveByReserveIdAndElderId(ctx context.C
 	out.Frequency = int(nr.Frequency)
 	out.PayAmount = nr.PayAmount
 	out.NurseDate = nr.NurseDate.Time
-	out.OrderFlag = constant.YesNo(nr.Status).String()
+	out.OrderFlag = constant.OrderStatus(nr.Status).String()
 	// 老人姓名、床位名
 	if el, eh, ee := dao.Elder(db).Get(ctx, ace.Where(tblelder.Id.Eq(nr.ElderId))); ee == nil && eh {
 		out.ElderName = el.Name.String()

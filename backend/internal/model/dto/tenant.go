@@ -55,7 +55,7 @@ type TenantResp struct {
 	ContactName  string       `json:"contact_name"`  // 联系人姓名
 	ContactPhone string       `json:"contact_phone"` // 联系电话
 	Plan         string       `json:"plan"`          // 套餐
-	Status       int8         `json:"status"`        // 状态：0试用中 1正式 2锁定
+	Status       uint8        `json:"status"`        // 状态：0试用中 1正式 2锁定
 	TrialStart   time.Time    `json:"trial_start"`   // 试用开始
 	TrialEnd     time.Time    `json:"trial_end"`     // 试用结束
 }

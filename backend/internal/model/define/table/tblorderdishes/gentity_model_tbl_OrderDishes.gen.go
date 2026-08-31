@@ -21,7 +21,7 @@ var (
 	UpdateId     = dialect.Field{Name: "update_id", Json: "update_id", Table: "order_dishes", Type: "types.BigInt", IsRelation: false}
 	UpdateTime   = dialect.Field{Name: "update_time", Json: "update_time", Table: "order_dishes", Type: "types.Time", IsRelation: false}
 	OrderNum     = dialect.Field{Name: "order_num", Json: "order_num", Table: "order_dishes", Type: "types.Int32", IsRelation: false}
-	Status       = dialect.Field{Name: "status", Json: "status", Table: "order_dishes", Type: "types.Int8", IsRelation: false}
+	Status       = dialect.Field{Name: "status", Json: "status", Table: "order_dishes", Type: "types.Uint8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 

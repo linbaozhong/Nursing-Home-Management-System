@@ -2,6 +2,86 @@ package constant
 
 import "github.com/linbaozhong/gentity/pkg/types"
 
+// 订单状态（order.status / nurse_reserve.status）
+type OrderStatus uint8
+
+// 订单状态
+const (
+	OrderPending   OrderStatus = 0 // 待处理
+	OrderDone      OrderStatus = 1 // 已处理
+	OrderCancelled OrderStatus = 2 // 已取消
+)
+
+func (o OrderStatus) String() string {
+	switch o {
+	case OrderPending:
+		return "待处理"
+	case OrderDone:
+		return "已处理"
+	case OrderCancelled:
+		return "已取消"
+	default:
+		return "未知"
+	}
+}
+
+// 套餐标记（order_dishes.status）
+type SetDishesStatus uint8
+
+const (
+	SetDishSingle SetDishesStatus = 0 // 单点
+	SetDishSet    SetDishesStatus = 1 // 套餐
+)
+
+func (s SetDishesStatus) String() string {
+	switch s {
+	case SetDishSingle:
+		return "单点"
+	case SetDishSet:
+		return "套餐"
+	default:
+		return "未知"
+	}
+}
+
+// 护理完成情况（nurse.complete_status）
+type NurseCompleteStatus uint8
+
+const (
+	NurseCompleteNo   NurseCompleteStatus = 0 // 未完成
+	NurseCompleteDone NurseCompleteStatus = 1 // 已完成
+)
+
+func (n NurseCompleteStatus) String() string {
+	switch n {
+	case NurseCompleteNo:
+		return "未完成"
+	case NurseCompleteDone:
+		return "已完成"
+	default:
+		return "未知"
+	}
+}
+
+// 进餐情况（nurse.dine_status）
+type NurseDineStatus uint8
+
+const (
+	NurseDineNo   NurseDineStatus = 0 // 未进餐
+	NurseDineDone NurseDineStatus = 1 // 已进餐
+)
+
+func (n NurseDineStatus) String() string {
+	switch n {
+	case NurseDineNo:
+		return "未进餐"
+	case NurseDineDone:
+		return "已进餐"
+	default:
+		return "未知"
+	}
+}
+
 // 服务
 var (
 	ErrServiceTypeRepeat = types.NewError(500, "该服务类型已存在")

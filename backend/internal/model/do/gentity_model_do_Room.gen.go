@@ -113,7 +113,7 @@ func (p *Room) UnmarshalJSON(data []byte) error {
 		case "state":
 			p.State = types.Int8(value.Int())
 		case "status":
-			p.Status = types.Int8(value.Int())
+			p.Status = types.Uint8(value.Uint())
 		case "type":
 			p.Type = types.Int8(value.Int())
 		}

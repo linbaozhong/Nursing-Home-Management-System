@@ -20,7 +20,7 @@ var (
 	TenantId   = dialect.Field{Name: "tenant_id", Json: "tenant_id", Table: "emergency_contact", Type: "types.BigInt", IsRelation: false}
 	UpdateId   = dialect.Field{Name: "update_id", Json: "update_id", Table: "emergency_contact", Type: "types.BigInt", IsRelation: false}
 	UpdateTime = dialect.Field{Name: "update_time", Json: "update_time", Table: "emergency_contact", Type: "types.Time", IsRelation: false}
-	Status     = dialect.Field{Name: "status", Json: "status", Table: "emergency_contact", Type: "types.Int8", IsRelation: false}
+	IsReceive  = dialect.Field{Name: "is_receive", Json: "is_receive", Table: "emergency_contact", Type: "types.Int8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 
@@ -37,7 +37,7 @@ var (
 		TenantId,
 		UpdateId,
 		UpdateTime,
-		Status,
+		IsReceive,
 	}
 	// 可读列
 	ReadableFields = []dialect.Field{
@@ -52,6 +52,6 @@ var (
 		TenantId,
 		UpdateId,
 		UpdateTime,
-		Status,
+		IsReceive,
 	}
 )

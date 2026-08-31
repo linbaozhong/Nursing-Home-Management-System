@@ -34,26 +34,6 @@ var (
 	ErrAuthError          = types.NewError(500, "权限不足")
 )
 
-// YesNo 是否标记
-type YesNo int8
-
-// 是否（Y/N）
-const (
-	YesNoNo  YesNo = 0 // N
-	YesNoYes YesNo = 1 // Y
-)
-
-func (y YesNo) String() string {
-	switch y {
-	case YesNoNo:
-		return "否"
-	case YesNoYes:
-		return "是"
-	default:
-		return "否"
-	}
-}
-
 // State 管理状态（通用，替代 del_flag 的 Y/N）
 type State int8
 

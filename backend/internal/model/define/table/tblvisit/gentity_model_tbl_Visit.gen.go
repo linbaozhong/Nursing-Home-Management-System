@@ -24,7 +24,7 @@ var (
 	VisitTime  = dialect.Field{Name: "visit_time", Json: "visit_time", Table: "visit", Type: "types.Time", IsRelation: false}
 	VisitNum   = dialect.Field{Name: "visit_num", Json: "visit_num", Table: "visit", Type: "types.Int32", IsRelation: false}
 	State      = dialect.Field{Name: "state", Json: "state", Table: "visit", Type: "types.Int8", IsRelation: false}
-	Status     = dialect.Field{Name: "status", Json: "status", Table: "visit", Type: "types.Int8", IsRelation: false}
+	Status     = dialect.Field{Name: "status", Json: "status", Table: "visit", Type: "types.Uint8", IsRelation: false}
 	// 主键
 	PrimaryKey = Id
 

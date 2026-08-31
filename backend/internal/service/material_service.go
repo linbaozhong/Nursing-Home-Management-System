@@ -207,7 +207,7 @@ func (m *material) AddMaterialType(ctx context.Context, in *dto.AddMaterialTypeR
 		bean.Kind = types.Int8(int8(*in.Kind))
 	} else {
 		// 默认归为设施/其他
-		bean.Kind = types.Int8(constant.KindFacility)
+		bean.Kind = types.Int8(constant.KindElse)
 	}
 	bean.State = types.Int8(constant.StateEnabled)
 	_, e = dao.MaterialType(db).InsertOne(ctx, bean)

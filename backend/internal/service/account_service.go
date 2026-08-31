@@ -71,8 +71,8 @@ func (a *account) loginWithUser(ctx context.Context, user *do.User, out *dto.Log
 	userID := user.Id.Int64()
 	memberList, _, e := dao.Member(db).List(ctx, db.Table(tblmember.TableName).
 		Where(tblmember.UserId.Eq(types.BigInt(userID)),
-			tblmember.Status.Eq(types.Int8(constant.MemberStatusActive)),
-			tblmember.State.NotEq(types.Int8(constant.StateDeleted))))
+			tblmember.Status.Eq(constant.MemberActive),
+			tblmember.State.NotEq(constant.StateDeleted)))
 	if e != nil {
 		return e
 	}
@@ -99,7 +99,7 @@ func (a *account) loginWithUser(ctx context.Context, user *do.User, out *dto.Log
 			ContactName:  tn.ContactName.String(),
 			ContactPhone: tn.ContactPhone.String(),
 			Plan:         tn.Plan.String(),
-			Status:       tn.Status.Int8(),
+			Status:       tn.Status,
 			TrialStart:   tn.ExpireTime.Time,
 			TrialEnd:     tn.ExpireTime.Time,
 		})

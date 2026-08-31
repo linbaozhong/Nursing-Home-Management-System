@@ -1,14 +1,14 @@
 package constant
 
 // AuditStatus 审计状态
-type AuditStatus int8
+type AuditStatus uint8
 
 // 审计状态
 const (
-	AuditNotPass AuditStatus = -1 // 不通过
-	AuditStay    AuditStatus = 0  // 待审核
-	Auditing     AuditStatus = 1  // 审核中
-	AuditPass    AuditStatus = 2  // 通过
+	AuditStay    AuditStatus = 0 // 待审核
+	Auditing     AuditStatus = 1 // 审核中
+	AuditPass    AuditStatus = 2 // 通过
+	AuditNotPass AuditStatus = 3 // 不通过
 )
 
 func (a AuditStatus) String() string {

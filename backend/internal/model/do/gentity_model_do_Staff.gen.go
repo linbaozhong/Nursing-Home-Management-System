@@ -125,7 +125,7 @@ func (p *Staff) UnmarshalJSON(data []byte) error {
 		case "age":
 			p.Age = types.Int32(value.Int())
 		case "status":
-			p.Status = types.Int8(value.Int())
+			p.Status = types.Uint8(value.Uint())
 		}
 		if e != nil {
 			log.Error(e)
